@@ -51,14 +51,13 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
-        if (player == null)
-            return InteractionResult.PASS;
+        if (player == null || context.isSecondaryUseActive()) {
+            return super.useOn(context);
+        }
 
-        if (player.level().isClientSide)
-            return InteractionResult.PASS;
-
-        if (!player.isShiftKeyDown())
-            return InteractionResult.PASS;
+        if (player.level().isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
 
         BlockEntity entity = context.getLevel().getBlockEntity(context.getClickedPos());
         if (entity instanceof AbstractComputerBlockEntity) {
@@ -66,7 +65,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         } else {
             clear(player, context.getItemInHand());
         }
-        return super.useOn(context);
+        return InteractionResult.CONSUME;
     }
 
     @Override
@@ -75,7 +74,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
             itemStack.remove(APDataComponents.BINDING_COMPUTER.get());
             return;
         }
-        if (!(entity instanceof LocalPlayer player)) {
+        if (!(entity instanceof LocalPlayer)) {
             return;
         }
         boolean pressed = KeyBindings.GLASSES_HOTKEY_KEYBINDING.isDown();
@@ -86,29 +85,26 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         if (!pressed) {
             return;
         }
-        if (player.containerMenu instanceof KeyboardContainer openedKeyboard && openedKeyboard.getKeyboardItem().equals(itemStack)) {
-            return;
-        }
         PacketDistributor.sendToServer(new GlassesHotkeyPacket("", -1));
         return;
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-        if (playerIn.level().isClientSide()) {
-            return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (player.level().isClientSide()) {
+            return InteractionResultHolder.pass(stack);
         }
         // Used to prevent the menu from opening when we just want to bind/unbind the keyboard
-        if (playerIn.isShiftKeyDown()) {
-            return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
+        if (player.isShiftKeyDown()) {
+            return InteractionResultHolder.pass(stack);
         }
-        ItemStack stack = playerIn.getItemInHand(handIn);
         if (!stack.has(APDataComponents.BINDING_COMPUTER.get())) {
-            playerIn.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard_notbound")), false);
-            return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
+            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard_notbound")), false);
+            return InteractionResultHolder.pass(stack);
         }
         // Run the super use which handles the IInventoryItem stuff to actually open the container
-        return super.use(worldIn, playerIn, handIn);
+        return super.use(level, player, hand);
     }
 
     @Override
@@ -123,8 +119,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         stack.remove(APDataComponents.BINDING_COMPUTER.get());
 
         if (!(world.getBlockEntity(pos) instanceof AbstractComputerBlockEntity computer)) {
-            // TODO: should it show bind failed message?
-            return;
+            throw new IllegalStateException("unreachable");
         }
 
         int id = computer.getComputerID();
@@ -159,7 +154,7 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         };
     }
 
-    public MenuProvider createContainerWithComputer(Player playerEntity, ItemStack stack, ServerComputer computer) {
+    public MenuProvider createContainerWithComputer(Player playerEntity, ServerComputer computer) {
         return new MenuProvider() {
             @NotNull
             @Override
@@ -169,14 +164,14 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
 
             @Override
             public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInv, @NotNull Player player) {
-                return new KeyboardContainer(pContainerId, playerInv, player.level(), stack, computer);
+                return new KeyboardContainer(pContainerId, playerInv, player.level(), computer);
             }
         };
     }
 
     @Override
     public void writeContainerData(Player player, ItemStack stack, RegistryFriendlyByteBuf buf) {
-        ItemStack.STREAM_CODEC.encode(buf, stack);
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, stack);
     }
 
     @Override

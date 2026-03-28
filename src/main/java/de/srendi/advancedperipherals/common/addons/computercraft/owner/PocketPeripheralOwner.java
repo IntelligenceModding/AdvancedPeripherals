@@ -20,6 +20,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3d;
+import org.joml.Quaterniond;
+import org.joml.Quaterniondc;
 
 public class PocketPeripheralOwner extends BasePeripheralOwner {
     private final IPocketAccess pocket;
@@ -68,19 +71,34 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @NotNull
     @Override
     public Direction getFacing() {
-        Entity owner = pocket.getEntity();
-        return owner == null ? Direction.NORTH : owner.getDirection();
+        return Direction.getNearest(this.getDirection());
     }
 
     @NotNull
     @Override
-    public FrontAndTop getOrientation() {
+    public FrontAndTop getFrontAndTop() {
         Entity owner = pocket.getEntity();
         if (owner == null) {
             return FrontAndTop.NORTH_UP;
         }
+        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(owner.getUpVector(1.0f)));
+    }
+
+    @NotNull
+    @Override
+    public Quaterniondc getOrientation() {
+        Entity owner = pocket.getEntity();
+        if (owner == null) {
+            return new Quaterniond();
+        }
+        Vec3 front = owner.getLookAngle();
         Vec3 up = owner.getUpVector(1.0f);
-        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(up.x, up.y, up.z));
+        Vec3 right = front.cross(up);
+        return new Quaterniond().setFromNormalized(new Matrix3d(
+            right.x, up.x, -front.x,
+            right.y, up.y, -front.y,
+            right.z, up.z, -front.z
+        ));
     }
 
     @Nullable

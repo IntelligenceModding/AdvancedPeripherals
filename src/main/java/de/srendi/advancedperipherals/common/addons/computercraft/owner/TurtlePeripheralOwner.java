@@ -50,7 +50,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @NotNull
     @Override
-    public FrontAndTop getOrientation() {
+    public FrontAndTop getFrontAndTop() {
         return FrontAndTop.fromFrontAndTop(getFacing(), Direction.UP);
     }
 

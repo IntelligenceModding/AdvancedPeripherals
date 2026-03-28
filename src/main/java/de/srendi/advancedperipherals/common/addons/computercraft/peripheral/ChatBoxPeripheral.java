@@ -42,12 +42,11 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     public static final String PERIPHERAL_TYPE = "chat_box";
     private static final Pattern UUID_PATTERN = Pattern.compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$");
 
-    private long lastConsumedMessage;
+    private long lastConsumedMessage = Events.getLastChatMessageID();
 
     protected ChatBoxPeripheral(IPeripheralOwner owner) {
         super(PERIPHERAL_TYPE, owner);
         owner.attachOperation(CHAT_MESSAGE);
-        lastConsumedMessage = Events.getLastChatMessageID() - 1;
     }
 
     public ChatBoxPeripheral(PeripheralBlockEntity<?> tileEntity) {

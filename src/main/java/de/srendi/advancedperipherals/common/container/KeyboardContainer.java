@@ -22,17 +22,19 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
 
     @Nullable
     private final ServerInputState input;
-    private final ItemStack keyboardItem;
     @Nullable
     private ServerComputer computer;
 
-    public KeyboardContainer(int id, Inventory inventory, Level level, ItemStack keyboardItem) {
+    public KeyboardContainer(int id, Inventory inventory, Level level, @NotNull ItemStack keyboardItem) {
         this(id, inventory, level, keyboardItem, null);
     }
 
-    public KeyboardContainer(int id, Inventory inventory, Level level, ItemStack keyboardItem, ServerComputer computer) {
+    public KeyboardContainer(int id, Inventory inventory, Level level, @NotNull ServerComputer computer) {
+        this(id, inventory, level, ItemStack.EMPTY, computer);
+    }
+
+    private KeyboardContainer(int id, Inventory inventory, Level level, ItemStack keyboardItem, ServerComputer computer) {
         super(APContainerTypes.KEYBOARD_CONTAINER.get(), id, inventory, null, level);
-        this.keyboardItem = keyboardItem;
 
         if (!(level instanceof final ServerLevel serverLevel)) {
             this.input = null;
@@ -56,10 +58,6 @@ public class KeyboardContainer extends BaseContainer implements ComputerMenu {
         }
         this.computer = computer;
         this.input = new ServerInputState(this, computer);
-    }
-
-    public ItemStack getKeyboardItem() {
-        return this.keyboardItem;
     }
 
     @Override

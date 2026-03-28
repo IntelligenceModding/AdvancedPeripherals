@@ -7,10 +7,11 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunction
 import net.minecraft.resources.ResourceLocation;
 
 public class HotkeyModule implements IModule {
+    private static final ResourceLocation ID = AdvancedPeripherals.getRL("hotkey");
 
     @Override
-    public ResourceLocation getName() {
-        return AdvancedPeripherals.getRL("hotkey");
+    public ResourceLocation getId() {
+        return ID;
     }
 
     @Override

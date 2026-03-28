@@ -10,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class NightVisionModule implements IModule {
+    private static final ResourceLocation ID = AdvancedPeripherals.getRL("night_vision");
 
     private volatile boolean nightVisionEnabled = true;
 
@@ -18,8 +19,8 @@ public class NightVisionModule implements IModule {
     }
 
     @Override
-    public ResourceLocation getName() {
-        return AdvancedPeripherals.getRL("night_vision");
+    public ResourceLocation getId() {
+        return ID;
     }
 
     @Override

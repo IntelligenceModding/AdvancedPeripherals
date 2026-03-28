@@ -14,6 +14,7 @@ import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
@@ -104,44 +105,45 @@ public class AdvancedPeripherals {
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
         APRegistration.BLOCK_ENTITIES.getEntries().forEach((entry) -> {
             event.registerBlockEntity(
-                    PeripheralCapability.get(),
-                    entry.get(),
-                    (blockEntity, side) ->
-                            blockEntity instanceof ICapabilityProvider provider ? provider.createPeripheralCap(side) : null
+                PeripheralCapability.get(),
+                entry.get(),
+                (blockEntity, side) -> blockEntity instanceof ICapabilityProvider provider
+                    ? provider.createPeripheralCap(side)
+                    : null
             );
-
             event.registerBlockEntity(
-                    Capabilities.ItemHandler.BLOCK,
-                    entry.get(),
-                    (blockEntity, side) ->
-                            blockEntity instanceof ICapabilityProvider provider ? provider.createItemHandlerCap(side) : null
+                Capabilities.ItemHandler.BLOCK,
+                entry.get(),
+                (blockEntity, side) -> blockEntity instanceof ICapabilityProvider provider
+                    ? provider.createItemHandlerCap(side)
+                    : null
             );
-
             event.registerBlockEntity(
-                    Capabilities.FluidHandler.BLOCK,
-                    entry.get(),
-                    (blockEntity, side) ->
-                            blockEntity instanceof ICapabilityProvider provider ? provider.createFluidHandlerCap(side) : null
+                Capabilities.FluidHandler.BLOCK,
+                entry.get(),
+                (blockEntity, side) -> blockEntity instanceof ICapabilityProvider provider
+                    ? provider.createFluidHandlerCap(side)
+                    : null
             );
-
             event.registerBlockEntity(
-                    Capabilities.EnergyStorage.BLOCK,
-                    entry.get(),
-                    (blockEntity, side) ->
-                            blockEntity instanceof ICapabilityProvider provider ? provider.createEnergyStorageCap(side) : null
+                Capabilities.EnergyStorage.BLOCK,
+                entry.get(),
+                (blockEntity, side) -> blockEntity instanceof ICapabilityProvider provider
+                    ? provider.createEnergyStorageCap(side)
+                    : null
             );
         });
 
         ItemLike[] smartGlasses = new ItemLike[]{
-                APItems.SMART_GLASSES.get(),
-                APItems.SMART_GLASSES_NETHERITE.get(),
+            APItems.SMART_GLASSES.get(),
+            APItems.SMART_GLASSES_NETHERITE.get(),
         };
         event.registerItem(MediaCapability.get(), (stack, ignored) -> MountMedia.COMPUTER, smartGlasses);
-        event.registerItem(
-                Capabilities.ItemHandler.ITEM,
-                (stack, ignored) -> ((SmartGlassesItem) (stack.getItem())).createItemHandlerCap(stack),
-                smartGlasses
-        );
+        // event.registerItem(
+        //     Capabilities.ItemHandler.ITEM,
+        //     (stack, ignored) -> ((SmartGlassesItem) (stack.getItem())).createItemHandlerCap(stack),
+        //     smartGlasses
+        // );
 
         if (APAddon.AE2.isLoaded())
             AEApi.registerCapabilities(event);

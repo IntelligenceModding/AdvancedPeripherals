@@ -29,7 +29,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "player_detector";
     private static final int MAX_RANGE = APConfig.PERIPHERALS_CONFIG.playerDetMaxRange.get();
-    private long lastConsumedMessage = Events.getLastPlayerMessageID() - 1;
+    private long lastConsumedMessage = Events.getLastPlayerMessageID();
 
     public PlayerDetectorPeripheral(PeripheralBlockEntity<?> tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
@@ -135,31 +135,29 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
         }
         ServerPlayer player = getPlayer(arguments.getString(0));
-        int posPrecision = arguments.optInt(1, 0);
         if (player == null) {
             return null;
         }
         if (MAX_RANGE != -1 && !CoordUtil.isInRange(getCenterPos(), getLevel(), player, MAX_RANGE, MAX_RANGE)) {
             return null;
         }
-        return getPlayerInfo(player, posPrecision);
+        return getPlayerInfo(player, player == owner.getHoldingEntity());
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<String, Object> getOwner(IArguments arguments) throws LuaException {
+    public final Map<String, Object> getOwner() throws LuaException {
         if (!(owner.getHoldingEntity() instanceof ServerPlayer player)) {
             return null;
         }
-        int posPrecision = arguments.optInt(0, 0);
-        return getPlayerInfo(player, posPrecision);
+        return getPlayerInfo(player, true);
     }
 
-    private Map<String, Object> getPlayerInfo(ServerPlayer player, int posPrecision) {
+    private Map<String, Object> getPlayerInfo(ServerPlayer player, boolean isOwner) {
         Map<String, Object> info = new HashMap<>();
 
         double x = player.getX(), y = player.getY(), z = player.getZ();
 
-        if (APConfig.PERIPHERALS_CONFIG.playerSpyRandError.get()) {
+        if (!isOwner && APConfig.PERIPHERALS_CONFIG.playerSpyRandError.get()) {
             // We apply random error to the returned player position if so enabled in the configuration.
             final int maxErrorRange = 10000;
 
@@ -192,12 +190,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
         }
 
-        int decimals = Math.min(posPrecision, 4);
-
-        final double unit = Math.pow(10, decimals);
-        info.put("x", Math.floor(x * unit) / unit);
-        info.put("y", Math.floor(y * unit) / unit);
-        info.put("z", Math.floor(z * unit) / unit);
+        info.put("x", x);
+        info.put("y", y);
+        info.put("z", z);
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
             info.put("uuid", player.getUUID().toString());
             info.put("name", player.getName().getString());
@@ -236,6 +231,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         }
         // Note: getPlayerByName still has O(N) time complexity but doesn't matter
         ServerPlayer player = level.getServer().getPlayerList().getPlayerByName(username);
+        if (player == null) {
+            return null;
+        }
         if (!isAllowedMultiDimensional() && player.level() != level) {
             return null;
         }

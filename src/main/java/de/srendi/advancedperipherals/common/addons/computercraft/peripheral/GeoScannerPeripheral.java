@@ -17,6 +17,8 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.ScanUtils;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -27,6 +29,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaterniondc;
+import org.joml.Vector3d;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,9 +41,9 @@ import static de.srendi.advancedperipherals.common.addons.computercraft.operatio
 
 public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
 
-    /*
-    Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
-    */
+    /**
+     * Highly inspired by https://github.com/SquidDev-CC/plethora/ BlockScanner
+     */
 
     public static final String PERIPHERAL_TYPE = "geo_scanner";
 
@@ -60,13 +64,23 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         this(new PocketPeripheralOwner(pocket));
     }
 
-    private static List<Map<String, Object>> scan(Level level, Vec3 center, int radius) {
+    private static List<Map<String, Object>> scan(IPeripheralOwner owner, int radius) {
         List<Map<String, Object>> result = new ArrayList<>();
-        ScanUtils.traverseBlocks(level, center, radius, (state, pos) -> {
+        Vec3 center = owner.getCenterPos();
+        Quaterniondc orientation = owner.getOrientation();
+        Vector3d rpos = new Vector3d();
+        ScanUtils.traverseBlocks(owner.getLevel(), center, radius, (state, pos) -> {
             Map<String, Object> data = new HashMap<>(LuaConverter.blockStateToLua(state));
-            data.put("x", pos.x);
-            data.put("y", pos.y);
-            data.put("z", pos.z);
+            double x = pos.getX() + 0.5 - center.x;
+            double y = pos.getY() + 0.5 - center.y;
+            double z = pos.getZ() + 0.5 - center.z;
+            data.put("x", x);
+            data.put("y", y);
+            data.put("z", z);
+            orientation.transform(rpos.set(x, y, z));
+            data.put("r", rpos.x);
+            data.put("u", rpos.y);
+            data.put("f", -rpos.z);
             result.add(data);
         });
 
@@ -99,23 +113,27 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             Level level = getLevel();
             LevelChunk chunk = level.getChunkAt(getPos());
             ChunkPos chunkPos = chunk.getPos();
-            Map<ResourceLocation, Integer> data = new HashMap<>();
+            Object2IntMap<ResourceLocation> data = new Object2IntOpenHashMap<>();
+            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
             for (int x = chunkPos.getMinBlockX(); x <= chunkPos.getMaxBlockX(); x++) {
                 for (int z = chunkPos.getMinBlockZ(); z <= chunkPos.getMaxBlockZ(); z++) {
                     for (int y = level.getMinBuildHeight(); y < level.getHeight(); y++) {
-                        BlockState block = chunk.getBlockState(new BlockPos(x, y, z));
+                        BlockState block = chunk.getBlockState(pos.set(x, y, z));
+                        if (!block.is(Tags.Blocks.ORES)) {
+                            continue;
+                        }
                         ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block.getBlock());
-                        if (name != null && block.is(Tags.Blocks.ORES)) {
-                            data.compute(name, (k, v) -> (v == null ? 0 : v) + 1);
+                        if (name != null) {
+                            data.put(name, data.getInt(name) + 1);
                         }
                     }
                 }
             }
             return MethodResult.of(
                 Map.ofEntries(
-                    data.entrySet()
+                    data.object2IntEntrySet()
                         .stream()
-                        .map((entry) -> Map.entry(entry.getKey().toString(), entry.getValue()))
+                        .map((entry) -> Map.entry(entry.getKey().toString(), entry.getIntValue()))
                         .toArray(Map.Entry[]::new)
                 )
             );
@@ -130,6 +148,6 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(null, "Radius is exceed max value");
             }
             return null;
-        }, context -> MethodResult.of(scan(getLevel(), getCenterPos(), context.getRadius())), null);
+        }, context -> MethodResult.of(scan(getPeripheralOwner(), context.getRadius())), null);
     }
 }

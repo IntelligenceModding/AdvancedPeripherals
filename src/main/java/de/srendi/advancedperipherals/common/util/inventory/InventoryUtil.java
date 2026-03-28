@@ -116,7 +116,7 @@ public class InventoryUtil {
     @Nullable
     public static IItemHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = Objects.requireNonNull(owner.getLevel());
-        Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
+        Direction relativeDirection = CoordUtil.getDirection(owner.getFrontAndTop(), direction);
         if (relativeDirection == null) {
             return null;
         }

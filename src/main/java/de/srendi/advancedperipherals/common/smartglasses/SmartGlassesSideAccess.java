@@ -75,21 +75,16 @@ public class SmartGlassesSideAccess implements IPocketAccess {
 
     @Override
     public DataComponentPatch getUpgradeData() {
-        UpgradeData<IPocketUpgrade> upgradeData = this.getUpgrade();
-        return upgradeData == null ? DataComponentPatch.EMPTY : upgradeData.data();
+        return this.computer.getUpgradeData(this.side);
     }
 
     @Override
     public void setUpgradeData(DataComponentPatch data) {
-        UpgradeData<IPocketUpgrade> upgradeData = this.getUpgrade();
-        if (upgradeData == null) {
-            return;
-        }
-        this.setUpgrade(UpgradeData.of(upgradeData.holder(), data));
+        this.computer.setUpgradeData(this.side, data);
     }
 
     @Override
     public void invalidatePeripheral() {
-        this.computer.invalidatePeripheral();
+        this.computer.invalidatePeripheral(this.side);
     }
 }

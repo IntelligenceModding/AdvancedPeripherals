@@ -71,12 +71,12 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlock
     @NotNull
     @Override
     public Direction getFacing() {
-        return getOrientation().front();
+        return getFrontAndTop().front();
     }
 
     @NotNull
     @Override
-    public FrontAndTop getOrientation() {
+    public FrontAndTop getFrontAndTop() {
         return tileEntity.getBlockState().getValue(BaseBlock.ORIENTATION);
     }
 

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface IModule {
 
-    ResourceLocation getName();
+    ResourceLocation getId();
 
     /**
      * Used to define the available functions of the module. This method only gets called once when indexing the modules

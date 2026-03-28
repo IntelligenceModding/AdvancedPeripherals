@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
-import dan200.computercraft.shared.computer.core.ServerComputer;
 import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,25 +13,31 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SmartGlassesMenuProvider implements MenuProvider {
-    private final ServerComputer computer;
-    private final Component name;
+    private final SmartGlassesComputer computer;
+    private final ItemStack stack;
     private final IItemHandler glassesContainer;
 
-    public SmartGlassesMenuProvider(ServerComputer computer, ItemStack stack, IItemHandler glassesContainer) {
+    public SmartGlassesMenuProvider(SmartGlassesComputer computer, ItemStack stack, IItemHandler glassesContainer) {
         this.computer = computer;
-        this.name = stack.getHoverName();
+        this.stack = stack;
         this.glassesContainer = glassesContainer;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Component getDisplayName() {
-        return this.name;
+        return this.stack.getHoverName();
     }
 
-    @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player entity) {
-        return new SmartGlassesContainer(id, p -> true, computer, inventory, glassesContainer, null);
+    @Nullable
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player entity) {
+        return new SmartGlassesContainer(
+            id,
+            player -> SmartGlassesItem.containsGlassesStack(player, this.stack),
+            computer,
+            inventory,
+            glassesContainer
+        );
     }
 }

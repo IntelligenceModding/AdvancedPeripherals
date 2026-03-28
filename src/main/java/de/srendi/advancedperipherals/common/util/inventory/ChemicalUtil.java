@@ -107,13 +107,14 @@ public class ChemicalUtil {
     public static IChemicalHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = owner.getLevel();
         Objects.requireNonNull(level);
-        Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
-        if (relativeDirection == null)
+        Direction relativeDirection = CoordUtil.getDirection(owner.getFrontAndTop(), direction);
+        if (relativeDirection == null) {
             return null;
+        }
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
-        if (target == null)
+        if (target == null) {
             return null;
-
+        }
         return extractHandler(target, level, owner.getPos().relative(relativeDirection), relativeDirection);
     }
 

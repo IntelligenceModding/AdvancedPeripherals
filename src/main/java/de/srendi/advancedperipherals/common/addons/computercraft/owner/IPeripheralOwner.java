@@ -21,6 +21,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3f;
+import org.joml.Quaterniond;
+import org.joml.Quaterniondc;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -80,7 +83,22 @@ public interface IPeripheralOwner {
 
     @NotNull Direction getFacing();
 
-    @NotNull FrontAndTop getOrientation();
+    @NotNull FrontAndTop getFrontAndTop();
+
+    @NotNull
+    default Quaterniondc getOrientation() {
+        FrontAndTop fat = this.getFrontAndTop();
+        Direction front = fat.front();
+        Direction up = fat.top();
+        int fx = front.getStepX(), fy = front.getStepY(), fz = front.getStepZ();
+        int ux = up.getStepX(), uy = up.getStepY(), uz = up.getStepZ();
+        int rx = fy * uz - fz * uy, ry = fz * ux - fx * uz, rz = fx * uy - fy * ux;
+        return new Quaterniond().setFromNormalized(new Matrix3f(
+            rx, ux, -fx,
+            ry, uy, -fy,
+            rz, uz, -fz
+        ));
+    }
 
     @Nullable Entity getHoldingEntity();
 
@@ -90,7 +108,7 @@ public interface IPeripheralOwner {
         Set<Entity> checked = new HashSet<>();
         while (owner != null && checked.add(owner)) {
             if (owner instanceof Player player) {
-                return (Player) player;
+                return player;
             }
             if (!(owner instanceof OwnableEntity ownable)) {
                 break;

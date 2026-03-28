@@ -16,6 +16,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 public class KeyboardModule implements IModule {
+    private static final ResourceLocation ID = AdvancedPeripherals.getRL("keyboard");
 
     private final KeyboardItem keyboardItem;
     private final ItemStack keyboardItemStack;
@@ -28,8 +29,8 @@ public class KeyboardModule implements IModule {
     }
 
     @Override
-    public ResourceLocation getName() {
-        return AdvancedPeripherals.getRL("keyboard");
+    public ResourceLocation getId() {
+        return ID;
     }
 
     @Nullable
@@ -66,12 +67,10 @@ public class KeyboardModule implements IModule {
         if (!(glasses.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        if (!(player.containerMenu instanceof KeyboardContainer keyboard)) {
+        if (!(player.containerMenu instanceof KeyboardContainer)) {
             return;
         }
-        if (keyboard.getKeyboardItem() == this.keyboardItemStack) {
-            player.closeContainer();
-        }
+        player.closeContainer();
     }
 
     public void openKeyboard(SmartGlassesSideAccess glasses) {
@@ -79,13 +78,10 @@ public class KeyboardModule implements IModule {
             return;
         }
         SmartGlassesComputer computer = glasses.getComputer();
-        ItemStack stack = computer.getStack();
-
-        stack.set(APDataComponents.KEYBOARD_OPENED.get(), true);
         computer.queueEvent("keyboard_open");
 
         KeyboardItem keyboardItem = this.keyboardItem;
-        player.openMenu(keyboardItem.createContainerWithComputer(player, stack, computer), buf -> keyboardItem.writeContainerData(player, stack, buf));
+        player.openMenu(keyboardItem.createContainerWithComputer(player, computer), buf -> keyboardItem.writeContainerData(player, ItemStack.EMPTY, buf));
         boolean captureMouse = this.captureMouse;
         this.lastCaptureMouse = captureMouse;
         if (captureMouse) {

@@ -18,15 +18,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class SmartGlassesItemHandler implements IItemHandlerModifiable {
-
-    public static final int SLOTS = 11;
-    public static final int PERIPHERAL_SLOTS = 5;
-
     private final ItemStack glasses;
     private final SmartGlassesComputer computer;
     private final RegistryAccess registryAccess;
 
-    public SmartGlassesItemHandler(ItemStack glasses, SmartGlassesComputer computer, RegistryAccess registryAccess) {
+    public SmartGlassesItemHandler(@NotNull ItemStack glasses, @NotNull SmartGlassesComputer computer, @NotNull RegistryAccess registryAccess) {
         this.glasses = glasses;
         this.computer = computer;
         this.registryAccess = registryAccess;
@@ -38,7 +34,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
 
     @Override
     public int getSlots() {
-        return SLOTS;
+        return SmartGlassesSlot.SLOTS;
     }
 
     @Override
@@ -47,12 +43,15 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     }
 
     @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+    public boolean isItemValid(int slot, ItemStack stack) {
+        if (slot >= SmartGlassesSlot.SLOTS) {
+            return false;
+        }
         if (stack.getItem() instanceof SmartGlassesItem) {
             return false;
         }
         List<ItemStack> items = this.loadItems();
-        if (slot < PERIPHERAL_SLOTS) {
+        if (slot < SmartGlassesSlot.PERIPHERAL_SLOTS) {
             UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(this.registryAccess, stack);
             if (upgradeData == null) {
                 return false;
@@ -63,14 +62,11 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
             }
             return true;
         }
-        if (slot >= SLOTS) {
-            return false;
-        }
         Item item = stack.getItem();
-        if (!(item instanceof IModuleItem module)) {
+        if (!(item instanceof IModuleItem)) {
             return false;
         }
-        for (int i = PERIPHERAL_SLOTS; i < SLOTS; i++) {
+        for (int i = SmartGlassesSlot.MODULE_SLOT_OFFSET; i < SmartGlassesSlot.SLOTS; i++) {
             if (items.get(i).getItem() == item) {
                 return false;
             }
@@ -80,7 +76,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
 
     @Override
     @NotNull
-    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
         }
@@ -137,33 +133,40 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
 
     @Override
     public ItemStack getStackInSlot(int slot) {
-        return loadItems().get(slot);
+        return this.loadItems().get(slot);
     }
 
     @Override
-    public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-        NonNullList<ItemStack> items = loadItems();
+    public void setStackInSlot(int slot, ItemStack stack) {
+        NonNullList<ItemStack> items = this.loadItems();
         if (ItemStack.isSameItemSameComponents(stack, items.get(slot))) {
             return;
         }
         items.set(slot, stack);
-        saveItems(items);
-        setChanged();
-    }
-
-    public void setChanged() {
-        if (this.computer != null) {
-            this.computer.invalidatePeripheral();
+        if (slot < SmartGlassesSlot.PERIPHERAL_SLOTS) {
+            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(this.registryAccess, stack);
+            this.computer.setUpgrade(SmartGlassesSlot.indexToSide(slot), upgradeData);
+        } else {
+            this.computer.setModule(slot - SmartGlassesSlot.MODULE_SLOT_OFFSET, stack);
         }
+        this.saveItems(items);
     }
 
-    public void saveItems(NonNullList<ItemStack> items) {
-        this.glasses.set(APDataComponents.ITEMS, ContainerHelper.saveAllItems(new CompoundTag(), items, this.registryAccess));
+    private void saveItems(NonNullList<ItemStack> items) {
+        saveItems(this.glasses, items, this.registryAccess);
     }
 
-    public NonNullList<ItemStack> loadItems() {
-        NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(this.glasses.getOrDefault(APDataComponents.ITEMS, new CompoundTag()), items, this.registryAccess);
+    private NonNullList<ItemStack> loadItems() {
+        return loadItems(this.glasses, this.registryAccess);
+    }
+
+    public static final void saveItems(ItemStack glasses, NonNullList<ItemStack> items, RegistryAccess registryAccess) {
+        glasses.set(APDataComponents.ITEMS, ContainerHelper.saveAllItems(new CompoundTag(), items, registryAccess));
+    }
+
+    public static final NonNullList<ItemStack> loadItems(ItemStack glasses, RegistryAccess registryAccess) {
+        NonNullList<ItemStack> items = NonNullList.withSize(SmartGlassesSlot.SLOTS, ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(glasses.getOrDefault(APDataComponents.ITEMS, new CompoundTag()), items, registryAccess);
         return items;
     }
 }

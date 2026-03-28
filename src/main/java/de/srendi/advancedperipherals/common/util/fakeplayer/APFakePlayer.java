@@ -192,8 +192,7 @@ public class APFakePlayer extends FakePlayer {
             setState(block, pos);
         }
 
-        Vec3 look = getLookAngle();
-        Direction direction = Direction.getNearest(look.x, look.y, look.z).getOpposite();
+        Direction direction = Direction.getNearest(this.getLookAngle()).getOpposite();
 
         if (world.isEmptyBlock(pos) || state.liquid()) {
             return Pair.of(false, "Nothing to dig here");
@@ -323,7 +322,7 @@ public class APFakePlayer extends FakePlayer {
 
         BlockHitResult blockHit;
         if (skipBlock) {
-            Direction traceDirection = Direction.getNearest(look.x, look.y, look.z);
+            Direction traceDirection = Direction.getNearest(look);
             blockHit = BlockHitResult.miss(target, traceDirection, BlockPos.containing(target));
         } else {
             blockHit = HitResultUtil.getBlockHitResult(origin, target, level(), ClipContext.Block.OUTLINE, this.source);

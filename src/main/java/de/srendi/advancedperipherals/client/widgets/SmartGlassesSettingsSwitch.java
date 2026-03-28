@@ -43,11 +43,7 @@ public class SmartGlassesSettingsSwitch extends AbstractWidget {
         }
         for (Slot slot : screen.getMenu().slots) {
             if (slot instanceof SmartGlassesSlot smartGlassesSlot) {
-                if (smartGlassesSlot.slotType == this.type) {
-                    smartGlassesSlot.setEnabled(true);
-                    continue;
-                }
-                smartGlassesSlot.setEnabled(false);
+                smartGlassesSlot.setActiveSlotType(this.type);
             }
         }
         screen.renderables.forEach(renderable -> {

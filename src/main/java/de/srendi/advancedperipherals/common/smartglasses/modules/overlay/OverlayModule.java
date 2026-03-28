@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OverlayModule implements IModule {
+    private static final ResourceLocation ID = AdvancedPeripherals.getRL("overlay");
 
     public final ConcurrentHashMap<Integer, RenderableObject> objects = new ConcurrentHashMap<>();
     public final ConcurrentHashMap<Integer, RenderableObject> objectsToUpdate = new ConcurrentHashMap<>();
@@ -39,8 +40,8 @@ public class OverlayModule implements IModule {
     }
 
     @Override
-    public ResourceLocation getName() {
-        return AdvancedPeripherals.getRL("glasses");
+    public ResourceLocation getId() {
+        return ID;
     }
 
     @Override

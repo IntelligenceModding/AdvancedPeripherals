@@ -82,13 +82,14 @@ public class FluidUtil {
     @Nullable
     public static IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
         Level level = Objects.requireNonNull(owner.getLevel());
-        Direction relativeDirection = CoordUtil.getDirection(owner.getOrientation(), direction);
-        if (relativeDirection == null)
+        Direction relativeDirection = CoordUtil.getDirection(owner.getFrontAndTop(), direction);
+        if (relativeDirection == null) {
             return null;
+        }
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
-        if (target == null)
+        if (target == null) {
             return null;
-
+        }
         return extractHandler(target, level, owner.getPos().relative(relativeDirection), relativeDirection);
     }
 
