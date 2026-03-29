@@ -34,7 +34,7 @@ public class SmartGlassesMenuProvider implements MenuProvider {
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player entity) {
         return new SmartGlassesContainer(
             id,
-            player -> SmartGlassesItem.containsGlassesStack(player, this.stack),
+            player -> SmartGlassesItem.containsGlassesStack(player, stack -> this.stack == stack),
             computer,
             inventory,
             glassesContainer

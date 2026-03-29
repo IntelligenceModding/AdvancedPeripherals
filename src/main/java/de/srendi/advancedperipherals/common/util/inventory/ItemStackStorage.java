@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;
@@ -9,21 +8,17 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.CheckReturnValue;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public final class ItemStackStorage {
-    public static final Codec<ItemStackStorage> CODEC = ItemStack.CODEC.listOf()
-        .xmap(ItemStackStorage::of, (value) -> List.of(value.getAll()));
+    public static final Codec<ItemStackStorage> CODEC = ItemStack.OPTIONAL_CODEC.listOf()
+        .xmap(ItemStackStorage::of, ItemStackStorage::getAllAsList);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ItemStackStorage> STREAM_CODEC = StreamCodec.of(
-        (RegistryFriendlyByteBuf buf, ItemStackStorage value) ->
-            buf.writeCollection(List.of(value.getAll()), (StreamCodec<? super FriendlyByteBuf, ItemStack>) ((StreamCodec<?, ItemStack>) ItemStack.STREAM_CODEC)),
-        (buf) -> ItemStackStorage.of(
-            buf.readList((StreamCodec<? super FriendlyByteBuf, ItemStack>) ((StreamCodec<?, ItemStack>) ItemStack.STREAM_CODEC))
-        )
-    );
+    public static final StreamCodec<RegistryFriendlyByteBuf, ItemStackStorage> STREAM_CODEC = ItemStack.OPTIONAL_LIST_STREAM_CODEC
+        .map(ItemStackStorage::of, ItemStackStorage::getAllAsList);
 
     private final ItemStack[] items;
 
@@ -69,6 +64,10 @@ public final class ItemStackStorage {
         return copyItems(this.items);
     }
 
+    private List<ItemStack> getAllAsList() {
+        return List.of(this.getAll());
+    }
+
     @CheckReturnValue
     public ItemStackStorage set(int slot, @NotNull ItemStack stack) {
         ItemStack[] items = copyItems(this.items);
@@ -98,6 +97,19 @@ public final class ItemStackStorage {
 
     public ItemStack[] getAllUnsafe() {
         return this.items;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        return other instanceof ItemStackStorage storage && Arrays.equals(this.items, storage.items);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(this.items);
     }
 
     private static ItemStack[] copyItems(ItemStack[] items) {

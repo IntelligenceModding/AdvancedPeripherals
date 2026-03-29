@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.items;
 
+import java.util.function.Predicate;
+
 import com.google.common.base.Objects;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.upgrades.UpgradeData;
@@ -122,6 +124,13 @@ public class SmartGlassesItem extends ArmorItem {
         if (!(entity instanceof LivingEntity livingEntity)) {
             return;
         }
+        if (level instanceof ServerLevel serverLevel) {
+            SmartGlassesComputer computer = getOrCreateComputer(serverLevel, livingEntity, stack);
+            computer.keepAlive();
+            if (computer.updateStack(stack) && livingEntity instanceof Player player) {
+                player.getInventory().setChanged();
+            }
+        }
         if (livingEntity.getItemBySlot(EquipmentSlot.HEAD) != stack) {
             return;
         }
@@ -132,7 +141,6 @@ public class SmartGlassesItem extends ArmorItem {
         SmartGlassesComputer computer = null;
         if (level instanceof ServerLevel serverLevel) {
             computer = getOrCreateComputer(serverLevel, entity, stack);
-            computer.keepAlive();
         }
 
         ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
@@ -151,10 +159,10 @@ public class SmartGlassesItem extends ArmorItem {
             moduleItem.moduleTick(level, entity, slot, glassesAccess, module);
         }
 
-        if (!(level instanceof ServerLevel serverLevel)) {
+        if (computer == null) {
             return;
         }
-        boolean changed = serverTick(stack, serverLevel, entity, computer);
+        boolean changed = serverTick(stack, (ServerLevel) level, entity, computer);
         if (changed && entity instanceof Player player) {
             player.getInventory().setChanged();
         }
@@ -236,7 +244,7 @@ public class SmartGlassesItem extends ArmorItem {
         return (SmartGlassesComputer) ServerComputerReference.get(stack, ServerContext.get(server).registry());
     }
 
-    private static int getComputerID(ItemStack stack) {
+    public static int getComputerID(ItemStack stack) {
         return NonNegativeId.getId(stack.get(ModRegistry.DataComponents.COMPUTER_ID.get()));
     }
 
@@ -271,19 +279,19 @@ public class SmartGlassesItem extends ArmorItem {
         return glassesSlot.stack();
     }
 
-    public static boolean containsGlassesStack(final Player player, final ItemStack target) {
-        if (player.getInventory().contains((stack) -> stack == target)) {
+    public static boolean containsGlassesStack(final Player player, final Predicate<ItemStack> tester) {
+        if (player.getInventory().contains(tester)) {
             return true;
         }
-        return APAddon.CURIOS.isLoaded() && containsGlassesStackCurios(player, target);
+        return APAddon.CURIOS.isLoaded() && containsGlassesStackCurios(player, tester);
     }
 
-    private static boolean containsGlassesStackCurios(final Player player, final ItemStack target) {
+    private static boolean containsGlassesStackCurios(final Player player, final Predicate<ItemStack> tester) {
         final ICuriosItemHandler curiosInv = CuriosApi.getCuriosInventory(player).orElse(null);
         if (curiosInv == null) {
             return false;
         }
-        return curiosInv.findFirstCurio((stack) -> stack == target).isPresent();
+        return curiosInv.findFirstCurio(tester).isPresent();
     }
 
     private static boolean isMarkedOn(ItemStack stack) {
