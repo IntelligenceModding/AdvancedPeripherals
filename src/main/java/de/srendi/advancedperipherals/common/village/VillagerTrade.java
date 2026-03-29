@@ -44,8 +44,8 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
         this.itemStack = itemStack;
     }
 
-    @Nullable
     @Override
+    @Nullable
     public MerchantOffer getOffer(@NotNull Entity trader, @NotNull RandomSource rand) {
         if (type == Type.EMERALD_FOR_ITEM) {
             if (itemStack != null)

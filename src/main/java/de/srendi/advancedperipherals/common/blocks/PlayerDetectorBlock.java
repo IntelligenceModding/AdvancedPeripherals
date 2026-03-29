@@ -22,15 +22,15 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
         super(APBlockEntityTypes.PLAYER_DETECTOR);
     }
 
-    @Nullable
     @Override
+    @Nullable
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return APBlockEntityTypes.PLAYER_DETECTOR.get().create(pos, state);
     }
 
-    @NotNull
     @Override
-    public InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
+    @NotNull
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get()) {
             return super.useWithoutItem(state, level, pos, player, hit);
         }

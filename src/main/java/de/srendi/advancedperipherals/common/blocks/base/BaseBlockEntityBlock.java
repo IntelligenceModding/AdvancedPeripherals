@@ -36,8 +36,8 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         super(properties, BlockTags.NEEDS_IRON_TOOL);
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
         BlockEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof VarNameable nameable && stack.getItem() instanceof NameTagItem) {
@@ -75,9 +75,9 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         }
     }
 
-    @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level0, @NotNull BlockState state0, @NotNull BlockEntityType<T> type) {
+    @Nullable
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level0, BlockState state0, BlockEntityType<T> type) {
         return (level, pos, state, entity) -> {
             if (entity instanceof IPeripheralBlockEntity blockEntity) {
                 blockEntity.handleTick(level, state, type);
@@ -85,15 +85,15 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
         };
     }
 
-    @Deprecated
-    @Nullable
     @Override
-    public MenuProvider getMenuProvider(@NotNull BlockState pState, Level pLevel, @NotNull BlockPos pPos) {
+    @Nullable
+    public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
         BlockEntity blockentity = pLevel.getBlockEntity(pPos);
         return blockentity instanceof IInventoryMenuBlock menuProvider ? menuProvider : null;
     }
 
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
+    @NotNull
+    public RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 }

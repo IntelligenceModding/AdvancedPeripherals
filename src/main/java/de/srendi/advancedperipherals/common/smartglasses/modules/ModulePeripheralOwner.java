@@ -32,51 +32,56 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
         this.computer = computer;
     }
 
-    @Nullable
+    @NotNull
+    public SmartGlassesComputer getComputer() {
+        return computer;
+    }
+
     @Override
+    @Nullable
     public String getCustomName() {
         return null;
     }
 
-    @Nullable
     @Override
+    @NotNull
     public Level getLevel() {
         return computer.getEntity().level();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public BlockPos getPos() {
         return BlockPos.containing(getCenterPos());
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Vec3 getCenterPos() {
         return computer.getEntity().getEyePosition();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Vec3 getDirection() {
         return computer.getEntity().getLookAngle();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Direction getFacing() {
         return Direction.getNearest(this.getDirection());
     }
 
-    @NotNull
     @Override
+    @NotNull
     public FrontAndTop getFrontAndTop() {
         Vec3 up = computer.getEntity().getUpVector(1.0f);
         return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(up));
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Quaterniondc getOrientation() {
         Entity owner = computer.getEntity();
         Vec3 front = owner.getLookAngle();
@@ -89,26 +94,21 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
         ));
     }
 
-    @NotNull
-    public SmartGlassesComputer getComputer() {
-        return computer;
-    }
-
-    @Nullable
     @Override
+    @Nullable
     public Entity getHoldingEntity() {
         return computer.getEntity();
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Player getOwner() {
         Entity owner = computer.getEntity();
         return owner instanceof Player player ? player : null;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public DataComponentPatch getDataStorage() {
         return computer.getModulesData();
     }
@@ -149,6 +149,7 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
+    @Nullable
     public <T extends IPeripheral> T getConnectedPeripheral(Class<T> type) {
         IPeripheral foundPeripheral = Stream.of(ComputerSide.values())
             .map(side -> computer.getPeripheral(side))

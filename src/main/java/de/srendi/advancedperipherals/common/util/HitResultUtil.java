@@ -190,8 +190,8 @@ public class HitResultUtil {
             super(null, null);
         }
 
-        @NotNull
         @Override
+        @NotNull
         public Type getType() {
             return Type.MISS;
         }
@@ -205,8 +205,8 @@ public class HitResultUtil {
 
         private IgnoreNoOccludedContext() {}
 
-        @NotNull
         @Override
+        @NotNull
         public VoxelShape get(BlockState pState, @NotNull BlockGetter pBlock, @NotNull BlockPos pPos, @NotNull CollisionContext pCollisionContext) {
             return !pState.canOcclude() ? Shapes.empty() : pState.getCollisionShape(pBlock, pPos, pCollisionContext);
         }
@@ -226,8 +226,8 @@ public class HitResultUtil {
             this.source = source;
         }
 
-        @NotNull
         @Override
+        @NotNull
         public VoxelShape getBlockShape(@NotNull BlockState pBlockState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos) {
             if (this.source != null && this.source.equals(pPos)) {
                 return Shapes.empty();

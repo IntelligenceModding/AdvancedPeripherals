@@ -37,8 +37,8 @@ public class BaseBlock extends Block implements IHarvestableBlock {
         this.harvestTag = harvestTag;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }

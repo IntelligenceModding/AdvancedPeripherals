@@ -127,7 +127,6 @@ public class TurtleEnderPearl extends ThrowableProjectile {
             return entity.turtle != null && super.shouldRender(entity, view, x, y, z);
         }
 
-        @NotNull
         @Override
         public ResourceLocation getTextureLocation(TurtleEnderPearl entity) {
             return null;
@@ -135,7 +134,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
     }
 
     @Override
-    public void remove(Entity.@NotNull RemovalReason reason) {
+    public void remove(@NotNull Entity.RemovalReason reason) {
         super.remove(reason);
         if (reason.shouldDestroy()) {
             if (this.callback != null) {
@@ -161,8 +160,8 @@ public class TurtleEnderPearl extends ThrowableProjectile {
         return !this.changedDim && super.canChangeDimensions(oldLevel, newLevel);
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Entity changeDimension(@NotNull DimensionTransition transition) {
         if (this.changedDim) {
             return null;

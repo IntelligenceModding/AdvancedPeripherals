@@ -15,27 +15,27 @@ import org.jetbrains.annotations.Nullable;
 
 public class MetaTurtleUpgradeModeller<T extends ClockwiseAnimatedTurtleUpgrade<?>> implements TurtleUpgradeModeller<T> {
 
-    @NotNull
     @Override
-    public TransformedModel getModel(T upgrade, @Nullable ITurtleAccess turtle, TurtleSide side, DataComponentPatch dataComponentPatch) {
-        if (upgrade.getLeftModel() == null) {
-            PoseStack stack = new PoseStack();
-            stack.pushPose();
-            stack.translate(0.0f, 0.5f, 0.5f);
-            if (turtle != null) {
-                int rotationStep = DataStorageUtil.RotationCharge.get(turtle, side);
-                stack.mulPose(Axis.XN.rotationDegrees(-10f * rotationStep));
-            }
-            stack.translate(0.0f, -0.5f, -0.5f);
-            stack.mulPose(Axis.YN.rotationDegrees(90));
-            if (side == TurtleSide.LEFT) {
-                stack.translate(0, 0, -0.6);
-            } else {
-                stack.translate(0, 0, -1.4);
-            }
-            return TransformedModel.of(upgrade.getCraftingItem(), new Transformation(stack.last().pose()));
+    @NotNull
+    public TransformedModel getModel(@NotNull T upgrade, @Nullable ITurtleAccess turtle, TurtleSide side, DataComponentPatch dataComponentPatch) {
+        if (upgrade.getLeftModel() != null) {
+            return TransformedModel.of(side == TurtleSide.LEFT ? upgrade.getLeftModel() : upgrade.getRightModel());
         }
-        return TransformedModel.of(side == TurtleSide.LEFT ? upgrade.getLeftModel() : upgrade.getRightModel());
+        PoseStack stack = new PoseStack();
+        stack.pushPose();
+        stack.translate(0.0f, 0.5f, 0.5f);
+        if (turtle != null) {
+            int rotationStep = DataStorageUtil.RotationCharge.get(turtle, side);
+            stack.mulPose(Axis.XN.rotationDegrees(-10f * rotationStep));
+        }
+        stack.translate(0.0f, -0.5f, -0.5f);
+        stack.mulPose(Axis.YN.rotationDegrees(90));
+        if (side == TurtleSide.LEFT) {
+            stack.translate(0, 0, -0.6);
+        } else {
+            stack.translate(0, 0, -1.4);
+        }
+        return TransformedModel.of(upgrade.getCraftingItem(), new Transformation(stack.last().pose()));
     }
 
 }

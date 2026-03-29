@@ -25,8 +25,8 @@ public class RSChemicalHandler implements IStorageSystemChemicalHandler {
         this.component = network.getComponent(StorageNetworkComponent.class);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ChemicalStack insertChemical(ChemicalStack resource, @NotNull mekanism.api.Action action) {
         if (resource.isEmpty())
             return resource;

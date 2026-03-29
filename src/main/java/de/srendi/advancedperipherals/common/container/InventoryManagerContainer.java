@@ -28,8 +28,8 @@ public class InventoryManagerContainer extends BaseContainer {
         return true;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ItemStack quickMoveStack(@NotNull Player player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);

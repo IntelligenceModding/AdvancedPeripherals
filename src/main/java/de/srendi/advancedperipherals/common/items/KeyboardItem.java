@@ -2,10 +2,10 @@ package de.srendi.advancedperipherals.common.items;
 
 import dan200.computercraft.shared.computer.blocks.AbstractComputerBlockEntity;
 import dan200.computercraft.shared.computer.core.ServerComputer;
+import dan200.computercraft.shared.computer.core.ServerContext;
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
-import de.srendi.advancedperipherals.common.items.base.IInventoryItem;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
@@ -14,9 +14,9 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleItem {
+public class KeyboardItem extends BaseItem implements IModuleItem {
 
     public KeyboardItem() {
         super(new Properties().stacksTo(1));
@@ -47,25 +47,63 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         return true;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
-        if (player == null || context.isSecondaryUseActive()) {
+        if (player == null || !context.isSecondaryUseActive()) {
             return super.useOn(context);
         }
+        Level level = context.getLevel();
 
-        if (player.level().isClientSide) {
+        if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
 
-        BlockEntity entity = context.getLevel().getBlockEntity(context.getClickedPos());
-        if (entity instanceof AbstractComputerBlockEntity) {
-            bind(player, context.getItemInHand(), context.getLevel(), context.getClickedPos());
+        BlockEntity entity = level.getBlockEntity(context.getClickedPos());
+        if (entity instanceof AbstractComputerBlockEntity blockEntity) {
+            bind(player, context.getItemInHand(), context.getLevel(), blockEntity);
         } else {
             clear(player, context.getItemInHand());
         }
         return InteractionResult.CONSUME;
+    }
+
+    @Override
+    @NotNull
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!stack.has(APDataComponents.BINDING_COMPUTER.get())) {
+            if (level.isClientSide()) {
+                player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard_notbound")), false);
+            }
+            return InteractionResultHolder.pass(stack);
+        }
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return InteractionResultHolder.success(stack);
+        }
+        ServerComputer computer = null;
+        int computerId = stack.get(APDataComponents.BINDING_COMPUTER.get());
+        for (ServerComputer computr : ServerContext.get(serverLevel.getServer()).registry().getComputers()) {
+            if (computr.getID() == computerId) {
+                computer = computr;
+                break;
+            }
+        }
+        if (computer == null) {
+            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard.computer_notfound")), false);
+            return InteractionResultHolder.fail(stack);
+        }
+        if (!computer.checkUsable(player)) {
+            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard.computer_unusable")), false);
+            return InteractionResultHolder.fail(stack);
+        }
+        if (!computer.isOn()) {
+            computer.turnOn();
+        }
+        ((ServerPlayer) player).openMenu(this.createContainerWithComputer(computer));
+        // Run the super use which handles the IInventoryItem stuff to actually open the container
+        return InteractionResultHolder.consume(stack);
     }
 
     @Override
@@ -85,26 +123,8 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         if (!pressed) {
             return;
         }
-        PacketDistributor.sendToServer(new GlassesHotkeyPacket("", -1));
+        PacketDistributor.sendToServer(GlassesHotkeyPacket.KEYBOARD_OPEN_PACKET);
         return;
-    }
-
-    @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (player.level().isClientSide()) {
-            return InteractionResultHolder.pass(stack);
-        }
-        // Used to prevent the menu from opening when we just want to bind/unbind the keyboard
-        if (player.isShiftKeyDown()) {
-            return InteractionResultHolder.pass(stack);
-        }
-        if (!stack.has(APDataComponents.BINDING_COMPUTER.get())) {
-            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard_notbound")), false);
-            return InteractionResultHolder.pass(stack);
-        }
-        // Run the super use which handles the IInventoryItem stuff to actually open the container
-        return super.use(level, player, hand);
     }
 
     @Override
@@ -115,63 +135,59 @@ public class KeyboardItem extends BaseItem implements IInventoryItem, IModuleIte
         }
     }
 
-    private void bind(Player player, ItemStack stack, Level world, BlockPos pos) {
+    private void bind(Player player, ItemStack stack, Level world, AbstractComputerBlockEntity computer) {
         stack.remove(APDataComponents.BINDING_COMPUTER.get());
-
-        if (!(world.getBlockEntity(pos) instanceof AbstractComputerBlockEntity computer)) {
-            throw new IllegalStateException("unreachable");
-        }
 
         int id = computer.getComputerID();
         if (id < 0) {
-            // TODO: show computer not initialized error?
+            player.getInventory().setChanged();
+            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_keyboard.not_init")), true);
             return;
         }
         stack.set(APDataComponents.BINDING_COMPUTER.get(), id);
 
-        player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_keyboard", pos.toShortString())), true);
+        player.getInventory().setChanged();
+        player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_keyboard", id)), true);
     }
 
     private void clear(Player player, ItemStack stack) {
+        if (!stack.has(APDataComponents.BINDING_COMPUTER.get())) {
+            return;
+        }
         stack.remove(APDataComponents.BINDING_COMPUTER.get());
 
+        player.getInventory().setChanged();
         player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.cleared_keyboard")), true);
     }
 
-    @Override
-    public MenuProvider createContainer(Player playerEntity, ItemStack stack) {
+    public MenuProvider createContainerWithComputer(ServerComputer computer) {
         return new MenuProvider() {
-            @NotNull
             @Override
+            @NotNull
             public Component getDisplayName() {
                 return Component.empty();
             }
 
             @Override
-            public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInv, @NotNull Player player) {
-                return new KeyboardContainer(pContainerId, playerInv, player.level(), stack);
+            public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+                return new KeyboardContainer(containerId, inventory, player.level(), computer);
             }
         };
     }
 
-    public MenuProvider createContainerWithComputer(Player playerEntity, ServerComputer computer) {
+    public MenuProvider createContainerWithModule(SmartGlassesSideAccess access, KeyboardModule module) {
         return new MenuProvider() {
-            @NotNull
             @Override
+            @NotNull
             public Component getDisplayName() {
                 return Component.empty();
             }
 
             @Override
-            public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory playerInv, @NotNull Player player) {
-                return new KeyboardContainer(pContainerId, playerInv, player.level(), computer);
+            public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+                return new KeyboardContainer(containerId, inventory, player.level(), access, module);
             }
         };
-    }
-
-    @Override
-    public void writeContainerData(Player player, ItemStack stack, RegistryFriendlyByteBuf buf) {
-        ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, stack);
     }
 
     @Override

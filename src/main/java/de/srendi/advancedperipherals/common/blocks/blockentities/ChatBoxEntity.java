@@ -13,8 +13,8 @@ public class ChatBoxEntity extends PeripheralBlockEntity<ChatBoxPeripheral> {
         super(APBlockEntityTypes.CHAT_BOX.get(), pos, state);
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected ChatBoxPeripheral buildPeripheral() {
         return new ChatBoxPeripheral(this);
     }

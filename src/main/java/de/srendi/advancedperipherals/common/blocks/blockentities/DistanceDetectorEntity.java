@@ -29,8 +29,8 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
         super(APBlockEntityTypes.DISTANCE_DETECTOR.get(), pos, state);
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected DistanceDetectorPeripheral buildPeripheral() {
         return new DistanceDetectorPeripheral(this);
     }

@@ -35,7 +35,7 @@ public interface IPeripheralOwner {
     @Nullable
     default String getCustomName() {
         Optional<? extends Component> component = this.getDataStorage().get(DataComponents.CUSTOM_NAME);
-        if (component == null || component.isPresent()) {
+        if (component == null || !component.isPresent()) {
             return null;
         }
         return component.get().getString();
@@ -138,9 +138,13 @@ public interface IPeripheralOwner {
 
     void destroyUpgrade();
 
-    boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos);
+    default boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
+        return false;
+    }
 
-    boolean move(@NotNull Level level, @NotNull BlockPos pos);
+    default boolean move(@NotNull Level level, @NotNull BlockPos pos) {
+        return false;
+    }
 
     <T extends IOwnerAbility> void attachAbility(PeripheralOwnerAbility<T> ability, T abilityImplementation);
 
@@ -162,6 +166,7 @@ public interface IPeripheralOwner {
             operationAbility.registerOperation(operation);
     }
 
+    @Nullable
     <T extends IPeripheral> T getConnectedPeripheral(Class<T> type);
 
     default boolean hasConnectedPeripheral(Class<? extends IPeripheral> type) {

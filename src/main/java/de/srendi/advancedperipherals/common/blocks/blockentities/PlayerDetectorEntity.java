@@ -18,8 +18,8 @@ public class PlayerDetectorEntity extends PeripheralBlockEntity<PlayerDetectorPe
         super(APBlockEntityTypes.PLAYER_DETECTOR.get(), pos, state);
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected PlayerDetectorPeripheral buildPeripheral() {
         return new PlayerDetectorPeripheral(this);
     }

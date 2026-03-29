@@ -44,8 +44,8 @@ public class RetrieveUsernamePacket implements IAPPacket {
         buffer.writeUUID(uuid);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }

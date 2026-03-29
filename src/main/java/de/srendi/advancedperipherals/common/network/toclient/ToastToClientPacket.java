@@ -43,8 +43,8 @@ public class ToastToClientPacket implements IAPPacket {
         ToastUtil.displayToast(title, component);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Type<ToastToClientPacket> type() {
         return TYPE;
     }

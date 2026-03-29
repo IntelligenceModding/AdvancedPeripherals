@@ -10,12 +10,16 @@ import java.util.stream.Collectors;
 
 public interface IPeripheralPlugin {
     default List<BoundMethod> getMethods() {
-        return ServerContext.get(ServerLifecycleHooks.getCurrentServer()).peripheralMethods().getSelfMethods(this).entrySet().stream().map(
-                entry -> new BoundMethod(this, entry.getKey(), entry.getValue())
-        ).collect(Collectors.toList());
+        return ServerContext.get(ServerLifecycleHooks.getCurrentServer())
+            .peripheralMethods()
+            .getSelfMethods(this)
+            .entrySet()
+            .stream()
+            .map(entry -> new BoundMethod(this, entry.getKey(), entry.getValue()))
+            .collect(Collectors.toList());
     }
 
-    default @Nullable IPeripheralOperation<?>[] getOperations() {
+    default IPeripheralOperation<?> @Nullable [] getOperations() {
         return null;
     }
 

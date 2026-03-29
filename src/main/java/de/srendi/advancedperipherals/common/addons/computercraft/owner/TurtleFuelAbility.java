@@ -12,7 +12,7 @@ public class TurtleFuelAbility extends FuelAbility<TurtlePeripheralOwner> {
 
     @Override
     protected boolean consumeFuel(int count) {
-        return owner.turtle.consumeFuel(count);
+        return owner.getTurtleAccess().consumeFuel(count);
     }
 
     @Override
@@ -27,16 +27,16 @@ public class TurtleFuelAbility extends FuelAbility<TurtlePeripheralOwner> {
 
     @Override
     public int getFuelCount() {
-        return owner.turtle.getFuelLevel();
+        return owner.getTurtleAccess().getFuelLevel();
     }
 
     @Override
     public int getFuelMaxCount() {
-        return owner.turtle.getFuelLimit();
+        return owner.getTurtleAccess().getFuelLimit();
     }
 
     @Override
     public void addFuel(int count) {
-        owner.turtle.addFuel(count);
+        owner.getTurtleAccess().addFuel(count);
     }
 }

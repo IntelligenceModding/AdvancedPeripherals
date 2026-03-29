@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -26,9 +25,8 @@ public class APContainerTypes {
     public static final DeferredHolder<MenuType<?>, MenuType<KeyboardContainer>> KEYBOARD_CONTAINER = APRegistration.CONTAINER_TYPES.register(
         "keyboard_container",
         () -> IMenuTypeExtension.create((windowId, inv, buf) -> {
-            ItemStack keyboardItem = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
             Level level = inv.player.getCommandSenderWorld();
-            return new KeyboardContainer(windowId, inv, level, keyboardItem);
+            return new KeyboardContainer(windowId, inv, level);
         })
     );
 

@@ -5,9 +5,7 @@ import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.KeybindUtil;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -32,14 +30,8 @@ public abstract class BaseItem extends Item {
     @Override
     @NotNull
     public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-        if (worldIn.isClientSide)
-            return new InteractionResultHolder<>(InteractionResult.PASS, playerIn.getItemInHand(handIn));
-        if (this instanceof IInventoryItem inventoryItem) {
-            ServerPlayer serverPlayerEntity = (ServerPlayer) playerIn;
-            ItemStack stack = playerIn.getItemInHand(handIn);
-            serverPlayerEntity.openMenu(inventoryItem.createContainer(playerIn, stack), buf -> {
-                ItemStack.STREAM_CODEC.encode(buf, stack);
-            });
+        if (worldIn.isClientSide) {
+            return InteractionResultHolder.pass(playerIn.getItemInHand(handIn));
         }
         return super.use(worldIn, playerIn, handIn);
     }

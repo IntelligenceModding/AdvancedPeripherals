@@ -26,9 +26,10 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
 
     private final BlockCapability<T, Direction> capability;
     // proxy that will forward X to the output but limit it to maxTransferRate
-    private final S proxy = createProxy();
+    @NotNull
+    private final S proxy = this.createProxy();
     private volatile long transferRate = 0;
-    private S inputStorageCap = null;
+    @Nullable
     private T zeroStorageCap = null;
 
     protected BaseDetectorEntity(BlockEntityType<?> tileEntityType, BlockPos pos, BlockState state, BlockCapability<T, Direction> capability) {
@@ -103,16 +104,13 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
     }
 
     @Override
-    public @Nullable Object getCapability(@NotNull BlockEntity object, Direction context) {
+    public @Nullable Object getCapability(BlockEntity self, Direction context) {
         Direction inputDirection = this.getInputDirection();
         Direction outputDirection = this.getOutputDirection();
         if (context == inputDirection) {
-            if (this.inputStorageCap != null) {
-                this.inputStorageCap = this.getStorageProxy();
-            }
-            return this.inputStorageCap;
+            return this.getStorageProxy();
         } else if (context == outputDirection) {
-            if (this.zeroStorageCap != null) {
+            if (this.zeroStorageCap == null) {
                 this.zeroStorageCap = this.getZeroStorage();
             }
             return this.zeroStorageCap;
@@ -146,5 +144,4 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
         Direction outputDirection = this.getOutputDirection();
         return level.getCapability(this.capability, worldPosition.relative(outputDirection), outputDirection.getOpposite());
     }
-
 }

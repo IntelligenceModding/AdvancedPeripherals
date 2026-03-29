@@ -13,8 +13,8 @@ public class BlockReaderEntity extends PeripheralBlockEntity<BlockReaderPeripher
         super(APBlockEntityTypes.BLOCK_READER.get(), pos, state);
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected BlockReaderPeripheral buildPeripheral() {
         return new BlockReaderPeripheral(this);
     }

@@ -23,8 +23,8 @@ public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOw
 
     public static final String PERIPHERAL_TYPE = "nbt_storage";
 
-    public NBTStoragePeripheral(NBTStorageEntity tileEntity) {
-        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+    public NBTStoragePeripheral(NBTStorageEntity blockEntity) {
+        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(blockEntity));
     }
 
     @Override
@@ -41,7 +41,7 @@ public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOw
 
     @LuaFunction(mainThread = true)
     public final MethodResult load() {
-        return MethodResult.of(NBTUtil.toLua(owner.tileEntity.getStored()));
+        return MethodResult.of(NBTUtil.toLua(owner.getBlockEntity().getStored()));
     }
 
     @LuaFunction(mainThread = true)
@@ -65,7 +65,7 @@ public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOw
         if (getNBTSize(parsedData) > APConfig.PERIPHERALS_CONFIG.nbtStorageMaxSize.get()) {
             return MethodResult.of(false, "NBT size is bigger than allowed");
         }
-        owner.tileEntity.setStored(parsedData);
+        owner.getBlockEntity().setStored(parsedData);
         return MethodResult.of(true);
     }
 

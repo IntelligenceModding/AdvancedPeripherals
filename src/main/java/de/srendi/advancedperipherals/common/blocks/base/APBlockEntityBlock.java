@@ -23,8 +23,8 @@ public class APBlockEntityBlock<T extends BlockEntity> extends BaseBlockEntityBl
         this(tileEntity, Properties.of().sound(SoundType.METAL).mapColor(DyeColor.GRAY));
     }
 
-    @Nullable
     @Override
+    @Nullable
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return tileEntity != null ? tileEntity.get().create(pos, state) : null;
     }

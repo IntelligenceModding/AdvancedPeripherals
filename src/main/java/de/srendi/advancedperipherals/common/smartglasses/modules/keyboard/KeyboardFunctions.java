@@ -12,6 +12,11 @@ public class KeyboardFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
+    public final boolean isCapturingKeys() {
+        return keyboardModule.isCapturingKeys();
+    }
+
+    @LuaFunction
     public final boolean isCapturingMouse() {
         return keyboardModule.isCapturingMouse();
     }

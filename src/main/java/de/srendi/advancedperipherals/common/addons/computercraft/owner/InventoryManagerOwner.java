@@ -9,9 +9,9 @@ public class InventoryManagerOwner extends BlockEntityPeripheralOwner<InventoryM
         super(tile);
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Player getOwner() {
-        return tileEntity.getOwnerPlayer();
+        return getBlockEntity().getOwnerPlayer();
     }
 }

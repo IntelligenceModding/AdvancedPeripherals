@@ -12,8 +12,8 @@ public class ZeroGasTank implements IChemicalHandler {
         return 0;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ChemicalStack getChemicalInTank(int tank) {
         return ChemicalStack.EMPTY;
     }
@@ -33,14 +33,14 @@ public class ZeroGasTank implements IChemicalHandler {
         return false;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ChemicalStack insertChemical(int tank, @NotNull ChemicalStack stack, @NotNull Action action) {
         return ChemicalStack.EMPTY;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ChemicalStack extractChemical(int tank, long amount, @NotNull Action action) {
         return ChemicalStack.EMPTY;
     }

@@ -40,14 +40,14 @@ public interface IStorageSystemItemHandler extends IItemHandler {
         throw new UnsupportedOperationException();
     }
 
-    @NotNull
     @Override
+    @NotNull
     default ItemStack extractItem(int slot, int amount, boolean simulate) {
         throw new UnsupportedOperationException();
     }
 
-    @NotNull
     @Override
+    @NotNull
     default ItemStack getStackInSlot(int slot) {
         throw new UnsupportedOperationException();
     }

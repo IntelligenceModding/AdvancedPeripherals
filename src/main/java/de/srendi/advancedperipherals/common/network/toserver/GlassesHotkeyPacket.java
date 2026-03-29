@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class GlassesHotkeyPacket implements IAPPacket {
+    public static final GlassesHotkeyPacket KEYBOARD_OPEN_PACKET = new GlassesHotkeyPacket("", -1);
 
     public static final Type<GlassesHotkeyPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("glasses_hotkey"));
 

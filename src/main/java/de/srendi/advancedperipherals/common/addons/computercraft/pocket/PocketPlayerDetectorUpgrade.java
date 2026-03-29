@@ -8,7 +8,6 @@ import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PocketPlayerDetectorUpgrade extends BasePocketUpgrade<PlayerDetectorPeripheral> {
 
@@ -16,8 +15,8 @@ public class PocketPlayerDetectorUpgrade extends BasePocketUpgrade<PlayerDetecto
         super(CCRegistration.ID.PLAYER_POCKET, stack);
     }
 
-    @Nullable
     @Override
+    @NotNull
     protected PlayerDetectorPeripheral buildPeripheral(@NotNull IPocketAccess iPocketAccess) {
         return new PlayerDetectorPeripheral(iPocketAccess);
     }

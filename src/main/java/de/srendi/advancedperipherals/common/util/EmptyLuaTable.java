@@ -34,33 +34,31 @@ public class EmptyLuaTable implements LuaTable<Object, Object> {
         return false;
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Object get(Object key) {
         return null;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Set<Object> keySet() {
         return Set.of();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Collection<Object> values() {
         return List.of();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Set<Entry<Object, Object>> entrySet() {
         return Set.of();
     }
 
     public static LuaTable<Object, Object> orEmpty(@Nullable Map<?, ?> table) {
-        if (table == null)
-            return INSTANCE;
-        return new ObjectLuaTable(table);
+        return table == null ? INSTANCE : new ObjectLuaTable(table);
     }
 }

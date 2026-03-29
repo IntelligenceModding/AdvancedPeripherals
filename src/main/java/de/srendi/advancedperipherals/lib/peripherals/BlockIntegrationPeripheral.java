@@ -20,8 +20,8 @@ public abstract class BlockIntegrationPeripheral<T extends Block> extends Integr
         return world.getBlockState(pos).getBlock();
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Object getTarget() {
         return world.getBlockState(pos).getBlock();
     }

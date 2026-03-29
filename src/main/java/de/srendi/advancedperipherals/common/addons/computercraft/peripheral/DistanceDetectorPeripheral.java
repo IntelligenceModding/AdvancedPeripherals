@@ -36,7 +36,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
 
     protected DistanceDetectorPeripheral(IPeripheralOwner owner) {
         super(PERIPHERAL_TYPE, owner);
-        this.tileEntity = owner instanceof BlockEntityPeripheralOwner<?> beOwner ? (DistanceDetectorEntity) beOwner.tileEntity : null;
+        this.tileEntity = owner instanceof BlockEntityPeripheralOwner<?> beOwner ? (DistanceDetectorEntity) beOwner.getBlockEntity() : null;
         PatchedDataComponentMap data = this.owner.getPatchedDataStorage();
         this.maxRange = data.getOrDefault(APDataComponents.MAX_RANGE.get(), this.getConfiguredMaxRange());
         this.currentDistance = data.getOrDefault(APDataComponents.CURRENT_DISTANCE.get(), -1f);

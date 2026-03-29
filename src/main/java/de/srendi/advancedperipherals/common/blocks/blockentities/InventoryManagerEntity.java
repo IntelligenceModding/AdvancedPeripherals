@@ -31,14 +31,14 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
         super(APBlockEntityTypes.INVENTORY_MANAGER.get(), pos, state);
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected InventoryManagerPeripheral buildPeripheral() {
         return new InventoryManagerPeripheral(this);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Component getDisplayName() {
         return Component.translatable("block.advancedperipherals.inventory_manager");
     }

@@ -35,22 +35,22 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
         }
     }
 
-    @Nullable
     @Override
+    @NotNull
     public Level getLevel() {
         // TODO: Certain version of CC will make pocket computer has null level while changing dimensions.
         // Not sure if this is fixed in later CC so bunch of null checks can be removed. :3
         return pocket.getLevel();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public BlockPos getPos() {
         return BlockPos.containing(getCenterPos());
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Vec3 getCenterPos() {
         if (pocket instanceof SmartGlassesSideAccess) {
             Entity owner = pocket.getEntity();
@@ -61,21 +61,21 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
         return pocket.getPosition();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Vec3 getDirection() {
         Entity owner = pocket.getEntity();
         return owner == null ? /* North */ new Vec3(0, 0, -1) : owner.getLookAngle();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Direction getFacing() {
         return Direction.getNearest(this.getDirection());
     }
 
-    @NotNull
     @Override
+    @NotNull
     public FrontAndTop getFrontAndTop() {
         Entity owner = pocket.getEntity();
         if (owner == null) {
@@ -84,8 +84,8 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
         return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(owner.getUpVector(1.0f)));
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Quaterniondc getOrientation() {
         Entity owner = pocket.getEntity();
         if (owner == null) {
@@ -101,8 +101,8 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
         ));
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Entity getHoldingEntity() {
         return pocket.getEntity();
     }
@@ -135,20 +135,11 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public void destroyUpgrade() {
-        throw new RuntimeException("Not implemented yet");
+        pocket.setUpgrade(null);;
     }
 
     @Override
-    public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
-        return false;
-    }
-
-    @Override
-    public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
-        return false;
-    }
-
-    @Override
+    @Nullable
     public <T extends IPeripheral> T getConnectedPeripheral(Class<T> type) {
         ServerComputer computer = null;
         if (pocket instanceof PocketBrain pocketBrain) {

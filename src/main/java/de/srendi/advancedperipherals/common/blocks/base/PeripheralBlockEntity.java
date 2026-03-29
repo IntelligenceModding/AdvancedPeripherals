@@ -32,7 +32,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
-    @Nullable
     private IItemHandler itemHandler = null;
     private IFluidHandler fluidHandler = null;
     private IPeripheral peripheral = null;
@@ -51,8 +50,26 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         this.name = name;
     }
 
-    @Nullable
     @Override
+    @NotNull
+    public IItemHandler createItemHandlerCap(@Nullable Direction side) {
+        if (this.itemHandler == null) {
+            this.itemHandler = new SidedInvWrapper(this, null);
+        }
+        return this.itemHandler;
+    }
+
+    @Override
+    @NotNull
+    public IFluidHandler createFluidHandlerCap(@Nullable Direction side) {
+        if (this.fluidHandler == null) {
+            this.fluidHandler = new FluidTank(0);
+        }
+        return this.fluidHandler;
+    }
+
+    @Override
+    @NotNull
     public IPeripheral createPeripheralCap(@Nullable Direction side) {
         // Perform later peripheral creation, because creating peripheral
         // on init of tile entity cause some infinity loop, if peripheral
@@ -64,24 +81,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
             this.peripheral = this.createPeripheralOrDisabled();
         }
         return this.peripheral;
-    }
-
-    @Nullable
-    @Override
-    public IFluidHandler createFluidHandlerCap(@Nullable Direction side) {
-        if (this.fluidHandler == null) {
-            this.fluidHandler = new FluidTank(0);
-        }
-        return this.fluidHandler;
-    }
-
-    @Nullable
-    @Override
-    public IItemHandler createItemHandlerCap(@Nullable Direction side) {
-        if (this.itemHandler == null) {
-            this.itemHandler = new SidedInvWrapper(this, null);
-        }
-        return this.itemHandler;
     }
 
     @NotNull
@@ -96,7 +95,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         if (this.getLevel().isClientSide()) {
             return;
         }
-        T peripheral = this.getPeripheral();
+        @Nullable T peripheral = this.getPeripheral();
         if (peripheral != null) {
             peripheral.queueEvent(event, args);
         }
@@ -168,8 +167,8 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }
 
 
-    @NotNull
     @Override
+    @NotNull
     public ItemStack getItem(int index) {
         if (index < 0 || index >= items.size()) {
             return ItemStack.EMPTY;
@@ -177,14 +176,14 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         return items.get(index);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ItemStack removeItem(int index, int count) {
         return ContainerHelper.removeItem(items, index, count);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ItemStack removeItemNoUpdate(int index) {
         return ContainerHelper.takeItem(items, index);
     }
@@ -197,8 +196,8 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         }
     }
 
-    @NotNull
     @Override
+    @NotNull
     public NonNullList<ItemStack> getItems() {
         return items;
     }
@@ -239,7 +238,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         if (level.isClientSide()) {
             return;
         }
-        T peripheral = this.getPeripheral();
+        @Nullable T peripheral = this.getPeripheral();
         if (peripheral != null) {
             peripheral.update();
         }

@@ -8,7 +8,6 @@ import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PocketDistanceDetectorUpgrade extends BasePocketUpgrade<DistanceDetectorPeripheral> {
 
@@ -16,8 +15,8 @@ public class PocketDistanceDetectorUpgrade extends BasePocketUpgrade<DistanceDet
         super(CCRegistration.ID.DISTANCE_POCKET, stack);
     }
 
-    @Nullable
     @Override
+    @NotNull
     protected DistanceDetectorPeripheral buildPeripheral(@NotNull IPocketAccess pocketAccess) {
         return new DistanceDetectorPeripheral(pocketAccess);
     }

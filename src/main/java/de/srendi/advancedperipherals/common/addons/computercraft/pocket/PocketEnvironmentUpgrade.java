@@ -8,7 +8,6 @@ import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PocketEnvironmentUpgrade extends BasePocketUpgrade<EnvironmentDetectorPeripheral> {
 
@@ -16,8 +15,8 @@ public class PocketEnvironmentUpgrade extends BasePocketUpgrade<EnvironmentDetec
         super(CCRegistration.ID.ENVIRONMENT_POCKET, stack);
     }
 
-    @Nullable
     @Override
+    @NotNull
     protected EnvironmentDetectorPeripheral buildPeripheral(@NotNull IPocketAccess iPocketAccess) {
         return new EnvironmentDetectorPeripheral(iPocketAccess);
     }

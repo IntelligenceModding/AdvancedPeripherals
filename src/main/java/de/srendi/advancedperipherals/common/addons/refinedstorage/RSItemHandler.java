@@ -29,8 +29,8 @@ public class RSItemHandler implements IStorageSystemItemHandler {
         this.component = network.getComponent(StorageNetworkComponent.class);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ItemStack insertItem(@NotNull ItemStack stack, boolean simulate) {
         long insertedAmount = component.insert(ItemResource.ofItemStack(stack), stack.getCount(), simulate ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
         ItemStack remain = stack.copyWithCount((int) (stack.getCount() - insertedAmount));

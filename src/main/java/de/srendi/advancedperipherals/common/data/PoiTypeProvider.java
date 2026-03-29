@@ -28,8 +28,8 @@ public class PoiTypeProvider extends PoiTypeTagsProvider {
         APRegistration.POI_TYPES.getEntries().stream().map(DeferredHolder::getKey).filter(Objects::nonNull).forEach(appender::add);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public String getName() {
         return "AP POI Type Tags";
     }

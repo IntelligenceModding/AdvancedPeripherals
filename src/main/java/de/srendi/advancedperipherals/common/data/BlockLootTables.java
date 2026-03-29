@@ -24,8 +24,8 @@ public class BlockLootTables extends BlockLootSubProvider {
         });
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected Iterable<Block> getKnownBlocks() {
         return (Iterable<Block>) APRegistration.BLOCKS.getEntries().stream().map(DeferredHolder::get).toList();
     }

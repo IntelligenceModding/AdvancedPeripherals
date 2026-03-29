@@ -21,8 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TurtlePeripheralOwner extends BasePeripheralOwner {
-    public final ITurtleAccess turtle;
-    public final TurtleSide side;
+    private final ITurtleAccess turtle;
+    private final TurtleSide side;
 
     public TurtlePeripheralOwner(ITurtleAccess turtle, TurtleSide side) {
         super();
@@ -31,37 +31,42 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     }
 
     @NotNull
+    public ITurtleAccess getTurtleAccess() {
+        return this.turtle;
+    }
+
     @Override
+    @NotNull
     public Level getLevel() {
         return turtle.getLevel();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public BlockPos getPos() {
         return turtle.getPosition();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Direction getFacing() {
         return turtle.getDirection();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public FrontAndTop getFrontAndTop() {
         return FrontAndTop.fromFrontAndTop(getFacing(), Direction.UP);
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Entity getHoldingEntity() {
         return null;
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Player getOwner() {
         GameProfile owningPlayer = turtle.getOwningPlayer();
         if (owningPlayer == null) return null;
@@ -132,6 +137,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
+    @Nullable
     public <T extends IPeripheral> T getConnectedPeripheral(Class<T> type) {
         for (TurtleSide side : TurtleSide.values()) {
             IPeripheral peripheral = turtle.getPeripheral(side);

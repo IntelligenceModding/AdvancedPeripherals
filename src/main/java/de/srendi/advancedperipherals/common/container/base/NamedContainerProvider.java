@@ -23,8 +23,8 @@ public class NamedContainerProvider implements MenuProvider {
         return component;
     }
 
-    @Nullable
     @Override
+    @Nullable
     public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player playerEntity) {
         return containerProvider.createMenu(id, playerInventory, playerEntity);
     }

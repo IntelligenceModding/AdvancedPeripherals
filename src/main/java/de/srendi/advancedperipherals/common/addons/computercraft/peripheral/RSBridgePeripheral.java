@@ -64,7 +64,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     }
 
     private AbstractNetworkNode getNode() {
-        return (AbstractNetworkNode) owner.tileEntity.getNode();
+        return (AbstractNetworkNode) owner.getBlockEntity().getNode();
     }
 
     public Network getNetwork() {

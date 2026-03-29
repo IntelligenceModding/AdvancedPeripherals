@@ -32,8 +32,8 @@ public class MEChemicalHandler implements IStorageSystemChemicalHandler {
         this.actionSource = actionSource;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ChemicalStack insertChemical(ChemicalStack resource, @NotNull Action action) {
         if (resource.isEmpty()) {
             return resource;

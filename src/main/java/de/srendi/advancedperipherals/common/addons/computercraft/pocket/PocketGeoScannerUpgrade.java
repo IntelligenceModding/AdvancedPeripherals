@@ -8,7 +8,6 @@ import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class PocketGeoScannerUpgrade extends BasePocketUpgrade<GeoScannerPeripheral> {
 
@@ -16,8 +15,8 @@ public class PocketGeoScannerUpgrade extends BasePocketUpgrade<GeoScannerPeriphe
         super(CCRegistration.ID.GEOSCANNER_POCKET, stack);
     }
 
-    @Nullable
     @Override
+    @NotNull
     protected GeoScannerPeripheral buildPeripheral(@NotNull IPocketAccess iPocketAccess) {
         return new GeoScannerPeripheral(iPocketAccess);
     }

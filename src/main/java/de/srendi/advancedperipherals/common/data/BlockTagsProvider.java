@@ -49,8 +49,8 @@ public class BlockTagsProvider extends TagsProvider<Block> {
         return this.packOutput.getOutputFolder().resolve("data/" + block.getNamespace() + "/tags/blocks/" + block.getPath() + ".json");
     }
 
-    @NotNull
     @Override
+    @NotNull
     public String getName() {
         return "Block tags";
     }

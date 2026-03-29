@@ -20,7 +20,8 @@ public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends Ab
         super(TranslationUtil.pocket(id.getPath()), stack);
     }
 
-    protected abstract T buildPeripheral(IPocketAccess access);
+    @NotNull
+    protected abstract T buildPeripheral(@NotNull IPocketAccess access);
 
     @Override
     public ItemStack getUpgradeItem(DataComponentPatch upgradeData) {
@@ -33,7 +34,7 @@ public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends Ab
     }
 
     @Override
-    public boolean isItemSuitable(@NotNull ItemStack stack) {
+    public boolean isItemSuitable(ItemStack stack) {
         if (stack.has(DataComponents.CUSTOM_NAME) || stack.has(APDataComponents.STORED_DATA)) {
             stack = stack.copy();
             stack.remove(DataComponents.CUSTOM_NAME);
@@ -42,15 +43,15 @@ public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends Ab
         return super.isItemSuitable(stack);
     }
 
-    @Nullable
     @Override
-    public IPeripheral createPeripheral(@NotNull IPocketAccess access) {
+    @Nullable
+    public IPeripheral createPeripheral(IPocketAccess access) {
         T peripheral = buildPeripheral(access);
         return peripheral.isEnabled() ? peripheral : new DisabledPeripheral(peripheral);
     }
 
     @Override
-    public void update(@NotNull IPocketAccess access, @Nullable IPeripheral peripheral) {
+    public void update(IPocketAccess access, @Nullable IPeripheral peripheral) {
         super.update(access, peripheral);
         if (peripheral instanceof IBasePeripheral<?> basePeripheral) {
             basePeripheral.update();

@@ -41,12 +41,13 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem {
         int duration = getKeyPressDuration(stack);
         // If the key is not pressed, but the duration is greater than 0, we can assume that the key was pressed
         // We can now post the event
-        if (duration > 0) {
-            setKeyPressDuration(stack, 0);
-
-            String keyBind = KeyBindings.GLASSES_HOTKEY_KEYBINDING.getKey().getName();
-            PacketDistributor.sendToServer(new GlassesHotkeyPacket(keyBind, duration));
+        if (duration <= 0) {
+            return;
         }
+        setKeyPressDuration(stack, 0);
+
+        String keyBind = KeyBindings.GLASSES_HOTKEY_KEYBINDING.getKey().getName();
+        PacketDistributor.sendToServer(new GlassesHotkeyPacket(keyBind, duration));
     }
 
     public static int getKeyPressDuration(ItemStack stack) {

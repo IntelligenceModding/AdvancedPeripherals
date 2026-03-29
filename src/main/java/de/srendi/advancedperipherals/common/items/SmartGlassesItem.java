@@ -25,6 +25,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -97,17 +98,17 @@ public class SmartGlassesItem extends ArmorItem {
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slotNum, boolean selected) {
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotNum, boolean selected) {
         SmartGlassesComputer computer = null;
         if (level instanceof ServerLevel serverLevel) {
             computer = getOrCreateComputer(serverLevel, entity, stack);
             computer.keepAlive();
         }
 
-        SmartGlassesItemHandler itemHandler = new SmartGlassesItemHandler(stack, computer, level.registryAccess());
+        NonNullList<ItemStack> items = SmartGlassesItemHandler.loadItems(stack, level.registryAccess());
 
         for (int slot = 0; slot < SmartGlassesSlot.MODULE_SLOTS; slot++) {
-            ItemStack itemStack = itemHandler.getStackInSlot(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET);
+            ItemStack itemStack = items.get(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET);
             if (!(itemStack.getItem() instanceof IModuleItem moduleItem)) {
                 continue;
             }
@@ -142,9 +143,9 @@ public class SmartGlassesItem extends ArmorItem {
         return false;
     }
 
-    @NotNull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand hand) {
+    @NotNull
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!player.isSecondaryUseActive()) {
             return super.use(level, player, hand);
         }
@@ -155,7 +156,9 @@ public class SmartGlassesItem extends ArmorItem {
         }
 
         SmartGlassesComputer computer = getOrCreateComputer(serverLevel, player, glasses);
-        computer.turnOn();
+        if (!computer.isOn()) {
+            computer.turnOn();
+        }
 
         SmartGlassesItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer, level.registryAccess());
         player.openMenu(

@@ -37,7 +37,9 @@ public class SmartGlassesInterfaceItem extends BaseItem {
         }
 
         SmartGlassesComputer computer = glassesItem.getOrCreateComputer(serverLevel, player, glasses);
-        computer.turnOn();
+        if (!computer.isOn()) {
+            computer.turnOn();
+        }
 
         IItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer, serverLevel.registryAccess());
         if (itemHandler != null) {

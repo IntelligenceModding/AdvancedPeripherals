@@ -11,7 +11,7 @@ public class SmartGlassesSlot extends SlotItemHandler {
     public static final int SLOTS = PERIPHERAL_SLOTS + MODULE_SLOTS;
 
     public static final ComputerSide[] UPGRADE_SIDES = new ComputerSide[]{
-        ComputerSide.TOP, ComputerSide.LEFT, ComputerSide.FRONT, ComputerSide.RIGHT, ComputerSide.BOTTOM
+        ComputerSide.TOP, ComputerSide.LEFT, ComputerSide.FRONT, ComputerSide.RIGHT, ComputerSide.BOTTOM,
     };
 
     public final SlotType slotType;

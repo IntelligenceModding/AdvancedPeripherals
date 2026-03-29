@@ -4,7 +4,6 @@ import appeng.api.config.Actionable;
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.GridHelper;
 import appeng.api.networking.IGridNode;
-import appeng.api.networking.IInWorldGridNodeHost;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingRequester;
@@ -41,7 +40,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> implements IActionSource, IActionHost, IInWorldGridNodeHost, IGridConnectedBlockEntity, ICraftingSimulationRequester, ICraftingRequester {
+public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> implements IActionSource, IGridConnectedBlockEntity, ICraftingSimulationRequester, ICraftingRequester {
 
     private final List<AECraftJob> jobs = new CopyOnWriteArrayList<>();
     private boolean initialized = false;
@@ -52,8 +51,8 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
         getMainNode().setExposedOnSides(getGridConnectableSides(null));
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected MEBridgePeripheral buildPeripheral() {
         return new MEBridgePeripheral(this);
     }
@@ -84,26 +83,26 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
         jobs.removeIf(AECraftJob::canBePurged);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Optional<Player> player() {
         return Optional.empty();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Optional<IActionHost> machine() {
         return Optional.of(this);
     }
 
-    @NotNull
     @Override
-    public <T> Optional<T> context(@NotNull Class<T> key) {
+    @NotNull
+    public <T> Optional<T> context(Class<T> key) {
         return Optional.empty();
     }
 
-    @Nullable
     @Override
+    @Nullable
     public IGridNode getActionableNode() {
         return mainNode.getNode();
     }
@@ -130,15 +129,15 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
         return IGridConnectedBlockEntity.super.getGridConnectableSides(orientation);
     }
 
-    @Nullable
     @Override
+    @Nullable
     public IGridNode getGridNode() {
         return IGridConnectedBlockEntity.super.getGridNode();
     }
 
-    @Nullable
     @Override
-    public IGridNode getGridNode(@NotNull Direction dir) {
+    @Nullable
+    public IGridNode getGridNode(Direction dir) {
         return getActionableNode();
     }
 
@@ -147,17 +146,17 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
 
     }
 
-    @NotNull
     @Override
-    public AECableType getCableConnectionType(@NotNull Direction dir) {
+    @NotNull
+    public AECableType getCableConnectionType(Direction dir) {
         return AECableType.SMART;
     }
 
     /**
      * Return the current action source, used to extract items.
      */
-    @Nullable
     @Override
+    @Nullable
     public IActionSource getActionSource() {
         return this;
     }

@@ -28,21 +28,21 @@ public interface IStorageSystemFluidHandler extends IFluidHandler {
      * Storage Systems do not respect tanks directly and to extract we need a filter
      */
 
-    @NotNull
     @Override
+    @NotNull
     default FluidStack drain(int maxDrain, FluidAction action) {
         throw new UnsupportedOperationException();
     }
 
-    @NotNull
     @Override
+    @NotNull
     default FluidStack drain(FluidStack resource, FluidAction action) {
         throw new UnsupportedOperationException();
 
     }
 
-    @NotNull
     @Override
+    @NotNull
     default FluidStack getFluidInTank(int tank) {
         throw new UnsupportedOperationException();
     }

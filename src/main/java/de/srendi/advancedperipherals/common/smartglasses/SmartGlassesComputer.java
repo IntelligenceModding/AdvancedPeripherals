@@ -276,7 +276,7 @@ public class SmartGlassesComputer extends ServerComputer {
         return this.sideAccesses[ComputerSide.BACK.ordinal()];
     }
 
-    private static final void checkUpgradeSide(ComputerSide side) throws IllegalArgumentException {
+    private static void checkUpgradeSide(ComputerSide side) throws IllegalArgumentException {
         if (side == ComputerSide.BACK) {
             throw new IllegalArgumentException("upgrade side cannot be BACK");
         }

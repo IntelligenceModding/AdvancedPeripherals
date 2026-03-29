@@ -8,8 +8,8 @@ import edivad.dimstorage.blockentities.BlockEntityDimChest;
 import org.jetbrains.annotations.NotNull;
 
 public class DimChestIntegration implements APGenericPeripheral {
-    @NotNull
     @Override
+    @NotNull
     public String getPeripheralType() {
         return "dim_chest";
     }

@@ -38,8 +38,8 @@ public class UsernameToCachePacket implements IAPPacket {
         ClientUUIDCache.putUsername(uuid, username);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }

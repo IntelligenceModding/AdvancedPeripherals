@@ -38,8 +38,8 @@ public abstract class PoweredPeripheralBlockEntity<T extends BasePeripheral<?>> 
             energyStorage.receiveEnergy(compound.getInt("energy") - energyStorage.getEnergyStored(), false);
     }
 
-    @Nullable
     @Override
+    @Nullable
     public IEnergyStorage createEnergyStorageCap(@Nullable Direction side) {
         return energyStorage;
     }

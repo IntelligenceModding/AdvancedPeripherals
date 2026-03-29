@@ -312,8 +312,8 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             this.id = id;
         }
 
-        @NotNull
         @Override
+        @NotNull
         public MethodResult resume(Object[] datas) {
             if (datas.length <= 0) {
                 return pull;

@@ -39,8 +39,8 @@ public class SmartGlassesSideAccess implements IPocketAccess {
         return entity != null ? entity.position() : this.computer.getPosition().getCenter();
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Entity getEntity() {
         return this.computer.getEntity();
     }

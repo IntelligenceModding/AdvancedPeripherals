@@ -29,6 +29,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
 
     public abstract ModelResourceLocation getRightModel();
 
+    @NotNull
     protected abstract T buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side);
 
     @Override
@@ -51,8 +52,8 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
         return super.isItemSuitable(stack);
     }
 
-    @Nullable
     @Override
+    @Nullable
     public IPeripheral createPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         T peripheral = buildPeripheral(turtle, side);
         return peripheral.isEnabled() ? peripheral : new DisabledPeripheral(peripheral);

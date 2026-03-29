@@ -7,9 +7,9 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 
-public class TileEntityFuelAbility<T extends BlockEntity & IPeripheralBlockEntity> extends FuelAbility<BlockEntityPeripheralOwner<T>> {
+public class BlockEntityFuelAbility<T extends BlockEntity & IPeripheralBlockEntity> extends FuelAbility<BlockEntityPeripheralOwner<T>> {
 
-    public TileEntityFuelAbility(@NotNull BlockEntityPeripheralOwner<T> owner) {
+    public BlockEntityFuelAbility(@NotNull BlockEntityPeripheralOwner<T> owner) {
         super(owner);
     }
 

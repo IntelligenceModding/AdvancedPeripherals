@@ -25,8 +25,8 @@ public class GasStorageProxy extends AbstractStorageProxy implements IChemicalHa
         return 1;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ChemicalStack getChemicalInTank(int tank) {
         IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
         return storage != null ? storage.getChemicalInTank(tank) : ChemicalStack.EMPTY;
@@ -52,8 +52,8 @@ public class GasStorageProxy extends AbstractStorageProxy implements IChemicalHa
         return storage != null ? storage.isValid(tank, stack) : false;
     }
 
-    @NotNull
     @Override
+    @NotNull
     @SuppressWarnings("removal")
     public ChemicalStack insertChemical(@NotNull ChemicalStack stack, @NotNull Action action) {
         if (this.receiving) {
@@ -98,14 +98,14 @@ public class GasStorageProxy extends AbstractStorageProxy implements IChemicalHa
         this.wasReady = null;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ChemicalStack insertChemical(int tank, @NotNull ChemicalStack stack, @NotNull Action action) {
         return insertChemical(stack, action);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ChemicalStack extractChemical(int tank, long amount, @NotNull Action action) {
         return ChemicalStack.EMPTY;
     }

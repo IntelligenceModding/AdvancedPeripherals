@@ -43,8 +43,8 @@ public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
         networkNodeContainer = new InWorldNetworkNodeContainerImpl(this, node, "RS Bridge", 1, connectionStrategy, null);
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected RSBridgePeripheral buildPeripheral() {
         return new RSBridgePeripheral(this);
     }
@@ -87,8 +87,8 @@ public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
         initialize(this.level, null);
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Set<InWorldNetworkNodeContainer> getContainers() {
         return Set.of(networkNodeContainer);
     }

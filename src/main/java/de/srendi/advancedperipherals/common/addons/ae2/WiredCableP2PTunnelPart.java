@@ -142,26 +142,26 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
     private class P2PWiredElement implements WiredElement {
         private final WiredNode node = ComputerCraftAPI.createWiredNodeForElement(this);
 
-        @NotNull
         @Override
+        @NotNull
         public WiredNode getNode() {
             return node;
         }
 
-        @NotNull
         @Override
+        @NotNull
         public String getSenderID() {
             return "p2p";
         }
 
-        @NotNull
         @Override
+        @NotNull
         public Level getLevel() {
             return WiredCableP2PTunnelPart.this.getLevel();
         }
 
-        @NotNull
         @Override
+        @NotNull
         public Vec3 getPosition() {
             return Vec3.atCenterOf(WiredCableP2PTunnelPart.this.getBlockEntity().getBlockPos());
         }

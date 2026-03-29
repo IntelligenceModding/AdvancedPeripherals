@@ -32,13 +32,14 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
 
     protected final AttachedComputerSet attachedComputers = new AttachedComputerSet();
     protected final String type;
+    @NotNull
     protected final O owner;
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
     protected boolean initialized = false;
     protected List<IPeripheralPlugin> plugins = null;
     protected String[] methodNames = new String[0];
 
-    protected BasePeripheral(String type, O owner) {
+    protected BasePeripheral(String type, @NotNull O owner) {
         this.type = type;
         this.owner = owner;
     }
@@ -77,14 +78,14 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         }
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Object getTarget() {
         return owner;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public String getType() {
         return type;
     }

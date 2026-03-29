@@ -31,8 +31,8 @@ public class MEItemHandler implements IStorageSystemItemHandler {
         this.actionSource = actionSource;
     }
 
-    @NotNull
     @Override
+    @NotNull
     public ItemStack insertItem(@NotNull ItemStack stack, boolean simulate) {
         AEItemKey itemKey = AEItemKey.of(stack);
         long inserted = storageMonitor.insert(itemKey, stack.getCount(), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);

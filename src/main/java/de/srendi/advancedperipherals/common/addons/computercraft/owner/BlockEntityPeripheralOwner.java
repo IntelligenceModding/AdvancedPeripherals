@@ -23,21 +23,24 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlockEntity> extends BasePeripheralOwner {
+    @NotNull
+    private final T blockEntity;
 
-    public final T tileEntity;
-
-    public BlockEntityPeripheralOwner(T tileEntity) {
+    public BlockEntityPeripheralOwner(@NotNull T blockEntity) {
         super();
-        this.tileEntity = tileEntity;
+        this.blockEntity = blockEntity;
     }
 
-    @Nullable
+    @NotNull
+    public final T getBlockEntity() {
+        return blockEntity;
+    }
+
     @Override
+    @Nullable
     public String getCustomName() {
-        if (!(tileEntity instanceof Nameable nameableEntity)) {
+        if (!(blockEntity instanceof Nameable nameableEntity)) {
             return null;
         }
         Component name = nameableEntity.getCustomName();
@@ -49,61 +52,61 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlock
 
     @Override
     public void setCustomName(String name) {
-        if (!(tileEntity instanceof VarNameable nameableEntity)) {
+        if (!(blockEntity instanceof VarNameable nameableEntity)) {
             return;
         }
         name = StringUtil.validateName(name);
         nameableEntity.setName(name == null ? null : Component.literal(name));
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Level getLevel() {
-        return Objects.requireNonNull(tileEntity.getLevel());
+        return blockEntity.getLevel();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public BlockPos getPos() {
-        return tileEntity.getBlockPos();
+        return blockEntity.getBlockPos();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public Direction getFacing() {
         return getFrontAndTop().front();
     }
 
-    @NotNull
     @Override
+    @NotNull
     public FrontAndTop getFrontAndTop() {
-        return tileEntity.getBlockState().getValue(BaseBlock.ORIENTATION);
+        return blockEntity.getBlockState().getValue(BaseBlock.ORIENTATION);
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Entity getHoldingEntity() {
         return null;
     }
 
-    @Nullable
     @Override
+    @Nullable
     public Player getOwner() {
         return null;
     }
 
     @Override
     public DataComponentPatch getDataStorage() {
-        return DataStorageUtil.getDataStorage(tileEntity);
+        return DataStorageUtil.getDataStorage(blockEntity);
     }
 
     @Override
     public void putDataStorage(DataComponentPatch dataStorage) {
-        DataStorageUtil.putDataStorage(tileEntity, dataStorage);
+        DataStorageUtil.putDataStorage(blockEntity, dataStorage);
     }
 
     @Override
-    public <T1> T1 withPlayer(APFakePlayer.Action<T1> function) throws LuaException {
+    public <U> U withPlayer(APFakePlayer.Action<U> function) throws LuaException {
         throw new NotImplementedException();
     }
 
@@ -120,25 +123,16 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlock
 
     @Override
     public void destroyUpgrade() {
-        getLevel().removeBlock(tileEntity.getBlockPos(), false);
-    }
-
-    @Override
-    public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
-        return false;
-    }
-
-    @Override
-    public boolean move(@NotNull Level level, @NotNull BlockPos pos) {
-        return false;
+        getLevel().removeBlock(blockEntity.getBlockPos(), false);
     }
 
     public BlockEntityPeripheralOwner<T> attachFuel() {
-        attachAbility(PeripheralOwnerAbility.FUEL, new TileEntityFuelAbility<>(this));
+        attachAbility(PeripheralOwnerAbility.FUEL, new BlockEntityFuelAbility<>(this));
         return this;
     }
 
     @Override
+    @Nullable
     public <U extends IPeripheral> U getConnectedPeripheral(Class<U> type) {
         throw new NotImplementedException();
     }

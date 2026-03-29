@@ -13,8 +13,8 @@ public class ColonyIntegratorEntity extends PeripheralBlockEntity<ColonyPeripher
         super(APBlockEntityTypes.COLONY_INTEGRATOR.get(), pos, state);
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected ColonyPeripheral buildPeripheral() {
         return new ColonyPeripheral(this);
     }

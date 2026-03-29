@@ -18,8 +18,8 @@ public class NBTStorageEntity extends PeripheralBlockEntity<NBTStoragePeripheral
         stored = new CompoundTag();
     }
 
-    @NotNull
     @Override
+    @NotNull
     protected NBTStoragePeripheral buildPeripheral() {
         return new NBTStoragePeripheral(this);
     }
