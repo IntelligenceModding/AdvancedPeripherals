@@ -48,9 +48,12 @@ public abstract class BaseItem extends Item {
             tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.disabled")));
     }
 
+    @Override
     @NotNull
     public Component getDescription() {
-        if (description == null) description = TranslationUtil.itemTooltip(getDescriptionId());
+        if (description == null) {
+            description = TranslationUtil.itemTooltip(getDescriptionId());
+        }
         return description;
     }
 

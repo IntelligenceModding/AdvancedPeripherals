@@ -37,7 +37,7 @@ public class BoxObject extends ThreeDimensionalObject {
             return null;
 
         boolean disableDepthTest = buffer.readBoolean();
-        boolean disableCulling = buffer.readBoolean();;
+        boolean disableCulling = buffer.readBoolean();
 
         BoxObject clientObject = optionalObject.get();
         clientObject.disableDepthTest = disableDepthTest;

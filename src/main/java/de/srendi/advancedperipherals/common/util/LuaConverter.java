@@ -228,7 +228,7 @@ public class LuaConverter {
             state.getValues()
                 .entrySet()
                 .stream()
-                .map(((entry) -> Map.entry(entry.getKey().getName(), stateToLua(entry.getValue()))))
+                .map((entry) -> Map.entry(entry.getKey().getName(), stateToLua(entry.getValue())))
                 .toArray(Map.Entry[]::new)
         );
     }

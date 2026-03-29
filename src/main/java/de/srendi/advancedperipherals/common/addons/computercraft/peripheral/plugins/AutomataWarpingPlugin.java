@@ -23,9 +23,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,33 +42,29 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     }
 
     @Override
-    public @Nullable IPeripheralOperation<?>[] getOperations() {
+    public IPeripheralOperation<?> @NotNull [] getOperations() {
         return new IPeripheralOperation[]{WARP, PREPARE_PORTAL, ACTIVE_PORTAL};
     }
 
     @NotNull
-    protected CompoundTag getPointData() {
+    protected CustomData getPointData() {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        CompoundTag data = owner.getPatchedDataStorage().get(APDataComponents.POINT_DATA_MARK.get());
-        if (data == null) {
-            return new CompoundTag();
-        }
-        return data;
+        return owner.getPatchedDataStorage().getOrDefault(APDataComponents.POINT_DATA_MARK.get(), CustomData.EMPTY);
     }
 
     protected void setPointData(@NotNull CompoundTag data) {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         PatchedDataComponentMap settings = owner.getPatchedDataStorage();
-        settings.set(APDataComponents.POINT_DATA_MARK.get(), data);
+        settings.set(APDataComponents.POINT_DATA_MARK.get(), CustomData.of(data));
         owner.putDataStorage(settings.asPatch());
     }
 
     protected Pair<MethodResult, CompoundTag> getPoint(String name) {
-        CompoundTag points = getPointData();
+        CustomData points = getPointData();
         if (!points.contains(name)) {
             return Pair.onlyLeft(MethodResult.of(null, "Warp point not exists"));
         }
-        return Pair.onlyRight(points.getCompound(name));
+        return Pair.onlyRight(points.getUnsafe().getCompound(name));
     }
 
     private SingleOperationContext getWarpContext(Level level, BlockPos pos) {
@@ -84,13 +80,14 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult savePoint(String name) {
         automataCore.addRotationCycle();
-        CompoundTag data = getPointData();
-        if (data.getAllKeys().size() >= APConfig.METAPHYSICS_CONFIG.endAutomataCoreWarpPointLimit.get()) {
+        CustomData cdata = getPointData();
+        if (cdata.size() >= APConfig.METAPHYSICS_CONFIG.endAutomataCoreWarpPointLimit.get()) {
             return MethodResult.of(null, "Cannot add new point, limit reached");
         }
 
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         Level level = owner.getLevel();
+        CompoundTag data = cdata.copyTag();
         data.put(name, NBTUtil.toNBT(level, owner.getPos()));
         setPointData(data);
         return MethodResult.of(true);
@@ -99,11 +96,12 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult deletePoint(String name) {
         automataCore.addRotationCycle();
-        CompoundTag data = getPointData();
-        if (!data.contains(name)) {
+        CustomData cdata = getPointData();
+        if (!cdata.contains(name)) {
             return MethodResult.of(null, "Cannot find point to delete");
         }
 
+        CompoundTag data = cdata.copyTag();
         data.remove(name);
         setPointData(data);
         return MethodResult.of(true);
@@ -111,7 +109,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult points() {
-        CompoundTag data = getPointData();
+        CompoundTag data = getPointData().getUnsafe();
         return MethodResult.of(data.getAllKeys());
     }
 
@@ -291,15 +289,12 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     private static int getCostsToLevel(Level level) {
         String dimension = level.dimension().location().toString();
         // TODO: load fuel costs from config / datapack
-        switch (dimension) {
-            case "minecraft:overworld":
-                return 10000;
-            case "minecraft:the_nether":
-                return 20000;
-            case "minecraft:the_end":
-                return 50000;
-        }
-        return 10000;
+        return switch (dimension) {
+            case "minecraft:overworld" -> 10000;
+            case "minecraft:the_nether" -> 20000;
+            case "minecraft:the_end" -> 50000;
+            default -> 10000;
+        };
     }
 
     private static final class PortalPrepareCallback implements ILuaCallback {

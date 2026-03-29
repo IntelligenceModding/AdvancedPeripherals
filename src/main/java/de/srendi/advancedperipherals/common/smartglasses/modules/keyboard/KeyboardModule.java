@@ -10,7 +10,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,17 +17,16 @@ public class KeyboardModule implements IModule {
     private static final ResourceLocation ID = AdvancedPeripherals.getRL("keyboard");
 
     private final KeyboardItem keyboardItem;
-    private final ItemStack keyboardItemStack;
     private volatile boolean capturingKeys = false;
     private boolean lastCaptureMouse = false;
     private volatile boolean captureMouse = false;
 
-    public KeyboardModule(KeyboardItem keyboardItem, ItemStack stack) {
+    public KeyboardModule(KeyboardItem keyboardItem) {
         this.keyboardItem = keyboardItem;
-        this.keyboardItemStack = stack;
     }
 
     @Override
+    @NotNull
     public ResourceLocation getId() {
         return ID;
     }
@@ -55,7 +53,7 @@ public class KeyboardModule implements IModule {
     }
 
     @Override
-    public void tick(SmartGlassesSideAccess glasses) {
+    public void serverTick(SmartGlassesSideAccess glasses) {
         if (!(glasses.getEntity() instanceof ServerPlayer player)) {
             return;
         }

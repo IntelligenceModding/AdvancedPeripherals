@@ -187,6 +187,7 @@ public class AECraftJob extends BasicCraftJob {
         return this;
     }
 
+    @Override
     public void startCalculation() {
         if (startedCalculation) {
             return;
@@ -207,6 +208,7 @@ public class AECraftJob extends BasicCraftJob {
         fireEvent(false, StatusConstants.CALCULATION_STARTED);
     }
 
+    @Override
     public void maybeCraft() {
         if (startedCrafting || futureJob == null || !futureJob.isDone()) {
             return;
@@ -252,6 +254,7 @@ public class AECraftJob extends BasicCraftJob {
         prepareCPUAndStatus(craftingService);
     }
 
+    @Override
     public void jobStateChanged() {
         ICraftingLink jobLink = this.jobLink;
         if (jobLink == null) {

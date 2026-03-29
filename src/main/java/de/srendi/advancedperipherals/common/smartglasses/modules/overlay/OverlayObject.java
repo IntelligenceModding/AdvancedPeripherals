@@ -156,30 +156,36 @@ public abstract class OverlayObject {
 
         if (fieldType.isAssignableFrom(value.getClass())) {
             return value;
-        } else if (fieldType.equals(Integer.TYPE)) {
-            return Double.valueOf(value.toString()).intValue();
-        } else if (fieldType.equals(Double.TYPE)) {
-            return Double.valueOf(value.toString());
-        } else if (fieldType.equals(Boolean.TYPE)) {
-            return Boolean.valueOf(value.toString());
-        } else if (fieldType.equals(Long.TYPE)) {
-            return Long.valueOf(StringUtil.removeFloatingPoints(value.toString()));
-        } else if (fieldType.equals(Short.TYPE)) {
-            return Short.valueOf(StringUtil.removeFloatingPoints(value.toString()));
-        } else if (fieldType.equals(Byte.TYPE)) {
-            return Byte.valueOf(StringUtil.removeFloatingPoints(value.toString()));
-        } else if (fieldType.equals(Float.TYPE)) {
-            return Float.valueOf(value.toString());
-        } else {
-            AdvancedPeripherals.debug("The field type " + fieldType.getName() + " is not supported for the value " + value + ".", Level.WARN);
         }
+        if (fieldType.equals(Integer.TYPE)) {
+            return Double.valueOf(value.toString()).intValue();
+        }
+        if (fieldType.equals(Double.TYPE)) {
+            return Double.valueOf(value.toString());
+        }
+        if (fieldType.equals(Boolean.TYPE)) {
+            return Boolean.valueOf(value.toString());
+        }
+        if (fieldType.equals(Long.TYPE)) {
+            return Long.valueOf(StringUtil.removeFloatingPoints(value.toString()));
+        }
+        if (fieldType.equals(Short.TYPE)) {
+            return Short.valueOf(StringUtil.removeFloatingPoints(value.toString()));
+        }
+        if (fieldType.equals(Byte.TYPE)) {
+            return Byte.valueOf(StringUtil.removeFloatingPoints(value.toString()));
+        }
+        if (fieldType.equals(Float.TYPE)) {
+            return Float.valueOf(value.toString());
+        }
+        AdvancedPeripherals.debug("The field type " + fieldType.getName() + " is not supported for the value " + value + ".", Level.WARN);
         return value;
     }
 
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(id);
         Entity entity = module.getAccess().getEntity();
-        if(entity instanceof Player player) {
+        if (entity instanceof Player player) {
             buffer.writeBoolean(true);
             buffer.writeUUID(player.getUUID());
         } else {

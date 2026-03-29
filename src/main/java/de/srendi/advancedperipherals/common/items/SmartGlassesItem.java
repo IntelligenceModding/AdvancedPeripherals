@@ -16,6 +16,7 @@ import dan200.computercraft.shared.util.IDAssigner;
 import dan200.computercraft.shared.util.NonNegativeId;
 import dan200.computercraft.shared.util.StorageCapacity;
 import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.addons.curios.SmartGlassesCurio;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesMenuProvider;
@@ -23,9 +24,9 @@ import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSlot;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
+import de.srendi.advancedperipherals.common.util.inventory.ItemStackStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.NonNullList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -37,8 +38,11 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -49,6 +53,22 @@ public class SmartGlassesItem extends ArmorItem {
 
     public SmartGlassesItem(Holder<ArmorMaterial> material) {
         super(material, ArmorItem.Type.HELMET, new Properties().stacksTo(1));
+    }
+
+    public IItemHandler createItemHandlerCap(ItemStack stack) {
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server == null) {
+            return null;
+        }
+        SmartGlassesComputer computer = getServerComputer(server, stack);
+        if (computer == null) {
+            return null;
+        }
+        return new SmartGlassesItemHandler(stack, computer);
+    }
+
+    public Object createCurioCap(ItemStack stack) {
+        return new SmartGlassesCurio(this, stack);
     }
 
     private boolean serverTick(ItemStack stack, ServerLevel level, Entity entity, SmartGlassesComputer computer) {
@@ -99,17 +119,27 @@ public class SmartGlassesItem extends ArmorItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotNum, boolean selected) {
+        if (!(entity instanceof LivingEntity livingEntity)) {
+            return;
+        }
+        if (livingEntity.getItemBySlot(EquipmentSlot.HEAD) != stack) {
+            return;
+        }
+        this.onEquippedTick(stack, level, livingEntity);
+    }
+
+    public void onEquippedTick(ItemStack stack, Level level, LivingEntity entity) {
         SmartGlassesComputer computer = null;
         if (level instanceof ServerLevel serverLevel) {
             computer = getOrCreateComputer(serverLevel, entity, stack);
             computer.keepAlive();
         }
 
-        NonNullList<ItemStack> items = SmartGlassesItemHandler.loadItems(stack, level.registryAccess());
+        ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
 
         for (int slot = 0; slot < SmartGlassesSlot.MODULE_SLOTS; slot++) {
-            ItemStack itemStack = items.get(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET);
-            if (!(itemStack.getItem() instanceof IModuleItem moduleItem)) {
+            Item item = items.getItem(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET);
+            if (!(item instanceof IModuleItem moduleItem)) {
                 continue;
             }
             SmartGlassesSideAccess glassesAccess = null;
@@ -118,7 +148,7 @@ public class SmartGlassesItem extends ArmorItem {
                 glassesAccess = computer.getSmartGlassesModuleAccess();
                 module = computer.getModuleBySlot(slot);
             }
-            moduleItem.inventoryTick(itemStack, level, entity, slot, selected, glassesAccess, module);
+            moduleItem.moduleTick(level, entity, slot, glassesAccess, module);
         }
 
         if (!(level instanceof ServerLevel serverLevel)) {
@@ -160,7 +190,7 @@ public class SmartGlassesItem extends ArmorItem {
             computer.turnOn();
         }
 
-        SmartGlassesItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer, level.registryAccess());
+        SmartGlassesItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer);
         player.openMenu(
             new SmartGlassesMenuProvider(computer, glasses, itemHandler),
             new ComputerContainerData(computer, glasses)::toBytes

@@ -52,7 +52,7 @@ public class RSFluidHandler implements IStorageSystemFluidHandler {
             }
             needs -= extracted;
             if (action.execute()) {
-                component.extract(fluid, extracted, Action.EXECUTE, Actor.EMPTY);;
+                component.extract(fluid, extracted, Action.EXECUTE, Actor.EMPTY);
             }
             if (needs <= 0) {
                 break;

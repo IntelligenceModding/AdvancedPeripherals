@@ -41,7 +41,7 @@ public class SmartGlassesInterfaceItem extends BaseItem {
             computer.turnOn();
         }
 
-        IItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer, serverLevel.registryAccess());
+        IItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer);
         if (itemHandler != null) {
             player.openMenu(
                 new SmartGlassesMenuProvider(computer, glasses, itemHandler),

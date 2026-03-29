@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,7 @@ public class OverlayModule implements IModule {
 
     public final ConcurrentHashMap<Integer, RenderableObject> objects = new ConcurrentHashMap<>();
     public final ConcurrentHashMap<Integer, RenderableObject> objectsToUpdate = new ConcurrentHashMap<>();
-    public final SmartGlassesSideAccess access;
+    private final SmartGlassesSideAccess access;
 
     public boolean autoUpdate = true;
     private int idCounter = 0;
@@ -46,11 +45,11 @@ public class OverlayModule implements IModule {
 
     @Override
     public IModuleFunctions getFunctions(SmartGlassesSideAccess access) {
-        return new OverlayGlassesFunctions(this);
+        return new OverlayGlassesFunctions(this, access);
     }
 
     @Override
-    public void tick(@NotNull SmartGlassesSideAccess access) {
+    public void serverTick(SmartGlassesSideAccess access) {
         Entity entity = access.getEntity();
         if (entity instanceof ServerPlayer player && player.level().getGameTime() % 2 == 0) {
             PacketDistributor.sendToPlayer(player, new OverlayModuleClientRequestPacket());

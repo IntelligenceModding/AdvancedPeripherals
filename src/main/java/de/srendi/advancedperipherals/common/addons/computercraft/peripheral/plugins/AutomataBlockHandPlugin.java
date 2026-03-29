@@ -230,10 +230,9 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             return "EVENT_CANCELED";
         }
         Item item = stack.getItem();
-        if (!(item instanceof BlockItem)) {
+        if (!(item instanceof BlockItem blockItem)) {
             return "NOT_BLOCK";
         }
-        BlockItem blockItem = (BlockItem) item;
         InteractionResult res = blockItem.place(context);
         if (!res.consumesAction()) {
             return "CANNOT_PLACE";

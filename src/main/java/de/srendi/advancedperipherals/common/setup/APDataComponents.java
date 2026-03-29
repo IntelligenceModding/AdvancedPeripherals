@@ -2,17 +2,18 @@ package de.srendi.advancedperipherals.common.setup;
 
 import com.mojang.serialization.Codec;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral.DetectionType;
+import de.srendi.advancedperipherals.common.util.inventory.ItemStackStorage;
 import net.minecraft.core.Registry;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -21,18 +22,17 @@ import java.util.function.UnaryOperator;
 
 public class APDataComponents {
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> ABILITY_COOLDOWNS = registerNBT("cooldowns");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> ABILITY_COOLDOWNS = registerNBT("cooldowns");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BINDING_COMPUTER = registerInt("binding_computer");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> CHUNKY_ID = registerUUID("chunky_id");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> CONSUMED_ENTITY_COMPOUND = registerNBT("consumed_entity_compound");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> ENTITY_TRANSFER = registerNBT("entity_transfer");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> CONSUMED_ENTITY_COMPOUND = registerNBT("consumed_entity_compound");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> ENTITY_TRANSFER = registerNBT("entity_transfer");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FUEL_CONSUMPTION_RATE = registerInt("fuel_consumption_rate");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> ITEMS = registerNBT("items");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemStackStorage>> ITEMS = registerItemStackStorage("items");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> KEYBOARD_OPENED = registerBoolean("keyboard_opened");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> KEY_PRESSED_DURATION = registerInt("key_pressed_duration");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> MODULE_DATAS = registerDataComponent("module_datas");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> OWNER = registerUUID("owner_id");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> POINT_DATA_MARK = registerNBT("point_data_mark");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> POINT_DATA_MARK = registerNBT("point_data_mark");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ROTATION_CHARGE_SETTING = registerInt("rotation_charge_setting");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> STORED_DATA = registerDataComponent("stored_data");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WORLD_DATA_MARK = registerString("world_data_mark");
@@ -91,8 +91,9 @@ public class APDataComponents {
                 .networkSynchronized(UUIDUtil.STREAM_CODEC));
     }
 
-    private static DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> registerNBT(String name) {
-        return simple(name, builder -> builder.persistent(CompoundTag.CODEC));
+    private static DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> registerNBT(String name) {
+        return simple(name, builder -> builder.persistent(CustomData.CODEC)
+                .networkSynchronized(CustomData.STREAM_CODEC));
     }
 
     private static DeferredHolder<DataComponentType<?>, DataComponentType<Component>> registerComponent(String name) {
@@ -109,5 +110,10 @@ public class APDataComponents {
     private static <T extends Enum<T> & StringRepresentable> DeferredHolder<DataComponentType<?>, DataComponentType<T>> registerEnum(String name, T... values) {
         return simple(name, builder -> builder.persistent(StringRepresentable.fromEnum(() -> values))
                 .networkSynchronized(NeoForgeStreamCodecs.enumCodec(values[0].getClass())));
+    }
+
+    private static DeferredHolder<DataComponentType<?>, DataComponentType<ItemStackStorage>> registerItemStackStorage(String name) {
+        return simple(name, builder -> builder.persistent(ItemStackStorage.CODEC)
+                .networkSynchronized(ItemStackStorage.STREAM_CODEC));
     }
 }

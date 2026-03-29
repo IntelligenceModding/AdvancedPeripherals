@@ -8,6 +8,7 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.stream.Stream;
@@ -54,7 +55,7 @@ public class DisabledPeripheral implements IDynamicPeripheral {
     }
 
     @Override
-    public boolean equals(IPeripheral other) {
+    public boolean equals(@Nullable IPeripheral other) {
         return other instanceof DisabledPeripheral disabled && this.basePeripheral.equals(disabled.basePeripheral);
     }
 

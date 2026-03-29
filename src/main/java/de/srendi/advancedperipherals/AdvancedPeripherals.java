@@ -10,7 +10,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.integrations.In
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.blocks.base.ICapabilityProvider;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-// import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
@@ -26,6 +26,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+import top.theillusivec4.curios.api.CuriosCapability;
+import top.theillusivec4.curios.api.type.capability.ICurio;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -42,6 +44,14 @@ public class AdvancedPeripherals {
     // Used for out item/fluid fingerprints
     private static MessageDigest fingerprintMessageDigest = null;
 
+    static {
+        try {
+            fingerprintMessageDigest = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            AdvancedPeripherals.debug("Could not create message digest. Fingerprint creation WILL fail.", e);
+        }
+    }
+
     public AdvancedPeripherals(IEventBus modBus) {
         LOGGER.info("AdvancedPeripherals says hello!");
 
@@ -54,12 +64,6 @@ public class AdvancedPeripherals {
         modBus.addListener(ChunkManager::registerTicketController);
 
         APRegistration.register(modBus);
-
-        try {
-            fingerprintMessageDigest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            AdvancedPeripherals.debug("Could not create message digest. Fingerprint creation WILL fail.", e);
-        }
     }
 
     @Nullable
@@ -138,18 +142,26 @@ public class AdvancedPeripherals {
             APItems.SMART_GLASSES_NETHERITE.get(),
         };
         event.registerItem(MediaCapability.get(), (stack, ignored) -> MountMedia.COMPUTER, smartGlasses);
-        // event.registerItem(
-        //     Capabilities.ItemHandler.ITEM,
-        //     (stack, ignored) -> ((SmartGlassesItem) (stack.getItem())).createItemHandlerCap(stack),
-        //     smartGlasses
-        // );
+        event.registerItem(
+            Capabilities.ItemHandler.ITEM,
+            (stack, ignored) -> ((SmartGlassesItem) (stack.getItem())).createItemHandlerCap(stack),
+            smartGlasses
+        );
+        if (APAddon.CURIOS.isLoaded()) {
+            event.registerItem(
+                CuriosCapability.ITEM,
+                (stack, ignored) -> (ICurio) (((SmartGlassesItem) (stack.getItem())).createCurioCap(stack)),
+                smartGlasses
+            );
+        }
 
-        if (APAddon.AE2.isLoaded())
+        if (APAddon.AE2.isLoaded()) {
             AEApi.registerCapabilities(event);
-        if (APAddon.REFINEDSTORAGE.isLoaded())
+        }
+        if (APAddon.REFINEDSTORAGE.isLoaded()) {
             RSApi.registerCapabilities(event);
+        }
 
         IntegrationPeripheralProvider.registerBlockIntegrations(event);
-
     }
 }

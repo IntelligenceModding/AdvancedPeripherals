@@ -1,4 +1,5 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
+import net.ltgt.gradle.errorprone.CheckSeverity
 
 import java.text.SimpleDateFormat
 
@@ -11,6 +12,7 @@ plugins {
     id 'com.github.breadmoirai.github-release' version '2.5.2'
     id 'com.modrinth.minotaur' version '2.+'
     id 'net.darkhax.curseforgegradle' version '1.1.16'
+    id 'net.ltgt.errorprone' version '5.1.0'
     id 'net.neoforged.moddev' version '2.+'
     id 'org.jetbrains.changelog' version '1.2.1'
 }
@@ -237,6 +239,8 @@ dependencies {
     // If some of the dependencies are not needed in the dev environment, you can comment the `runtimeOnly` line so it
     // will not be included in the client.
 
+    errorprone "com.google.errorprone:error_prone_core:2.48.0"
+
     // Minimal requirements
     compileOnly "org.jetbrains:annotations:${jb_annotations}"
     implementation "net.neoforged:neoforge:${neo_version}"
@@ -333,6 +337,19 @@ changelog {
     keepUnreleasedSection = true
     unreleasedTerm = "[Unreleased]"
     groups = []
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.errorprone {
+        disable(
+            "EffectivelyPrivate",
+            "EnumOrdinal",
+            "ImmutableEnumChecker",
+            "MissingSummary",
+            "ReferenceEquality",
+        )
+        check("MissingOverride", CheckSeverity.ERROR)
+    }
 }
 
 afterEvaluate {

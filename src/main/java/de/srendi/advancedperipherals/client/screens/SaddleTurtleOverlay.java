@@ -21,9 +21,6 @@ public class SaddleTurtleOverlay implements LayeredDraw.Layer {
     private static final ResourceLocation JUMP_BAR_COOLDOWN_SPRITE = ResourceLocation.withDefaultNamespace("hud/jump_bar_cooldown");
     private static final ResourceLocation JUMP_BAR_PROGRESS_SPRITE = ResourceLocation.withDefaultNamespace("hud/jump_bar_progress");
 
-    private int screenWidth = 0;
-    private int screenHeight = 0;
-
     private int fuelLevel = 0;
     private int fuelLimit = 0;
     private int barColor = 0;

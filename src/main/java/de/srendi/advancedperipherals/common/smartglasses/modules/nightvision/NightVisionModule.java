@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunction
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class NightVisionModule implements IModule {
@@ -15,10 +16,10 @@ public class NightVisionModule implements IModule {
     private volatile boolean nightVisionEnabled = true;
 
     public NightVisionModule() {
-
     }
 
     @Override
+    @NotNull
     public ResourceLocation getId() {
         return ID;
     }

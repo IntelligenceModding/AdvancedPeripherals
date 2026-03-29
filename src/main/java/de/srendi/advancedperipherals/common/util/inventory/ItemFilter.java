@@ -101,6 +101,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         return new ItemFilter();
     }
 
+    @Override
     public boolean isEmpty() {
         return this == EMPTY || (fingerprint.isEmpty() && item == Items.AIR && tag == null && components == null);
     }
@@ -154,6 +155,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         return result;
     }
 
+    @Override
     public boolean test(ItemStack stack) {
         if (isEmpty())
             return true;

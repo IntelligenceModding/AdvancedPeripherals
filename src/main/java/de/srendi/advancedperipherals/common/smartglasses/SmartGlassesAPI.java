@@ -12,7 +12,7 @@ public class SmartGlassesAPI implements ILuaAPI {
 
     public static ILuaAPI create(IComputerSystem system) {
         final Boolean isSmartGlasses = system.getComponent(APComputerComponents.SMARTGLASSES);
-        if (isSmartGlasses != Boolean.TRUE) {
+        if (!Boolean.TRUE.equals(isSmartGlasses)) {
             return null;
         }
         return new SmartGlassesAPI();

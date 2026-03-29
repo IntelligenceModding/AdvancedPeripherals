@@ -1,24 +1,21 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules;
 
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-public interface IModuleItem {
+public interface IModuleItem<T extends IModule> {
 
-    IModule createModule(SmartGlassesSideAccess access, ItemStack stack);
+    @NotNull
+    T createModule(SmartGlassesSideAccess access);
 
     /**
-     * This method is called every tick the item is in the inventory of the smart glasses
-     * Runs on the client and server side
+     * This method is called every tick the item is in the inventory of the smart glasses.
+     * Runs on both client and server side.
      *
-     * @param access The access to the smart glasses - Null on the client side
-     * @param module The module - Null on the client side
+     * @param access The access to the smart glasses - Null on client side
+     * @param module The module - Null on client side
      */
-    default void inventoryTick(ItemStack itemStack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, @Nullable SmartGlassesSideAccess access, @Nullable IModule module) {
-
-    }
-
+    default void moduleTick(Level level, LivingEntity entity, int moduleSlot, SmartGlassesSideAccess access, T module) {}
 }

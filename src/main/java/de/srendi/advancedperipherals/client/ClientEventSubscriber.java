@@ -34,15 +34,15 @@ public class ClientEventSubscriber {
             return;
         }
         switch (event.getAction()) {
-            case InputConstants.PRESS:
+            case InputConstants.PRESS -> {
                 sneaking = true;
                 if (ClientRegistry.SADDLE_TURTLE_OVERLAY.isPlayerControllingTurtle()) {
                     minecraft.options.keyShift.setDown(false);
                 }
-                break;
-            case InputConstants.RELEASE:
+            }
+            case InputConstants.RELEASE -> {
                 sneaking = false;
-                break;
+            }
         }
     }
 

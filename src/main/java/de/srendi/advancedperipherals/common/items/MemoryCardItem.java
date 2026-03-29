@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.items;
 import de.srendi.advancedperipherals.client.ClientUUIDCache;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.EnumColor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -14,6 +13,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 import static de.srendi.advancedperipherals.common.setup.APDataComponents.OWNER;
 
@@ -25,14 +25,15 @@ public class MemoryCardItem extends APItem {
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         super.appendHoverText(stack, context, tooltip, flagIn);
-        Minecraft minecraft = Minecraft.getInstance();
-        if (stack.has(OWNER)) {
-            String username = ClientUUIDCache.getUsername(stack.get(OWNER));
-            if (username == null) {
-                username = stack.get(OWNER).toString();
-            }
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", username)));
+        UUID uuid = stack.get(OWNER);
+        if (uuid == null) {
+            return;
         }
+        String username = ClientUUIDCache.getUsername(uuid);
+        if (username == null) {
+            username = uuid.toString();
+        }
+        tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", username)));
     }
 
     @Override

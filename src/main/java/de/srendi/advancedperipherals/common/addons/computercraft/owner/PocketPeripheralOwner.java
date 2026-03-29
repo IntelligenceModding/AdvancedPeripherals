@@ -135,7 +135,7 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public void destroyUpgrade() {
-        pocket.setUpgrade(null);;
+        pocket.setUpgrade(null);
     }
 
     @Override

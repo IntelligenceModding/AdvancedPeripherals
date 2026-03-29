@@ -97,6 +97,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         return new FluidFilter();
     }
 
+    @Override
     public boolean isEmpty() {
         return this == EMPTY || (fingerprint.isEmpty() && fluid == Fluids.EMPTY && tag == null && components == null);
     }
@@ -150,6 +151,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         return result;
     }
 
+    @Override
     public boolean test(FluidStack stack) {
         if (!fingerprint.isEmpty()) {
             String testFingerprint = FluidUtil.getFingerprint(stack);

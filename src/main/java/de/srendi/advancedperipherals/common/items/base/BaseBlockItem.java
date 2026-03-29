@@ -32,12 +32,16 @@ public abstract class BaseBlockItem extends BlockItem {
         } else {
             tooltip.add(EnumColor.buildTextComponent(getDescription()));
         }
-        if (!isEnabled())
+        if (!isEnabled()) {
             tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.disabled")));
+        }
     }
 
+    @Override
     public @NotNull Component getDescription() {
-        if (description == null) description = TranslationUtil.itemTooltip(getDescriptionId());
+        if (description == null) {
+            description = TranslationUtil.itemTooltip(getDescriptionId());
+        }
         return description;
     }
 

@@ -12,6 +12,7 @@ import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.ModulePeripheral;
+import de.srendi.advancedperipherals.common.util.inventory.ItemStackStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -57,11 +58,11 @@ public class SmartGlassesComputer extends ServerComputer {
         }
 
         RegistryAccess registryAccess = level.registryAccess();
-        NonNullList<ItemStack> items = SmartGlassesItemHandler.loadItems(stack, registryAccess);
+        ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
         // build upgrades
         for (ComputerSide side : SmartGlassesSlot.UPGRADE_SIDES) {
             int slot = SmartGlassesSlot.sideToIndex(side);
-            ItemStack upgradeStack = items.get(slot);
+            ItemStack upgradeStack = items.getAllUnsafe()[slot];
             UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(registryAccess, upgradeStack);
             this.upgrades[slot] = upgradeData;
             if (upgradeData == null) {
@@ -74,10 +75,10 @@ public class SmartGlassesComputer extends ServerComputer {
         // build modules
         SmartGlassesSideAccess smartGlassesModuleAccess = this.getSmartGlassesModuleAccess();
         for (int slot = 0; slot < SmartGlassesSlot.MODULE_SLOTS; slot++) {
-            ItemStack moduleItem = items.get(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET);
-            this.moduleItems.set(slot, moduleItem);
-            if (!moduleItem.isEmpty() && moduleItem.getItem() instanceof IModuleItem module) {
-                IModule newModule = module.createModule(smartGlassesModuleAccess, moduleItem);
+            ItemStack moduleStack = items.get(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET);
+            this.moduleItems.set(slot, moduleStack);
+            if (moduleStack.getItem() instanceof IModuleItem moduleItem) {
+                IModule newModule = moduleItem.createModule(smartGlassesModuleAccess);
                 this.modules[slot] = newModule;
             }
         }
@@ -95,32 +96,28 @@ public class SmartGlassesComputer extends ServerComputer {
     }
 
     public boolean updateStack(ItemStack stack) {
-        RegistryAccess registryAccess = this.getLevel().registryAccess();
         boolean changed = false;
-        NonNullList<ItemStack> items = null;
+        ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
         if (this.upgradesUpdated) {
             this.upgradesUpdated = false;
-            items = SmartGlassesItemHandler.loadItems(stack, registryAccess);
+            changed = true;
             synchronized (this.upgrades) {
                 for (int slot = 0; slot < SmartGlassesSlot.PERIPHERAL_SLOTS; slot++) {
                     UpgradeData<IPocketUpgrade> upgrade = this.upgrades[slot];
-                    items.set(slot, upgrade == null ? ItemStack.EMPTY : upgrade.getUpgradeItem());
+                    items = items.set(slot, upgrade == null ? ItemStack.EMPTY : upgrade.getUpgradeItem());
                 }
             }
         }
         if (this.modulesUpdated) {
             this.modulesUpdated = false;
-            if (items == null) {
-                items = SmartGlassesItemHandler.loadItems(stack, registryAccess);
-            }
+            changed = true;
             for (int slot = 0; slot < SmartGlassesSlot.MODULE_SLOTS; slot++) {
-                ItemStack moduleItem = this.moduleItems.get(slot);
-                items.set(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET, moduleItem);
+                ItemStack moduleStack = this.moduleItems.get(slot);
+                items = items.set(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET, moduleStack);
             }
         }
-        if (items != null) {
-            changed = true;
-            SmartGlassesItemHandler.saveItems(stack, items, registryAccess);
+        if (changed) {
+            SmartGlassesItemHandler.saveItems(stack, items);
         }
         if (this.moduleDatasUpdated) {
             this.moduleDatasUpdated = false;
@@ -201,11 +198,18 @@ public class SmartGlassesComputer extends ServerComputer {
         this.setPeripheral(side, peripheral);
     }
 
-    public void setModule(int slot, ItemStack stack) {
+    public ItemStack getModuleStack(int slot) {
+        return this.moduleItems.get(slot);
+    }
+
+    public void setModuleStack(int slot, ItemStack stack) {
+        this.moduleItems.set(slot, stack);
+        this.modulesUpdated = true;
+
         SmartGlassesSideAccess smartGlassesModuleAccess = this.getSmartGlassesModuleAccess();
         IModule oldModule = this.modules[slot];
-        if (!stack.isEmpty() && stack.getItem() instanceof IModuleItem moduleItem) {
-            IModule newModule = moduleItem.createModule(smartGlassesModuleAccess, stack);
+        if (stack.getItem() instanceof IModuleItem moduleItem) {
+            IModule newModule = moduleItem.createModule(smartGlassesModuleAccess);
             if (oldModule != null) {
                 if (oldModule.getId().equals(newModule.getId())) {
                     return;
@@ -234,7 +238,7 @@ public class SmartGlassesComputer extends ServerComputer {
         SmartGlassesSideAccess smartGlassesModuleAccess = this.getSmartGlassesModuleAccess();
         for (IModule module : this.modules) {
             if (module != null) {
-                module.tick(smartGlassesModuleAccess);
+                module.serverTick(smartGlassesModuleAccess);
             }
         }
     }

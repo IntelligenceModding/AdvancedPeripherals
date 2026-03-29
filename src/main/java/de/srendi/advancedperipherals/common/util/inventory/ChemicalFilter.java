@@ -77,6 +77,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         return new ChemicalFilter();
     }
 
+    @Override
     public boolean isEmpty() {
         return this == EMPTY || (fingerprint.isEmpty() && chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) && tag == null);
     }
@@ -118,6 +119,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         return new ChemicalStack(chemical, amount);
     }
 
+    @Override
     public boolean test(ChemicalStack stack) {
         if (isEmpty())
             return true;

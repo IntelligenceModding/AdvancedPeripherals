@@ -55,7 +55,7 @@ public class RSChemicalHandler implements IStorageSystemChemicalHandler {
             }
             needs -= extracted;
             if (action.execute()) {
-                component.extract(chemical, extracted, Action.EXECUTE, Actor.EMPTY);;
+                component.extract(chemical, extracted, Action.EXECUTE, Actor.EMPTY);
             }
             if (needs <= 0) {
                 break;

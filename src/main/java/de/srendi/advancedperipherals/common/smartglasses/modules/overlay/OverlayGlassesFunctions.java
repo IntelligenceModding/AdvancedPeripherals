@@ -23,9 +23,9 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     private final OverlayModule overlayModule;
     private final SmartGlassesSideAccess access;
 
-    public OverlayGlassesFunctions(OverlayModule overlayModule) {
+    public OverlayGlassesFunctions(OverlayModule overlayModule, SmartGlassesSideAccess access) {
         this.overlayModule = overlayModule;
-        this.access = overlayModule.access;
+        this.access = access;
     }
 
     @LuaFunction

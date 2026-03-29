@@ -2,10 +2,12 @@ package de.srendi.advancedperipherals.common.smartglasses.modules;
 
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface IModule {
 
+    @NotNull
     ResourceLocation getId();
 
     /**
@@ -24,7 +26,7 @@ public interface IModule {
      * Implementations should check if the entity is not null since the glasses can still tick without belonging to an entity
      * @param smartGlassesAccess Contains access to the entity, the computer, the level or the upgrades
      */
-    default void tick(SmartGlassesSideAccess smartGlassesAccess) {}
+    default void serverTick(SmartGlassesSideAccess smartGlassesAccess) {}
 
     default void onUnequipped(SmartGlassesSideAccess smartGlassesAccess) {}
 
@@ -34,5 +36,4 @@ public interface IModule {
     class ErrorConstants {
         public static final String ALREADY_EXISTS = "ID_ALREADY_EXISTS";
     }
-
 }

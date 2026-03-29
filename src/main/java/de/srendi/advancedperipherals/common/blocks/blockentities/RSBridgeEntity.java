@@ -82,6 +82,7 @@ public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
         return node;
     }
 
+    @Override
     public void clearRemoved() {
         super.clearRemoved();
         initialize(this.level, null);

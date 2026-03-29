@@ -9,7 +9,6 @@ import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
-import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
 import de.srendi.advancedperipherals.common.util.EnumColor;
@@ -21,7 +20,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -35,8 +34,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
-public class KeyboardItem extends BaseItem implements IModuleItem {
+public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule> {
+    private Map<LivingEntity, Boolean> clientKeyboardHotkeyPressed = new WeakHashMap<>(); // client-only
 
     public KeyboardItem() {
         super(new Properties().stacksTo(1));
@@ -45,6 +47,12 @@ public class KeyboardItem extends BaseItem implements IModuleItem {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    @NotNull
+    public KeyboardModule createModule(SmartGlassesSideAccess access) {
+        return new KeyboardModule(this);
     }
 
     @Override
@@ -107,19 +115,15 @@ public class KeyboardItem extends BaseItem implements IModuleItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack itemStack, Level level, Entity entity, int inventorySlot, boolean isCurrentItem, @Nullable SmartGlassesSideAccess access, @Nullable IModule module) {
-        if (!level.isClientSide()) {
-            itemStack.remove(APDataComponents.BINDING_COMPUTER.get());
-            return;
-        }
-        if (!(entity instanceof LocalPlayer)) {
+    public void moduleTick(Level level, LivingEntity entity, int moduleSlot, SmartGlassesSideAccess access, KeyboardModule module) {
+        if (!level.isClientSide() || !(entity instanceof LocalPlayer)) {
             return;
         }
         boolean pressed = KeyBindings.GLASSES_HOTKEY_KEYBINDING.isDown();
-        if (itemStack.getOrDefault(APDataComponents.KEYBOARD_OPENED.get(), false).booleanValue() == pressed) {
+        if (this.clientKeyboardHotkeyPressed.getOrDefault(entity, false) == pressed) {
             return;
         }
-        itemStack.set(APDataComponents.KEYBOARD_OPENED.get(), pressed);
+        this.clientKeyboardHotkeyPressed.put(entity, pressed);
         if (!pressed) {
             return;
         }
@@ -188,10 +192,5 @@ public class KeyboardItem extends BaseItem implements IModuleItem {
                 return new KeyboardContainer(containerId, inventory, player.level(), access, module);
             }
         };
-    }
-
-    @Override
-    public IModule createModule(SmartGlassesSideAccess access, ItemStack stack) {
-        return new KeyboardModule(this, stack);
     }
 }

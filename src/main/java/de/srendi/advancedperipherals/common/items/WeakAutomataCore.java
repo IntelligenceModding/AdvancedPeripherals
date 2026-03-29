@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,13 +61,14 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flagIn) {
         super.appendHoverText(stack, context, tooltip, flagIn);
 
-        CompoundTag consumedData = stack.get(CONSUMED_ENTITY_COMPOUND.get());
-        if (consumedData != null)
-            consumedData.getAllKeys().forEach(key -> {
+        CustomData consumedData = stack.get(CONSUMED_ENTITY_COMPOUND);
+        if (consumedData != null) {
+            consumedData.getUnsafe().getAllKeys().forEach(key -> {
                 WeakAutomataCoreRecord record = AUTOMATA_CORE_REGISTRY.get(key);
-                CompoundTag recordData = consumedData.getCompound(key);
+                CompoundTag recordData = consumedData.getUnsafe().getCompound(key);
                 tooltip.add(EnumColor.buildTextComponent(Component.literal(String.format("Consumed: %d/%d %s", recordData.getInt(CONSUMED_ENTITY_COUNT), record.getRequiredCount(key), recordData.getString(CONSUMED_ENTITY_NAME)))));
             });
+        }
     }
 
     @Override
@@ -78,31 +80,33 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
         }
         String entityType = EntityType.getKey(entity.getType()).toString();
 
-        if (AUTOMATA_CORE_REGISTRY.containsKey(entityType)) {
-            CompoundTag consumedData = stack.get(CONSUMED_ENTITY_COMPOUND) == null ? new CompoundTag() : stack.get(CONSUMED_ENTITY_COMPOUND);
-            if (consumedData == null)
-                return InteractionResult.PASS;
-            WeakAutomataCoreRecord record;
-            if (consumedData.isEmpty()) {
-                record = AUTOMATA_CORE_REGISTRY.get(entityType);
-            } else {
-                Optional<String> anyKey = consumedData.getAllKeys().stream().findAny();
-                if (!anyKey.isPresent()) return InteractionResult.PASS;
-                record = AUTOMATA_CORE_REGISTRY.get(anyKey.get());
-            }
-            if (!record.isSuitable(entityType, consumedData)) return InteractionResult.PASS;
-            entity.remove(Entity.RemovalReason.KILLED);
-            CompoundTag entityCompound = consumedData.getCompound(entityType);
-            entityCompound.putInt(CONSUMED_ENTITY_COUNT, entityCompound.getInt(CONSUMED_ENTITY_COUNT) + 1);
-            entityCompound.putString(CONSUMED_ENTITY_NAME, entity.getName().getString());
-            consumedData.put(entityType, entityCompound);
-            if (record.isFinished(consumedData)) {
-                player.setItemInHand(hand, new ItemStack(record.resultSoul().get()));
-            }
-            stack.set(CONSUMED_ENTITY_COMPOUND.get(), consumedData);
-            return InteractionResult.SUCCESS;
+        if (!AUTOMATA_CORE_REGISTRY.containsKey(entityType)) {
+            return InteractionResult.FAIL;
         }
-        return InteractionResult.PASS;
+        CompoundTag consumedData = stack.getOrDefault(CONSUMED_ENTITY_COMPOUND, CustomData.EMPTY).copyTag();
+        WeakAutomataCoreRecord record;
+        if (consumedData.isEmpty()) {
+            record = AUTOMATA_CORE_REGISTRY.get(entityType);
+        } else {
+            Optional<String> anyKey = consumedData.getAllKeys().stream().findAny();
+            if (!anyKey.isPresent()) {
+                return InteractionResult.FAIL;
+            }
+            record = AUTOMATA_CORE_REGISTRY.get(anyKey.get());
+        }
+        if (!record.isSuitable(entityType, consumedData)) {
+            return InteractionResult.FAIL;
+        }
+        entity.remove(Entity.RemovalReason.KILLED);
+        CompoundTag entityCompound = consumedData.getCompound(entityType);
+        entityCompound.putInt(CONSUMED_ENTITY_COUNT, entityCompound.getInt(CONSUMED_ENTITY_COUNT) + 1);
+        entityCompound.putString(CONSUMED_ENTITY_NAME, entity.getName().getString());
+        consumedData.put(entityType, entityCompound);
+        if (record.isFinished(consumedData)) {
+            player.setItemInHand(hand, new ItemStack(record.resultSoul().get()));
+        }
+        stack.set(CONSUMED_ENTITY_COMPOUND, CustomData.of(consumedData));
+        return InteractionResult.SUCCESS;
     }
 
     public record WeakAutomataCoreRecord(Map<String, Integer> ingredients, Supplier<Item> resultSoul) {

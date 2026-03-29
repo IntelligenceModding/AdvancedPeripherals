@@ -23,6 +23,7 @@ public class RawValue implements Ingredient.Value {
         this.item = pItem;
     }
 
+    @Override
     @NotNull
     public Collection<ItemStack> getItems() {
         return Collections.singleton(new ItemStack(RegistryUtil.getRegistryEntry(this.item.toString(), BuiltInRegistries.ITEM)));

@@ -3,8 +3,6 @@ package de.srendi.advancedperipherals.common.util;
 import java.nio.charset.StandardCharsets;
 
 public class StringUtil {
-    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-
     /**
      * This method will convert "&[0-9a-z]" to "§[0-9a-z]", then we can make colored message in CC easier
      * If a '&' is behind reverse slash '\', it will be ignored.
