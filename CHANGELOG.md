@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- Prevent an empty say command crashing the game
+- [#812] Fixed a chemical duplication bug using the ME bridge
+- [#813] Corrected the Mod ID of AE2 Things preventing our integrations to load correctly
+
 ## [1.21.1-0.7.60b] - 2026-03-05
 
 ### Fixed
