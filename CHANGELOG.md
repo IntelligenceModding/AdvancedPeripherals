@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [1.21.1-0.7.60b] - 2026-03-05
 
 ### Fixed
 - Added support for minecolonies 1.1.1282-1.21.1-snapshot
