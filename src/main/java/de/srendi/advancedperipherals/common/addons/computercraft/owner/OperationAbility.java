@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
+import dan200.computercraft.api.lua.ILuaFunction;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -132,7 +133,9 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     @Override
     public void collectConfiguration(Map<String, Object> data) {
         for (IPeripheralOperation<?> operation : allowedOperations.values()) {
-            data.put(operation.settingsName(), operation.computerDescription());
+            Map<String, Object> operData = operation.computerDescription();
+            data.put("getCost", (ILuaFunction) operation::getCostLua);
+            data.put(operation.settingsName(), operData);
         }
     }
 

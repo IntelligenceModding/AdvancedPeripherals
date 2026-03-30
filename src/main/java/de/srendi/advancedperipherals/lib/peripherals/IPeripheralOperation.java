@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.lib.peripherals;
 
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility.FailReason;
 import de.srendi.advancedperipherals.lib.misc.IConfigHandler;
@@ -12,6 +14,8 @@ public interface IPeripheralOperation<T> extends IConfigHandler {
     int getCooldown(T context);
 
     int getCost(T context);
+
+    MethodResult getCostLua(IArguments args) throws LuaException;
 
     Map<String, Object> computerDescription();
 

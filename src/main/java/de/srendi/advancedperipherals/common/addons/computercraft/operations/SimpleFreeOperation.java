@@ -6,7 +6,11 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.MethodResult;
+
+public enum SimpleFreeOperation implements IPeripheralOperation<Void> {
     CHAT_MESSAGE(1000),
     SADDLE_CAPTURE(5000);
 
@@ -28,13 +32,18 @@ public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
     }
 
     @Override
-    public int getCooldown(Object context) {
+    public int getCooldown(Void context) {
         return cooldown.get();
     }
 
     @Override
-    public int getCost(Object context) {
+    public int getCost(Void context) {
         return 0;
+    }
+
+    @Override
+    public MethodResult getCostLua(IArguments args) throws LuaException {
+        return MethodResult.of(0);
     }
 
     @Override

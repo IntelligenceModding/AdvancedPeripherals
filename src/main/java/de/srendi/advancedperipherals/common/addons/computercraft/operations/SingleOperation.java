@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.IntUnaryOperator;
 
-import dan200.computercraft.api.lua.ILuaFunction;
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 
 public enum SingleOperation implements IPeripheralOperation<SingleOperationContext> {
@@ -61,6 +62,11 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     }
 
     @Override
+    public MethodResult getCostLua(IArguments args) throws LuaException {
+        return MethodResult.of(this.getCost(new SingleOperationContext(args.getInt(0), args.getInt(1))));
+    }
+
+    @Override
     public Map<String, Object> computerDescription() {
         Map<String, Object> data = new HashMap<>();
         data.put("name", settingsName());
@@ -71,9 +77,6 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
         data.put("countCooldownPolicy", countCooldownPolicy.getName());
         data.put("distanceCostPolicy", distanceCostPolicy.getName());
         data.put("countCostPolicy", countCostPolicy.getName());
-        data.put("getCost",
-            (ILuaFunction) (arg) -> MethodResult.of(this.getCost(new SingleOperationContext(arg.getInt(0), arg.getInt(1))))
-        );
         return data;
     }
 

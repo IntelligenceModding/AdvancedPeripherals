@@ -66,7 +66,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return APConfig.PERIPHERALS_CONFIG.enableChatBox.get();
     }
 
-    protected MethodResult withChatOperation(IPeripheralFunction<Object, MethodResult> function) throws LuaException {
+    protected MethodResult withChatOperation(IPeripheralFunction<Void, MethodResult> function) throws LuaException {
         return withOperation(CHAT_MESSAGE, null, null, function, null);
     }
 

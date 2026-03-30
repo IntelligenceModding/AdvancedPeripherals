@@ -21,8 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3d;
 import org.joml.Matrix3dc;
-import org.joml.Quaterniond;
-import org.joml.Quaterniondc;
 
 import java.util.stream.Stream;
 

@@ -1,7 +1,8 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import com.google.common.math.IntMath;
-import dan200.computercraft.api.lua.ILuaFunction;
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -63,6 +64,11 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
         return (int) Math.floor((allBlockCount - freeBlockCount) * extraBlockCost.get());
     }
 
+    @Override
+    public MethodResult getCostLua(IArguments args) throws LuaException {
+        return MethodResult.of(this.getCost(SphereOperationContext.of(args.getInt(0))));
+    }
+
     public int getMaxFreeRadius() {
         return maxFreeRadius.get();
     }
@@ -80,7 +86,6 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
         data.put("maxFreeRadius", this.maxFreeRadius.get());
         data.put("maxCostRadius", this.maxCostRadius.get());
         data.put("extraBlockCost", this.extraBlockCost.get());
-        data.put("getCost", (ILuaFunction) (arg) -> MethodResult.of(this.getCost(SphereOperationContext.of(arg.getInt(0)))));
         return data;
     }
 

@@ -13,7 +13,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3dc;
-import org.joml.Quaterniondc;
 import org.joml.Vector3d;
 
 import java.util.Locale;
