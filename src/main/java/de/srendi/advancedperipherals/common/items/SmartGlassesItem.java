@@ -73,7 +73,7 @@ public class SmartGlassesItem extends ArmorItem {
         return new SmartGlassesCurio(this, stack);
     }
 
-    private boolean serverTick(ItemStack stack, ServerLevel level, Entity entity, SmartGlassesComputer computer) {
+    private boolean postInventoryTick(ItemStack stack, ServerLevel level, Entity entity, SmartGlassesComputer computer) {
         computer.setPosition(level, entity != null ? entity.blockPosition() : computer.getPosition());
 
         boolean changed = false;
@@ -104,14 +104,6 @@ public class SmartGlassesItem extends ArmorItem {
             computer.setEntity(entity);
         }
 
-        for (ComputerSide side : SmartGlassesSlot.UPGRADE_SIDES) {
-            SmartGlassesSideAccess access = computer.getSmartGlassesUpgradeAccess(side);
-            UpgradeData<IPocketUpgrade> upgrade = access.getUpgrade();
-            if (upgrade != null) {
-                upgrade.upgrade().update(access, computer.getPeripheral(side));
-            }
-        }
-
         if (computer.updateStack(stack)) {
             changed = true;
         }
@@ -124,20 +116,30 @@ public class SmartGlassesItem extends ArmorItem {
         if (!(entity instanceof LivingEntity livingEntity)) {
             return;
         }
+        SmartGlassesComputer computer = null;
         if (level instanceof ServerLevel serverLevel) {
-            SmartGlassesComputer computer = getOrCreateComputer(serverLevel, livingEntity, stack);
+            computer = getOrCreateComputer(serverLevel, livingEntity, stack);
             computer.keepAlive();
-            if (computer.updateStack(stack) && livingEntity instanceof Player player) {
+
+            for (ComputerSide side : SmartGlassesSlot.UPGRADE_SIDES) {
+                SmartGlassesSideAccess access = computer.getSmartGlassesUpgradeAccess(side);
+                UpgradeData<IPocketUpgrade> upgrade = access.getUpgrade();
+                if (upgrade != null) {
+                    upgrade.upgrade().update(access, computer.getPeripheral(side));
+                }
+            }
+        }
+        if (livingEntity.getItemBySlot(EquipmentSlot.HEAD) == stack) {
+            this.onEquippedTick(stack, level, livingEntity, false);
+        }
+        if (computer != null) {
+            if (postInventoryTick(stack, (ServerLevel) level, entity, computer) && entity instanceof Player player) {
                 player.getInventory().setChanged();
             }
         }
-        if (livingEntity.getItemBySlot(EquipmentSlot.HEAD) != stack) {
-            return;
-        }
-        this.onEquippedTick(stack, level, livingEntity);
     }
 
-    public void onEquippedTick(ItemStack stack, Level level, LivingEntity entity) {
+    public void onEquippedTick(ItemStack stack, Level level, LivingEntity entity, boolean isCurios) {
         SmartGlassesComputer computer = null;
         if (level instanceof ServerLevel serverLevel) {
             computer = getOrCreateComputer(serverLevel, entity, stack);
@@ -158,12 +160,10 @@ public class SmartGlassesItem extends ArmorItem {
             }
             moduleItem.moduleTick(level, entity, slot, glassesAccess, module);
         }
-
-        if (computer == null) {
+        if (!isCurios) {
             return;
         }
-        boolean changed = serverTick(stack, (ServerLevel) level, entity, computer);
-        if (changed && entity instanceof Player player) {
+        if (computer != null && postInventoryTick(stack, (ServerLevel) level, entity, computer) && entity instanceof Player player) {
             player.getInventory().setChanged();
         }
     }
@@ -175,7 +175,7 @@ public class SmartGlassesItem extends ArmorItem {
         }
 
         SmartGlassesComputer computer = getServerComputer(serverLevel.getServer(), stack);
-        if (computer != null && serverTick(stack, serverLevel, entity, computer)) {
+        if (computer != null && postInventoryTick(stack, serverLevel, entity, computer)) {
             entity.setItem(stack.copy());
         }
         return false;
@@ -218,7 +218,7 @@ public class SmartGlassesItem extends ArmorItem {
             computerID = NonNegativeId.getOrCreate(level.getServer(), stack, ModRegistry.DataComponents.COMPUTER_ID.get(), IDAssigner.COMPUTER);
         }
 
-        SmartGlassesComputer newComputer = new SmartGlassesComputer(
+        SmartGlassesComputer newComputer = SmartGlassesComputer.create(
             level,
             BlockPos.containing(entity.getEyePosition()),
             ServerComputer.properties(getComputerID(stack), ComputerFamily.ADVANCED)

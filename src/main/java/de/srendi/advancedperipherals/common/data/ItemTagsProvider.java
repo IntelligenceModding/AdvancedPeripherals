@@ -2,6 +2,9 @@ package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
+import de.srendi.advancedperipherals.common.addons.curios.CuriosRegistries;
+import de.srendi.advancedperipherals.common.setup.APItems;
+import de.srendi.advancedperipherals.common.setup.APTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -20,6 +23,11 @@ public class ItemTagsProvider extends TagsProvider<Item> {
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
+        this.tag(APTags.Items.SMART_GLASSES)
+            .add(APItems.SMART_GLASSES.getKey())
+            .add(APItems.SMART_GLASSES_NETHERITE.getKey());
+
         AE2Registries.registerTags(this::tag);
+        CuriosRegistries.registerTags(this::tag);
     }
 }

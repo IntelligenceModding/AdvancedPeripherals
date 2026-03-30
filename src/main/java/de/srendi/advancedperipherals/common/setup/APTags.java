@@ -14,7 +14,7 @@ public class APTags {
 
     public static class Items {
 
-        // public static final TagKey<Item> SMART_GLASSES = tag("smart_glasses"); // unused
+        public static final TagKey<Item> SMART_GLASSES = tag("smart_glasses");
 
         public static void register() {
         }

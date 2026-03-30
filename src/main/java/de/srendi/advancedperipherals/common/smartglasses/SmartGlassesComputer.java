@@ -7,6 +7,7 @@ import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.impl.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.core.TerminalSize;
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APComputerComponents;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
@@ -19,11 +20,13 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.function.BooleanSupplier;
 import java.util.stream.Stream;
 
 /**
@@ -31,6 +34,7 @@ import java.util.stream.Stream;
  */
 public class SmartGlassesComputer extends ServerComputer {
 
+    private ItemStack stack;
     @Nullable
     private Entity entity;
     private final SmartGlassesSideAccess[] sideAccesses = new SmartGlassesSideAccess[ComputerSide.values().length];
@@ -44,14 +48,9 @@ public class SmartGlassesComputer extends ServerComputer {
     private volatile boolean modulesUpdated = false;
     private volatile boolean moduleDatasUpdated = false;
 
-    public SmartGlassesComputer(ServerLevel level, BlockPos pos, ServerComputer.Properties properties, ItemStack stack) {
-        super(
-            level,
-            pos,
-            properties
-                .terminalSize(new TerminalSize(39, 13))
-                .addComponent(APComputerComponents.SMARTGLASSES, Boolean.TRUE)
-        );
+    protected SmartGlassesComputer(ServerLevel level, BlockPos pos, ServerComputer.Properties properties, ItemStack stack) {
+        super(level, pos, properties);
+        this.stack = stack;
         this.moduleDatas = stack.getOrDefault(APDataComponents.MODULE_DATAS.get(), DataComponentPatch.EMPTY);
         for (ComputerSide side : ComputerSide.values()) {
             this.sideAccesses[side.ordinal()] = new SmartGlassesSideAccess(side, this);
@@ -86,6 +85,20 @@ public class SmartGlassesComputer extends ServerComputer {
         this.setPeripheral(ComputerSide.BACK, this.modulePeripheral);
     }
 
+    public static SmartGlassesComputer create(ServerLevel level, BlockPos pos, ServerComputer.Properties properties, ItemStack stack) {
+        IsEquippedWrapper wrapper = new IsEquippedWrapper();
+        SmartGlassesComputer computer = new SmartGlassesComputer(
+            level,
+            pos,
+            properties
+                .terminalSize(new TerminalSize(39, 13))
+                .addComponent(APComputerComponents.SMARTGLASSES_EQUIPPED, wrapper),
+            stack
+        );
+        wrapper.computer = computer;
+        return computer;
+    }
+
     @Nullable
     public Entity getEntity() {
         Entity entity = this.entity;
@@ -95,8 +108,17 @@ public class SmartGlassesComputer extends ServerComputer {
         return entity;
     }
 
+    public boolean isEquipped() {
+        Entity entity = this.getEntity();
+        if (entity == null || !(entity instanceof LivingEntity livingEntity)) {
+            return false;
+        }
+        return SmartGlassesItem.getEquipped(livingEntity) == this.stack;
+    }
+
     public boolean updateStack(ItemStack stack) {
         boolean changed = false;
+        this.stack = stack;
         ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
         if (this.upgradesUpdated) {
             this.upgradesUpdated = false;
@@ -283,6 +305,15 @@ public class SmartGlassesComputer extends ServerComputer {
     private static void checkUpgradeSide(ComputerSide side) throws IllegalArgumentException {
         if (side == ComputerSide.BACK) {
             throw new IllegalArgumentException("upgrade side cannot be BACK");
+        }
+    }
+
+    private static final class IsEquippedWrapper implements BooleanSupplier {
+        private SmartGlassesComputer computer = null;
+
+        @Override
+        public boolean getAsBoolean() {
+            return this.computer != null && this.computer.isEquipped();
         }
     }
 }
