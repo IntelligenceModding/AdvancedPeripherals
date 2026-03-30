@@ -70,7 +70,7 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
 
         BlockEntity entity = level.getBlockEntity(context.getClickedPos());
         if (entity instanceof AbstractComputerBlockEntity blockEntity) {
-            bind(player, context.getItemInHand(), context.getLevel(), blockEntity);
+            bind(player, context.getItemInHand(), blockEntity);
         } else {
             clear(player, context.getItemInHand());
         }
@@ -128,7 +128,6 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
             return;
         }
         PacketDistributor.sendToServer(GlassesHotkeyPacket.KEYBOARD_OPEN_PACKET);
-        return;
     }
 
     @Override
@@ -139,7 +138,7 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
         }
     }
 
-    private void bind(Player player, ItemStack stack, Level world, AbstractComputerBlockEntity computer) {
+    private void bind(Player player, ItemStack stack, AbstractComputerBlockEntity computer) {
         stack.remove(APDataComponents.BINDING_COMPUTER.get());
 
         int id = computer.getComputerID();

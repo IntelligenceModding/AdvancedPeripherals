@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import java.util.Locale;
+
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -171,7 +173,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
             int index = Math.min(Math.max(modeInd.intValue(), 0), 2);
             detectionType = DetectionType.values()[index];
         } else if (mode instanceof String modeStr) {
-            detectionType = switch (modeStr.toUpperCase()) {
+            detectionType = switch (modeStr.toUpperCase(Locale.ROOT)) {
                 case "BLOCK" -> DetectionType.BLOCK;
                 case "ENTITY" -> DetectionType.ENTITY;
                 case "BOTH" -> DetectionType.BOTH;

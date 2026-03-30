@@ -13,7 +13,7 @@ public interface IStorageSystemChemicalHandler extends IChemicalHandler {
      *
      * @param filter The parsed filter
      * @param processor The extractation processor
-     * @param simulate Should this action be simulated
+     * @param action Should this action be simulated
      * @return extracted chemical amount
      */
     long extractChemicals(ChemicalFilter filter, StorageProcessor.Large<ChemicalStack> processor, Action action);

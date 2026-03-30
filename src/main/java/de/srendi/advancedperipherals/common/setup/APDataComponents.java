@@ -109,7 +109,7 @@ public class APDataComponents {
 
     private static <T extends Enum<T> & StringRepresentable> DeferredHolder<DataComponentType<?>, DataComponentType<T>> registerEnum(String name, T... values) {
         return simple(name, builder -> builder.persistent(StringRepresentable.fromEnum(() -> values))
-                .networkSynchronized(NeoForgeStreamCodecs.enumCodec(values[0].getClass())));
+                .networkSynchronized(NeoForgeStreamCodecs.enumCodec(values[0].getDeclaringClass())));
     }
 
     private static DeferredHolder<DataComponentType<?>, DataComponentType<ItemStackStorage>> registerItemStackStorage(String name) {

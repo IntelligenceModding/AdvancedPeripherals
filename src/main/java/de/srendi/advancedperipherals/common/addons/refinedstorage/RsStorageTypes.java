@@ -5,28 +5,28 @@ import com.refinedmods.refinedstorage.common.storage.StorageTypes;
 import com.refinedmods.refinedstorage.mekanism.ChemicalResourceType;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 
-import java.util.function.Supplier;
-
 /**
  * To better support third party RS addons and to prevent any jvm loading issues when third party addons are not loaded
  */
 public enum RsStorageTypes {
+    ITEM {
+        @Override
+        public StorageType getStorageType() {
+            return StorageTypes.ITEM;
+        }
+    },
+    FLUID {
+        @Override
+        public StorageType getStorageType() {
+            return StorageTypes.FLUID;
+        }
+    },
+    CHEMICAL {
+        @Override
+        public StorageType getStorageType() {
+            return APAddon.REFINEDSTORAGE_MEKANISM.isLoaded() ? ChemicalResourceType.STORAGE_TYPE : null;
+        }
+    };
 
-    ITEM(() -> StorageTypes.ITEM),
-    FLUID(() -> StorageTypes.FLUID),
-    CHEMICAL(() -> {
-        if (APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return ChemicalResourceType.STORAGE_TYPE;
-        return null;
-    });
-
-    private final Supplier<StorageType> storageType;
-
-    RsStorageTypes(Supplier<StorageType> storageType) {
-        this.storageType = storageType;
-    }
-
-    public StorageType getStorageType() {
-        return storageType.get();
-    }
+    public abstract StorageType getStorageType();
 }

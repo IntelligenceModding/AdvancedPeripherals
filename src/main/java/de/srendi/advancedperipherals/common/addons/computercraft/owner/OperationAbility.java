@@ -21,8 +21,6 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     private final Map<String, IPeripheralOperation<?>> allowedOperations = new HashMap<>();
     private final IPeripheralOwner owner;
 
-    private static final String COOLDOWNS_TAG = "cooldowns";
-
     public OperationAbility(IPeripheralOwner owner) {
         this.owner = owner;
     }

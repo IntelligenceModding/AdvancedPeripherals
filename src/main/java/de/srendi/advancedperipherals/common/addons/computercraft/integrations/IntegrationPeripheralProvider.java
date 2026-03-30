@@ -22,7 +22,7 @@ public class IntegrationPeripheralProvider {
                 AdvancedPeripherals.LOGGER.warn("Failed to load integration for {}", mod);
                 continue;
             }
-            Runnable runnable = (Runnable) (integration.get());
+            Runnable runnable = (Runnable) integration.get();
             AdvancedPeripherals.LOGGER.info("Successfully loaded integration for {}", mod);
             runnable.run();
         }

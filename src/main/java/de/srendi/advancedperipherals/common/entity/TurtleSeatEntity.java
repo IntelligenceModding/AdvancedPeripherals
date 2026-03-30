@@ -32,11 +32,8 @@ import org.jetbrains.annotations.Nullable;
 
 // TODO: better rendering
 public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen {
-    private static final int ANIM_DURATION = 8; // Should be same as TurtleBrain.ANIM_DURATION
-
     private ITurtleAccess turtle = null;
     private int life = 0;
-    private int moveProg = 0;
 
     private InputKeySet inputs = InputKeySet.NONE;
     private InputKeySet oldInputs = InputKeySet.NONE;
@@ -181,7 +178,6 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
                     return;
                 }
                 ServerComputer computer = tile.createServerComputer();
-                BlockState state = tile.getBlockState();
                 ItemStack stack = new ItemStack(tile.getBlockState().getBlock());
                 stack.applyComponents(tile.collectComponents());
                 PlatformHelper.get().openMenu(player, tile.getName(), tile, new ComputerContainerData(computer, stack));

@@ -69,16 +69,18 @@ public class SlotCondition {
      * @return returns true if the item is valid
      */
     public boolean isValid(ItemStack stack) {
-        boolean valid = true;
-        if (!neededTags.isEmpty()) {
-            for (TagKey<?> tag : neededTags) {
-                if (stack.getTags().noneMatch(tag::equals)) valid = false;
+        if (neededTags.isEmpty()) {
+            return true;
+        }
+        for (TagKey<?> tag : neededTags) {
+            if (stack.getTags().noneMatch(tag::equals)) {
+                return false;
             }
         }
-        if (!neededItems.isEmpty() && (!neededItems.contains(stack.getItem())))
-            valid = false;
-
-        return valid;
+        if (!neededItems.contains(stack.getItem())) {
+            return false;
+        }
+        return true;
     }
 
 }

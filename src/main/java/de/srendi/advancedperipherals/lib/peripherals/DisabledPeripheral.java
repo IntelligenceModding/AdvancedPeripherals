@@ -54,6 +54,7 @@ public class DisabledPeripheral implements IDynamicPeripheral {
         return this.basePeripheral.getTarget();
     }
 
+    @SuppressWarnings("NonOverridingEquals")
     @Override
     public boolean equals(@Nullable IPeripheral other) {
         return other instanceof DisabledPeripheral disabled && this.basePeripheral.equals(disabled.basePeripheral);

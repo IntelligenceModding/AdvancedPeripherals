@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -64,7 +63,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
-        if (plugins == null) plugins = new LinkedList<>();
+        if (plugins == null) plugins = new ArrayList<>();
         plugins.add(plugin);
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {
@@ -105,6 +104,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         attachedComputers.remove(computer);
     }
 
+    @SuppressWarnings("NonOverridingEquals")
     @Override
     public boolean equals(@Nullable IPeripheral iPeripheral) {
         return Objects.equals(this, iPeripheral);

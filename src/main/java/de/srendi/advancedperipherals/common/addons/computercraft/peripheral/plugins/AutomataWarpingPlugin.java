@@ -28,6 +28,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -191,22 +192,14 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @LuaFunction
     public final MethodResult portalShipPrepare(IArguments arguments) throws LuaException {
         Direction direction;
-        switch (arguments.optString(0).orElse("").toLowerCase()) {
-            case "up":
-            case "top":
-                direction = Direction.UP;
-                break;
-            case "down":
-            case "bottom":
-                direction = Direction.DOWN;
-                break;
-            case "front":
-            case "":
-                direction = null;
-                break;
-            default:
+        switch (arguments.optString(0).orElse("").toLowerCase(Locale.ROOT)) {
+            case "up", "top" -> direction = Direction.UP;
+            case "down", "bottom" -> direction = Direction.DOWN;
+            case "front", "" -> direction = null;
+            default -> {
                 return MethodResult.of(null, "Direction can only be 'up', 'top', 'down', 'bottom', or 'front'");
-        }
+            }
+        };
 
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         ITurtleAccess turtle = owner.getTurtle();

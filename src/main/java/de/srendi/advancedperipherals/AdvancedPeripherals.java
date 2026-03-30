@@ -144,13 +144,13 @@ public class AdvancedPeripherals {
         event.registerItem(MediaCapability.get(), (stack, ignored) -> MountMedia.COMPUTER, smartGlasses);
         event.registerItem(
             Capabilities.ItemHandler.ITEM,
-            (stack, ignored) -> ((SmartGlassesItem) (stack.getItem())).createItemHandlerCap(stack),
+            (stack, ignored) -> ((SmartGlassesItem) stack.getItem()).createItemHandlerCap(stack),
             smartGlasses
         );
         if (APAddon.CURIOS.isLoaded()) {
             event.registerItem(
                 CuriosCapability.ITEM,
-                (stack, ignored) -> (ICurio) (((SmartGlassesItem) (stack.getItem())).createCurioCap(stack)),
+                (stack, ignored) -> (ICurio) ((SmartGlassesItem) stack.getItem()).createCurioCap(stack),
                 smartGlasses
             );
         }

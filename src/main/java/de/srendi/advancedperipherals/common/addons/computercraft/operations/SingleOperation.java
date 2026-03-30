@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
@@ -64,10 +65,10 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
         data.put("type", getClass().getName());
         data.put("baseCooldown", cooldown.get());
         data.put("baseCost", cost.get());
-        data.put("distanceCooldownPolicy", distanceCooldownPolicy.name().toLowerCase());
-        data.put("countCooldownPolicy", countCooldownPolicy.name().toLowerCase());
-        data.put("distanceCostPolicy", distanceCostPolicy.name().toLowerCase());
-        data.put("countCostPolicy", countCostPolicy.name().toLowerCase());
+        data.put("distanceCooldownPolicy", distanceCooldownPolicy.name().toLowerCase(Locale.ROOT));
+        data.put("countCooldownPolicy", countCooldownPolicy.name().toLowerCase(Locale.ROOT));
+        data.put("distanceCostPolicy", distanceCostPolicy.name().toLowerCase(Locale.ROOT));
+        data.put("countCostPolicy", countCostPolicy.name().toLowerCase(Locale.ROOT));
         return data;
     }
 

@@ -426,7 +426,7 @@ public class LuaConverter {
             throw new LuaException("Position should be numbers");
         }
         // Use round here in case of 0.1 + 0.2 calculation
-        return new BlockPos((int) (Math.round(x.doubleValue())), (int) (Math.round(y.doubleValue())), (int) (Math.round(z.doubleValue())));
+        return new BlockPos((int) Math.round(x.doubleValue()), (int) Math.round(y.doubleValue()), (int) Math.round(z.doubleValue()));
     }
 
     public static BlockPos convertToBlockPos(BlockPos center, Map<?, ?> table) throws LuaException {

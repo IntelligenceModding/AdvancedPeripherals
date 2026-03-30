@@ -31,7 +31,7 @@ public class RSFluidHandler implements IStorageSystemFluidHandler {
             return 0;
         }
         // should never overflow
-        return (int) (component.insert(VariantUtil.ofFluidStack(resource), resource.getAmount(), action.simulate() ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY));
+        return (int) component.insert(VariantUtil.ofFluidStack(resource), resource.getAmount(), action.simulate() ? Action.SIMULATE : Action.EXECUTE, Actor.EMPTY);
     }
 
     @Override

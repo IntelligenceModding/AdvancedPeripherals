@@ -344,9 +344,13 @@ tasks.withType(JavaCompile).configureEach {
         disable(
             "EffectivelyPrivate",
             "EnumOrdinal",
+            "FutureReturnValueIgnored",
             "ImmutableEnumChecker",
             "MissingSummary",
+            "MutablePublicArray",
             "ReferenceEquality",
+
+            "StringSplitter",
         )
         check("MissingOverride", CheckSeverity.ERROR)
     }

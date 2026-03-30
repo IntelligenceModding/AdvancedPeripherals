@@ -38,7 +38,7 @@ public class MEFluidHandler implements IStorageSystemFluidHandler {
         }
         AEFluidKey itemKey = AEFluidKey.of(resource.getFluid());
         // should never overflow
-        return (int) (storageMonitor.insert(itemKey, resource.getAmount(), action.simulate() ? Actionable.SIMULATE : Actionable.MODULATE, actionSource));
+        return (int) storageMonitor.insert(itemKey, resource.getAmount(), action.simulate() ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
     }
 
     @Override

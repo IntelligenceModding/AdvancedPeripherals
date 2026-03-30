@@ -12,8 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class TurtleChunkyUpgrade extends PeripheralTurtleUpgrade<ChunkyPeripheral> {
-    private int updateTick = 0;
-
     public TurtleChunkyUpgrade(ItemStack stack) {
         super(CCRegistration.ID.CHUNKY_TURTLE, stack);
     }
