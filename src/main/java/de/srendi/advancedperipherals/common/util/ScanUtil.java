@@ -8,7 +8,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.function.BiConsumer;
 
-public class ScanUtils {
+public class ScanUtil {
     public static void traverseBlocks(Level world, Vec3 center, int radius, BiConsumer<BlockState, BlockPos> consumer) {
         final int x = Mth.floor(center.x), y = Mth.floor(center.y), z = Mth.floor(center.z);
         final int minX = x - radius, maxX = x + radius;

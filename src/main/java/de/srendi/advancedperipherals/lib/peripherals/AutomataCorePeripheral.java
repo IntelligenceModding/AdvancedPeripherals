@@ -50,7 +50,7 @@ public abstract class AutomataCorePeripheral extends BasePeripheral<TurtlePeriph
     }
 
     @Override
-    public Map<String, Object> getPeripheralConfiguration() {
+    protected Map<String, Object> getPeripheralConfiguration() {
         Map<String, Object> data = super.getPeripheralConfiguration();
         data.put("interactionRadius", getInteractionRadius());
         return data;

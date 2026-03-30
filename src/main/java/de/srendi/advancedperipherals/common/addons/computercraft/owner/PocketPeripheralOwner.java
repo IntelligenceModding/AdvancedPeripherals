@@ -21,18 +21,24 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3d;
-import org.joml.Quaterniond;
-import org.joml.Quaterniondc;
+import org.joml.Matrix3dc;
 
 public class PocketPeripheralOwner extends BasePeripheralOwner {
     private final IPocketAccess pocket;
 
-    public PocketPeripheralOwner(IPocketAccess pocket) {
+    protected PocketPeripheralOwner(IPocketAccess pocket) {
         super();
         this.pocket = pocket;
         if (APConfig.PERIPHERALS_CONFIG.disablePocketFuelConsumption.get()) {
             attachAbility(PeripheralOwnerAbility.FUEL, new InfinitePocketFuelAbility(this));
         }
+    }
+
+    public static PocketPeripheralOwner of(IPocketAccess pocket) {
+        if (pocket instanceof SmartGlassesSideAccess access) {
+            return new SmartGlassesPeripheralOwner(access);
+        }
+        return new PocketPeripheralOwner(pocket);
     }
 
     @Override
@@ -52,12 +58,6 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Override
     @NotNull
     public Vec3 getCenterPos() {
-        if (pocket instanceof SmartGlassesSideAccess) {
-            Entity owner = pocket.getEntity();
-            if (owner != null) {
-                return owner.getEyePosition();
-            }
-        }
         return pocket.getPosition();
     }
 
@@ -86,19 +86,20 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
 
     @Override
     @NotNull
-    public Quaterniondc getOrientation() {
+    public Matrix3dc getOrientation() {
         Entity owner = pocket.getEntity();
         if (owner == null) {
-            return new Quaterniond();
+            return new Matrix3d();
         }
-        Vec3 front = owner.getLookAngle();
-        Vec3 up = owner.getUpVector(1.0f);
-        Vec3 right = front.cross(up);
-        return new Quaterniond().setFromNormalized(new Matrix3d(
-            right.x, up.x, -front.x,
-            right.y, up.y, -front.y,
-            right.z, up.z, -front.z
-        ));
+        // Note: Pocket computer have no sense about pitch since player always hold it flatly.
+        float yRot = owner.getYRot();
+        Vec3 front = Vec3.directionFromRotation(0, yRot);
+        Vec3 right = Vec3.directionFromRotation(0, (yRot - 90) % 360);
+        return new Matrix3d(
+            right.x, right.y, right.z,
+            0, 1, 0,
+            front.x, front.y, front.z
+        );
     }
 
     @Override

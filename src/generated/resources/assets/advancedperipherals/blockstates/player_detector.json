@@ -3,21 +3,21 @@
     "orientation=down_east": {
       "model": "advancedperipherals:block/player_detector",
       "x": 90,
-      "y": 270
+      "y": 90
     },
     "orientation=down_north": {
+      "model": "advancedperipherals:block/player_detector",
+      "x": 90
+    },
+    "orientation=down_south": {
       "model": "advancedperipherals:block/player_detector",
       "x": 90,
       "y": 180
     },
-    "orientation=down_south": {
-      "model": "advancedperipherals:block/player_detector",
-      "x": 90
-    },
     "orientation=down_west": {
       "model": "advancedperipherals:block/player_detector",
       "x": 90,
-      "y": 90
+      "y": 270
     },
     "orientation=east_up": {
       "model": "advancedperipherals:block/player_detector",

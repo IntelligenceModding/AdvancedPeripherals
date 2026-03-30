@@ -21,9 +21,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix3f;
-import org.joml.Quaterniond;
-import org.joml.Quaterniondc;
+import org.joml.Matrix3d;
+import org.joml.Matrix3dc;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -85,19 +84,63 @@ public interface IPeripheralOwner {
 
     @NotNull FrontAndTop getFrontAndTop();
 
+    /**
+     * default implementation respect CC:Tweaked turtle's relative direction rule:
+     * <pre>{@code
+     * |      BACK
+     * | RIGHT O LEFT
+     * |     FRONT
+     * }</pre>
+     *
+     * Computer-like block's should follow different rule:
+     * <pre>{@code
+     * |     BACK
+     * | LEFT O RIGHT
+     * |    FRONT
+     * }</pre>
+     *
+     * The behaviour can be fixed for computer-like blocks by simply overriding this method and get the opposite direction:
+     * <pre>{@code
+     * @Override
+     * public Direction getRightDirection() {
+     *     return [IPeripheralOwner.]super.getRightDirection().getOpposite();
+     * }
+     * }</pre>
+     *
+     * @return the relative right direction based on front and top
+     */
     @NotNull
-    default Quaterniondc getOrientation() {
+    default Direction getRightDirection() {
+        return switch (this.getFrontAndTop()) {
+            case DOWN_EAST -> Direction.SOUTH;
+            case DOWN_NORTH -> Direction.EAST;
+            case DOWN_SOUTH -> Direction.WEST;
+            case DOWN_WEST -> Direction.NORTH;
+            case UP_EAST -> Direction.NORTH;
+            case UP_NORTH -> Direction.WEST;
+            case UP_SOUTH -> Direction.EAST;
+            case UP_WEST -> Direction.SOUTH;
+            case WEST_UP -> Direction.NORTH;
+            case EAST_UP -> Direction.SOUTH;
+            case NORTH_UP -> Direction.EAST;
+            case SOUTH_UP -> Direction.WEST;
+        };
+    }
+
+    @NotNull
+    default Matrix3dc getOrientation() {
         FrontAndTop fat = this.getFrontAndTop();
         Direction front = fat.front();
         Direction up = fat.top();
+        Direction right = this.getRightDirection();
         int fx = front.getStepX(), fy = front.getStepY(), fz = front.getStepZ();
         int ux = up.getStepX(), uy = up.getStepY(), uz = up.getStepZ();
-        int rx = fy * uz - fz * uy, ry = fz * ux - fx * uz, rz = fx * uy - fy * ux;
-        return new Quaterniond().setFromNormalized(new Matrix3f(
-            rx, ux, -fx,
-            ry, uy, -fy,
-            rz, uz, -fz
-        ));
+        int rx = right.getStepX(), ry = right.getStepY(), rz = right.getStepZ();
+        return new Matrix3d(
+            rx, ry, rz,
+            ux, uy, uz,
+            fx, fy, fz
+        );
     }
 
     @Nullable Entity getHoldingEntity();

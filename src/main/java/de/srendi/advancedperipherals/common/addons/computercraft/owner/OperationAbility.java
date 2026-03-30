@@ -130,9 +130,9 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     }
 
     @Override
-    public void collectConfiguration(Map<String, Object> dict) {
+    public void collectConfiguration(Map<String, Object> data) {
         for (IPeripheralOperation<?> operation : allowedOperations.values()) {
-            dict.put(operation.settingsName(), operation.computerDescription());
+            data.put(operation.settingsName(), operation.computerDescription());
         }
     }
 

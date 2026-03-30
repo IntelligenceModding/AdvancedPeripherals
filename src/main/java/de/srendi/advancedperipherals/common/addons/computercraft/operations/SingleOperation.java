@@ -4,9 +4,11 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.function.UnaryOperator;
+import java.util.function.IntUnaryOperator;
+
+import dan200.computercraft.api.lua.ILuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
 
 public enum SingleOperation implements IPeripheralOperation<SingleOperationContext> {
     DIG(1000, 1),
@@ -62,13 +64,16 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     public Map<String, Object> computerDescription() {
         Map<String, Object> data = new HashMap<>();
         data.put("name", settingsName());
-        data.put("type", getClass().getName());
+        data.put("type", "single_operation");
         data.put("baseCooldown", cooldown.get());
         data.put("baseCost", cost.get());
-        data.put("distanceCooldownPolicy", distanceCooldownPolicy.name().toLowerCase(Locale.ROOT));
-        data.put("countCooldownPolicy", countCooldownPolicy.name().toLowerCase(Locale.ROOT));
-        data.put("distanceCostPolicy", distanceCostPolicy.name().toLowerCase(Locale.ROOT));
-        data.put("countCostPolicy", countCostPolicy.name().toLowerCase(Locale.ROOT));
+        data.put("distanceCooldownPolicy", distanceCooldownPolicy.getName());
+        data.put("countCooldownPolicy", countCooldownPolicy.getName());
+        data.put("distanceCostPolicy", distanceCostPolicy.getName());
+        data.put("countCostPolicy", countCostPolicy.getName());
+        data.put("getCost",
+            (ILuaFunction) (arg) -> MethodResult.of(this.getCost(new SingleOperationContext(arg.getInt(0), arg.getInt(1))))
+        );
         return data;
     }
 
@@ -79,33 +84,45 @@ public enum SingleOperation implements IPeripheralOperation<SingleOperationConte
     }
 
     public enum DistancePolicy {
-        IGNORED(d -> 1),
-        LINEAR(d -> d),
-        SQRT(d -> (int) Math.sqrt(d));
+        IGNORED("ignored", d -> 1),
+        LINEAR("linear", d -> d),
+        SQRT("sqrt", d -> (int) Math.sqrt(d));
 
-        private final UnaryOperator<Integer> factorFunction;
+        private final String name;
+        private final IntUnaryOperator factorFunction;
 
-        DistancePolicy(UnaryOperator<Integer> factorFunction) {
+        DistancePolicy(String name, IntUnaryOperator factorFunction) {
+            this.name = name;
             this.factorFunction = factorFunction;
         }
 
+        public String getName() {
+            return this.name;
+        }
+
         public int getFactor(int distance) {
-            return factorFunction.apply(distance);
+            return factorFunction.applyAsInt(distance);
         }
     }
 
     public enum CountPolicy {
-        IGNORED(c -> 1),
-        MULTIPLY(c -> c);
+        IGNORED("ignored", c -> 1),
+        MULTIPLY("multiply", c -> c);
 
-        private final UnaryOperator<Integer> factorFunction;
+        private final String name;
+        private final IntUnaryOperator factorFunction;
 
-        CountPolicy(UnaryOperator<Integer> factorFunction) {
+        CountPolicy(String name, IntUnaryOperator factorFunction) {
+            this.name = name;
             this.factorFunction = factorFunction;
         }
 
+        public String getName() {
+            return this.name;
+        }
+
         public int getFactor(int count) {
-            return factorFunction.apply(count);
+            return factorFunction.applyAsInt(count);
         }
     }
 }

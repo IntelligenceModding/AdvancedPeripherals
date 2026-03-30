@@ -20,6 +20,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3d;
+import org.joml.Matrix3dc;
 import org.joml.Quaterniond;
 import org.joml.Quaterniondc;
 
@@ -82,16 +83,16 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     @NotNull
-    public Quaterniondc getOrientation() {
+    public Matrix3dc getOrientation() {
         Entity owner = computer.getEntity();
         Vec3 front = owner.getLookAngle();
         Vec3 up = owner.getUpVector(1.0f);
         Vec3 right = front.cross(up);
-        return new Quaterniond().setFromNormalized(new Matrix3d(
-            right.x, up.x, -front.x,
-            right.y, up.y, -front.y,
-            right.z, up.z, -front.z
-        ));
+        return new Matrix3d(
+            right.x, right.y, right.z,
+            up.x, up.y, up.z,
+            front.x, front.y, front.z
+        );
     }
 
     @Override

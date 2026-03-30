@@ -14,8 +14,9 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPer
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.common.util.ScanUtils;
+import de.srendi.advancedperipherals.common.util.ScanUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -29,8 +30,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Quaterniondc;
-import org.joml.Vector3d;
+import org.joml.Matrix3dc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,36 +61,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     public GeoScannerPeripheral(IPocketAccess pocket) {
-        this(new PocketPeripheralOwner(pocket));
-    }
-
-    private static List<Map<String, Object>> scan(IPeripheralOwner owner, int radius) {
-        List<Map<String, Object>> result = new ArrayList<>();
-        Vec3 center = owner.getCenterPos();
-        Quaterniondc orientation = owner.getOrientation();
-        Vector3d rpos = new Vector3d();
-        ScanUtils.traverseBlocks(owner.getLevel(), center, radius, (state, pos) -> {
-            Map<String, Object> data = new HashMap<>(LuaConverter.blockStateToLua(state));
-            double x = pos.getX() + 0.5 - center.x;
-            double y = pos.getY() + 0.5 - center.y;
-            double z = pos.getZ() + 0.5 - center.z;
-            data.put("x", x);
-            data.put("y", y);
-            data.put("z", z);
-            orientation.transform(rpos.set(x, y, z));
-            data.put("r", rpos.x);
-            data.put("u", rpos.y);
-            data.put("f", -rpos.z);
-            result.add(data);
-        });
-
-        return result;
-    }
-
-    private static int estimateCost(int radius) {
-        if (radius > SCAN_BLOCKS.getMaxCostRadius()) return -1;
-
-        return SCAN_BLOCKS.getCost(SphereOperationContext.of(radius));
+        this(PocketPeripheralOwner.of(pocket));
     }
 
     @Override
@@ -98,13 +69,15 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         return APConfig.PERIPHERALS_CONFIG.enableGeoScanner.get();
     }
 
-    @LuaFunction
-    public final MethodResult cost(int radius) {
-        int estimatedCost = estimateCost(radius);
-        if (estimatedCost < 0) {
-            return MethodResult.of(null, "Radius is exceed max value");
-        }
-        return MethodResult.of(estimatedCost);
+    @LuaFunction(mainThread = true)
+    public final MethodResult scanBlocks(@NotNull IArguments arguments) throws LuaException {
+        int radius = arguments.getInt(0);
+        return withOperation(SCAN_BLOCKS, new SphereOperationContext(radius), context -> {
+            if (context.getRadius() > SCAN_BLOCKS.getMaxCostRadius()) {
+                return MethodResult.of(null, "Radius is exceed max value");
+            }
+            return null;
+        }, context -> MethodResult.of(scan(getPeripheralOwner(), context.getRadius())), null);
     }
 
     @LuaFunction(mainThread = true)
@@ -140,14 +113,19 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
         }, null);
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult scan(@NotNull IArguments arguments) throws LuaException {
-        int radius = arguments.getInt(0);
-        return withOperation(SCAN_BLOCKS, new SphereOperationContext(radius), context -> {
-            if (context.getRadius() > SCAN_BLOCKS.getMaxCostRadius()) {
-                return MethodResult.of(null, "Radius is exceed max value");
-            }
-            return null;
-        }, context -> MethodResult.of(scan(getPeripheralOwner(), context.getRadius())), null);
+    private static List<Map<String, Object>> scan(IPeripheralOwner owner, int radius) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        Vec3 center = owner.getCenterPos();
+        Matrix3dc orientation = owner.getOrientation();
+        ScanUtil.traverseBlocks(owner.getLevel(), center, radius, (state, pos) -> {
+            Map<String, Object> data = new HashMap<>(LuaConverter.blockStateToLua(state));
+            double x = pos.getX() + 0.5 - center.x;
+            double y = pos.getY() + 0.5 - center.y;
+            double z = pos.getZ() + 0.5 - center.z;
+            CoordUtil.putRelativeCoords(data, x, y, z, orientation);
+            result.add(data);
+        });
+
+        return result;
     }
 }

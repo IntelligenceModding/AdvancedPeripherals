@@ -58,7 +58,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     public ChatBoxPeripheral(IPocketAccess pocket) {
-        this(new PocketPeripheralOwner(pocket));
+        this(PocketPeripheralOwner.of(pocket));
     }
 
     @Override

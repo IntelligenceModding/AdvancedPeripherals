@@ -41,8 +41,8 @@ public enum SimpleFreeOperation implements IPeripheralOperation<Object> {
     public Map<String, Object> computerDescription() {
         Map<String, Object> data = new HashMap<>();
         data.put("name", settingsName());
-        data.put("type", getClass().getSimpleName());
-        data.put("cooldown", cooldown.get());
+        data.put("type", "simple_free_operation");
+        data.put("defaultCooldown", this.cooldown.get());
         return data;
     }
 }

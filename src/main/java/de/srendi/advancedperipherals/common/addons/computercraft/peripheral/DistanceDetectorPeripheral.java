@@ -53,7 +53,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
     }
 
     public DistanceDetectorPeripheral(IPocketAccess pocket) {
-        this(new PocketPeripheralOwner(pocket));
+        this(PocketPeripheralOwner.of(pocket));
     }
 
     @Override

@@ -12,8 +12,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3dc;
+import org.joml.Quaterniondc;
+import org.joml.Vector3d;
 
 import java.util.Locale;
+import java.util.Map;
 
 public class CoordUtil {
 
@@ -177,5 +181,26 @@ public class CoordUtil {
             return ComputerSide.TOP;
         }
         return ComputerSide.BOTTOM;
+    }
+
+    /**
+     * put "x", "y", "z", and/or "f", "r", "u" coords based on configuration
+     * @see putFRUCoords
+     */
+    public static void putRelativeCoords(Map<? super String, ? super Double> data, double x, double y, double z, Matrix3dc orientation) {
+        data.put("x", x);
+        data.put("y", y);
+        data.put("z", z);
+        putFRUCoords(data, x, y, z, orientation);
+    }
+
+    /**
+     * put "f", "r", "u" coords into the map
+     */
+    public static void putFRUCoords(Map<? super String, ? super Double> data, double x, double y, double z, Matrix3dc orientation) {
+        Vector3d rpos = orientation.transformTranspose(new Vector3d(x, y, z));
+        data.put("r", rpos.x);
+        data.put("u", rpos.y);
+        data.put("f", rpos.z);
     }
 }

@@ -84,6 +84,12 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlock
     }
 
     @Override
+    @NotNull
+    public Direction getRightDirection() {
+        return super.getRightDirection().getOpposite();
+    }
+
+    @Override
     @Nullable
     public Entity getHoldingEntity() {
         return null;

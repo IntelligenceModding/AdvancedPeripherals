@@ -15,9 +15,11 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,12 +37,9 @@ import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
@@ -67,17 +66,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     }
 
     public EnvironmentDetectorPeripheral(IPocketAccess pocket) {
-        this(new PocketPeripheralOwner(pocket));
-    }
-
-    private static int estimateCost(int radius) {
-        if (radius <= SCAN_ENTITIES.getMaxFreeRadius()) {
-            return 0;
-        }
-        if (radius > SCAN_ENTITIES.getMaxCostRadius()) {
-            return -1;
-        }
-        return SCAN_ENTITIES.getCost(SphereOperationContext.of(radius));
+        this(PocketPeripheralOwner.of(pocket));
     }
 
     public static void addIntegrationPlugin(Function<IPeripheralOwner, IPeripheralPlugin> plugin) {
@@ -141,62 +130,47 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     }
 
     @LuaFunction(mainThread = true)
-    public final Set<String> listDimensions() {
-        Set<String> dimensions = new HashSet<>();
-        getLevel().getServer().getAllLevels().forEach(serverWorld -> dimensions.add(serverWorld.dimension().location().getPath()));
-        return dimensions;
+    public final List<String> listDimensions() {
+        return getLevel().getServer().levelKeys().stream().map(ResourceKey::location).map(ResourceLocation::toString).toList();
     }
 
     @LuaFunction(mainThread = true)
-    public final int getMoonId() {
-        return getCurrentMoonPhase().keySet().toArray(new Integer[0])[0];
+    public final MethodResult getMoon() {
+        Pair<Integer, String> moon = getCurrentMoonPhase();
+        return MethodResult.of(moon.getLeft(), moon.getRight());
     }
 
-    @LuaFunction(mainThread = true)
-    public final boolean isMoon(int phase) {
-        return getCurrentMoonPhase().containsKey(phase);
-    }
-
-    @LuaFunction(mainThread = true)
-    public final String getMoonName() {
-        String[] name = getCurrentMoonPhase().values().toArray(new String[0]);
-        return name[0];
-    }
-
-    private Map<Integer, String> getCurrentMoonPhase() {
-        Map<Integer, String> moon = new HashMap<>();
+    private Pair<Integer, String> getCurrentMoonPhase() {
         if (getLevel().dimension() == Level.OVERWORLD) {
-            switch (getLevel().getMoonPhase()) {
-                case 0 -> moon.put(0, "Full moon");
-                case 1 -> moon.put(1, "Waning gibbous");
-                case 2 -> moon.put(2, "Third quarter");
-                case 3 -> moon.put(3, "Wanning crescent");
-                case 4 -> moon.put(4, "New moon");
-                case 5 -> moon.put(5, "Waxing crescent");
-                case 6 -> moon.put(6, "First quarter");
-                case 7 -> moon.put(7, "Waxing gibbous");
-                default -> moon.put(0, "What is a moon");
-            }
-        } else {
-            // aren't we in the overworld?
-            moon.put(0, "Moon.exe not found...");
+            return switch (getLevel().getMoonPhase()) {
+                case 0 -> Pair.of(0, "Full moon");
+                case 1 -> Pair.of(1, "Waning gibbous");
+                case 2 -> Pair.of(2, "Third quarter");
+                case 3 -> Pair.of(3, "Wanning crescent");
+                case 4 -> Pair.of(4, "New moon");
+                case 5 -> Pair.of(5, "Waxing crescent");
+                case 6 -> Pair.of(6, "First quarter");
+                case 7 -> Pair.of(7, "Waxing gibbous");
+                default -> Pair.of(0, "What is a moon");
+            };
         }
-        return moon;
+        // aren't we in the overworld?
+        return Pair.of(0, "Moon.exe not found...");
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isRaining() {
-        return getLevel().getRainLevel(0) > 0;
+        return getLevel().getRainLevel(1) > 0;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isThunder() {
-        return getLevel().getThunderLevel(0) > 0;
+        return getLevel().getThunderLevel(1) > 0;
     }
 
     @LuaFunction(mainThread = true)
     public final boolean isSunny() {
-        return getLevel().getThunderLevel(0) < 1 && getLevel().getRainLevel(0) < 1;
+        return getLevel().getThunderLevel(1) < 1 && getLevel().getRainLevel(1) < 1;
     }
 
     @LuaFunction(mainThread = true)
@@ -221,27 +195,21 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         }, null);
     }
 
-    @LuaFunction
-    public final MethodResult scanCost(int radius) {
-        int estimatedCost = estimateCost(radius);
-        if (estimatedCost < 0)
-            return MethodResult.of(null, "Radius exceeds max value");
-        return MethodResult.of(estimatedCost);
-    }
-
     @LuaFunction(mainThread = true)
     public final MethodResult canSleepHere() {
         return MethodResult.of(!getLevel().isDay());
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult canSleepPlayer(String playername) {
+    public final MethodResult canPlayerSleep(String playername) {
         Player player = getLevel().getServer().getPlayerList().getPlayerByName(playername);
-        if (player == null)
+        if (player == null) {
             return MethodResult.of(false, "player_not_online");
+        }
 
-        if (!player.level().dimensionType().bedWorks())
+        if (!player.level().dimensionType().bedWorks()) {
             return MethodResult.of(false, "not_allowed_in_dimension");
+        }
 
         CanContinueSleepingEvent evt = new CanContinueSleepingEvent(player, null);
         NeoForge.EVENT_BUS.post(evt);

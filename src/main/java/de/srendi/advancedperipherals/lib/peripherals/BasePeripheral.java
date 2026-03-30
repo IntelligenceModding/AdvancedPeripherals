@@ -122,7 +122,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         owner.setCustomName(name);
     }
 
-    public Map<String, Object> getPeripheralConfiguration() {
+    protected Map<String, Object> getPeripheralConfiguration() {
         Map<String, Object> data = new HashMap<>();
         owner.getAbilities().forEach(ability -> ability.collectConfiguration(data));
         return data;

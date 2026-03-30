@@ -1,6 +1,8 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
 import com.google.common.math.IntMath;
+import dan200.computercraft.api.lua.ILuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -48,9 +50,16 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
 
     @Override
     public int getCost(SphereOperationContext context) {
-        if (context.getRadius() <= maxFreeRadius.get()) return 0;
-        int freeBlockCount = IntMath.pow(2 * maxFreeRadius.get() + 1, 3);
-        int allBlockCount = IntMath.pow(2 * context.getRadius() + 1, 3);
+        int radius = context.getRadius();
+        int maxFreeRadius = this.maxFreeRadius.get();
+        if (radius <= maxFreeRadius) {
+            return 0;
+        }
+        if (radius > this.maxCostRadius.get()) {
+            return -1;
+        }
+        int freeBlockCount = IntMath.pow(2 * maxFreeRadius + 1, 3);
+        int allBlockCount = IntMath.pow(2 * radius + 1, 3);
         return (int) Math.floor((allBlockCount - freeBlockCount) * extraBlockCost.get());
     }
 
@@ -66,11 +75,12 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
     public Map<String, Object> computerDescription() {
         Map<String, Object> data = new HashMap<>();
         data.put("name", settingsName());
-        data.put("type", getClass().getName());
-        data.put("cooldown", cooldown.get());
-        data.put("maxFreeRadius", maxFreeRadius.get());
-        data.put("maxCostRadius", maxCostRadius.get());
-        data.put("extraBlockCost", extraBlockCost.get());
+        data.put("type", "sphere_operation");
+        data.put("defaultCooldown", this.cooldown.get());
+        data.put("maxFreeRadius", this.maxFreeRadius.get());
+        data.put("maxCostRadius", this.maxCostRadius.get());
+        data.put("extraBlockCost", this.extraBlockCost.get());
+        data.put("getCost", (ILuaFunction) (arg) -> MethodResult.of(this.getCost(SphereOperationContext.of(arg.getInt(0)))));
         return data;
     }
 

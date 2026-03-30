@@ -50,7 +50,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     public ColonyPeripheral(IPocketAccess access) {
-        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(access));
+        super(PERIPHERAL_TYPE, PocketPeripheralOwner.of(access));
     }
 
     @Override

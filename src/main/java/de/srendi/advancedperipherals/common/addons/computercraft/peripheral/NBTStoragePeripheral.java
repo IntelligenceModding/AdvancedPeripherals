@@ -33,7 +33,7 @@ public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOw
     }
 
     @Override
-    public Map<String, Object> getPeripheralConfiguration() {
+    protected Map<String, Object> getPeripheralConfiguration() {
         Map<String, Object> data = super.getPeripheralConfiguration();
         data.put("maxSize", APConfig.PERIPHERALS_CONFIG.nbtStorageMaxSize.get());
         return data;

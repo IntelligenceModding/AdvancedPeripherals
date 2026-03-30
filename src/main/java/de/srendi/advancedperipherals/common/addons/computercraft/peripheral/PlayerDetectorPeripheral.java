@@ -40,7 +40,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     public PlayerDetectorPeripheral(IPocketAccess pocket) {
-        super(PERIPHERAL_TYPE, new PocketPeripheralOwner(pocket));
+        super(PERIPHERAL_TYPE, PocketPeripheralOwner.of(pocket));
     }
 
     private boolean isAllowedMultiDimensional() {
@@ -190,9 +190,8 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
         }
 
-        info.put("x", x);
-        info.put("y", y);
-        info.put("z", z);
+        CoordUtil.putRelativeCoords(info, x, y, z, owner.getOrientation());
+
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
             info.put("uuid", player.getUUID().toString());
             info.put("name", player.getName().getString());
