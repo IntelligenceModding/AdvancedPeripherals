@@ -19,23 +19,23 @@ public abstract class IntegrationPeripheral implements IDynamicPeripheral {
     protected final List<IComputerAccess> connectedComputers = new ArrayList<>();
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
     protected boolean initialized = false;
-    protected List<IPeripheralPlugin> plugins = null;
+    protected final List<IPeripheralPlugin> plugins = new ArrayList<>();
     protected String[] methodNames = new String[0];
 
     protected void buildPlugins() {
         if (!initialized) {
             initialized = true;
             this.pluggedMethods.clear();
-            if (plugins != null) plugins.forEach(plugin -> {
-                if (plugin.isSuitable(this))
+            this.plugins.forEach(plugin -> {
+                if (plugin.isSuitable(this)) {
                     pluggedMethods.addAll(plugin.getMethods());
+                }
             });
             this.methodNames = pluggedMethods.stream().map(BoundMethod::getName).toArray(String[]::new);
         }
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
-        if (plugins == null) plugins = new ArrayList<>();
         plugins.add(plugin);
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {

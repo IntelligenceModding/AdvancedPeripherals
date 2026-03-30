@@ -35,7 +35,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     protected final O owner;
     protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
     protected boolean initialized = false;
-    protected List<IPeripheralPlugin> plugins = null;
+    protected final List<IPeripheralPlugin> plugins = new ArrayList<>();
     protected String[] methodNames = new String[0];
 
     protected BasePeripheral(String type, @NotNull O owner) {
@@ -49,11 +49,9 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         }
         this.initialized = true;
         this.pluggedMethods.clear();
-        if (this.plugins != null) {
-            this.plugins.stream()
-                .filter(plugin -> plugin.isSuitable(this))
-                .forEach(plugin -> this.pluggedMethods.addAll(plugin.getMethods()));
-        }
+        this.plugins.stream()
+            .filter(plugin -> plugin.isSuitable(this))
+            .forEach(plugin -> this.pluggedMethods.addAll(plugin.getMethods()));
         owner.getAbilities().forEach(ability -> {
             if (ability instanceof IPeripheralPlugin peripheralPlugin) {
                 this.pluggedMethods.addAll(peripheralPlugin.getMethods());
@@ -63,8 +61,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     protected void addPlugin(@NotNull IPeripheralPlugin plugin) {
-        if (plugins == null) plugins = new ArrayList<>();
-        plugins.add(plugin);
+        this.plugins.add(plugin);
         IPeripheralOperation<?>[] operations = plugin.getOperations();
         if (operations != null) {
             OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
