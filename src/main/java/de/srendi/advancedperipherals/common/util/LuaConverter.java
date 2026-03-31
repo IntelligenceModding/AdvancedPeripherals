@@ -17,7 +17,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -211,21 +210,18 @@ public class LuaConverter {
     /**
      * Block states to a lua representable object
      *
-     * @param stateValue block state see {@link net.minecraft.world.level.block.state.BlockState#getValue(Property)}
+     * @param value block state see {@link net.minecraft.world.level.block.state.BlockState#getValue(Property)}
      * @return the state cast to a lua representable object
      */
-    public static Object stateToLua(Comparable<?> stateValue) {
-        if (stateValue == null) {
+    public static Object stateToLua(@SuppressWarnings("rawtypes") Property property, Comparable<?> value) {
+        if (value == null) {
             return null;
         }
-        if (stateValue instanceof Boolean || stateValue instanceof Number || stateValue instanceof String) {
+        if (value instanceof Boolean || value instanceof Number || value instanceof String) {
             // Just return the value since lua can represent them just fine
-            return stateValue;
+            return value;
         }
-        if (stateValue instanceof StringRepresentable stringRepresentable) {
-            return stringRepresentable.getSerializedName();
-        }
-        return null;
+        return property.getName(value);
     }
 
     @Unmodifiable
@@ -234,7 +230,7 @@ public class LuaConverter {
             state.getValues()
                 .entrySet()
                 .stream()
-                .map((entry) -> Map.entry(entry.getKey().getName(), stateToLua(entry.getValue())))
+                .map((entry) -> Map.entry(entry.getKey().getName(), stateToLua(entry.getKey(), entry.getValue())))
                 .toArray(Map.Entry[]::new)
         );
     }

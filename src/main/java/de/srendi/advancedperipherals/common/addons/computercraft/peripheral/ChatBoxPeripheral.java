@@ -28,6 +28,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -108,6 +109,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return brackets.isPresent() && brackets.get().length() != 2;
     }
 
+    // TODO: instead of having many optional arguments, use a single table argument instead.
     // 0 message, 1 prefix, 2 brackets, 3 color, 4 range, 5 utf8compatible
     @LuaFunction(mainThread = true)
     public final MethodResult sendFormattedMessage(@NotNull IArguments arguments) throws LuaException {
@@ -115,11 +117,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             boolean useUTF8 = arguments.optBoolean(5, false);
 
             String message = arguments.getString(0);
-
             // check size while it represents bytes (in utf8 mode) as that is longer
-            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get())
-                return MethodResult.of(null, "Message is too long");
-
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+                return Errors.MESSAGE_TOO_LONG_RESULT;
+            }
             if (useUTF8) {
                 message = StringUtil.byteStringToUTF8(message);
             }
@@ -128,16 +129,17 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             int range = arguments.optInt(4, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             MutableComponent component = Component.Serializer.fromJson(message, RegistryAccess.EMPTY);
-            if (component == null)
-                return MethodResult.of(null, "incorrect json");
+            if (component == null) {
+                return Errors.INCORRECT_MESSAGE_JSON_RESULT;
+            }
 
             Optional<String> brackets = arguments.optString(2);
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-
-            if (checkBrackets(brackets))
-                return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            if (checkBrackets(brackets)) {
+                return Errors.INCORRECT_BRACKETS_RESULT;
+            }
 
             Optional<String> prefix = arguments.optString(1);
             if (useUTF8) {
@@ -154,16 +156,13 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     brackets.orElse("[]"),
                     StringUtil.convertAndToSectionMark(bracketColor)
             );
-            if (preparedMessage == null) {
-                return MethodResult.of(null, "illegal prefix");
-            }
             preparedMessage.append(component);
 
             for (ServerPlayer player : getLevel().getServer().getPlayerList().getPlayers()) {
                 if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
                     continue;
                 }
-                if (CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, maxRange)) {
+                if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
                     player.sendSystemMessage(preparedMessage);
                 }
             }
@@ -178,12 +177,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             boolean useUTF8 = arguments.optBoolean(5, false);
 
             String message = arguments.getString(0);
-
             // check size while it represents bytes (in utf8 mode) as that is longer
             if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
-                return MethodResult.of(null, "Message is too long");
+                return Errors.MESSAGE_TOO_LONG_RESULT;
             }
-
             if (useUTF8) {
                 message = StringUtil.byteStringToUTF8(message);
             }
@@ -196,9 +193,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-
-            if (checkBrackets(brackets))
-                return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            if (checkBrackets(brackets)) {
+                return Errors.INCORRECT_BRACKETS_RESULT;
+            }
 
             Optional<String> prefix = arguments.optString(1);
             if (useUTF8) {
@@ -215,16 +212,13 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     brackets.orElse("[]"),
                     StringUtil.convertAndToSectionMark(bracketColor)
             );
-            if (preparedMessage == null) {
-                return MethodResult.of(null, "illegal prefix");
-            }
             preparedMessage.append(message);
 
             for (ServerPlayer player : getLevel().getServer().getPlayerList().getPlayers()) {
                 if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
                     continue;
                 }
-                if (CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, maxRange)) {
+                if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
                     player.sendSystemMessage(preparedMessage);
                 }
             }
@@ -239,11 +233,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             boolean useUTF8 = arguments.optBoolean(5, false);
 
             String message = arguments.getString(0);
-
             // check size while it represents bytes (in utf8 mode) as that is longer
-            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get())
-                return MethodResult.of(null, "Message is too long");
-
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+                return Errors.MESSAGE_TOO_LONG_RESULT;
+            }
             if (useUTF8) {
                 message = StringUtil.byteStringToUTF8(message);
             }
@@ -253,20 +246,22 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             int range = arguments.optInt(5, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
-            if (player == null)
-                return MethodResult.of(null, "incorrect player name/uuid");
+            if (player == null) {
+                return Errors.INCORRECT_PLAYER_ID_RESULT;
+            }
 
             MutableComponent component = Component.Serializer.fromJson(message, RegistryAccess.EMPTY);
-            if (component == null)
-                return MethodResult.of(null, "incorrect json");
+            if (component == null) {
+                return Errors.INCORRECT_MESSAGE_JSON_RESULT;
+            }
 
             Optional<String> brackets = arguments.optString(3);
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-
-            if (checkBrackets(brackets))
-                return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            if (checkBrackets(brackets)) {
+                return Errors.INCORRECT_BRACKETS_RESULT;
+            }
 
             Optional<String> prefix = arguments.optString(2);
             if (useUTF8) {
@@ -283,16 +278,13 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     brackets.orElse("[]"),
                     StringUtil.convertAndToSectionMark(bracketColor)
             );
-            if (preparedMessage == null) {
-                return MethodResult.of(null, "illegal prefix");
-            }
             preparedMessage.append(component);
 
             if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
-                return MethodResult.of(false, "NOT_SAME_DIMENSION");
+                return Errors.NOT_SAME_DIMENSION_RESULT;
             }
 
-            if (CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, maxRange)) {
+            if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
                 player.sendSystemMessage(preparedMessage);
             }
             return MethodResult.of(true);
@@ -309,17 +301,14 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
             // check size while it represents bytes (in utf8 mode) as that is longer
             if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
-                return MethodResult.of(null, "Message is too long");
+                return Errors.MESSAGE_TOO_LONG_RESULT;
             }
-
             if (useUTF8) {
                 message = StringUtil.byteStringToUTF8(message);
             }
 
             String title = arguments.getString(1);
-
             // TODO: missing max length check?
-
             if (useUTF8) {
                 title = StringUtil.byteStringToUTF8(title);
             }
@@ -329,32 +318,32 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             int range = arguments.optInt(6, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
-            if (player == null)
-                return MethodResult.of(null, "incorrect player name/uuid");
+            if (player == null) {
+                return Errors.INCORRECT_PLAYER_ID_RESULT;
+            }
 
             MutableComponent messageComponent = Component.Serializer.fromJson(message, RegistryAccess.EMPTY);
-            if (messageComponent == null)
-                return MethodResult.of(null, "incorrect json for message");
+            if (messageComponent == null) {
+                return Errors.INCORRECT_MESSAGE_JSON_RESULT;
+            }
 
             MutableComponent titleComponent = Component.Serializer.fromJson(title, RegistryAccess.EMPTY);
-            if (titleComponent == null)
-                return MethodResult.of(null, "incorrect json for title");
+            if (titleComponent == null) {
+                return Errors.INCORRECT_TITLE_JSON_RESULT;
+            }
 
             Optional<String> brackets = arguments.optString(4);
-
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-
-            if (checkBrackets(brackets))
-                return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ,,,)");
-
+            if (checkBrackets(brackets)) {
+                return Errors.INCORRECT_BRACKETS_RESULT;
+            }
 
             Optional<String> prefix = arguments.optString(3);
             if (useUTF8) {
                 prefix = prefix.map(StringUtil::byteStringToUTF8);
             }
-
 
             String bracketColor = arguments.optString(5, "");
             if (useUTF8) {
@@ -366,13 +355,11 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     brackets.orElse("[]"),
                     StringUtil.convertAndToSectionMark(bracketColor)
             );
-            if (preparedMessage == null) {
-                return MethodResult.of(null, "illegal prefix");
-            }
             preparedMessage.append(messageComponent);
 
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
-                return MethodResult.of(false, "NOT_SAME_DIMENSION");
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
+                return Errors.NOT_SAME_DIMENSION_RESULT;
+            }
 
             if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
                 ToastToClientPacket packet = new ToastToClientPacket(titleComponent, preparedMessage);
@@ -392,8 +379,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             String message = arguments.getString(0);
 
             // check size while it represents bytes (in utf8 mode) as that is longer
-            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get())
-                return MethodResult.of(null, "Message is too long");
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+                return Errors.MESSAGE_TOO_LONG_RESULT;
+            }
 
             if (useUTF8) {
                 message = StringUtil.byteStringToUTF8(message);
@@ -404,8 +392,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             int range = arguments.optInt(5, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
-            if (player == null)
-                return MethodResult.of(null, "incorrect player name/uuid");
+            if (player == null) {
+                return Errors.INCORRECT_PLAYER_ID_RESULT;
+            }
 
             Optional<String> brackets = arguments.optString(3);
 
@@ -413,8 +402,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
 
-            if (checkBrackets(brackets))
-                return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            if (checkBrackets(brackets)) {
+                return Errors.INCORRECT_BRACKETS_RESULT;
+            }
 
             Optional<String> prefix = arguments.optString(2);
 
@@ -431,14 +421,12 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     brackets.orElse("[]"),
                     StringUtil.convertAndToSectionMark(bracketColor)
             );
-            if (preparedMessage == null) {
-                return MethodResult.of(null, "illegal prefix");
-            }
             preparedMessage.append(message);
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
-                return MethodResult.of(false, "NOT_SAME_DIMENSION");
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
+                return Errors.NOT_SAME_DIMENSION_RESULT;
+            }
 
-            if (CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, maxRange)) {
+            if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
                 player.sendSystemMessage(preparedMessage, false);
             }
             return MethodResult.of(true);
@@ -453,8 +441,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
             String message = arguments.getString(0);
 
-            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get())
-                return MethodResult.of(null, "Message is too long");
+            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+                return Errors.MESSAGE_TOO_LONG_RESULT;
+            }
 
             // check size while it represents bytes (in utf8 mode) as that is longer
             if (useUTF8) {
@@ -474,8 +463,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             int range = arguments.optInt(6, -1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerName);
-            if (player == null)
-                return MethodResult.of(null, "incorrect player name/uuid");
+            if (player == null) {
+                return Errors.INCORRECT_PLAYER_ID_RESULT;
+            }
 
             Optional<String> brackets = arguments.optString(4);
 
@@ -483,8 +473,9 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
 
-            if (checkBrackets(brackets))
-                return MethodResult.of(null, "incorrect bracket string (e.g. [], {}, <>, ...)");
+            if (checkBrackets(brackets)) {
+                return Errors.INCORRECT_BRACKETS_RESULT;
+            }
 
             Optional<String> prefix = arguments.optString(3);
 
@@ -502,13 +493,11 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                     brackets.orElse("[]"),
                     StringUtil.convertAndToSectionMark(bracketColor)
             );
-            if (preparedMessage == null) {
-                return MethodResult.of(null, "illegal prefix");
-            }
             preparedMessage.append(message);
 
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension)
-                return MethodResult.of(false, "NOT_SAME_DIMENSION");
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
+                return Errors.NOT_SAME_DIMENSION_RESULT;
+            }
 
             if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
                 ToastToClientPacket packet = new ToastToClientPacket(Component.literal(title), preparedMessage);
@@ -521,8 +510,41 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     @Override
     public void update() {
         lastConsumedMessage = Events.traverseChatMessages(lastConsumedMessage, message -> {
-            String byteString = StringUtil.utf8ToByteString(message.message());
-            queueEvent("chat", message.username(), message.message(), message.uuid(), message.isHidden(), byteString);
+            int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
+            if (maxRange != -1) {
+                if (message.level() != this.getLevel().dimension()) {
+                    return;
+                }
+                Vec3 pos = this.getPhysicsPos();
+                Vec3 mpos = message.position();
+                if (Math.abs(pos.x - mpos.x) > maxRange || Math.abs(pos.y - mpos.y) > maxRange || Math.abs(pos.z - mpos.z) > maxRange) {
+                    return;
+                }
+            }
+            queueEvent(
+                "chat",
+                message.senderName(),
+                message.message(),
+                message.senderId(),
+                message.isHidden(),
+                StringUtil.utf8ToByteString(message.message())
+            );
         });
+    }
+
+    private static final class Errors {
+        static final String INCORRECT_BRACKETS = "INCORRECT_BRACKETS (e.g. [], {}, <>, ...)";
+        static final String INCORRECT_MESSAGE_JSON = "INCORRECT_MESSAGE_JSON";
+        static final String INCORRECT_PLAYER_ID = "INCORRECT_PLAYER_NAME_OR_UUID";
+        static final String INCORRECT_TITLE_JSON = "INCORRECT_TITLE_JSON";
+        static final String MESSAGE_TOO_LONG = "MESSAGE_TOO_LONG";
+        static final String NOT_SAME_DIMENSION = "NOT_SAME_DIMENSION";
+
+        static final MethodResult INCORRECT_BRACKETS_RESULT = MethodResult.of(null, INCORRECT_BRACKETS);
+        static final MethodResult INCORRECT_MESSAGE_JSON_RESULT = MethodResult.of(null, INCORRECT_MESSAGE_JSON);
+        static final MethodResult INCORRECT_PLAYER_ID_RESULT = MethodResult.of(null, INCORRECT_PLAYER_ID);
+        static final MethodResult INCORRECT_TITLE_JSON_RESULT = MethodResult.of(null, INCORRECT_TITLE_JSON);
+        static final MethodResult MESSAGE_TOO_LONG_RESULT = MethodResult.of(null, MESSAGE_TOO_LONG);
+        static final MethodResult NOT_SAME_DIMENSION_RESULT = MethodResult.of(null, NOT_SAME_DIMENSION);
     }
 }

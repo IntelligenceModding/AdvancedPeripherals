@@ -1,8 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.ILuaFunction;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
@@ -17,9 +19,14 @@ import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.StatType;
+import net.minecraft.world.phys.Vec3;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +139,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getPlayer(IArguments arguments) throws LuaException {
         if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get()) {
-            throw new LuaException("This function is disabled in the config. Activate it or ask an admin if he can activate it.");
+            throw new LuaException("This function is disabled in the config. Activate it or ask admins if they can activate it.");
         }
         ServerPlayer player = getPlayer(arguments.getString(0));
         if (player == null) {
@@ -153,9 +160,13 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     private Map<String, Object> getPlayerInfo(ServerPlayer player, boolean isOwner) {
+        boolean showAbsCoords = true;
+
         Map<String, Object> info = new HashMap<>();
 
-        double x = player.getX(), y = player.getY(), z = player.getZ();
+        Vec3 selfPos = this.getPhysicsPos();
+        Vec3 playerPos = player.position();
+        double x = playerPos.x, y = playerPos.y, z = playerPos.z;
 
         if (!isOwner && APConfig.PERIPHERALS_CONFIG.playerSpyRandError.get()) {
             // We apply random error to the returned player position if so enabled in the configuration.
@@ -177,7 +188,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             maxDistance = Math.max(minDistance, maxDistance);
 
             // Calculate Euclidean distance between the player locator and the player in question
-            double distanceFromPlayer = Math.sqrt(getCenterPos().distanceToSqr(x, y, z));
+            double distanceFromPlayer = selfPos.distanceTo(playerPos);
 
             distanceFromPlayer -= minDistance;
             if (distanceFromPlayer > 0) {
@@ -189,8 +200,10 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
                 z += (Math.random() * 2 - 1) * error;
             }
         }
-
-        CoordUtil.putRelativeCoords(info, x, y, z, owner.getOrientation());
+        if (showAbsCoords) {
+            CoordUtil.putXYZCoords(info, x, y, z);
+        }
+        CoordUtil.putFRUCoords(info, x - selfPos.x, y - selfPos.y, z - selfPos.z, owner.getOrientation());
 
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
             info.put("uuid", player.getUUID().toString());
@@ -206,7 +219,41 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             info.put("respawnDimension", player.getRespawnDimension().location().toString());
             info.put("respawnAngle", player.getRespawnAngle());
         }
+        WeakReference<ServerPlayer> playerRef = new WeakReference<>(player);
+        if (APConfig.PERIPHERALS_CONFIG.playerSpyStatistics.get()) {
+            info.put("getStat", (ILuaFunction) (args) -> this.getPlayerStat(playerRef, args.getString(0)));
+        }
         return info;
+    }
+
+    private MethodResult getPlayerStat(WeakReference<ServerPlayer> playerRef, String statName) {
+        ServerPlayer player = playerRef.get();
+        if (player == null || player.isRemoved()) {
+            return Errors.PLAYER_NOT_EXISTS_RESULT;
+        }
+        ResourceLocation statId = ResourceLocation.tryParse(statName);
+        if (statId == null) {
+            return Errors.INVAILD_STAT_ID_RESULT;
+        }
+        ResourceLocation statTypeId = ResourceLocation.tryParse(statId.getNamespace().replace('.', ':'));
+        if (statTypeId == null) {
+            return Errors.INVAILD_STAT_ID_RESULT;
+        }
+        ResourceLocation statValueId = ResourceLocation.tryParse(statId.getPath().replace('.', ':'));
+        if (statValueId == null) {
+            return Errors.INVAILD_STAT_ID_RESULT;
+        }
+
+        @SuppressWarnings("rawtypes")
+        StatType statType = BuiltInRegistries.STAT_TYPE.get(statTypeId);
+        if (statType == null) {
+            return Errors.UNKNOWN_STAT_TYPE_RESULT;
+        }
+        Object statValue = statType.getRegistry().get(statValueId);
+        if (statValue == null) {
+            return Errors.UNKNOWN_STAT_VALUE_RESULT;
+        }
+        return MethodResult.of(player.getStats().getValue(statType.get(statValue)));
     }
 
     private Stream<ServerPlayer> getPlayers() {
@@ -244,9 +291,21 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public void update() {
-        lastConsumedMessage = Events.traversePlayerMessages(
-            lastConsumedMessage,
-            message -> queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension())
-        );
+        lastConsumedMessage = Events.traversePlayerMessages(lastConsumedMessage, message -> {
+            // TODO: distance check?
+            queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension());
+        });
+    }
+
+    private static final class Errors {
+        static final String INVAILD_STAT_ID = "INVAILD_STAT_ID";
+        static final String PLAYER_NOT_EXISTS = "PLAYER_NOT_EXISTS";
+        static final String UNKNOWN_STAT_TYPE = "UNKNOWN_STAT_TYPE";
+        static final String UNKNOWN_STAT_VALUE = "UNKNOWN_STAT_VALUE";
+
+        static final MethodResult INVAILD_STAT_ID_RESULT = MethodResult.of(null, "INVAILD_STAT_ID");
+        static final MethodResult PLAYER_NOT_EXISTS_RESULT = MethodResult.of(null, "PLAYER_NOT_EXISTS");
+        static final MethodResult UNKNOWN_STAT_TYPE_RESULT = MethodResult.of(null, "UNKNOWN_STAT_TYPE");
+        static final MethodResult UNKNOWN_STAT_VALUE_RESULT = MethodResult.of(null, "UNKNOWN_STAT_VALUE");
     }
 }

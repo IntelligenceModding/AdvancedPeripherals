@@ -7,7 +7,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
     private final int capacity;
 
     public LRUCache(final int capacity) {
-        super(capacity * 2, 1, true); // Should never rehash
+        super(capacity * 2, 0.75f, true); // Should never rehash
         this.capacity = capacity;
     }
 

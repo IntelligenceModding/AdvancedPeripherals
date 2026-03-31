@@ -9,23 +9,30 @@ import de.srendi.advancedperipherals.lib.misc.DataPublisher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.CommandEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import vazkii.patchouli.api.PatchouliAPI;
 
+import java.util.UUID;
 import java.util.function.Consumer;
 
 @EventBusSubscriber
 public class Events {
 
-    private static final String PLAYED_BEFORE = "ap_played_before";
-    private static final DataPublisher<ChatMessageObject> messageQueue = new DataPublisher<>(64);
-    private static final DataPublisher<PlayerMessageObject> playerMessageQueue = new DataPublisher<>(64);
+    private static final String PLAYED_BEFORE_TAG = "ap_played_before";
+    private static final DataPublisher<ChatMessageRecord> messageQueue = new DataPublisher<>(64);
+    private static final DataPublisher<PlayerMessageRecord> playerMessageQueue = new DataPublisher<>(64);
 
     @SubscribeEvent
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
@@ -35,20 +42,20 @@ public class Events {
         // a config option for that. So we will stick with the custom solution here.
         // See https://vazkiimods.github.io/Patchouli/docs/patchouli-basics/giving-new
         if (APConfig.WORLD_CONFIG.givePlayerBookOnJoin.get() && APAddon.PATCHOULI.isLoaded()) {
-            if (!getAndSetPlayedBefore(player)) {
-                vazkii.patchouli.api.PatchouliAPI.IPatchouliAPI patchouli = vazkii.patchouli.api.PatchouliAPI.get();
+            if (getAndSetPlayedBefore(player)) {
+                PatchouliAPI.IPatchouliAPI patchouli = PatchouliAPI.get();
                 ItemStack book = patchouli.getBookStack(AdvancedPeripherals.getRL("manual"));
                 player.addItem(book);
             }
         }
 
-        putPlayerMessage(new PlayerMessageObject("player_join", player.getName().getString(), player.level().dimension().location().toString(), null));
+        putPlayerMessage(new PlayerMessageRecord("player_join", player.getName().getString(), player.level().dimension().location().toString(), null));
     }
 
     @SubscribeEvent
     public static void onWorldLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
-        putPlayerMessage(new PlayerMessageObject("player_leave", player.getName().getString(), player.level().dimension().location().toString(), null));
+        putPlayerMessage(new PlayerMessageRecord("player_leave", player.getName().getString(), player.level().dimension().location().toString(), null));
     }
 
     @SubscribeEvent
@@ -57,7 +64,7 @@ public class Events {
         String fromDim = event.getFrom().location().toString();
         String toDim = event.getTo().location().toString();
 
-        putPlayerMessage(new PlayerMessageObject("player_changed_dimension", player.getName().getString(), fromDim, toDim));
+        putPlayerMessage(new PlayerMessageRecord("player_changed_dimension", player.getName().getString(), fromDim, toDim));
     }
 
     @SubscribeEvent
@@ -69,21 +76,26 @@ public class Events {
         if (context.getCommand() == null || !getCommandName(context).equals("say")) {
             return;
         }
-        String username = "sayCommand";
-        String uuid = null;
+        UUID uuid = null;
+        String username = "[say]";
         String message = MessageArgument.getMessage(context.build(""), "message").getString();
         boolean isHidden = false;
         CommandSourceStack source = context.getSource();
-        if (source.getEntity() != null) {
-            username = source.getEntity().getDisplayName().getString();
-            uuid = source.getEntity().getUUID().toString();
+        Entity sourceEntity = source.getEntity();
+        if (sourceEntity != null) {
+            uuid = sourceEntity.getUUID();
+            username = sourceEntity instanceof Player player
+                ? player.getGameProfile().getName()
+                : sourceEntity.getName().getString();
         }
         if (message.startsWith("$")) {
             event.setCanceled(true);
             message = message.substring(1);
             isHidden = true;
         }
-        putChatMessage(new ChatMessageObject(username, message, uuid, isHidden));
+        putChatMessage(
+            new ChatMessageRecord(uuid, username, message, isHidden, source.getLevel().dimension(), source.getPosition())
+        );
     }
 
     private static String getCommandName(CommandContextBuilder<?> context) {
@@ -94,32 +106,39 @@ public class Events {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void onChatBox(ServerChatEvent event) {
-        if (APConfig.PERIPHERALS_CONFIG.enableChatBox.get()) {
-            String message = event.getMessage().getString();
-            boolean isHidden = false;
-            if (message.startsWith("$")) {
-                event.setCanceled(true);
-                message = message.substring(1);
-                isHidden = true;
-            }
-            putChatMessage(new ChatMessageObject(event.getUsername(), message, event.getPlayer().getUUID().toString(), isHidden));
+    public static void onChat(ServerChatEvent event) {
+        if (!APConfig.PERIPHERALS_CONFIG.enableChatBox.get()) {
+            return;
         }
+        ServerPlayer player = event.getPlayer();
+        // TODO: investigate the use of event.getRawText
+        String message = event.getMessage().getString();
+        boolean isHidden = message.startsWith("$");
+        if (isHidden) {
+            message = message.substring(1);
+            event.setCanceled(true);
+        }
+        putChatMessage(
+            new ChatMessageRecord(player.getUUID(), event.getUsername(), message, isHidden, player.serverLevel().dimension(), player.position())
+        );
     }
 
-    public static void putChatMessage(ChatMessageObject message) {
+    public static void putChatMessage(ChatMessageRecord message) {
         messageQueue.add(message);
     }
 
-    public static void putPlayerMessage(PlayerMessageObject message) {
+    public static void putPlayerMessage(PlayerMessageRecord message) {
+        if (!APConfig.PERIPHERALS_CONFIG.enablePlayerEvents.get()) {
+            return;
+        }
         playerMessageQueue.add(message);
     }
 
-    public static long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageObject> consumer) {
+    public static long traverseChatMessages(long lastConsumedMessage, Consumer<ChatMessageRecord> consumer) {
         return messageQueue.traverse(lastConsumedMessage, consumer);
     }
 
-    public static long traversePlayerMessages(long lastConsumedMessage, Consumer<PlayerMessageObject> consumer) {
+    public static long traversePlayerMessages(long lastConsumedMessage, Consumer<PlayerMessageRecord> consumer) {
         return playerMessageQueue.traverse(lastConsumedMessage, consumer);
     }
 
@@ -133,14 +152,14 @@ public class Events {
 
     private static boolean getAndSetPlayedBefore(Player player) {
         CompoundTag tag = player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
-        if (tag.getBoolean(PLAYED_BEFORE)) {
-            return true;
+        if (tag.getBoolean(PLAYED_BEFORE_TAG)) {
+            return false;
         }
-        tag.putBoolean(PLAYED_BEFORE, true);
+        tag.putBoolean(PLAYED_BEFORE_TAG, true);
         player.getPersistentData().put(Player.PERSISTED_NBT_TAG, tag);
-        return false;
+        return true;
     }
 
-    public record ChatMessageObject(String username, String message, String uuid, boolean isHidden) {}
-    public record PlayerMessageObject(String eventName, String playerName, String fromDimension, String toDimension) {}
+    public record ChatMessageRecord(UUID senderId, String senderName, String message, boolean isHidden, ResourceKey<Level> level, Vec3 position) {}
+    public record PlayerMessageRecord(String eventName, String playerName, String fromDimension, String toDimension) {}
 }

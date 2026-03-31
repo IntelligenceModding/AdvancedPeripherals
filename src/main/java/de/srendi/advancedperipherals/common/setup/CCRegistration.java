@@ -6,7 +6,7 @@ import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import dan200.computercraft.api.upgrades.UpgradeType;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
-import de.srendi.advancedperipherals.common.addons.computercraft.luaapi.GlobalVersionsLuaAPI;
+import de.srendi.advancedperipherals.common.addons.computercraft.luaapi.APLuaAPI;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketChatBoxUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketColonyIntegratorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketDistanceDetectorUpgrade;
@@ -63,7 +63,7 @@ public class CCRegistration {
      */
     public static void registerMain() {
         IntegrationPeripheralProvider.load();
-        ComputerCraftAPI.registerAPIFactory(system -> GlobalVersionsLuaAPI.INSTANCE);
+        ComputerCraftAPI.registerAPIFactory(system -> APLuaAPI.INSTANCE);
         ComputerCraftAPI.registerAPIFactory(SmartGlassesAPI::create);
     }
 

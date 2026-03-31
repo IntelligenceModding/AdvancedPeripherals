@@ -187,12 +187,19 @@ public class CoordUtil {
      * @see putFRUCoords
      */
     public static void putRelativeCoords(Map<? super String, ? super Double> data, double x, double y, double z, @Nullable Matrix3dc orientation) {
-        data.put("x", x);
-        data.put("y", y);
-        data.put("z", z);
+        putXYZCoords(data, x, y, z);
         if (orientation != null) {
             putFRUCoords(data, x, y, z, orientation);
         }
+    }
+
+    /**
+     * put "x", "y", "z" coords into the map
+     */
+    public static void putXYZCoords(Map<? super String, ? super Double> data, double x, double y, double z) {
+        data.put("x", x);
+        data.put("y", y);
+        data.put("z", z);
     }
 
     /**
