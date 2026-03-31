@@ -9,13 +9,11 @@ import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.StatType;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 
-import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
