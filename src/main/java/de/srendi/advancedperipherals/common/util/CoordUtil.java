@@ -186,17 +186,19 @@ public class CoordUtil {
      * put "x", "y", "z", and/or "f", "r", "u" coords based on configuration
      * @see putFRUCoords
      */
-    public static void putRelativeCoords(Map<? super String, ? super Double> data, double x, double y, double z, Matrix3dc orientation) {
+    public static void putRelativeCoords(Map<? super String, ? super Double> data, double x, double y, double z, @Nullable Matrix3dc orientation) {
         data.put("x", x);
         data.put("y", y);
         data.put("z", z);
-        putFRUCoords(data, x, y, z, orientation);
+        if (orientation != null) {
+            putFRUCoords(data, x, y, z, orientation);
+        }
     }
 
     /**
      * put "f", "r", "u" coords into the map
      */
-    public static void putFRUCoords(Map<? super String, ? super Double> data, double x, double y, double z, Matrix3dc orientation) {
+    public static void putFRUCoords(Map<? super String, ? super Double> data, double x, double y, double z, @NotNull Matrix3dc orientation) {
         Vector3d rpos = orientation.transformTranspose(new Vector3d(x, y, z));
         data.put("r", rpos.x);
         data.put("u", rpos.y);

@@ -657,7 +657,7 @@ public class RSApi {
         properties.put("total", diskDrive.getCapacity());
         properties.put("disks", disks);
         properties.put("mode", storageConfiguration.getFilterMode().toString());
-        properties.put("access_type", storageConfiguration.getAccessMode().toString());
+        properties.put("accessType", storageConfiguration.getAccessMode().toString());
         properties.put("position", LuaConverter.posToLua(nodeContainer.getLocalPosition()));
         properties.put("priority", nodeContainer.getPriority());
 
@@ -690,7 +690,7 @@ public class RSApi {
     public static Object parseCraftingTask(@Nullable RSCraftJob task, TaskStatus status, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put("bridge_id", task == null ? -1 : task.getId());
+        properties.put("bridgeId", task == null ? -1 : task.getId());
         properties.put("id", status.info().id().toString());
         properties.put("quantity", status.info().amount());
         // The "stored" attribute of the Item does not always work. I guess this is a bug, I at least reported it.

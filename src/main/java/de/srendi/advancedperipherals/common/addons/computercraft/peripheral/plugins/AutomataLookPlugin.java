@@ -71,14 +71,23 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         float pitch = options.optDouble("pitch").orElse(0d).floatValue();
 
         automataCore.addRotationCycle();
-        HitResult result = automataCore.getPeripheralOwner().withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true)));
+        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
+        HitResult result = owner.withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true)));
         if (result.getType() == HitResult.Type.MISS) {
             return MethodResult.of(null, "No entity find");
         }
 
         EntityHitResult entityHit = (EntityHitResult) result;
-        Vec3 origin = automataCore.getPhysicsPos();
-        return MethodResult.of(LuaConverter.entityToLua(entityHit.getEntity(), LuaConverter.entityContextBuilder().detailed().position(origin).build()));
+        return MethodResult.of(
+            LuaConverter.entityToLua(
+                entityHit.getEntity(),
+                LuaConverter.entityContextBuilder()
+                    .detailed()
+                    .position(owner.getPhysicsPos())
+                    .orientation(owner.getOrientation())
+                    .build()
+            )
+        );
     }
 
 }

@@ -7,7 +7,7 @@ import java.util.Arrays;
 public enum APAddon {
 
     AE2("ae2"),
-    AE2_THINGS("ae2things"),
+    AE2THINGS("ae2things"),
     APP_MEKANISTICS("appmek"),
     CURIOS("curios"),
     MEKANISM("mekanism"),

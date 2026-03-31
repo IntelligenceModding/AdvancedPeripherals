@@ -39,7 +39,8 @@ import net.neoforged.neoforge.common.IShearable;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
+import org.joml.Matrix3dc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,10 +71,10 @@ public class LuaConverter {
     public interface EntityConverter<T extends Entity> {
         void entityToMap(T entity, Map<String, Object> data, Context ctx);
 
-        record Context(boolean detailed, ItemStack itemInHand, Vec3 position) {}
+        record Context(boolean detailed, ItemStack itemInHand, Vec3 position, Matrix3dc orientation) {}
     }
 
-    private static final EntityConverter.Context EMPTY_ENTITY_CONVERTER_CONTEXT = new EntityConverter.Context(false, null, null);
+    private static final EntityConverter.Context EMPTY_ENTITY_CONVERTER_CONTEXT = new EntityConverter.Context(false, null, null, null);
 
     public static EntityContextBuilder entityContextBuilder() {
         return new EntityContextBuilder();
@@ -83,6 +84,7 @@ public class LuaConverter {
         private boolean detailed = false;
         private ItemStack itemInHand = null;
         private Vec3 position = null;
+        private Matrix3dc orientation = null;
 
         public EntityContextBuilder detailed(boolean detailed) {
             this.detailed = detailed;
@@ -107,8 +109,13 @@ public class LuaConverter {
             return this.position(pos.getCenter());
         }
 
+        public EntityContextBuilder orientation(Matrix3dc orientation) {
+            this.orientation = orientation;
+            return this;
+        }
+
         public EntityConverter.Context build() {
-            return new EntityConverter.Context(this.detailed, this.itemInHand, this.position);
+            return new EntityConverter.Context(this.detailed, this.itemInHand, this.position, this.orientation);
         }
     }
 
@@ -132,9 +139,7 @@ public class LuaConverter {
         }
         Vec3 pos = ctx.position();
         if (pos != null) {
-            data.put("x", entity.getX() - pos.x);
-            data.put("y", entity.getY() - pos.y);
-            data.put("z", entity.getZ() - pos.z);
+            CoordUtil.putRelativeCoords(data, entity.getX() - pos.x, entity.getY() - pos.y, entity.getZ() - pos.z, ctx.orientation());
         }
         return data;
     }
@@ -223,6 +228,7 @@ public class LuaConverter {
         return null;
     }
 
+    @Unmodifiable
     public static Map<String, Object> blockStateValuesToLua(BlockState state) {
         return Map.ofEntries(
             state.getValues()
@@ -235,8 +241,9 @@ public class LuaConverter {
 
     private static final LRUCache<BlockState, Map<String, Object>> BLOCKSTATES_CACHE = new LRUCache<>(256);
 
+    @Unmodifiable
     public static Map<String, Object> blockStateToLua(BlockState state0) {
-        Map<String, Object> data = BLOCKSTATES_CACHE.computeIfAbsent(state0, (state) -> {
+        return BLOCKSTATES_CACHE.computeIfAbsent(state0, (state) -> {
             Block block = state.getBlock();
             ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block);
             return Map.of(
@@ -245,21 +252,18 @@ public class LuaConverter {
                 "state", blockStateValuesToLua(state)
             );
         });
-
-        return data;
     }
 
-    @Nullable
-    public static Object posToLua(BlockPos pos) {
+    @Unmodifiable
+    public static Map<String, Object> posToLua(BlockPos pos) {
         if (pos == null) {
             return null;
         }
-
-        Map<String, Object> properties = new HashMap<>(3);
-        properties.put("x", pos.getX());
-        properties.put("y", pos.getY());
-        properties.put("z", pos.getZ());
-        return properties;
+        return Map.of(
+            "x", pos.getX(),
+            "y", pos.getY(),
+            "z", pos.getZ()
+        );
     }
 
     public static Map<String, Object> itemToLua(@NotNull Item item) {
@@ -284,7 +288,6 @@ public class LuaConverter {
         return properties;
     }
 
-    @Nullable
     public static Map<String, Object> itemStackToLua(@NotNull ItemStack stack) {
         if (stack.isEmpty()) {
             return null;
@@ -375,7 +378,6 @@ public class LuaConverter {
      * @return a Map containing proper item stack details
      * @see InventoryManagerPeripheral#getItems()
      */
-    @Nullable
     public static Map<String, Object> itemStackToLuaWithSlot(@NotNull ItemStack stack, int slot) {
         if (stack.isEmpty()) {
             return null;
@@ -385,20 +387,22 @@ public class LuaConverter {
         return properties;
     }
 
-    private static final LRUCache<ResourceKey<?>, List<String>> HOLDER2TAGS_CACHE = new LRUCache<>(512);
+    private static final LRUCache<ResourceKey<?>, Map<String, Boolean>> HOLDER2TAGS_CACHE = new LRUCache<>(512);
 
-    public static <T> List<String> getHolderTags(final Holder<T> holder) {
+    @Unmodifiable
+    public static <T> Map<String, Boolean> getHolderTags(final Holder<T> holder) {
         final ResourceKey<T> holderKey = holder.unwrapKey().orElse(null);
         if (holderKey == null) {
-            return tagsToList(holder.tags());
+            return tagsToMap(holder.tags());
         }
         synchronized (HOLDER2TAGS_CACHE) {
-            return HOLDER2TAGS_CACHE.computeIfAbsent(holderKey, (k) -> tagsToList(holder.tags()));
+            return HOLDER2TAGS_CACHE.computeIfAbsent(holderKey, (k) -> tagsToMap(holder.tags()));
         }
     }
 
-    public static <T> List<String> tagsToList(Stream<TagKey<T>> tags) {
-        return tags.map(LuaConverter::tagToString).toList();
+    @Unmodifiable
+    public static <T> Map<String, Boolean> tagsToMap(Stream<TagKey<T>> tags) {
+        return Map.ofEntries(tags.map(LuaConverter::tagToString).map((tag) -> Map.entry(tag, Boolean.TRUE)).toArray(Map.Entry[]::new));
     }
 
     private static final LRUCache<TagKey<?>, String> TAG2STRING_CACHE = new LRUCache<>(1024);
@@ -434,22 +438,24 @@ public class LuaConverter {
         return new BlockPos(center.getX() + relative.getX(), center.getY() + relative.getY(), center.getZ() + relative.getZ());
     }
 
+    @Unmodifiable
     public static Map<String, Object> effectToLua(MobEffectInstance effect) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", effect.getDescriptionId());
-        map.put("duration", effect.getDuration());
-        map.put("amplifier", effect.getAmplifier());
-        return map;
+        return Map.of(
+            "name", effect.getDescriptionId(),
+            "duration", effect.getDuration(),
+            "amplifier", effect.getAmplifier()
+        );
     }
 
+    @Unmodifiable
     public static Map<String, Object> teamToLua(Team team) {
         if (team == null) {
             return null;
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", team.getName());
-        map.put("color", team.getColor());
-        return map;
+        return Map.of(
+            "name", team.getName(),
+            "color", team.getColor()
+        );
     }
 
     // public static Map<String, Object> shipToObject(ServerShip ship) {

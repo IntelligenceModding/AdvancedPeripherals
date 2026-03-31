@@ -1,14 +1,13 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.operations;
 
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import dan200.computercraft.api.lua.IArguments;
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.MethodResult;
 
 public enum SimpleFreeOperation implements IPeripheralOperation<Void> {
     CHAT_MESSAGE(1000),

@@ -21,7 +21,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -39,7 +38,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
     }
 
     @Override
-    public @Nullable IPeripheralOperation<?>[] getOperations() {
+    public IPeripheralOperation<?> @NotNull [] getOperations() {
         return new IPeripheralOperation[]{USE_ON_ANIMAL};
     }
 
@@ -96,6 +95,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
             .detailed(detailed)
             .itemInHand(owner.getToolInMainHand())
             .position(currentPos)
+            .orientation(owner.getOrientation())
             .build();
         List<Map<String, Object>> entities = owner
             .getLevel()

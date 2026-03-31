@@ -134,7 +134,7 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     public void collectConfiguration(Map<String, Object> data) {
         for (IPeripheralOperation<?> operation : allowedOperations.values()) {
             Map<String, Object> operData = operation.computerDescription();
-            data.put("getCost", (ILuaFunction) operation::getCostLua);
+            operData.put("getCost", (ILuaFunction) operation::getCostLua);
             data.put(operation.settingsName(), operData);
         }
     }

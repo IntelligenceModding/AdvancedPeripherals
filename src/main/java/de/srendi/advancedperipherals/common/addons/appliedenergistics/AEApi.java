@@ -517,7 +517,7 @@ public class AEApi {
     public static Object parseCraftingJob(CraftingJobStatus status, @Nullable AECraftJob craftJob, @Nullable ICraftingCPU cpu) {
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put("bridge_id", craftJob == null ? -1 : craftJob.getId());
+        properties.put("bridgeId", craftJob == null ? -1 : craftJob.getId());
         properties.put("quantity", status.crafting().amount());
         properties.put("resource", parseGenericStack(status.crafting()));
 
@@ -710,7 +710,7 @@ public class AEApi {
                     if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
                         total += cell.getBytes(null);
                     }
-                } else if (APAddon.AE2_THINGS.isLoaded() && stack.getItem() instanceof DISKDrive disk) {
+                } else if (APAddon.AE2THINGS.isLoaded() && stack.getItem() instanceof DISKDrive disk) {
                     if (disk.getKeyType().toString().equals("ae2:i")) {
                         total += disk.getBytes(null);
                     }
@@ -798,7 +798,7 @@ public class AEApi {
 
                         used += cellInventory.getUsedBytes();
                     }
-                } else if (APAddon.AE2_THINGS.isLoaded() && stack.getItem() instanceof DISKDrive) {
+                } else if (APAddon.AE2THINGS.isLoaded() && stack.getItem() instanceof DISKDrive) {
                     DISKCellInventory diskCellInventory = DISKCellHandler.INSTANCE.getCellInventory(stack, null);
                     if (diskCellInventory != null) {
                         used += diskCellInventory.getNbtItemCount();
@@ -959,7 +959,7 @@ public class AEApi {
 
                 if (stack.getItem() instanceof IBasicCellItem cell) {
                     items.add(parseCell(cell, stack));
-                } else if (APAddon.AE2_THINGS.isLoaded() && stack.getItem() instanceof DISKDrive disk) {
+                } else if (APAddon.AE2THINGS.isLoaded() && stack.getItem() instanceof DISKDrive disk) {
                     items.add(parseDISKDrive(disk, stack));
                 }
             }

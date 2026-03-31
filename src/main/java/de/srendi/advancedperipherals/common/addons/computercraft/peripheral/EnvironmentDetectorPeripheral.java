@@ -180,11 +180,13 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
         return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
             return context.getRadius() > SCAN_ENTITIES.getMaxCostRadius() ? MethodResult.of(null, "Radius exceeds max value") : null;
         }, context -> {
-            Vec3 pos = this.getPhysicsPos();
+            IPeripheralOwner owner = this.getPeripheralOwner();
+            Vec3 pos = owner.getPhysicsPos();
             AABB box = new AABB(pos, pos).inflate(context.getRadius() + 0.5);
             LuaConverter.EntityConverter.Context convContext = LuaConverter.entityContextBuilder()
                 .detailed(detailed)
                 .position(pos)
+                .orientation(owner.getOrientation())
                 .build();
             List<Map<String, Object>> entities = getLevel()
                 .getEntities((Entity) null, box, entity -> entity instanceof LivingEntity && entity.isAlive())
