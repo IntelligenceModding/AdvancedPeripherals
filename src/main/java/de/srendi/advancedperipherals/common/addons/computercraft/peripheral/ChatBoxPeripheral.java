@@ -1,10 +1,12 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonParseException;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
+import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
@@ -18,6 +20,7 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
+import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
@@ -32,6 +35,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -78,7 +82,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             try {
                 formattablePrefix = MutableComponent.Serializer.fromJson(prefix, RegistryAccess.EMPTY);
                 prefixComponent = formattablePrefix;
-            } catch (JsonSyntaxException exception) {
+            } catch (JsonParseException e) {
                 AdvancedPeripherals.debug("Not vaild json prefix, using plain text instead.");
                 prefixComponent = Component.literal(prefix);
             }
@@ -109,31 +113,30 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         return brackets.isPresent() && brackets.get().length() != 2;
     }
 
-    // TODO: instead of having many optional arguments, use a single table argument instead.
-    // 0 message, 1 prefix, 2 brackets, 3 color, 4 range, 5 utf8compatible
     @LuaFunction(mainThread = true)
-    public final MethodResult sendFormattedMessage(@NotNull IArguments arguments) throws LuaException {
+    public final MethodResult sendFormattedMessage(String messageJson, Optional<Map<?, ?>> options) throws LuaException {
         return withChatOperation(ignored -> {
-            boolean useUTF8 = arguments.optBoolean(5, false);
+            LuaTable<?, ?> optionsLua = EmptyLuaTable.orEmpty(options.orElse(null));
+            boolean useUTF8 = optionsLua.optBoolean("utf8").orElse(false);
 
-            String message = arguments.getString(0);
+            String message1 = messageJson;
             // check size while it represents bytes (in utf8 mode) as that is longer
-            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+            if (message1.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
                 return Errors.MESSAGE_TOO_LONG_RESULT;
             }
             if (useUTF8) {
-                message = StringUtil.byteStringToUTF8(message);
+                message1 = StringUtil.byteStringToUTF8(message1);
             }
 
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(4, -1);
+            int range = optionsLua.optInt("range").orElse(-1);
             ResourceKey<Level> dimension = getLevel().dimension();
-            MutableComponent component = Component.Serializer.fromJson(message, RegistryAccess.EMPTY);
+            MutableComponent component = Component.Serializer.fromJson(message1, RegistryAccess.EMPTY);
             if (component == null) {
                 return Errors.INCORRECT_MESSAGE_JSON_RESULT;
             }
 
-            Optional<String> brackets = arguments.optString(2);
+            Optional<String> brackets = optionsLua.optString("brackets");
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
@@ -141,20 +144,20 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
-            Optional<String> prefix = arguments.optString(1);
+            Optional<String> prefix = optionsLua.optString("prefix");
             if (useUTF8) {
                 prefix = prefix.map(StringUtil::byteStringToUTF8);
             }
 
-            String bracketColor = arguments.optString(3, "");
+            String bracketsColor = optionsLua.optString("bracketsColor").orElse("");
             if (useUTF8) {
-                bracketColor = StringUtil.byteStringToUTF8(bracketColor);
+                bracketsColor = StringUtil.byteStringToUTF8(bracketsColor);
             }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
                     brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                    StringUtil.convertAndToSectionMark(bracketsColor)
             );
             preparedMessage.append(component);
 
@@ -170,26 +173,26 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         });
     }
 
-    // 0 message, 1 prefix, 2 brackets, 3 color, 4 range, 5 utf8compatible
     @LuaFunction(mainThread = true)
-    public final MethodResult sendMessage(@NotNull IArguments arguments) throws LuaException {
+    public final MethodResult sendMessage(String message, Optional<Map<?, ?>> options) throws LuaException {
         return withChatOperation(ignored -> {
-            boolean useUTF8 = arguments.optBoolean(5, false);
+            LuaTable<?, ?> optionsLua = EmptyLuaTable.orEmpty(options.orElse(null));
+            boolean useUTF8 = optionsLua.optBoolean("utf8").orElse(false);
 
-            String message = arguments.getString(0);
+            String message1 = message;
             // check size while it represents bytes (in utf8 mode) as that is longer
-            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+            if (message1.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
                 return Errors.MESSAGE_TOO_LONG_RESULT;
             }
             if (useUTF8) {
-                message = StringUtil.byteStringToUTF8(message);
+                message1 = StringUtil.byteStringToUTF8(message1);
             }
 
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(4, -1);
+            int range = optionsLua.optInt("range").orElse(-1);
             ResourceKey<Level> dimension = getLevel().dimension();
 
-            Optional<String> brackets = arguments.optString(2);
+            Optional<String> brackets = optionsLua.optString("brackets");
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
@@ -197,22 +200,22 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
-            Optional<String> prefix = arguments.optString(1);
+            Optional<String> prefix = optionsLua.optString("prefix");
             if (useUTF8) {
                 prefix = prefix.map(StringUtil::byteStringToUTF8);
             }
 
-            String bracketColor = arguments.optString(3, "");
+            String bracketsColor = optionsLua.optString("bracketsColor").orElse("");
             if (useUTF8) {
-                bracketColor = StringUtil.byteStringToUTF8(bracketColor);
+                bracketsColor = StringUtil.byteStringToUTF8(bracketsColor);
             }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
                     brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                    StringUtil.convertAndToSectionMark(bracketsColor)
             );
-            preparedMessage.append(message);
+            preparedMessage.append(message1);
 
             for (ServerPlayer player : getLevel().getServer().getPlayerList().getPlayers()) {
                 if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
@@ -226,36 +229,35 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         });
     }
 
-    // 0 message, 1 playerName, 2 prefix, 3 brackets, 4 color, 5 range
     @LuaFunction(mainThread = true)
-    public final MethodResult sendFormattedMessageToPlayer(@NotNull IArguments arguments) throws LuaException {
+    public final MethodResult sendFormattedMessageToPlayer(String messageJson, String playerId, Optional<Map<?, ?>> options) throws LuaException {
         return withChatOperation(ignored -> {
-            boolean useUTF8 = arguments.optBoolean(5, false);
+            LuaTable<?, ?> optionsLua = EmptyLuaTable.orEmpty(options.orElse(null));
+            boolean useUTF8 = optionsLua.optBoolean("utf8").orElse(false);
 
-            String message = arguments.getString(0);
+            String message1 = messageJson;
             // check size while it represents bytes (in utf8 mode) as that is longer
-            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+            if (message1.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
                 return Errors.MESSAGE_TOO_LONG_RESULT;
             }
             if (useUTF8) {
-                message = StringUtil.byteStringToUTF8(message);
+                message1 = StringUtil.byteStringToUTF8(message1);
             }
 
-            String playerName = arguments.getString(1);
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(5, -1);
+            int range = optionsLua.optInt("range").orElse(-1);
             ResourceKey<Level> dimension = getLevel().dimension();
-            ServerPlayer player = getPlayer(playerName);
+            ServerPlayer player = getPlayer(playerId);
             if (player == null) {
                 return Errors.INCORRECT_PLAYER_ID_RESULT;
             }
 
-            MutableComponent component = Component.Serializer.fromJson(message, RegistryAccess.EMPTY);
+            MutableComponent component = Component.Serializer.fromJson(message1, RegistryAccess.EMPTY);
             if (component == null) {
                 return Errors.INCORRECT_MESSAGE_JSON_RESULT;
             }
 
-            Optional<String> brackets = arguments.optString(3);
+            Optional<String> brackets = optionsLua.optString("brackets");
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
@@ -263,20 +265,20 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
-            Optional<String> prefix = arguments.optString(2);
+            Optional<String> prefix = optionsLua.optString("prefix");
             if (useUTF8) {
                 prefix = prefix.map(StringUtil::byteStringToUTF8);
             }
 
-            String bracketColor = arguments.optString(4, "");
+            String bracketsColor = optionsLua.optString("bracketsColor").orElse("");
             if (useUTF8) {
-                bracketColor = StringUtil.byteStringToUTF8(bracketColor);
+                bracketsColor = StringUtil.byteStringToUTF8(bracketsColor);
             }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
                     brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                    StringUtil.convertAndToSectionMark(bracketsColor)
             );
             preparedMessage.append(component);
 
@@ -291,14 +293,73 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         });
     }
 
-
-    // 0 message, 1 title, 2 playerName, 3 prefix, 4 brackets, 5 bracket color, 6 range, 7 utf8compatible
+    // 0 message, 1 playerName, 2 prefix, 3 brackets, 4 bracket color, 5 range, 6 utf8compatible
     @LuaFunction(mainThread = true)
-    public final MethodResult sendFormattedToastToPlayer(@NotNull IArguments arguments) throws LuaException {
+    public final MethodResult sendMessageToPlayer(String message, String playerId, Optional<Map<?, ?>> options) throws LuaException {
         return withChatOperation(ignored -> {
-            boolean useUTF8 = arguments.optBoolean(7, false);
+            LuaTable<?, ?> optionsLua = EmptyLuaTable.orEmpty(options.orElse(null));
+            boolean useUTF8 = optionsLua.optBoolean("utf8").orElse(false);
 
-            String message = arguments.getString(0);
+            String message1 = message;
+            // check size while it represents bytes (in utf8 mode) as that is longer
+            if (message1.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+                return Errors.MESSAGE_TOO_LONG_RESULT;
+            }
+            if (useUTF8) {
+                message1 = StringUtil.byteStringToUTF8(message1);
+            }
+
+            int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
+            int range = optionsLua.optInt(5).orElse(-1);
+            ResourceKey<Level> dimension = getLevel().dimension();
+            ServerPlayer player = getPlayer(playerId);
+            if (player == null) {
+                return Errors.INCORRECT_PLAYER_ID_RESULT;
+            }
+
+            Optional<String> brackets = optionsLua.optString("brackets");
+            if (useUTF8) {
+                brackets = brackets.map(StringUtil::byteStringToUTF8);
+            }
+            if (checkBrackets(brackets)) {
+                return Errors.INCORRECT_BRACKETS_RESULT;
+            }
+
+            Optional<String> prefix = optionsLua.optString("prefix");
+            if (useUTF8) {
+                prefix = prefix.map(StringUtil::byteStringToUTF8);
+            }
+
+            String bracketsColor = optionsLua.optString("bracketsColor").orElse("");
+            if (useUTF8) {
+                bracketsColor = StringUtil.byteStringToUTF8(bracketsColor);
+            }
+
+            MutableComponent preparedMessage = appendPrefix(
+                    StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
+                    brackets.orElse("[]"),
+                    StringUtil.convertAndToSectionMark(bracketsColor)
+            );
+            preparedMessage.append(message1);
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
+                return Errors.NOT_SAME_DIMENSION_RESULT;
+            }
+
+            if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
+                player.sendSystemMessage(preparedMessage, false);
+            }
+            return MethodResult.of(true);
+        });
+    }
+
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult sendFormattedToastToPlayer(Map<?, ?> options) throws LuaException {
+        return withChatOperation(ignored -> {
+            LuaTable<?, ?> optionsLua = new ObjectLuaTable(options);
+            boolean useUTF8 = optionsLua.optBoolean("utf8").orElse(false);
+
+            String message = optionsLua.getString("message");
             // check size while it represents bytes (in utf8 mode) as that is longer
             if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
                 return Errors.MESSAGE_TOO_LONG_RESULT;
@@ -307,17 +368,17 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 message = StringUtil.byteStringToUTF8(message);
             }
 
-            String title = arguments.getString(1);
+            String title = optionsLua.getString("title");
             // TODO: missing max length check?
             if (useUTF8) {
                 title = StringUtil.byteStringToUTF8(title);
             }
 
-            String playerName = arguments.getString(2);
+            String playerId = optionsLua.getString("player");
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(6, -1);
+            int range = optionsLua.optInt("range").orElse(-1);
             ResourceKey<Level> dimension = getLevel().dimension();
-            ServerPlayer player = getPlayer(playerName);
+            ServerPlayer player = getPlayer(playerId);
             if (player == null) {
                 return Errors.INCORRECT_PLAYER_ID_RESULT;
             }
@@ -332,7 +393,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return Errors.INCORRECT_TITLE_JSON_RESULT;
             }
 
-            Optional<String> brackets = arguments.optString(4);
+            Optional<String> brackets = optionsLua.optString(4);
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
@@ -340,20 +401,20 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
-            Optional<String> prefix = arguments.optString(3);
+            Optional<String> prefix = optionsLua.optString(3);
             if (useUTF8) {
                 prefix = prefix.map(StringUtil::byteStringToUTF8);
             }
 
-            String bracketColor = arguments.optString(5, "");
+            String bracketsColor = optionsLua.optString("bracketsColor").orElse("");
             if (useUTF8) {
-                bracketColor = StringUtil.byteStringToUTF8(bracketColor);
+                bracketsColor = StringUtil.byteStringToUTF8(bracketsColor);
             }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
                     brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                    StringUtil.convertAndToSectionMark(bracketsColor)
             );
             preparedMessage.append(messageComponent);
 
@@ -370,128 +431,59 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         });
     }
 
-    // 0 message, 1 playerName, 2 prefix, 3 brackets, 4 bracket color, 5 range, 6 utf8compatible
-    @LuaFunction(mainThread = true)
-    public final MethodResult sendMessageToPlayer(@NotNull IArguments arguments) throws LuaException {
-        return withChatOperation(ignored -> {
-            boolean useUTF8 = arguments.optBoolean(6, false);
-
-            String message = arguments.getString(0);
-
-            // check size while it represents bytes (in utf8 mode) as that is longer
-            if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
-                return Errors.MESSAGE_TOO_LONG_RESULT;
-            }
-
-            if (useUTF8) {
-                message = StringUtil.byteStringToUTF8(message);
-            }
-
-            String playerName = arguments.getString(1);
-            int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(5, -1);
-            ResourceKey<Level> dimension = getLevel().dimension();
-            ServerPlayer player = getPlayer(playerName);
-            if (player == null) {
-                return Errors.INCORRECT_PLAYER_ID_RESULT;
-            }
-
-            Optional<String> brackets = arguments.optString(3);
-
-            if (useUTF8) {
-                brackets = brackets.map(StringUtil::byteStringToUTF8);
-            }
-
-            if (checkBrackets(brackets)) {
-                return Errors.INCORRECT_BRACKETS_RESULT;
-            }
-
-            Optional<String> prefix = arguments.optString(2);
-
-            if (useUTF8) {
-                prefix = prefix.map(StringUtil::byteStringToUTF8);
-            }
-            String bracketColor = arguments.optString(4, "");
-            if (useUTF8) {
-                bracketColor = StringUtil.byteStringToUTF8(bracketColor);
-            }
-
-            MutableComponent preparedMessage = appendPrefix(
-                    StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
-                    brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
-            );
-            preparedMessage.append(message);
-            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
-                return Errors.NOT_SAME_DIMENSION_RESULT;
-            }
-
-            if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
-                player.sendSystemMessage(preparedMessage, false);
-            }
-            return MethodResult.of(true);
-        });
-    }
-
     // 0 message, 1 title, 2 playerName, 3 prefix, 4 brackets, 5 bracket color, 6 range, 7 utf8compatible
     @LuaFunction(mainThread = true)
-    public final MethodResult sendToastToPlayer(@NotNull IArguments arguments) throws LuaException {
+    public final MethodResult sendToastToPlayer(Map<?, ?> options) throws LuaException {
         return withChatOperation(ignored -> {
-            boolean useUTF8 = arguments.optBoolean(7, false);
+            LuaTable<?, ?> optionsLua = new ObjectLuaTable(options);
+            boolean useUTF8 = optionsLua.optBoolean("utf8").orElse(false);
 
-            String message = arguments.getString(0);
-
+            String message = optionsLua.getString("message");
+            // check size while it represents bytes (in utf8 mode) as that is longer
             if (message.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
                 return Errors.MESSAGE_TOO_LONG_RESULT;
             }
-
-            // check size while it represents bytes (in utf8 mode) as that is longer
             if (useUTF8) {
                 message = StringUtil.byteStringToUTF8(message);
             }
 
-            String title = arguments.getString(1);
-
+            String title = optionsLua.getString("title");
             // TODO: missing max length check?
-
             if (useUTF8) {
                 title = StringUtil.byteStringToUTF8(title);
             }
 
-            String playerName = arguments.getString(2);
+            String playerId = optionsLua.getString("player");
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = arguments.optInt(6, -1);
+            int range = optionsLua.optInt(6).orElse(-1);
             ResourceKey<Level> dimension = getLevel().dimension();
-            ServerPlayer player = getPlayer(playerName);
+            ServerPlayer player = getPlayer(playerId);
             if (player == null) {
                 return Errors.INCORRECT_PLAYER_ID_RESULT;
             }
 
-            Optional<String> brackets = arguments.optString(4);
-
+            Optional<String> brackets = optionsLua.optString("brackets");
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-
             if (checkBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
-            Optional<String> prefix = arguments.optString(3);
-
+            Optional<String> prefix = optionsLua.optString("prefix");
             if (useUTF8) {
                 prefix = prefix.map(StringUtil::byteStringToUTF8);
             }
 
-            String bracketColor = arguments.optString(5, "");
+            String bracketsColor = optionsLua.optString("bracketsColor").orElse("");
             if (useUTF8) {
-                bracketColor = StringUtil.byteStringToUTF8(bracketColor);
+                bracketsColor = StringUtil.byteStringToUTF8(bracketsColor);
             }
 
             MutableComponent preparedMessage = appendPrefix(
                     StringUtil.convertAndToSectionMark(prefix.orElseGet(APConfig.PERIPHERALS_CONFIG.defaultChatBoxPrefix)),
                     brackets.orElse("[]"),
-                    StringUtil.convertAndToSectionMark(bracketColor)
+                    StringUtil.convertAndToSectionMark(bracketsColor)
             );
             preparedMessage.append(message);
 
