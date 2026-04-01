@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import com.google.gson.JsonParseException;
-import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.LuaTable;
@@ -33,7 +32,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Optional;
@@ -106,10 +104,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
     /**
      * Checks if brackets are in correct format if present
      *
-     * @param brackets {@link IArguments#optString(int) IArguments.optString()} to check
-     * @return true if brackets are in the right format
+     * @param brackets the brackets to check
+     * @return true if brackets are not in the right format
      */
-    private boolean checkBrackets(Optional<String> brackets) {
+    private boolean isInvaildBrackets(Optional<String> brackets) {
         return brackets.isPresent() && brackets.get().length() != 2;
     }
 
@@ -140,7 +138,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (checkBrackets(brackets)) {
+            if (isInvaildBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
@@ -196,7 +194,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (checkBrackets(brackets)) {
+            if (isInvaildBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
@@ -261,7 +259,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (checkBrackets(brackets)) {
+            if (isInvaildBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
@@ -293,7 +291,6 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         });
     }
 
-    // 0 message, 1 playerName, 2 prefix, 3 brackets, 4 bracket color, 5 range, 6 utf8compatible
     @LuaFunction(mainThread = true)
     public final MethodResult sendMessageToPlayer(String message, String playerId, Optional<Map<?, ?>> options) throws LuaException {
         return withChatOperation(ignored -> {
@@ -321,7 +318,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (checkBrackets(brackets)) {
+            if (isInvaildBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
@@ -351,7 +348,6 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             return MethodResult.of(true);
         });
     }
-
 
     @LuaFunction(mainThread = true)
     public final MethodResult sendFormattedToastToPlayer(Map<?, ?> options) throws LuaException {
@@ -397,7 +393,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (checkBrackets(brackets)) {
+            if (isInvaildBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
@@ -431,7 +427,6 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
         });
     }
 
-    // 0 message, 1 title, 2 playerName, 3 prefix, 4 brackets, 5 bracket color, 6 range, 7 utf8compatible
     @LuaFunction(mainThread = true)
     public final MethodResult sendToastToPlayer(Map<?, ?> options) throws LuaException {
         return withChatOperation(ignored -> {
@@ -466,7 +461,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (checkBrackets(brackets)) {
+            if (isInvaildBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
