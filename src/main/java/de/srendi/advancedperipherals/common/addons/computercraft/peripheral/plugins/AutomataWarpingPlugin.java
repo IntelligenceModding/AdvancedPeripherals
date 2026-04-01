@@ -14,19 +14,20 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.entity.TurtleEnderPearl;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -48,28 +49,31 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     }
 
     @NotNull
-    protected CustomData getPointData() {
+    @Unmodifiable
+    protected Map<String, GlobalPos> getPointDatas() {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        return owner.getPatchedDataStorage().getOrDefault(APDataComponents.POINT_DATA_MARK.get(), CustomData.EMPTY);
+        return owner.getPatchedDataStorage().getOrDefault(APDataComponents.POINT_DATA_MARK.get(), Map.of());
     }
 
-    protected void setPointData(@NotNull CompoundTag data) {
+    protected void setPointData(@NotNull Map<String, GlobalPos> data) {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         PatchedDataComponentMap settings = owner.getPatchedDataStorage();
-        settings.set(APDataComponents.POINT_DATA_MARK.get(), CustomData.of(data));
+        settings.set(APDataComponents.POINT_DATA_MARK.get(), Map.copyOf(data));
         owner.putDataStorage(settings.asPatch());
     }
 
-    protected Pair<MethodResult, CompoundTag> getPoint(String name) {
-        CustomData points = getPointData();
-        if (!points.contains(name)) {
+    protected Pair<MethodResult, GlobalPos> getPoint(String name) {
+        Map<String, GlobalPos> points = getPointDatas();
+        if (!points.containsKey(name)) {
             return Pair.onlyLeft(MethodResult.of(null, "Warp point not exists"));
         }
-        return Pair.onlyRight(points.getUnsafe().getCompound(name));
+        return Pair.onlyRight(points.get(name));
     }
 
-    private SingleOperationContext getWarpContext(Level level, BlockPos pos) {
-        return level == automataCore.getPeripheralOwner().getLevel() ? automataCore.toDistance(pos) : new SingleOperationContext(getCostsToLevel(level), 1);
+    private SingleOperationContext getWarpContext(ResourceKey<Level> level, BlockPos pos) {
+        return level == automataCore.getPeripheralOwner().getLevel().dimension()
+            ? automataCore.toDistance(pos)
+            : new SingleOperationContext(getCostsToLevel(level), 1);
     }
 
     private int getWarpCost(SingleOperationContext context) {
@@ -81,15 +85,15 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult savePoint(String name) {
         automataCore.addRotationCycle();
-        CustomData cdata = getPointData();
+        Map<String, GlobalPos> cdata = getPointDatas();
         if (cdata.size() >= APConfig.METAPHYSICS_CONFIG.endAutomataCoreWarpPointLimit.get()) {
             return MethodResult.of(null, "Cannot add new point, limit reached");
         }
 
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         Level level = owner.getLevel();
-        CompoundTag data = cdata.copyTag();
-        data.put(name, NBTUtil.toNBT(level, owner.getPos()));
+        Map<String, GlobalPos> data = new HashMap<>(cdata);
+        data.put(name, GlobalPos.of(level.dimension(), owner.getPos()));
         setPointData(data);
         return MethodResult.of(true);
     }
@@ -97,36 +101,37 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final MethodResult deletePoint(String name) {
         automataCore.addRotationCycle();
-        CustomData cdata = getPointData();
-        if (!cdata.contains(name)) {
+        Map<String, GlobalPos> cdata = getPointDatas();
+        if (!cdata.containsKey(name)) {
             return MethodResult.of(null, "Cannot find point to delete");
         }
 
-        CompoundTag data = cdata.copyTag();
+        Map<String, GlobalPos> data = new HashMap<>(cdata);
         data.remove(name);
         setPointData(data);
         return MethodResult.of(true);
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult points() {
-        CompoundTag data = getPointData().getUnsafe();
-        return MethodResult.of(data.getAllKeys());
+    public final Collection<String> points() {
+        Map<String, GlobalPos> data = getPointDatas();
+        return data.keySet();
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult warpToPoint(String name) throws LuaException {
-        Pair<MethodResult, CompoundTag> pairData = getPoint(name);
+        Pair<MethodResult, GlobalPos> pairData = getPoint(name);
         if (pairData.leftPresent()) {
-            return pairData.getLeft();
+            return pairData.left();
         }
 
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        Pair<Level, BlockPos> newLevelAndPosition = NBTUtil.levelAndBlockPosFromNBT(automataCore.getLevel().getServer(), pairData.getRight());
-        Level newLevel = newLevelAndPosition.getLeft();
-        BlockPos newPosition = newLevelAndPosition.getRight();
+        GlobalPos globalPos = pairData.right();
+        Level newLevel = owner.getLevel().getServer().getLevel(globalPos.dimension());
+        BlockPos newPosition = globalPos.pos();
 
-        return automataCore.withOperation(WARP, getWarpContext(newLevel, newPosition), context -> {
+        return automataCore.withOperation(WARP, getWarpContext(globalPos.dimension(), newPosition), context -> {
+            // TODO: load destination
             boolean result = owner.move(newLevel, newPosition);
             if (!result) {
                 return MethodResult.of(null, "Cannot teleport to location");
@@ -142,28 +147,28 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
 
     @LuaFunction(mainThread = true)
     public final MethodResult estimateWarpCost(String name) {
-        Pair<MethodResult, CompoundTag> pairData = getPoint(name);
+        Pair<MethodResult, GlobalPos> pairData = getPoint(name);
         if (pairData.leftPresent()) {
-            return pairData.getLeft();
+            return pairData.left();
         }
 
-        Pair<Level, BlockPos> newLevelAndPosition = NBTUtil.levelAndBlockPosFromNBT(automataCore.getLevel().getServer(), pairData.getRight());
-        return MethodResult.of(getWarpCost(getWarpContext(newLevelAndPosition.getLeft(), newLevelAndPosition.getRight())));
+        GlobalPos globalPos = pairData.right();
+        return MethodResult.of(getWarpCost(getWarpContext(globalPos.dimension(), globalPos.pos())));
     }
 
     @LuaFunction(mainThread = true)
     public final MethodResult distanceToPoint(String name) {
-        Pair<MethodResult, CompoundTag> pairData = getPoint(name);
+        Pair<MethodResult, GlobalPos> pairData = getPoint(name);
         if (pairData.leftPresent()) {
-            return pairData.getLeft();
+            return pairData.left();
         }
 
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        Pair<Level, BlockPos> newLevelAndPosition = NBTUtil.levelAndBlockPosFromNBT(automataCore.getLevel().getServer(), pairData.getRight());
-        if (newLevelAndPosition.getLeft() != owner.getLevel()) {
+        GlobalPos globalPos = pairData.right();
+        if (globalPos.dimension() != owner.getLevel().dimension()) {
             return MethodResult.of(-1);
         }
-        return MethodResult.of(newLevelAndPosition.getRight().distManhattan(owner.getPos()));
+        return MethodResult.of(globalPos.pos().distManhattan(owner.getPos()));
     }
 
     /**
@@ -226,7 +231,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
                         data.put("name", level.dimension().location().toString());
                         data.put("pos", LuaConverter.posToLua(pos));
                         data.put("facing", pearl.getDirection().getName());
-                        data.put("costs", getCostsToLevel(level));
+                        data.put("costs", getCostsToLevel(level.dimension()));
                         data.put("canSpawn", owner.isMovementPossible(level, pos));
                         data.put("shipId", shipId);
                         shipPearls.put(shipId, pearl);
@@ -263,7 +268,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         }
         Level level = shipPearl.level();
         BlockPos newPosition = shipPearl.blockPosition();
-        return automataCore.withOperation(ACTIVE_PORTAL, new SingleOperationContext(getCostsToLevel(level), 1), context -> {
+        return automataCore.withOperation(ACTIVE_PORTAL, new SingleOperationContext(getCostsToLevel(level.dimension()), 1), context -> {
             shipPearl.discard();
             boolean result = owner.move(level, newPosition);
             if (!result) {
@@ -279,8 +284,8 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         });
     }
 
-    private static int getCostsToLevel(Level level) {
-        String dimension = level.dimension().location().toString();
+    private static int getCostsToLevel(ResourceKey<Level> level) {
+        String dimension = level.location().toString();
         // TODO: load fuel costs from config / datapack
         return switch (dimension) {
             case "minecraft:overworld" -> 10000;

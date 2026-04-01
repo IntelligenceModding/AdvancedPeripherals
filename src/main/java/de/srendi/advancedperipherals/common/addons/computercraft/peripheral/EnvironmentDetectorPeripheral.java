@@ -137,7 +137,7 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final MethodResult getMoon() {
         Pair<Integer, String> moon = getCurrentMoonPhase();
-        return MethodResult.of(moon.getLeft(), moon.getRight());
+        return MethodResult.of(moon.left(), moon.right());
     }
 
     private Pair<Integer, String> getCurrentMoonPhase() {

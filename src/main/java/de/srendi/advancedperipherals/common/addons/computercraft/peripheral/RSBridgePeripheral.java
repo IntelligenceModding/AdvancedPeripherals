@@ -95,12 +95,12 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
+            return MethodResult.of(0, filter.right());
 
         if (targetInventory == null)
             return MethodResult.of(0, "Target Inventory does not exist");
 
-        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()));
+        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.left()));
     }
 
     /**
@@ -115,12 +115,12 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
+            return MethodResult.of(0, filter.right());
 
         if (targetTank == null)
             return MethodResult.of(0, "Target Tank does not exist");
 
-        return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()));
+        return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.left()));
     }
 
     /**
@@ -135,12 +135,12 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
+            return MethodResult.of(0, filter.right());
 
         if (targetInventory == null)
             return MethodResult.of(0, "Target Inventory does not exist");
 
-        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()));
+        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.left()));
     }
 
     /**
@@ -155,12 +155,12 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
+            return MethodResult.of(0, filter.right());
 
         if (targetTank == null)
             return MethodResult.of(0, "Target Tank does not exist");
 
-        return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()));
+        return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.left()));
     }
 
     @Override
@@ -186,9 +186,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        ItemFilter parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
@@ -207,9 +207,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        FluidFilter parsedFilter = filter.getLeft();
+        FluidFilter parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
@@ -231,9 +231,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ChemicalFilter parsedFilter = filter.getLeft();
+        ChemicalFilter parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, "EMPTY_FILTER");
 
@@ -252,9 +252,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        ItemFilter parsedFilter = filter.left();
 
         List<Map<String, Object>> resourceProperties = RSApi.getParsedItems(getNetwork(), parsedFilter);
 
@@ -269,9 +269,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        FluidFilter parsedFilter = filter.getLeft();
+        FluidFilter parsedFilter = filter.left();
 
         List<Map<String, Object>> resourceProperties = RSApi.getParsedFluids(getNetwork(), parsedFilter);
 
@@ -289,9 +289,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ChemicalFilter parsedFilter = filter.getLeft();
+        ChemicalFilter parsedFilter = filter.left();
 
         List<Map<String, Object>> resourceProperties = RSApi.getParsedChemicals(getNetwork(), parsedFilter);
 
@@ -306,9 +306,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        ItemFilter parsedFilter = filter.left();
 
         List<Map<String, Object>> resourceProperties = RSApi.getCraftableItems(getNetwork(), parsedFilter);
 
@@ -323,9 +323,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        FluidFilter parsedFilter = filter.getLeft();
+        FluidFilter parsedFilter = filter.left();
 
         List<Map<String, Object>> resourceProperties = RSApi.getCraftableFluids(getNetwork(), parsedFilter);
 
@@ -343,9 +343,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ChemicalFilter parsedFilter = filter.getLeft();
+        ChemicalFilter parsedFilter = filter.left();
 
         List<Map<String, Object>> resourceProperties = RSApi.getCraftableChemicals(getNetwork(), parsedFilter);
 
@@ -693,9 +693,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getCount(), ItemResource.ofItemStack(filter.getLeft().toItemStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.left().getCount(), ItemResource.ofItemStack(filter.left().toItemStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
         bridge.addJob(job);
         return MethodResult.of(job);
     }
@@ -708,9 +708,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getAmount(), VariantUtil.ofFluidStack(filter.getLeft().toFluidStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.left().getAmount(), VariantUtil.ofFluidStack(filter.left().toFluidStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
         bridge.addJob(job);
         return MethodResult.of(job);
     }
@@ -726,9 +726,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getLeft().getAmount(), ChemicalResource.ofChemicalStack(filter.getLeft().toChemicalStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.left().getAmount(), ChemicalResource.ofChemicalStack(filter.left().toChemicalStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
         bridge.addJob(job);
         return MethodResult.of(job);
     }
@@ -763,10 +763,10 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.getRight() != null)
-            return MethodResult.of(0, filter.getRight());
+        if (filter.right() != null)
+            return MethodResult.of(0, filter.right());
 
-        GenericFilter<?> parsedFilter = filter.getLeft();
+        GenericFilter<?> parsedFilter = filter.left();
 
         AutocraftingNetworkComponent craftingManager = getComponent(AutocraftingNetworkComponent.class);
         int canceled = 0;
@@ -788,10 +788,10 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(false);
 
         Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.getRight() != null)
-            return MethodResult.of(false, filter.getRight());
+        if (filter.right() != null)
+            return MethodResult.of(false, filter.right());
 
-        GenericFilter<?> parsedFilter = filter.getLeft();
+        GenericFilter<?> parsedFilter = filter.left();
 
         return MethodResult.of(RSApi.findPatternFromFilters(getNetwork(), null, parsedFilter).leftPresent());
     }
@@ -803,10 +803,10 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(false);
 
         Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.getRight() != null)
-            return MethodResult.of(false, filter.getRight());
+        if (filter.right() != null)
+            return MethodResult.of(false, filter.right());
 
-        GenericFilter<?> parsedFilter = filter.getLeft();
+        GenericFilter<?> parsedFilter = filter.left();
 
         AutocraftingNetworkComponent craftingManager = getComponent(AutocraftingNetworkComponent.class);
 
@@ -849,9 +849,9 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             Pair<? extends GenericFilter<?>, String> parsedFilter = GenericFilter.parseGeneric(inputFilterTable);
 
             if (parsedFilter.rightPresent())
-                return MethodResult.of(null, parsedFilter.getRight());
+                return MethodResult.of(null, parsedFilter.right());
 
-            inputFilter = parsedFilter.getLeft();
+            inputFilter = parsedFilter.left();
         }
         if (hasOutputFilter) {
             LuaTable<?, ?> outputFilterTable = new ObjectLuaTable(filterTable.getTable("output"));
@@ -859,18 +859,18 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             Pair<? extends GenericFilter<?>, String> parsedFilter = GenericFilter.parseGeneric(outputFilterTable);
 
             if (parsedFilter.rightPresent())
-                return MethodResult.of(null, parsedFilter.getRight());
+                return MethodResult.of(null, parsedFilter.right());
 
-            outputFilter = parsedFilter.getLeft();
+            outputFilter = parsedFilter.left();
         }
 
         Pair<Pattern, String> pattern = RSApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
 
         if (pattern.rightPresent())
-            return MethodResult.of(null, pattern.getRight());
+            return MethodResult.of(null, pattern.right());
 
         AutocraftingNetworkComponent autocrafting = getNetwork().getComponent(AutocraftingNetworkComponent.class);
 
-        return MethodResult.of(RSApi.parsePattern(pattern.getLeft(), autocrafting));
+        return MethodResult.of(RSApi.parsePattern(pattern.left(), autocrafting));
     }
 }

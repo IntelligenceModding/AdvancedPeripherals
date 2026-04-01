@@ -54,9 +54,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     public final MethodResult addItemToPlayer(String invDirection, Map<?, ?> item) throws LuaException {
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(item));
         if (filter.rightPresent()) {
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
         }
-        return addItemCommon(invDirection, filter.getLeft());
+        return addItemCommon(invDirection, filter.left());
     }
 
     private MethodResult addItemCommon(String invDirection, ItemFilter filter) throws LuaException {
@@ -78,9 +78,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     public final MethodResult removeItemFromPlayer(String invDirection, Map<?, ?> item) throws LuaException {
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(item));
         if (filter.rightPresent()) {
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
         }
-        return removeItemCommon(invDirection, filter.getLeft());
+        return removeItemCommon(invDirection, filter.left());
     }
 
     private MethodResult removeItemCommon(String invDirection, ItemFilter filter) throws LuaException {

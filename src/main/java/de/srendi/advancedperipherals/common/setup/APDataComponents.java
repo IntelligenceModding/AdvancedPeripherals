@@ -2,7 +2,9 @@ package de.srendi.advancedperipherals.common.setup;
 
 import com.mojang.serialization.Codec;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral.DetectionType;
-import de.srendi.advancedperipherals.common.util.inventory.ItemStackStorage;
+import de.srendi.advancedperipherals.common.component.ItemStackStorage;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentPatch;
@@ -10,6 +12,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
@@ -17,12 +20,17 @@ import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.UnaryOperator;
 
 public class APDataComponents {
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> ABILITY_COOLDOWNS = registerNBT("cooldowns");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Map<String, Long>>> ABILITY_COOLDOWNS = registerStringKeyMap("cooldowns", Codec.LONG, ByteBufCodecs.VAR_LONG);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BINDING_COMPUTER = registerInt("binding_computer");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> CHUNKY_ID = registerUUID("chunky_id");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> CONSUMED_ENTITY_COMPOUND = registerNBT("consumed_entity_compound");
@@ -32,7 +40,7 @@ public class APDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> KEYBOARD_OPENED = registerBoolean("keyboard_opened");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> MODULE_DATAS = registerDataComponent("module_datas");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> OWNER = registerUUID("owner_id");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> POINT_DATA_MARK = registerNBT("point_data_mark");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Map<String, GlobalPos>>> POINT_DATA_MARK = registerStringKeyMap("point_data_mark", GlobalPos.CODEC, GlobalPos.STREAM_CODEC);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ROTATION_CHARGE_SETTING = registerInt("rotation_charge_setting");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> STORED_DATA = registerDataComponent("stored_data");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WORLD_DATA_MARK = registerString("world_data_mark");
@@ -115,5 +123,36 @@ public class APDataComponents {
     private static DeferredHolder<DataComponentType<?>, DataComponentType<ItemStackStorage>> registerItemStackStorage(String name) {
         return simple(name, builder -> builder.persistent(ItemStackStorage.CODEC)
                 .networkSynchronized(ItemStackStorage.STREAM_CODEC));
+    }
+
+    private static <K, V> DeferredHolder<DataComponentType<?>, DataComponentType<Map<K, V>>> registerMap(
+        String name,
+        Codec<K> keyCodec,
+        Codec<V> valueCodec,
+        StreamCodec<? super ByteBuf, K> keyStreamCodec,
+        StreamCodec<? super ByteBuf, V> valueStreamCodec
+    ) {
+        return simple(
+            name,
+            builder -> builder
+                .persistent(Codec.unboundedMap(keyCodec, valueCodec))
+                .networkSynchronized(
+                    ByteBufCodecs.map(
+                        // type cast here is necessary cause weird generics
+                        (IntFunction<Map<K, V>>) HashMap::new,
+                        keyStreamCodec,
+                        valueStreamCodec
+                    )
+                        .map(Collections::unmodifiableMap, Function.identity())
+                )
+        );
+    }
+
+    private static <V> DeferredHolder<DataComponentType<?>, DataComponentType<Map<String, V>>> registerStringKeyMap(
+        String name,
+        Codec<V> valueCodec,
+        StreamCodec<? super ByteBuf, V> valueStreamCodec
+    ) {
+        return registerMap(name, Codec.STRING, valueCodec, ByteBufCodecs.STRING_UTF8, valueStreamCodec);
     }
 }

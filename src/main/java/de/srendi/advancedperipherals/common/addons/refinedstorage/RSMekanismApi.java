@@ -30,7 +30,7 @@ public final class RSMekanismApi {
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
+            return MethodResult.of(0, filter.right());
 
         String side = arguments.getString(1);
         IChemicalHandler targetTank = ChemicalUtil.getHandlerFromDirection(side, peripheral.getPeripheralOwner());
@@ -44,7 +44,7 @@ public final class RSMekanismApi {
 
         RSChemicalHandler chemicalHandler = new RSChemicalHandler(peripheral.getNetwork());
 
-        return MethodResult.of(ChemicalUtil.moveChemical(targetTank, chemicalHandler, filter.getLeft()));
+        return MethodResult.of(ChemicalUtil.moveChemical(targetTank, chemicalHandler, filter.left()));
     }
 
     /**
@@ -59,7 +59,7 @@ public final class RSMekanismApi {
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
+            return MethodResult.of(0, filter.right());
 
         String side = arguments.getString(1);
         IChemicalHandler targetTank = ChemicalUtil.getHandlerFromDirection(side, peripheral.getPeripheralOwner());
@@ -73,7 +73,7 @@ public final class RSMekanismApi {
 
         RSChemicalHandler chemicalHandler = new RSChemicalHandler(peripheral.getNetwork());
 
-        return MethodResult.of(ChemicalUtil.moveChemical(chemicalHandler, targetTank, filter.getLeft()));
+        return MethodResult.of(ChemicalUtil.moveChemical(chemicalHandler, targetTank, filter.left()));
     }
 
 }

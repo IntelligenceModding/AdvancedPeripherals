@@ -192,7 +192,7 @@ public class AEApi {
     @NotNull
     public static Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> findPatternFromFilters(IGrid grid, Level level, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
         for (Pair<EncodedPatternItem<?>, IPatternDetails> pattern : getPatterns(grid, level)) {
-            IPatternDetails patternDetails = pattern.getRight();
+            IPatternDetails patternDetails = pattern.right();
             if (patternDetails.getInputs().length == 0)
                 continue;
             if (patternDetails.getOutputs().isEmpty())
@@ -227,7 +227,7 @@ public class AEApi {
             }
 
             if (inputMatch && outputMatch)
-                return Pair.of(Pair.of(pattern.getLeft(), patternDetails), null);
+                return Pair.of(Pair.of(pattern.left(), patternDetails), null);
         }
 
         return Pair.of(null, StatusConstants.NOT_FOUND.toString());
@@ -351,16 +351,16 @@ public class AEApi {
     }
 
     public static <T extends AEKey> Map<String, Object> parseAeStack(Pair<Long, T> stack, @Nullable ICraftingService service) {
-        if (stack.getRight() == null)
+        if (stack.right() == null)
             return null;
-        if (stack.getRight() instanceof AEItemKey itemKey)
-            return parseItemStack(Pair.of(stack.getLeft(), itemKey), service);
-        if (stack.getRight() instanceof AEFluidKey fluidKey)
-            return parseFluidStack(Pair.of(stack.getLeft(), fluidKey), service);
-        if (APAddon.APP_MEKANISTICS.isLoaded() && (stack.getRight() instanceof MekanismKey gasKey))
-            return parseChemStack(Pair.of(stack.getLeft(), gasKey), service);
+        if (stack.right() instanceof AEItemKey itemKey)
+            return parseItemStack(Pair.of(stack.left(), itemKey), service);
+        if (stack.right() instanceof AEFluidKey fluidKey)
+            return parseFluidStack(Pair.of(stack.left(), fluidKey), service);
+        if (APAddon.APP_MEKANISTICS.isLoaded() && (stack.right() instanceof MekanismKey gasKey))
+            return parseChemStack(Pair.of(stack.left(), gasKey), service);
 
-        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getRight().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.right().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.WARN);
         return null;
     }
 
@@ -447,27 +447,27 @@ public class AEApi {
     }
 
     private static Map<String, Object> parseItemStack(Pair<Long, AEItemKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> properties = LuaConverter.itemStackToLua(stack.getRight().getReadOnlyStack(), stack.getLeft());
-        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
+        Map<String, Object> properties = LuaConverter.itemStackToLua(stack.right().getReadOnlyStack(), stack.left());
+        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.right()));
         return properties;
     }
 
     private static Map<String, Object> parseFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> properties = LuaConverter.fluidStackToLua(stack.getRight().toStack(1), stack.getLeft());
-        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
+        Map<String, Object> properties = LuaConverter.fluidStackToLua(stack.right().toStack(1), stack.left());
+        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.right()));
         return properties;
     }
 
     private static Map<String, Object> parseChemStack(Pair<Long, MekanismKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> properties = LuaConverter.chemicalStackToLua(stack.getRight().withAmount(stack.getLeft()));
-        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.getRight()));
+        Map<String, Object> properties = LuaConverter.chemicalStackToLua(stack.right().withAmount(stack.left()));
+        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.right()));
         return properties;
     }
 
     public static Map<String, Object> parsePattern(Pair<EncodedPatternItem<?>, IPatternDetails> pattern) {
         Map<String, Object> properties = new HashMap<>();
-        IPatternDetails patternDetails = pattern.getRight();
-        String patternType = getPatternType(pattern.getLeft());
+        IPatternDetails patternDetails = pattern.right();
+        String patternType = getPatternType(pattern.left());
 
         properties.put("inputs", Arrays.stream(patternDetails.getInputs()).map(AEApi::parsePatternInput).collect(Collectors.toList()));
         properties.put("outputs", patternDetails.getOutputs().stream().map(AEApi::parseGenericStack).collect(Collectors.toList()));

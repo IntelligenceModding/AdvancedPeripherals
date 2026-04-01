@@ -66,13 +66,13 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
             ItemStack selectedTool = owner.getToolInMainHand();
             int previousDamageValue = selectedTool.getDamageValue();
             Pair<Boolean, String> result = owner.withPlayer(APFakePlayer.wrapActionWithShiftKey(sneak, APFakePlayer.wrapActionWithRot(yaw, pitch, APFakePlayer::digBlock)));
-            if (!result.getLeft()) {
-                return MethodResult.of(false, result.getRight());
+            if (!result.left()) {
+                return MethodResult.of(false, result.right());
             }
             if (automataCore.canActiveOverpower() && automataCore.afterOverpowerAction()) {
                 selectedTool.setDamageValue(previousDamageValue);
             }
-            return MethodResult.of(true, result.getRight());
+            return MethodResult.of(true, result.right());
         });
     }
 

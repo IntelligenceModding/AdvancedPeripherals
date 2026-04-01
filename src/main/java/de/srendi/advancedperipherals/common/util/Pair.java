@@ -1,10 +1,12 @@
 package de.srendi.advancedperipherals.common.util;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public record Pair<T, V>(T left, V right) {
+public record Pair<T, V>(@Nullable T left, @Nullable V right) {
     public static <T, V> Pair<T, V> onlyRight(V right) {
         return new Pair<>(null, right);
     }
@@ -17,16 +19,6 @@ public record Pair<T, V>(T left, V right) {
         return new Pair<>(left, right);
     }
 
-    // TODO: replace by left() in 0.8
-    public T getLeft() {
-        return left;
-    }
-
-    // TODO: replace by right() in 0.8
-    public V getRight() {
-        return right;
-    }
-
     public boolean leftPresent() {
         return left != null;
     }
@@ -36,24 +28,26 @@ public record Pair<T, V>(T left, V right) {
     }
 
     public void ifRightPresent(Consumer<V> consumer) {
-        if (rightPresent())
+        if (right != null) {
             consumer.accept(right);
+        }
     }
 
     public void ifLeftPresent(Consumer<T> consumer) {
-        if (leftPresent())
+        if (left != null) {
             consumer.accept(left);
+        }
     }
 
-    public <T1> Pair<T1, V> mapLeft(Function<T, T1> mapFunc) {
+    public <T1> Pair<T1, V> mapLeft(Function<@Nullable T, T1> mapFunc) {
         return new Pair<>(mapFunc.apply(left), right);
     }
 
-    public <V1> Pair<T, V1> mapRight(Function<V, V1> mapFunc) {
+    public <V1> Pair<T, V1> mapRight(Function<@Nullable V, V1> mapFunc) {
         return new Pair<>(left, mapFunc.apply(right));
     }
 
-    public <T1, V1> Pair<T1, V1> mapBoth(BiFunction<T, V, Pair<T1, V1>> mapFunc) {
+    public <T1, V1> Pair<T1, V1> mapBoth(BiFunction<@Nullable T, @Nullable V, Pair<T1, V1>> mapFunc) {
         return mapFunc.apply(left, right);
     }
 
@@ -65,7 +59,7 @@ public record Pair<T, V>(T left, V right) {
         return new Pair<>(left, null);
     }
 
-    public <R> R reduce(BiFunction<T, V, R> reduceFunc) {
+    public <R> R reduce(BiFunction<@Nullable T, @Nullable V, R> reduceFunc) {
         return reduceFunc.apply(left, right);
     }
 }

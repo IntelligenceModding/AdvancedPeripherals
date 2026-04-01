@@ -88,9 +88,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
+            return MethodResult.of(0, filter.right());
 
-        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.getLeft()), null);
+        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.left()), null);
     }
 
     /**
@@ -106,9 +106,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
+            return MethodResult.of(0, filter.right());
 
-        return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.getLeft()), null);
+        return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.left()), null);
     }
 
 
@@ -125,9 +125,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
+            return MethodResult.of(0, filter.right());
 
-        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.getLeft()), null);
+        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.left()), null);
     }
 
     /**
@@ -143,9 +143,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
 
         if (filter.rightPresent())
-            return MethodResult.of(0, filter.getRight());
+            return MethodResult.of(0, filter.right());
 
-        return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
+        return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.left()), null);
     }
 
     private MethodResult notConnected(@Nullable Object defaultValue) {
@@ -177,9 +177,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         MEStorage monitor = AEApi.getMonitor(node);
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        ItemFilter parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
@@ -194,9 +194,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        FluidFilter parsedFilter = filter.getLeft();
+        FluidFilter parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
@@ -211,9 +211,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ChemicalFilter parsedFilter = filter.getLeft();
+        ChemicalFilter parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
@@ -228,9 +228,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        ItemFilter parsedFilter = filter.left();
 
         return MethodResult.of(AEApi.listItems(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
@@ -243,9 +243,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        FluidFilter parsedFilter = filter.getLeft();
+        FluidFilter parsedFilter = filter.left();
 
         return MethodResult.of(AEApi.listFluids(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
@@ -261,9 +261,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ChemicalFilter parsedFilter = filter.getLeft();
+        ChemicalFilter parsedFilter = filter.left();
 
         return MethodResult.of(AEApi.listChemicals(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
@@ -276,9 +276,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        ItemFilter parsedFilter = filter.left();
 
         return MethodResult.of(AEApi.listCraftableItems(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
@@ -291,9 +291,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        FluidFilter parsedFilter = filter.getLeft();
+        FluidFilter parsedFilter = filter.left();
 
         return MethodResult.of(AEApi.listCraftableFluids(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
@@ -308,9 +308,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ChemicalFilter parsedFilter = filter.getLeft();
+        ChemicalFilter parsedFilter = filter.left();
 
         return MethodResult.of(AEApi.listCraftableChemicals(AEApi.getMonitor(node), getCraftingService(), parsedFilter));
     }
@@ -462,20 +462,20 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (hasInputFilter) {
             LuaTable<?, ?> inputFilterTable = new ObjectLuaTable(filterTable.getTable("input"));
 
-            inputFilter = GenericFilter.parseGeneric(inputFilterTable).getLeft();
+            inputFilter = GenericFilter.parseGeneric(inputFilterTable).left();
         }
         if (hasOutputFilter) {
             LuaTable<?, ?> outputFilterTable = new ObjectLuaTable(filterTable.getTable("output"));
 
-            outputFilter = GenericFilter.parseGeneric(outputFilterTable).getLeft();
+            outputFilter = GenericFilter.parseGeneric(outputFilterTable).left();
         }
 
         Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> pattern = AEApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
 
-        if (pattern.getRight() != null)
-            return MethodResult.of(null, pattern.getRight());
+        if (pattern.right() != null)
+            return MethodResult.of(null, pattern.right());
 
-        return MethodResult.of(AEApi.parsePattern(pattern.getLeft()));
+        return MethodResult.of(AEApi.parsePattern(pattern.left()));
     }
 
     @Override
@@ -684,9 +684,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ItemFilter parsedFilter = filter.getLeft();
+        ItemFilter parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
@@ -699,11 +699,11 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
         Pair<Long, AEItemKey> stack = AEApi.findAEStackFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
-        if (stack.getRight() == null && stack.getLeft() == 0) {
+        if (stack.right() == null && stack.left() == 0) {
             return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
         }
 
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getCount(), bridge, target);
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.right(), parsedFilter.getCount(), bridge, target);
         bridge.addJob(job);
         return MethodResult.of(job.withCPU(target));
     }
@@ -716,9 +716,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        FluidFilter parsedFilter = filter.getLeft();
+        FluidFilter parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
@@ -729,10 +729,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
         Pair<Long, AEFluidKey> stack = AEApi.findAEFluidFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
-        if (stack.getRight() == null && stack.getLeft() == 0)
+        if (stack.right() == null && stack.left() == 0)
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
 
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getAmount(), bridge, target);
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.right(), parsedFilter.getAmount(), bridge, target);
         bridge.addJob(job);
         return MethodResult.of(job.withCPU(target));
     }
@@ -747,9 +747,9 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
         if (filter.rightPresent())
-            return MethodResult.of(null, filter.getRight());
+            return MethodResult.of(null, filter.right());
 
-        ChemicalFilter parsedFilter = filter.getLeft();
+        ChemicalFilter parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
 
@@ -760,10 +760,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
         Pair<Long, MekanismKey> stack = AEApi.findAEChemicalFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, parsedFilter);
-        if (stack.getRight() == null && stack.getLeft() == 0)
+        if (stack.right() == null && stack.left() == 0)
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
 
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.getRight(), parsedFilter.getAmount(), bridge, target);
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.right(), parsedFilter.getAmount(), bridge, target);
         bridge.addJob(job);
         return MethodResult.of(job.withCPU(target));
     }
@@ -813,10 +813,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
 
         Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.getRight() != null)
-            return MethodResult.of(0, filter.getRight());
+        if (filter.right() != null)
+            return MethodResult.of(0, filter.right());
 
-        GenericFilter<?> parsedFilter = filter.getLeft();
+        GenericFilter<?> parsedFilter = filter.left();
 
         int jobsCanceled = 0;
         for (ICraftingCPU cpu : craftingGrid.getCpus()) {
@@ -835,14 +835,14 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(false);
 
         Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.getRight() != null)
-            return MethodResult.of(false, filter.getRight());
+        if (filter.right() != null)
+            return MethodResult.of(false, filter.right());
 
-        GenericFilter<?> parsedFilter = filter.getLeft();
+        GenericFilter<?> parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, StatusConstants.EMPTY_FILTER.toString());
 
-        return MethodResult.of(AEApi.findPatternFromFilters(node.getGrid(), getLevel(), null, parsedFilter).getLeft() != null);
+        return MethodResult.of(AEApi.findPatternFromFilters(node.getGrid(), getLevel(), null, parsedFilter).left() != null);
     }
 
     @Override
@@ -854,10 +854,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
 
         Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.getRight() != null)
-            return MethodResult.of(false, filter.getRight());
+        if (filter.right() != null)
+            return MethodResult.of(false, filter.right());
 
-        GenericFilter<?> parsedFilter = filter.getLeft();
+        GenericFilter<?> parsedFilter = filter.left();
         if (parsedFilter.isEmpty())
             return MethodResult.of(false, StatusConstants.EMPTY_FILTER.toString());
 

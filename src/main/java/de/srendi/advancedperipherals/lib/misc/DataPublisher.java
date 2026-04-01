@@ -38,11 +38,11 @@ public class DataPublisher<T> {
         this.lock.readLock().lock();
         try {
             for (Pair<Long, T> data : this.buffer) {
-                long id = data.getLeft();
+                long id = data.left();
                 if (id <= lastConsumedID) {
                     continue;
                 }
-                consumer.accept(data.getRight());
+                consumer.accept(data.right());
                 lastConsumedID = id;
             }
         } finally {

@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.util.inventory;
+package de.srendi.advancedperipherals.common.component;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
