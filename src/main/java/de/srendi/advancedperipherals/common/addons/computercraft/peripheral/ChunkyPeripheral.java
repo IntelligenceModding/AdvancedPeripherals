@@ -6,16 +6,12 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.UUID;
 
 public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
@@ -24,17 +20,6 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     public ChunkyPeripheral(ITurtleAccess turtle, TurtleSide side) {
         super(PERIPHERAL_TYPE, new TurtlePeripheralOwner(turtle, side));
-    }
-
-    protected UUID getUUID() {
-        PatchedDataComponentMap patchMap = owner.getPatchedDataStorage();
-        UUID id = patchMap.get(APDataComponents.CHUNKY_ID.get());
-        if (id == null) {
-            id = UUID.randomUUID();
-            patchMap.set(APDataComponents.CHUNKY_ID.get(), id);
-            owner.putDataStorage(patchMap.asPatch());
-        }
-        return id;
     }
 
     public ChunkPos getChunkPos() {
@@ -58,7 +43,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         ChunkManager manager = ChunkManager.get(level.getServer());
         ChunkPos currentChunk = getChunkPos();
         setLoadedChunk(currentChunk, manager, level);
-        manager.touch(getUUID());
+        manager.touch(owner.getChunkLoadUUID());
     }
 
     protected void setLoadedChunk(@Nullable ChunkPos newChunk, ChunkManager manager, ServerLevel level) {
@@ -66,14 +51,14 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
             if (loadedCentralChunk.equals(newChunk)) {
                 return;
             }
-            manager.removeForceChunk(level, getUUID());
+            manager.removeForceChunk(level, owner.getChunkLoadUUID());
             // Should not be used
             // level.setChunkForced(loadedChunk.x, loadedChunk.z, false);
             loadedCentralChunk = null;
         }
         if (newChunk != null) {
             loadedCentralChunk = newChunk;
-            manager.addForceChunk(level, getUUID(), loadedCentralChunk);
+            manager.addForceChunk(level, owner.getChunkLoadUUID(), loadedCentralChunk);
             // Should not be used
             // level.setChunkForced(newChunk.x, newChunk.z, true);
         }

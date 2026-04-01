@@ -13,6 +13,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.entity.TurtleEnderPearl;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
@@ -23,6 +24,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -113,7 +117,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final Collection<String> points() {
+    public final Collection<String> listPoints() {
         Map<String, GlobalPos> data = getPointDatas();
         return data.keySet();
     }
@@ -127,11 +131,12 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
 
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         GlobalPos globalPos = pairData.right();
-        Level newLevel = owner.getLevel().getServer().getLevel(globalPos.dimension());
+        MinecraftServer server = owner.getLevel().getServer();
+        ServerLevel newLevel = server.getLevel(globalPos.dimension());
         BlockPos newPosition = globalPos.pos();
 
         return automataCore.withOperation(WARP, getWarpContext(globalPos.dimension(), newPosition), context -> {
-            // TODO: load destination
+            ChunkManager.get(server).addForceChunk(newLevel, owner.getChunkLoadUUID(), new ChunkPos(newPosition));
             boolean result = owner.move(newLevel, newPosition);
             if (!result) {
                 return MethodResult.of(null, "Cannot teleport to location");

@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -18,7 +19,6 @@ import net.neoforged.neoforge.common.world.chunk.TicketController;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
-import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -51,7 +51,7 @@ public class ChunkManager extends SavedData {
     public static ChunkManager load(@NotNull CompoundTag data, HolderLookup.Provider provider) {
         ChunkManager manager = new ChunkManager();
         CompoundTag forcedData = data.getCompound(FORCED_CHUNKS_TAG);
-        AdvancedPeripherals.debug("Loading chunk manager from NBT " + data, Level.WARN);
+        AdvancedPeripherals.debug("Loading chunk manager from NBT " + data, org.apache.logging.log4j.Level.WARN);
         for (String key : forcedData.getAllKeys()) {
             manager.forcedChunks.put(UUID.fromString(key), LoadChunkRecord.deserialize(forcedData.getCompound(key)));
         }
@@ -84,32 +84,32 @@ public class ChunkManager extends SavedData {
     }
 
     private static boolean forceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
-        AdvancedPeripherals.debug("Forcing chunk " + pos, Level.WARN);
+        AdvancedPeripherals.debug("Forcing chunk " + pos, org.apache.logging.log4j.Level.WARN);
         return CONTROLLER.forceChunk(level, owner, pos.x, pos.z, true, true);
     }
 
     private static boolean unforceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
-        AdvancedPeripherals.debug("Unforcing chunk " + pos, Level.WARN);
+        AdvancedPeripherals.debug("Unforcing chunk " + pos, org.apache.logging.log4j.Level.WARN);
         return CONTROLLER.forceChunk(level, owner, pos.x, pos.z, false, true);
     }
 
-    public synchronized int getForcedChunksCount() {
+    public int getForcedChunksCount() {
         return this.forcedChunks.size();
     }
 
-    public synchronized boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
-        AdvancedPeripherals.debug("Trying to load forced chunk cluster " + pos, Level.WARN);
+    public boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
+        AdvancedPeripherals.debug("Trying to load forced chunk cluster " + pos, org.apache.logging.log4j.Level.WARN);
         LoadChunkRecord oldRecord = this.forcedChunks.get(owner);
         if (oldRecord != null) {
-            ServerLevel oldLevel = this.getServerLevel(oldRecord.getDimensionName());
+            ServerLevel oldLevel = this.server.getLevel(oldRecord.getDimension());
             if (oldLevel == level && pos.equals(oldRecord.getPos())) {
                 return true;
             }
             unforceChunkRecord(owner, oldRecord, oldLevel);
         }
         final int chunkRadius = getMaxLoadRadius();
-        this.forcedChunks.put(owner, new LoadChunkRecord(level.dimension().location().toString(), pos, chunkRadius));
-        setDirty();
+        this.forcedChunks.put(owner, new LoadChunkRecord(level.dimension(), pos, chunkRadius));
+        this.setDirty();
         boolean result = true;
         for (int x = -chunkRadius; x <= chunkRadius; x++) {
             for (int z = -chunkRadius; z <= chunkRadius; z++) {
@@ -119,34 +119,35 @@ public class ChunkManager extends SavedData {
         return result;
     }
 
-    public synchronized void touch(UUID owner) {
+    public void touch(UUID owner) {
         LoadChunkRecord forcedChunk = this.forcedChunks.get(owner);
         if (forcedChunk != null) {
             forcedChunk.touch();
         }
     }
 
-    public synchronized boolean removeForceChunk(ServerLevel level, UUID owner) {
-        AdvancedPeripherals.debug("Attempting to unload forced chunk cluster " + owner, Level.WARN);
+    public boolean removeForceChunk(ServerLevel level, UUID owner) {
+        AdvancedPeripherals.debug("Attempting to unload forced chunk cluster " + owner, org.apache.logging.log4j.Level.WARN);
         LoadChunkRecord chunkRecord = this.forcedChunks.get(owner);
-        if (chunkRecord == null)
+        if (chunkRecord == null) {
             return true;
-        String dimensionName = level.dimension().location().toString();
-        if (!chunkRecord.getDimensionName().equals(dimensionName))
-            throw new IllegalArgumentException(String.format("Incorrect dimension! Should be %s instead of %s", chunkRecord.getDimensionName(), dimensionName));
+        }
+        if (chunkRecord.getDimension() != level.dimension()) {
+            throw new IllegalArgumentException(String.format("Incorrect dimension! Should be %s instead of %s", chunkRecord.getDimension(), level.dimension()));
+        }
         boolean result = unforceChunkRecord(owner, chunkRecord, level);
         if (result) {
             this.forcedChunks.remove(owner);
-            setDirty();
+            this.setDirty();
         }
         return result;
     }
 
-    private synchronized boolean unforceChunkRecord(UUID owner, LoadChunkRecord chunkRecord, ServerLevel level) {
+    private boolean unforceChunkRecord(UUID owner, LoadChunkRecord chunkRecord, ServerLevel level) {
         boolean result = true;
         final ChunkPos pos = chunkRecord.getPos();
         final int chunkRadius = chunkRecord.getRadius();
-        AdvancedPeripherals.debug(String.format("Trying to unload forced chunk cluster %s at %s with radius %d", owner, pos, chunkRadius), Level.WARN);
+        AdvancedPeripherals.debug(String.format("Trying to unload forced chunk cluster %s at %s with radius %d", owner, pos, chunkRadius), org.apache.logging.log4j.Level.WARN);
         for (int x = -chunkRadius; x <= chunkRadius; x++) {
             for (int z = -chunkRadius; z <= chunkRadius; z++) {
                 result &= unforceChunk(owner, level, new ChunkPos(pos.x + x, pos.z + z));
@@ -155,25 +156,24 @@ public class ChunkManager extends SavedData {
         return result;
     }
 
-    public synchronized void init() {
+    public void init() {
         if (this.initialized) {
             return;
         }
         this.initialized = true;
 
-        AdvancedPeripherals.debug(String.format("Schedule chunk manager init, forcedChunks = %d", this.forcedChunks.size()), Level.WARN);
+        AdvancedPeripherals.debug(String.format("Schedule chunk manager init, forcedChunks = %d", this.forcedChunks.size()), org.apache.logging.log4j.Level.WARN);
         final int chunkRadius = getMaxLoadRadius();
-        final Map<String, ServerLevel> levels = this.getServerLevels();
         this.forcedChunks.forEach((uuid, value) -> {
-            String dimensionName = value.getDimensionName();
-            ServerLevel level = levels.get(dimensionName);
+            ResourceKey<Level> dimension = value.getDimension();
+            ServerLevel level = this.server.getLevel(dimension);
             if (level == null) {
-                AdvancedPeripherals.debug("Skipped not exists dimension " + dimensionName, Level.ERROR);
+                AdvancedPeripherals.debug("Skipped not exists dimension " + dimension, org.apache.logging.log4j.Level.ERROR);
                 return;
             }
             final ChunkPos pos = value.getPos();
             final int loadedRadius = value.getRadius();
-            AdvancedPeripherals.debug(String.format("Recorded chunk in %s at %s with radius %d", dimensionName, pos, loadedRadius), Level.INFO);
+            AdvancedPeripherals.debug(String.format("Recorded chunk in %s at %s with radius %d", dimension, pos, loadedRadius), org.apache.logging.log4j.Level.INFO);
             if (loadedRadius == chunkRadius) {
                 return;
             }
@@ -197,36 +197,36 @@ public class ChunkManager extends SavedData {
                 }
             }
             value.setRadius(chunkRadius);
-            setDirty();
+            this.setDirty();
         });
     }
 
-    public synchronized void cleanup() {
-        AdvancedPeripherals.debug("Schedule chunk manager cleanup", Level.WARN);
-        final Map<String, ServerLevel> levels = this.getServerLevels();
+    public void cleanup() {
+        AdvancedPeripherals.debug("Schedule chunk manager cleanup", org.apache.logging.log4j.Level.WARN);
         final Iterator<Map.Entry<UUID, LoadChunkRecord>> iterator = this.forcedChunks.entrySet().iterator();
         while (iterator.hasNext()) {
             final Map.Entry<UUID, LoadChunkRecord> entry = iterator.next();
             UUID uuid = entry.getKey();
             LoadChunkRecord chunkRecord = entry.getValue();
-            String dimensionName = chunkRecord.getDimensionName();
-            ServerLevel level = levels.get(dimensionName);
+            ResourceKey<Level> dimension = chunkRecord.getDimension();
+            ServerLevel level = this.server.getLevel(dimension);
             if (level == null) {
                 continue;
             }
             if (chunkRecord.isValid()) {
                 continue;
             }
-            AdvancedPeripherals.debug(String.format("Purge forced chunk for %s", uuid), Level.WARN);
+            AdvancedPeripherals.debug(String.format("Purge forced chunk for %s", uuid), org.apache.logging.log4j.Level.WARN);
             unforceChunkRecord(uuid, chunkRecord, level);
             iterator.remove();
-            setDirty();
+            this.setDirty();
         }
     }
 
     @Override
-    public synchronized @NotNull CompoundTag save(@NotNull CompoundTag data, HolderLookup.@NotNull Provider registries) {
-        AdvancedPeripherals.debug("Schedule chunk manager save, forcedChunks = " + this.forcedChunks.size(), Level.WARN);
+    @NotNull
+    public CompoundTag save(@NotNull CompoundTag data, @NotNull HolderLookup.Provider registries) {
+        AdvancedPeripherals.debug("Schedule chunk manager save, forcedChunks = " + this.forcedChunks.size(), org.apache.logging.log4j.Level.WARN);
         CompoundTag forcedChunksTag = new CompoundTag();
         this.forcedChunks.forEach((key, value) -> forcedChunksTag.put(key.toString(), value.serialize()));
         // !!! DO NOT forget to put forcedChunksTag into data !!!
@@ -235,33 +235,21 @@ public class ChunkManager extends SavedData {
         return data;
     }
 
-    private Map<String, ServerLevel> getServerLevels() {
-        Map<String, ServerLevel> levels = new HashMap<>();
-        this.server.getAllLevels().forEach(level -> {
-            String dimensionName = level.dimension().location().toString();
-            levels.put(dimensionName, level);
-        });
-        return levels;
-    }
-
-    private ServerLevel getServerLevel(String name) {
-        ResourceKey<net.minecraft.world.level.Level> key = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(name));
-        return this.server.getLevel(key);
-    }
-
     private static class LoadChunkRecord {
 
         private static final String POS_TAG = "pos";
         private static final String DIMENSION_NAME_TAG = "dimensionName";
         private static final String RADIUS_TAG = "radius";
 
-        private final @NotNull String dimensionName;
-        private final @NotNull ChunkPos pos;
+        @NotNull
+        private final ResourceKey<Level> dimension;
+        @NotNull
+        private final ChunkPos pos;
         private int radius;
         private long lastTouch;
 
-        LoadChunkRecord(@NotNull String dimensionName, @NotNull ChunkPos pos, int radius) {
-            this.dimensionName = dimensionName;
+        LoadChunkRecord(@NotNull ResourceKey<Level> dimension, @NotNull ChunkPos pos, int radius) {
+            this.dimension = dimension;
             this.pos = pos;
             this.radius = radius;
             this.lastTouch = tickCounter;
@@ -269,22 +257,24 @@ public class ChunkManager extends SavedData {
 
         public static LoadChunkRecord deserialize(@NotNull CompoundTag tag) {
             return new LoadChunkRecord(
-                tag.getString(DIMENSION_NAME_TAG),
+                ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(tag.getString(DIMENSION_NAME_TAG))),
                 NBTUtil.chunkPosFromNBT(tag.getCompound(POS_TAG)),
                 tag.getInt(RADIUS_TAG)
             );
         }
 
-        public @NotNull ChunkPos getPos() {
-            return pos;
+        @NotNull
+        public ChunkPos getPos() {
+            return this.pos;
         }
 
-        public @NotNull String getDimensionName() {
-            return dimensionName;
+        @NotNull
+        public ResourceKey<Level> getDimension() {
+            return this.dimension;
         }
 
         public int getRadius() {
-            return radius;
+            return this.radius;
         }
 
         public void setRadius(int radius) {
@@ -292,18 +282,19 @@ public class ChunkManager extends SavedData {
         }
 
         public void touch() {
-            lastTouch = tickCounter;
+            this.lastTouch = tickCounter;
         }
 
         public boolean isValid() {
-            return lastTouch + APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get() * 20 >= tickCounter;
+            return this.lastTouch + APConfig.PERIPHERALS_CONFIG.chunkLoadValidTime.get() * 20 >= tickCounter;
         }
 
-        public @NotNull CompoundTag serialize() {
+        @NotNull
+        public CompoundTag serialize() {
             CompoundTag tag = new CompoundTag();
-            tag.putString(DIMENSION_NAME_TAG, dimensionName);
-            tag.put(POS_TAG, NBTUtil.toNBT(pos));
-            tag.putInt(RADIUS_TAG, radius);
+            tag.putString(DIMENSION_NAME_TAG, this.dimension.location().toString());
+            tag.put(POS_TAG, NBTUtil.toNBT(this.pos));
+            tag.putInt(RADIUS_TAG, this.radius);
             return tag;
         }
     }

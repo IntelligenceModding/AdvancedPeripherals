@@ -6,6 +6,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.util.InventoryUtil;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
@@ -13,12 +14,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class TurtlePeripheralOwner extends BasePeripheralOwner {
     private final ITurtleAccess turtle;
@@ -83,6 +87,17 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
         turtle.setUpgradeData(side, dataStorage);
     }
 
+    public UUID getChunkLoadUUID() {
+        PatchedDataComponentMap patchMap = this.getPatchedDataStorage();
+        UUID id = patchMap.get(APDataComponents.CHUNKY_ID.get());
+        if (id == null) {
+            id = UUID.randomUUID();
+            patchMap.set(APDataComponents.CHUNKY_ID.get(), id);
+            this.putDataStorage(patchMap.asPatch());
+        }
+        return id;
+    }
+
     @Override
     public <T> T withPlayer(APFakePlayer.Action<T> function) throws LuaException {
         return FakePlayerProviderTurtle.withPlayer(turtle, function);
@@ -106,9 +121,8 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Override
     public boolean isMovementPossible(@NotNull Level level, @NotNull BlockPos pos) {
         try {
-            return FakePlayerProviderTurtle.withPlayer(turtle, player -> {
+            return this.withPlayer(player -> {
                 if (!level.isInWorldBounds(pos)) return false;
-                if (!level.hasChunkAt(pos)) return false;
                 return level.getWorldBorder().isWithinBounds(pos);
             });
         } catch (LuaException e) {
