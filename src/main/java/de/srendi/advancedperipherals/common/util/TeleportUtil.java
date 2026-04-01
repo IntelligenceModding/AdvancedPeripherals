@@ -4,6 +4,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +13,12 @@ import java.util.List;
 public final class TeleportUtil {
     private TeleportUtil() {}
 
-    public static <T extends Entity> T teleportToWithPassengers(T entity, ServerLevel newLevel, Vec3 newPos) {
+    @Nullable
+    public static <T extends Entity> T teleportToWithPassengers(@NotNull T entity, ServerLevel newLevel, Vec3 newPos) {
         Vec3 oldPos = entity.position();
         List<Entity> passengers = new ArrayList<>(entity.getPassengers());
         T newEntity;
         if (entity instanceof ServerPlayer player) {
-            // TODO <1.20.1>: player will be reconstruct in 1.20.1
             player.teleportTo(newLevel, newPos.x, newPos.y, newPos.z, player.getYRot(), player.getXRot());
             newEntity = entity;
         } else {

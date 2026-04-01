@@ -55,11 +55,11 @@ public class SmartGlassesSettingsSwitch extends AbstractWidget {
         this.isEnabled = true;
     }
 
-    // TODO:
-    // public void renderTooltip(PoseStack poseStack, int x, int y) {
-    //     if (screen != null && isMouseOver(x, y))
-    //         screen.renderComponentTooltip(poseStack, Collections.singletonList(type.getName()), x, y);
-    // }
+    public void renderTooltip(GuiGraphics gui, int x, int y) {
+        if (screen != null && isMouseOver(x, y)) {
+            gui.renderTooltip(gui.minecraft.font, type.getName(), x, y);
+        }
+    }
 
     @Override
     protected void updateWidgetNarration(@NotNull NarrationElementOutput pNarrationElementOutput) {

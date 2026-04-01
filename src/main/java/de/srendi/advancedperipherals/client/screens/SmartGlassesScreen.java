@@ -28,8 +28,8 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
     public SmartGlassesScreen(SmartGlassesContainer container, Inventory player, Component title) {
         super(container, player, title, TurtleMenu.BORDER);
 
-        imageWidth = TEX_WIDTH + AbstractComputerMenu.SIDEBAR_WIDTH;
-        imageHeight = TEX_HEIGHT;
+        this.imageWidth = TEX_WIDTH + AbstractComputerMenu.SIDEBAR_WIDTH + 21;
+        this.imageHeight = TEX_HEIGHT;
     }
 
     @Override
@@ -62,16 +62,15 @@ public class SmartGlassesScreen extends AbstractComputerScreen<SmartGlassesConta
         // graphics.blit(SIDEBAR, leftPos, topPos + sidebarYOffset, AbstractComputerMenu.SIDEBAR_WIDTH, ComputerSidebar.HEIGHT);
     }
 
-    // TODO:
-    // @Override
-    // protected void renderTooltip(@NotNull PoseStack poseStack, int x, int y) {
-    //     super.renderTooltip(poseStack, x, y);
-    //     renderables.forEach(renderable -> {
-    //         if (renderable instanceof SmartGlassesSettingsSwitch smartGlassesSettingsSwitch) {
-    //             smartGlassesSettingsSwitch.renderTooltip(poseStack, x, y);
-    //         }
-    //     });
-    // }
+    @Override
+    protected void renderTooltip(@NotNull GuiGraphics gui, int x, int y) {
+        super.renderTooltip(gui, x, y);
+        renderables.forEach(renderable -> {
+            if (renderable instanceof SmartGlassesSettingsSwitch smartGlassesSettingsSwitch) {
+                smartGlassesSettingsSwitch.renderTooltip(gui, x, y);
+            }
+        });
+    }
 
     @Override
     protected void renderLabels(@NotNull GuiGraphics graphics, int x, int y) {

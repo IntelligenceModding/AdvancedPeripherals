@@ -53,7 +53,7 @@ public class ChunkyPeripheral extends BasePeripheral<TurtlePeripheralOwner> {
 
     @Override
     public void update() {
-        // TODO: should find someway to update after turtle moved or while moving, but not every tick
+        // supressedTODO: should find someway to update after turtle moved or while moving, but not every tick
         ServerLevel level = (ServerLevel) getLevel();
         ChunkManager manager = ChunkManager.get(level.getServer());
         ChunkPos currentChunk = getChunkPos();
