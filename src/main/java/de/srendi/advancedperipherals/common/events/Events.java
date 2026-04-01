@@ -11,6 +11,7 @@ import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +22,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.CommandEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import vazkii.patchouli.api.PatchouliAPI;
 
@@ -32,7 +34,7 @@ public class Events {
 
     private static final String PLAYED_BEFORE_TAG = "ap_played_before";
     private static final DataPublisher<ChatMessageRecord> messageQueue = new DataPublisher<>(64);
-    private static final DataPublisher<PlayerMessageRecord> playerMessageQueue = new DataPublisher<>(64);
+    private static final DataPublisher<IPlayerEvent> playerMessageQueue = new DataPublisher<>(64);
 
     @SubscribeEvent
     public static void onWorldJoin(PlayerEvent.PlayerLoggedInEvent event) {
@@ -49,13 +51,13 @@ public class Events {
             }
         }
 
-        putPlayerMessage(new PlayerMessageRecord("player_join", player.getName().getString(), player.level().dimension().location().toString(), null));
+        putPlayerMessage(new PlayerDimensionEvent("player_join", player.getUUID(), player.getName().getString(), player.level().dimension().location().toString(), null));
     }
 
     @SubscribeEvent
     public static void onWorldLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
-        putPlayerMessage(new PlayerMessageRecord("player_leave", player.getName().getString(), player.level().dimension().location().toString(), null));
+        putPlayerMessage(new PlayerDimensionEvent("player_leave", player.getUUID(), player.getName().getString(), player.level().dimension().location().toString(), null));
     }
 
     @SubscribeEvent
@@ -64,7 +66,15 @@ public class Events {
         String fromDim = event.getFrom().location().toString();
         String toDim = event.getTo().location().toString();
 
-        putPlayerMessage(new PlayerMessageRecord("player_changed_dimension", player.getName().getString(), fromDim, toDim));
+        putPlayerMessage(new PlayerDimensionEvent("player_changed_dimension", player.getUUID(), player.getName().getString(), fromDim, toDim));
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onLivingDeath(LivingDeathEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+        putPlayerMessage(new PlayerDeathEvent(player.getUUID(), player.getName().getString(), event.getSource()));
     }
 
     @SubscribeEvent
@@ -127,7 +137,7 @@ public class Events {
         messageQueue.add(message);
     }
 
-    public static void putPlayerMessage(PlayerMessageRecord message) {
+    public static void putPlayerMessage(IPlayerEvent message) {
         if (!APConfig.PERIPHERALS_CONFIG.enablePlayerEvents.get()) {
             return;
         }
@@ -138,7 +148,7 @@ public class Events {
         return messageQueue.traverse(lastConsumedMessage, consumer);
     }
 
-    public static long traversePlayerMessages(long lastConsumedMessage, Consumer<PlayerMessageRecord> consumer) {
+    public static long traversePlayerMessages(long lastConsumedMessage, Consumer<IPlayerEvent> consumer) {
         return playerMessageQueue.traverse(lastConsumedMessage, consumer);
     }
 
@@ -161,5 +171,34 @@ public class Events {
     }
 
     public record ChatMessageRecord(UUID senderId, String senderName, String message, boolean isHidden, ResourceKey<Level> level, Vec3 position) {}
-    public record PlayerMessageRecord(String eventName, String playerName, String fromDimension, String toDimension) {}
+
+    public interface IPlayerEvent {
+        String eventName();
+        Object[] eventArgs();
+    }
+
+    public record PlayerDimensionEvent(
+        String eventName,
+        UUID playerId,
+        String playerName,
+        String fromDimension,
+        String toDimension
+    ) implements IPlayerEvent {
+        @Override
+        public Object[] eventArgs() {
+            return new Object[]{this.playerId.toString(), this.playerName, this.fromDimension, this.toDimension};
+        }
+    }
+
+    public record PlayerDeathEvent(UUID playerId, String playerName, DamageSource source) implements IPlayerEvent {
+        @Override
+        public String eventName() {
+            return "player_death";
+        }
+
+        @Override
+        public Object[] eventArgs() {
+            return new Object[]{this.playerId.toString(), this.playerName, this.source.typeHolder().getRegisteredName()};
+        }
+    }
 }

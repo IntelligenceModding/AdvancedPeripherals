@@ -293,7 +293,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public void update() {
         lastConsumedMessage = Events.traversePlayerMessages(lastConsumedMessage, message -> {
             // TODO: distance check?
-            queueEvent(message.eventName(), message.playerName(), message.fromDimension(), message.toDimension());
+            queueEvent(message.eventName(), message.eventArgs());
         });
     }
 
@@ -303,9 +303,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         static final String UNKNOWN_STAT_TYPE = "UNKNOWN_STAT_TYPE";
         static final String UNKNOWN_STAT_VALUE = "UNKNOWN_STAT_VALUE";
 
-        static final MethodResult INVAILD_STAT_ID_RESULT = MethodResult.of(null, "INVAILD_STAT_ID");
-        static final MethodResult PLAYER_NOT_EXISTS_RESULT = MethodResult.of(null, "PLAYER_NOT_EXISTS");
-        static final MethodResult UNKNOWN_STAT_TYPE_RESULT = MethodResult.of(null, "UNKNOWN_STAT_TYPE");
-        static final MethodResult UNKNOWN_STAT_VALUE_RESULT = MethodResult.of(null, "UNKNOWN_STAT_VALUE");
+        static final MethodResult INVAILD_STAT_ID_RESULT = MethodResult.of(null, INVAILD_STAT_ID);
+        static final MethodResult PLAYER_NOT_EXISTS_RESULT = MethodResult.of(null, PLAYER_NOT_EXISTS);
+        static final MethodResult UNKNOWN_STAT_TYPE_RESULT = MethodResult.of(null, UNKNOWN_STAT_TYPE);
+        static final MethodResult UNKNOWN_STAT_VALUE_RESULT = MethodResult.of(null, UNKNOWN_STAT_VALUE);
     }
 }
