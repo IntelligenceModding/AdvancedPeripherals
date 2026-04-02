@@ -6,7 +6,6 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public interface IPeripheralPlugin {
     default List<BoundMethod> getMethods() {
@@ -16,7 +15,7 @@ public interface IPeripheralPlugin {
             .entrySet()
             .stream()
             .map(entry -> new BoundMethod(this, entry.getKey(), entry.getValue()))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     default IPeripheralOperation<?> @Nullable [] getOperations() {

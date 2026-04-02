@@ -11,7 +11,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propert
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -20,7 +19,7 @@ import java.util.UUID;
 public class LineObject extends RenderableObject {
     public static final int TYPE_ID = 8;
 
-    private static final IObjectRenderer RENDERER = new LineRenderer();
+    private static final LineRenderer RENDERER = new LineRenderer();
 
     @BooleanProperty
     public boolean pixelated = false;
@@ -30,7 +29,6 @@ public class LineObject extends RenderableObject {
 
     public LineObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
-        reflectivelyMapProperties(arguments);
     }
 
     /**
@@ -42,10 +40,15 @@ public class LineObject extends RenderableObject {
         super(player);
     }
 
+    @Override
+    public int getTypeId() {
+        return TYPE_ID;
+    }
+
     @LuaFunction
     public void setPixelated(boolean pixelated) {
         this.pixelated = pixelated;
-        getModule().update(this);
+        this.sendUpdate();
     }
 
     @LuaFunction
@@ -56,7 +59,7 @@ public class LineObject extends RenderableObject {
     @LuaFunction
     public void setPixelSize(int pixelSize) {
         this.pixelSize = pixelSize;
-        getModule().update(this);
+        this.sendUpdate();
     }
 
     @LuaFunction
@@ -66,27 +69,16 @@ public class LineObject extends RenderableObject {
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(TYPE_ID);
         super.encode(buffer);
         buffer.writeBoolean(pixelated);
         buffer.writeInt(pixelSize);
     }
 
-    public static LineObject decode(FriendlyByteBuf buffer) {
-        Optional<LineObject> optionalObject = RenderableObject.baseDecode(buffer, LineObject::new);
-        if (optionalObject.isEmpty())
-            return null;
-
-        boolean pixelated = buffer.readBoolean();
-        int pixelSize = buffer.readInt();
-
-        LineObject clientObject = optionalObject.get();
-
-        clientObject.pixelated = pixelated;
-        clientObject.pixelSize = pixelSize;
-
-        return clientObject;
-
+    @Override
+    public void decode(FriendlyByteBuf buffer) {
+        super.decode(buffer);
+        this.pixelated = buffer.readBoolean();
+        this.pixelSize = buffer.readInt();
     }
 
     @Override

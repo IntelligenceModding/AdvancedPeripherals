@@ -4,8 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BlockObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
-import de.srendi.advancedperipherals.common.util.RegistryUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -20,10 +18,10 @@ import org.joml.Quaternionf;
 
 import java.util.List;
 
-public class BlockRenderer implements IThreeDObjectRenderer {
+public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
 
     @Override
-    public void renderBatch(List<ThreeDimensionalObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
+    public void renderBatch(List<BlockObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
         Level level = event.getCamera().getEntity().level();
         BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
@@ -31,16 +29,18 @@ public class BlockRenderer implements IThreeDObjectRenderer {
 
         poseStack.pushPose();
 
-        for (ThreeDimensionalObject obj : batch) {
-            BlockObject block = (BlockObject) obj;
-
-            Block blockToRender = RegistryUtil.getRegistryEntry(block.block, BuiltInRegistries.BLOCK);
+        for (BlockObject block : batch) {
+            if (block.block == null) {
+                return;
+            }
+            Block blockToRender = BuiltInRegistries.BLOCK.get(block.block);
             if (blockToRender == null) {
                 continue;
             }
 
+            this.onPreRender(block);
+
             poseStack.pushPose();
-            onPreRender(block);
 
             poseStack.translate(-view.x + block.getX(), -view.y + block.getY(), -view.z + block.getZ());
             poseStack.mulPose(new Quaternionf().rotationXYZ((float) Math.toRadians(block.rotX), (float) Math.toRadians(block.rotY), (float) Math.toRadians(block.rotZ)));
@@ -66,7 +66,7 @@ public class BlockRenderer implements IThreeDObjectRenderer {
             float green = RenderUtil.getGreen(block.color);
             float blue = RenderUtil.getBlue(block.color);
 
-            onPostRender(obj);
+            this.onPostRender(block);
         }
 
         poseStack.popPose();

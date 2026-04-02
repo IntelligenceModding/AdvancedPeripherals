@@ -6,64 +6,63 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.BlockRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class BlockObject extends ThreeDimensionalObject {
     public static final int TYPE_ID = 5;
 
-    private static final IThreeDObjectRenderer RENDERER = new BlockRenderer();
+    private static final BlockRenderer RENDERER = new BlockRenderer();
 
-    @StringProperty
-    public String block = "minecraft:air";
+    // @StringProperty
+    public ResourceKey<Block> block = null;
 
     public BlockObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
-        reflectivelyMapProperties(arguments);
     }
 
     public BlockObject(UUID player) {
         super(player);
     }
 
-    @LuaFunction
-    public final void setBlock(String block) {
-        this.block = block;
-        getModule().update(this);
+    @Override
+    public int getTypeId() {
+        return TYPE_ID;
     }
 
     @LuaFunction
     public final String getBlock() {
-        return block;
+        return this.block == null ? null : this.block.location().toString();
+    }
+
+    @LuaFunction
+    public final void setBlock(String block) {
+        ResourceLocation name = ResourceLocation.tryParse(block);
+        this.block = BuiltInRegistries.BLOCK.containsKey(name) ? ResourceKey.create(Registries.BLOCK, name) : null;
+        this.sendUpdate();
     }
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(TYPE_ID);
         super.encode(buffer);
-        buffer.writeUtf(block);
+        if (this.block == null) {
+            buffer.writeBoolean(false);
+        } else {
+            buffer.writeBoolean(true);
+            buffer.writeResourceKey(this.block);
+        }
     }
 
-    public static BlockObject decode(FriendlyByteBuf buffer) {
-        Optional<BlockObject> optionalObject = RenderableObject.baseDecode(buffer, BlockObject::new);
-        if (optionalObject.isEmpty())
-            return null;
-
-        boolean disableDepthTest = buffer.readBoolean();
-        boolean disableCulling = buffer.readBoolean();
-
-        String block = buffer.readUtf();
-
-        BlockObject clientObject = optionalObject.get();
-        clientObject.disableDepthTest = disableDepthTest;
-        clientObject.disableCulling = disableCulling;
-        clientObject.block = block;
-
-        return clientObject;
+    @Override
+    public void decode(FriendlyByteBuf buffer) {
+        super.decode(buffer);
+        this.block = buffer.readBoolean() ? buffer.readResourceKey(Registries.BLOCK) : null;
     }
 
     @Override

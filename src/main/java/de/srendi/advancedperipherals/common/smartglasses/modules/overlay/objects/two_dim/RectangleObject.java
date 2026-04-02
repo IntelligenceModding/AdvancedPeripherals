@@ -6,9 +6,7 @@ import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.RectangleRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
-import net.minecraft.network.FriendlyByteBuf;
 
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -17,11 +15,10 @@ import java.util.UUID;
 public class RectangleObject extends RenderableObject {
     public static final int TYPE_ID = 0;
 
-    private static final IObjectRenderer RENDERER = new RectangleRenderer();
+    private static final RectangleRenderer RENDERER = new RectangleRenderer();
 
     public RectangleObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
-        reflectivelyMapProperties(arguments);
     }
 
     /**
@@ -34,14 +31,8 @@ public class RectangleObject extends RenderableObject {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(TYPE_ID);
-        super.encode(buffer);
-    }
-
-    public static RectangleObject decode(FriendlyByteBuf buffer) {
-        Optional<RectangleObject> optionalObject = RenderableObject.baseDecode(buffer, RectangleObject::new);
-        return optionalObject.orElse(null);
+    public int getTypeId() {
+        return TYPE_ID;
     }
 
     @Override

@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import de.srendi.advancedperipherals.client.RenderUtil;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.LineObject;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,30 +16,27 @@ import org.joml.Matrix4f;
 
 import java.util.List;
 
-public class LineRenderer implements ITwoDObjectRenderer {
+public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
 
     @Override
-    public void renderBatch(List<RenderableObject> objects, GuiGraphics gui, PoseStack poseStack, DeltaTracker partialTick, int screenWidth, int screenHeight) {
+    public void renderBatch(List<LineObject> objects, GuiGraphics gui, PoseStack poseStack, DeltaTracker partialTick, int screenWidth, int screenHeight) {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         Matrix4f matrix = poseStack.last().pose();
 
-        for (RenderableObject obj : objects) {
-
-            LineObject line = (LineObject) obj;
-
-            float alpha = obj.opacity;
-            float red = RenderUtil.getRed(obj.color);
-            float green = RenderUtil.getGreen(obj.color);
-            float blue = RenderUtil.getBlue(obj.color);
+        for (LineObject line : objects) {
+            float alpha = line.opacity;
+            float red = RenderUtil.getRed(line.color);
+            float green = RenderUtil.getGreen(line.color);
+            float blue = RenderUtil.getBlue(line.color);
 
             // Start and end points of the line
-            float x1 = obj.x;
-            float y1 = obj.y;
-            float z1 = obj.z;
+            float x1 = line.x;
+            float y1 = line.y;
+            float z1 = line.z;
 
-            float x2 = obj.maxX;
-            float y2 = obj.maxY;
-            float z2 = obj.maxZ;
+            float x2 = line.maxX;
+            float y2 = line.maxY;
+            float z2 = line.maxZ;
 
             // Normal, smooth lines
             if (!line.pixelated) {

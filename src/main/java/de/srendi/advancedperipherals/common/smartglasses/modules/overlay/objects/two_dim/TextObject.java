@@ -12,13 +12,12 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propert
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class TextObject extends RenderableObject {
     public static final int TYPE_ID = 2;
 
-    private static final IObjectRenderer RENDERER = new TextRenderer();
+    private static final TextRenderer RENDERER = new TextRenderer();
 
     @StringProperty
     public String content = "";
@@ -34,17 +33,15 @@ public class TextObject extends RenderableObject {
 
     public TextObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
-        reflectivelyMapProperties(arguments);
     }
 
     public TextObject(UUID player) {
         super(player);
     }
 
-    @LuaFunction
-    public final void setContent(String content) {
-        this.content = content;
-        getModule().update(this);
+    @Override
+    public int getTypeId() {
+        return TYPE_ID;
     }
 
     @LuaFunction
@@ -52,38 +49,43 @@ public class TextObject extends RenderableObject {
         return content;
     }
 
-    // For any reason, cc does not support float, only double. So we need to cast it here
     @LuaFunction
-    public void setFontSize(double fontSize) {
-        this.fontSize = (float) fontSize;
-        getModule().update(this);
+    public final void setContent(String content) {
+        this.content = content;
+        this.sendUpdate();
     }
 
     @LuaFunction
-    public double getFontSize() {
+    public final double getFontSize() {
         return fontSize;
     }
 
     @LuaFunction
-    public void setShadow(boolean shadow) {
-        this.shadow = shadow;
-        getModule().update(this);
+    public final void setFontSize(double fontSize) {
+        this.fontSize = (float) fontSize;
+        this.sendUpdate();
     }
 
     @LuaFunction
-    public boolean isShadow() {
+    public final boolean isShadow() {
         return shadow;
     }
 
     @LuaFunction
-    public void setCenter(boolean center) {
-        this.center = center;
-        getModule().update(this);
+    public final void setShadow(boolean shadow) {
+        this.shadow = shadow;
+        this.sendUpdate();
     }
 
     @LuaFunction
-    public boolean isCenter() {
+    public final boolean isCenter() {
         return center;
+    }
+
+    @LuaFunction
+    public final void setCenter(boolean center) {
+        this.center = center;
+        this.sendUpdate();
     }
 
     @Override
@@ -93,7 +95,6 @@ public class TextObject extends RenderableObject {
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(TYPE_ID);
         super.encode(buffer);
         buffer.writeUtf(content);
         buffer.writeFloat(fontSize);
@@ -101,23 +102,13 @@ public class TextObject extends RenderableObject {
         buffer.writeBoolean(center);
     }
 
-    public static TextObject decode(FriendlyByteBuf buffer) {
-        Optional<TextObject> optionalObject = RenderableObject.baseDecode(buffer, TextObject::new);
-        if (optionalObject.isEmpty())
-            return null;
-
-        String content = buffer.readUtf();
-        float fontSize = buffer.readFloat();
-        boolean shadow = buffer.readBoolean();
-        boolean center = buffer.readBoolean();
-
-        TextObject clientObject = optionalObject.get();
-        clientObject.content = content;
-        clientObject.fontSize = fontSize;
-        clientObject.shadow = shadow;
-        clientObject.center = center;
-
-        return clientObject;
+    @Override
+    public void decode(FriendlyByteBuf buffer) {
+        super.decode(buffer);
+        this.content = buffer.readUtf();
+        this.fontSize = buffer.readFloat();
+        this.shadow = buffer.readBoolean();
+        this.center = buffer.readBoolean();
     }
 
 }

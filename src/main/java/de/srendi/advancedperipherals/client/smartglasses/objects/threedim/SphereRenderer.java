@@ -9,24 +9,21 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.SphereObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import java.util.List;
 
-public class SphereRenderer implements IThreeDObjectRenderer {
+public class SphereRenderer implements IThreeDObjectRenderer<SphereObject> {
 
     @Override
-    public void renderBatch(List<ThreeDimensionalObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
+    public void renderBatch(List<SphereObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
         poseStack.pushPose();
 
-        for (ThreeDimensionalObject obj : batch) {
-            SphereObject sphere = (SphereObject) obj;
-
+        for (SphereObject sphere : batch) {
+            this.onPreRender(sphere);
             poseStack.pushPose();
-            onPreRender(sphere);
             BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
 
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -39,8 +36,8 @@ public class SphereRenderer implements IThreeDObjectRenderer {
             RenderUtil.drawSphere(poseStack, bufferBuilder, sphere.radius, sphere.x, sphere.y, sphere.z, sphere.rotX, sphere.rotY, sphere.rotZ, red, green, blue, alpha, sphere.sectors, sphere.stacks);
             BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
 
-            onPostRender(sphere);
             poseStack.popPose();
+            this.onPostRender(sphere);
         }
 
         poseStack.popPose();

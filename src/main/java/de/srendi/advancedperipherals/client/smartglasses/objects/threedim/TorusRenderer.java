@@ -8,7 +8,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import de.srendi.advancedperipherals.client.RenderUtil;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TorusObject;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.phys.Vec3;
@@ -16,17 +15,15 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import java.util.List;
 
-public class TorusRenderer implements IThreeDObjectRenderer {
+public class TorusRenderer implements IThreeDObjectRenderer<TorusObject> {
 
     @Override
-    public void renderBatch(List<ThreeDimensionalObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
+    public void renderBatch(List<TorusObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
         poseStack.pushPose();
 
-        for (ThreeDimensionalObject obj : batch) {
-            TorusObject torus = (TorusObject) obj;
-
+        for (TorusObject torus : batch) {
+            this.onPreRender(torus);
             poseStack.pushPose();
-            onPreRender(obj);
             BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
 
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -39,8 +36,8 @@ public class TorusRenderer implements IThreeDObjectRenderer {
             RenderUtil.drawTorus(poseStack, bufferBuilder, torus.majorRadius, torus.minorRadius, 0, 0, 0, torus.rotX, torus.rotY, torus.rotZ, red, green, blue, alpha, torus.rings, torus.sides);
             BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
 
-            onPostRender(obj);
             poseStack.popPose();
+            this.onPostRender(torus);
         }
 
         poseStack.popPose();

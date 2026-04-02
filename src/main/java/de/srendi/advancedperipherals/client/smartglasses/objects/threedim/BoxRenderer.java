@@ -8,24 +8,20 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BoxObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import java.util.List;
 
-public class BoxRenderer implements IThreeDObjectRenderer {
+public class BoxRenderer implements IThreeDObjectRenderer<BoxObject> {
 
     @Override
-    public void renderBatch(List<ThreeDimensionalObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
+    public void renderBatch(List<BoxObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
         poseStack.pushPose();
 
-        for (ThreeDimensionalObject obj : batch) {
-            BoxObject box = (BoxObject) obj;
-
+        for (BoxObject box : batch) {
+            this.onPreRender(box);
             poseStack.pushPose();
-            onPreRender(box);
-
             // TODO: we suppose to use bufferSource instead of Tesselator
             // BufferBuilder bufferBuilder = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.solid());
             BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
@@ -38,9 +34,8 @@ public class BoxRenderer implements IThreeDObjectRenderer {
             poseStack.translate(-view.x + box.getX(), -view.y + box.getY(), -view.z + box.getZ());
             RenderUtil.drawBox(poseStack, bufferBuilder, red, green, blue, alpha, box.x, box.y, box.z, box.rotX, box.rotY, box.rotZ, box.maxX, box.maxY, box.maxZ);
             BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
-            onPostRender(box);
-
             poseStack.popPose();
+            this.onPostRender(box);
         }
 
         poseStack.popPose();

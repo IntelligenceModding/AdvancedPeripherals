@@ -28,20 +28,14 @@ public abstract class ThreeDimensionalObject extends RenderableObject {
     }
 
     @LuaFunction
-    public final void setDepthTest(boolean depthTest) {
-        disableDepthTest = depthTest;
-        getModule().update(this);
-    }
-
-    @LuaFunction
     public final boolean getDepthTest() {
         return disableDepthTest;
     }
 
     @LuaFunction
-    public final void setCulling(boolean culling) {
-        disableCulling = culling;
-        getModule().update(this);
+    public final void setDepthTest(boolean depthTest) {
+        disableDepthTest = depthTest;
+        this.sendUpdate();
     }
 
     @LuaFunction
@@ -49,15 +43,26 @@ public abstract class ThreeDimensionalObject extends RenderableObject {
         return disableCulling;
     }
 
+    @LuaFunction
+    public final void setCulling(boolean culling) {
+        disableCulling = culling;
+        this.sendUpdate();
+    }
+
     @Override
-    public abstract IThreeDObjectRenderer getObjectRenderer();
+    public abstract IThreeDObjectRenderer<?> getObjectRenderer();
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
         super.encode(buffer);
-
         buffer.writeBoolean(disableDepthTest);
         buffer.writeBoolean(disableCulling);
     }
 
+    @Override
+    public void decode(FriendlyByteBuf buffer) {
+        super.decode(buffer);
+        this.disableDepthTest = buffer.readBoolean();
+        this.disableCulling = buffer.readBoolean();
+    }
 }

@@ -29,75 +29,75 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final MethodResult createRectangle(IArguments arguments) throws LuaException {
+    public final Object createRectangle(IArguments arguments) throws LuaException {
         RectangleObject rectangle = new RectangleObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(rectangle);
 
-        return MethodResult.of(object, "SUCCESS");
+        return object;
     }
 
     @LuaFunction
-    public final MethodResult createCircle(IArguments arguments) throws LuaException {
+    public final Object createCircle(IArguments arguments) throws LuaException {
         CircleObject circle = new CircleObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(circle);
 
-        return MethodResult.of(object, "SUCCESS");
+        return object;
     }
 
     @LuaFunction
-    public final MethodResult createLine(IArguments arguments) throws LuaException {
+    public final Object createLine(IArguments arguments) throws LuaException {
         LineObject rectangle = new LineObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(rectangle);
 
-        return MethodResult.of(object, "SUCCESS");
+        return object;
     }
 
     @LuaFunction
-    public final MethodResult createText(IArguments arguments) throws LuaException {
+    public final Object createText(IArguments arguments) throws LuaException {
         TextObject circle = new TextObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(circle);
 
-        return MethodResult.of(object, "SUCCESS");
+        return object;
     }
 
     @LuaFunction
-    public final MethodResult createItem(IArguments arguments) throws LuaException {
+    public final Object createItem(IArguments arguments) throws LuaException {
         ItemObject item = new ItemObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(item);
 
-        return MethodResult.of(object, "SUCCESS");
+        return object;
     }
 
     @LuaFunction
-    public final MethodResult createBlock(IArguments arguments) throws LuaException {
+    public final Object createBlock(IArguments arguments) throws LuaException {
         BlockObject block = new BlockObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(block);
 
-        return MethodResult.of(object, "SUCCESS");
+        return object;
     }
 
     @LuaFunction
-    public final MethodResult createBox(IArguments arguments) throws LuaException {
+    public final Object createBox(IArguments arguments) throws LuaException {
         BoxObject block = new BoxObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(block);
 
-        return MethodResult.of(object, "SUCCESS");
+        return object;
     }
 
     @LuaFunction
-    public final MethodResult createSphere(IArguments arguments) throws LuaException {
+    public final Object createSphere(IArguments arguments) throws LuaException {
         SphereObject block = new SphereObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(block);
 
-        return MethodResult.of(object, "SUCCESS");
+        return object;
     }
 
     @LuaFunction
-    public final MethodResult createTorus(IArguments arguments) throws LuaException {
+    public final Object createTorus(IArguments arguments) throws LuaException {
         TorusObject block = new TorusObject(overlayModule, arguments);
         RenderableObject object = overlayModule.addObject(block);
 
-        return MethodResult.of(object, "SUCCESS");
+        return object;
     }
 
     @LuaFunction
@@ -107,18 +107,18 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final MethodResult removeObject(int id) {
-        return MethodResult.of(overlayModule.removeObject(id));
+    public final boolean removeObject(int id) {
+        return overlayModule.removeObject(id);
     }
 
     @LuaFunction
-    public final MethodResult clear() {
-        return MethodResult.of(overlayModule.clear());
+    public final int clear() {
+        return overlayModule.clear();
     }
 
     @LuaFunction
-    public final MethodResult getObjectsSize() {
-        return MethodResult.of(overlayModule.getObjects().size());
+    public final int getObjectsSize() {
+        return overlayModule.getObjects().size();
     }
 
     @LuaFunction
@@ -127,26 +127,28 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final MethodResult getGuiScale() {
-        return MethodResult.of(overlayModule.getGuiScale());
+    public final double getGuiScale() {
+        return overlayModule.getGuiScale();
     }
 
     @LuaFunction
-    public final MethodResult getCoords() {
+    public final MethodResult getEyePosition() {
         Vec3 pos = access.getEntity().getEyePosition();
         return MethodResult.of(pos.x, pos.y, pos.z);
     }
 
     @LuaFunction
-    public final MethodResult update() {
-        return MethodResult.of(overlayModule.bulkUpdate());
+    public final int update() {
+        return overlayModule.bulkUpdate();
     }
 
     @LuaFunction
-    public final MethodResult autoUpdate(IArguments arguments) throws LuaException {
-        overlayModule.autoUpdate = arguments.optBoolean(0, !overlayModule.autoUpdate);
-        return MethodResult.of(overlayModule.autoUpdate);
+    public final boolean autoUpdatde() {
+        return overlayModule.autoUpdate;
     }
 
-
+    @LuaFunction
+    public final void autoUpdate(boolean autoUpdate) {
+        overlayModule.autoUpdate = autoUpdate;
+    }
 }

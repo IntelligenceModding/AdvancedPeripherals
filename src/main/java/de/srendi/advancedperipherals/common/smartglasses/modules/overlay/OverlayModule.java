@@ -12,7 +12,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunction
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
@@ -38,6 +37,10 @@ public class OverlayModule implements IModule {
         this.access = access;
     }
 
+    private ServerPlayer getOwner() {
+        return this.access.getEntity() instanceof ServerPlayer player ? player : null;
+    }
+
     @Override
     public ResourceLocation getId() {
         return ID;
@@ -50,8 +53,8 @@ public class OverlayModule implements IModule {
 
     @Override
     public void serverTick(SmartGlassesSideAccess access) {
-        Entity entity = access.getEntity();
-        if (entity instanceof ServerPlayer player && player.level().getGameTime() % 2 == 0) {
+        ServerPlayer player = this.getOwner();
+        if (player != null && player.level().getGameTime() % 2 == 0) {
             PacketDistributor.sendToPlayer(player, new OverlayModuleClientRequestPacket());
         }
     }
@@ -93,7 +96,8 @@ public class OverlayModule implements IModule {
         int id = idCounter++;
         object.setId(id);
         if (autoUpdate) {
-            PacketDistributor.sendToPlayer((ServerPlayer) access.getEntity(), new RenderableObjectSyncPacket(object));
+            ServerPlayer owner = this.getOwner();
+            PacketDistributor.sendToPlayer(owner, new RenderableObjectSyncPacket(owner.getUUID(), object));
             objects.put(id, object);
         } else {
             objectsToUpdate.put(id, object);
@@ -109,11 +113,12 @@ public class OverlayModule implements IModule {
      */
     public boolean removeObject(int id) {
         RenderableObject removed = objects.remove(id);
-
-        if (removed != null)
-            PacketDistributor.sendToPlayer((ServerPlayer) access.getEntity(), new RenderableObjectDeletePacket(id));
-
-        return removed != null;
+        RenderableObject removedUpdating = objectsToUpdate.remove(id);
+        if (removed == null) {
+            return removedUpdating != null;
+        }
+        PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectDeletePacket(id));
+        return true;
     }
 
     /**
@@ -126,7 +131,7 @@ public class OverlayModule implements IModule {
         objects.clear();
         idCounter = 0;
         objectsToUpdate.clear();
-        PacketDistributor.sendToPlayer((ServerPlayer) access.getEntity(), new RenderableObjectClearPacket());
+        PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectClearPacket());
         return size;
     }
 
@@ -137,36 +142,38 @@ public class OverlayModule implements IModule {
      */
     public void update(RenderableObject object) {
         if (autoUpdate) {
-            PacketDistributor.sendToPlayer((ServerPlayer) access.getEntity(), new RenderableObjectSyncPacket(object));
+            ServerPlayer owner = this.getOwner();
+            PacketDistributor.sendToPlayer(owner, new RenderableObjectSyncPacket(owner.getUUID(), object));
             return;
         }
 
         objectsToUpdate.put(object.getId(), object);
     }
 
-
     public int bulkUpdate() {
+        ServerPlayer owner = this.getOwner();
+        int maxPackets = 15000;
         int size = objectsToUpdate.size();
-        int packetCount = (int) Math.ceil((double) size / 15000);
+        int packetCount = (size + maxPackets - 1) / maxPackets;
 
+        List<RenderableObject> packedObjects = new ArrayList<>();
         // In some cases, if the user creates a lot of objects above 15k, the packet payload can be too big.
         // We split up the packets for every 15k objects to prevent the payload limit from mc
         for (int i = 0; i < packetCount; i++) {
-            List<RenderableObject> packetObjects = new ArrayList<>();
             int count = 0;
-
+            packedObjects.clear();
             for (RenderableObject object : objectsToUpdate.values()) {
-                packetObjects.add(object);
+                packedObjects.add(object);
                 objects.put(object.getId(), object);
                 objectsToUpdate.remove(object.getId());
                 count++;
 
-                if (count >= 15000) {
+                if (count >= maxPackets) {
                     break; // Ensure we don't exceed the packet size limit
                 }
             }
 
-            PacketDistributor.sendToPlayer((ServerPlayer) access.getEntity(), new RenderableObjectBulkSyncPacket(packetObjects));
+            PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkSyncPacket(owner.getUUID(), List.copyOf(packedObjects)));
         }
 
         return size;

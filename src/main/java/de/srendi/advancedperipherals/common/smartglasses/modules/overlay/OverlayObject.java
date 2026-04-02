@@ -8,10 +8,9 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propert
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.PropertyType;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -29,8 +28,9 @@ public abstract class OverlayObject {
     private OverlayModule module;
     private UUID player;
 
-    public OverlayObject(OverlayModule module, IArguments arguments) {
+    public OverlayObject(OverlayModule module, IArguments arguments) throws LuaException {
         this.module = module;
+        this.reflectivelyMapProperties(arguments);
     }
 
     /**
@@ -44,7 +44,6 @@ public abstract class OverlayObject {
         this.id = id;
     }
 
-    @LuaFunction
     public int getId() {
         return id;
     }
@@ -57,14 +56,19 @@ public abstract class OverlayObject {
         return player;
     }
 
-    @LuaFunction
-    public final void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    @LuaFunction("getId")
+    public final int getIdLua() {
+        return this.getId();
     }
 
     @LuaFunction
     public final boolean isEnabled() {
         return enabled;
+    }
+
+    @LuaFunction
+    public final void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**
@@ -85,15 +89,17 @@ public abstract class OverlayObject {
      * @see ObjectProperty
      * @see PropertyType
      */
-    public void reflectivelyMapProperties(IArguments arguments) throws LuaException {
-        if (arguments.optTable(0).isEmpty())
+    private void reflectivelyMapProperties(IArguments arguments) throws LuaException {
+        Map<?, ?> propMap = arguments.optTable(0).orElse(null);
+        if (propMap == null) {
             return;
+        }
+
+        Map<String, Object> properties = propMap.entrySet().stream()
+                .filter(entry -> entry.getKey() instanceof String)
+                .collect(Collectors.toMap(entry -> (String) entry.getKey(), Map.Entry::getValue));
 
         try {
-            Map<String, Object> properties = arguments.optTable(0).get().entrySet().stream()
-                    .filter(entry -> entry.getKey() instanceof String)
-                    .collect(Collectors.toMap(entry -> (String) entry.getKey(), Map.Entry::getValue));
-
             Field[] allFields = FieldUtils.getAllFields(this.getClass());
 
             for (Field field : allFields) {
@@ -114,7 +120,7 @@ public abstract class OverlayObject {
 
                     if (objectProperty == null) {
                         AdvancedPeripherals.debug("The field " + field.getName() + " has no ObjectProperty annotation and can't be changed.", Level.WARN);
-                        return;
+                        continue;
                     }
 
                     PropertyType<?> propertyType = PropertyType.of(objectProperty);
@@ -129,15 +135,14 @@ public abstract class OverlayObject {
 
                             // Set the value of the field
                             field.set(this, castValueToFieldType(field, value));
-
                         } else {
                             AdvancedPeripherals.debug("The value " + value + " is not valid for the field " + field.getName() + ".", Level.WARN);
-                            return;
+                            continue;
                         }
                     }
                 }
             }
-        } catch (LuaException | IllegalAccessException exception) {
+        } catch (IllegalAccessException exception) {
             AdvancedPeripherals.exception("An error occurred while mapping properties.", exception);
             throw new LuaException("An error occurred while mapping properties.");
         }
@@ -182,16 +187,14 @@ public abstract class OverlayObject {
         return value;
     }
 
+    @MustBeInvokedByOverriders
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(id);
-        Entity entity = module.getAccess().getEntity();
-        if (entity instanceof Player player) {
-            buffer.writeBoolean(true);
-            buffer.writeUUID(player.getUUID());
-        } else {
-            // Should theoretically never happen. But better safe than sorry
-            buffer.writeBoolean(false);
-        }
+    }
+
+    @MustBeInvokedByOverriders
+    public void decode(FriendlyByteBuf buffer) {
+        this.id = buffer.readInt();
     }
 
     @Override

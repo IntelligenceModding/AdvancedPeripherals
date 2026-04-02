@@ -8,6 +8,6 @@ import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.List;
 
-public interface ITwoDObjectRenderer extends IObjectRenderer {
-    void renderBatch(List<RenderableObject> object, GuiGraphics gui, PoseStack poseStack, DeltaTracker partialTick, int screenWidth, int screenHeight);
+public interface ITwoDObjectRenderer<O extends RenderableObject> extends IObjectRenderer {
+    void renderBatch(List<O> object, GuiGraphics gui, PoseStack poseStack, DeltaTracker partialTick, int screenWidth, int screenHeight);
 }

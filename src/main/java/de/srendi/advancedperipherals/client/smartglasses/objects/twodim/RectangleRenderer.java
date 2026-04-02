@@ -9,7 +9,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import de.srendi.advancedperipherals.client.RenderUtil;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -17,29 +17,29 @@ import org.joml.Matrix4f;
 
 import java.util.List;
 
-public class RectangleRenderer implements ITwoDObjectRenderer {
+public class RectangleRenderer implements ITwoDObjectRenderer<RectangleObject> {
 
     @Override
-    public void renderBatch(List<RenderableObject> objects, GuiGraphics gui, PoseStack ignored, DeltaTracker partialTick, int screenWidth, int screenHeight) {
+    public void renderBatch(List<RectangleObject> objects, GuiGraphics gui, PoseStack ignored, DeltaTracker partialTick, int screenWidth, int screenHeight) {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-        for (RenderableObject obj : objects) {
+        for (RectangleObject obj : objects) {
             float rotX = obj.rotX;
             float rotY = obj.rotY;
             float rotZ = obj.rotZ;
 
             PoseStack poseStack = new PoseStack();
 
-            poseStack.translate(obj.x, obj.y, obj.z);
-
             poseStack.pushPose();
 
-            Matrix4f matrix = poseStack.last().pose();
+            poseStack.translate(obj.x, obj.y, obj.z);
 
             poseStack.mulPose(Axis.XP.rotationDegrees(rotX));
             poseStack.mulPose(Axis.YP.rotationDegrees(rotY));
             poseStack.mulPose(Axis.ZP.rotationDegrees(rotZ));
+
+            Matrix4f matrix = poseStack.last().pose();
 
             float alpha = obj.opacity;
             float red = RenderUtil.getRed(obj.color);

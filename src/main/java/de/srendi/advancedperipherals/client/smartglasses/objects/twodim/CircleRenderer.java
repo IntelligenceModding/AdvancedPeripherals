@@ -9,7 +9,6 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
 import de.srendi.advancedperipherals.client.RenderUtil;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,14 +17,10 @@ import org.joml.Matrix4f;
 
 import java.util.List;
 
-public class CircleRenderer implements ITwoDObjectRenderer {
-
+public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
     @Override
-    public void renderBatch(List<RenderableObject> objects, GuiGraphics gui, PoseStack poseStack, DeltaTracker partialTick, int screenWidth, int screenHeight) {
-        for (RenderableObject obj : objects) {
-
-            CircleObject circle = (CircleObject) obj;
-
+    public void renderBatch(List<CircleObject> objects, GuiGraphics gui, PoseStack poseStack, DeltaTracker partialTick, int screenWidth, int screenHeight) {
+        for (CircleObject circle : objects) {
             float alpha = circle.opacity;
             float red = RenderUtil.getRed(circle.color);
             float green = RenderUtil.getGreen(circle.color);
@@ -51,9 +46,9 @@ public class CircleRenderer implements ITwoDObjectRenderer {
 
         PoseStack poseStack = new PoseStack();
 
-        poseStack.translate(cx, cy, cz);
-
         poseStack.pushPose();
+
+        poseStack.translate(cx, cy, cz);
 
         poseStack.mulPose(Axis.XP.rotationDegrees(rotX));
         poseStack.mulPose(Axis.YP.rotationDegrees(rotY));

@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.client.smartglasses;
 
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectDecodeRegistry;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectFactoryRegistry;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BlockObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BoxObject;
@@ -13,15 +13,15 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Static holder for client side renderable objects - will change
  */
 public class OverlayObjectHolder {
 
-    public static Map<Integer, RenderableObject> objects = new HashMap<>();
+    public static Map<Integer, RenderableObject> objects = new ConcurrentHashMap<>();
 
     public static void addOrUpdateObject(RenderableObject object) {
         objects.put(object.getId(), object);
@@ -46,15 +46,15 @@ public class OverlayObjectHolder {
     }
 
     public static void registerDecodeObjects() {
-        ObjectDecodeRegistry.register(RectangleObject.TYPE_ID, RectangleObject::decode);
-        ObjectDecodeRegistry.register(CircleObject.TYPE_ID, CircleObject::decode);
-        ObjectDecodeRegistry.register(TextObject.TYPE_ID, TextObject::decode);
-        ObjectDecodeRegistry.register(ItemObject.TYPE_ID, ItemObject::decode);
-        ObjectDecodeRegistry.register(LineObject.TYPE_ID, LineObject::decode);
+        ObjectFactoryRegistry.register(RectangleObject.TYPE_ID, RectangleObject::new);
+        ObjectFactoryRegistry.register(CircleObject.TYPE_ID, CircleObject::new);
+        ObjectFactoryRegistry.register(TextObject.TYPE_ID, TextObject::new);
+        ObjectFactoryRegistry.register(ItemObject.TYPE_ID, ItemObject::new);
+        ObjectFactoryRegistry.register(LineObject.TYPE_ID, LineObject::new);
 
-        ObjectDecodeRegistry.register(BoxObject.TYPE_ID, BoxObject::decode);
-        ObjectDecodeRegistry.register(BlockObject.TYPE_ID, BlockObject::decode);
-        ObjectDecodeRegistry.register(SphereObject.TYPE_ID, SphereObject::decode);
-        ObjectDecodeRegistry.register(TorusObject.TYPE_ID, TorusObject::decode);
+        ObjectFactoryRegistry.register(BoxObject.TYPE_ID, BoxObject::new);
+        ObjectFactoryRegistry.register(BlockObject.TYPE_ID, BlockObject::new);
+        ObjectFactoryRegistry.register(SphereObject.TYPE_ID, SphereObject::new);
+        ObjectFactoryRegistry.register(TorusObject.TYPE_ID, TorusObject::new);
     }
 }

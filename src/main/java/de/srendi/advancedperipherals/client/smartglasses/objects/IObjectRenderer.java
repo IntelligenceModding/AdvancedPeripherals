@@ -9,5 +9,4 @@ public interface IObjectRenderer {
     default int getWeight() {
         return 100;
     }
-
 }

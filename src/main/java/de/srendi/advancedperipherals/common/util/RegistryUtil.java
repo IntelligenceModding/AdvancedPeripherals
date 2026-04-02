@@ -1,25 +1,18 @@
 package de.srendi.advancedperipherals.common.util;
 
-import net.minecraft.ResourceLocationException;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 public class RegistryUtil {
-
+    @Nullable
     public static <T> T getRegistryEntry(String name, Registry<T> forgeRegistry) {
-        ResourceLocation location;
-        try {
-            location = ResourceLocation.parse(name);
-        } catch (ResourceLocationException ex) {
-            location = null;
-        }
+        ResourceLocation location = ResourceLocation.tryParse(name);
 
-        T value;
-        if (location != null && forgeRegistry.containsKey(location) && (value = forgeRegistry.get(location)) != null) {
-            return value;
-        } else {
+        if (location == null || !forgeRegistry.containsKey(location)) {
             return null;
         }
+        return forgeRegistry.get(location);
     }
 
 }

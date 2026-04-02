@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 public class OverlayModuleOverlay implements LayeredDraw.Layer {
@@ -26,7 +27,7 @@ public class OverlayModuleOverlay implements LayeredDraw.Layer {
     public void render(GuiGraphics gui, PoseStack poseStack, DeltaTracker deltaTracker, int screenWidth, int screenHeight) {
         poseStack.pushPose();
 
-        Map<Integer, Map<Class<? extends RenderableObject>, List<RenderableObject>>> prioritizedBatches = new TreeMap<>();
+        NavigableMap<Integer, Map<Class<?>, List<RenderableObject>>> prioritizedBatches = new TreeMap<>();
 
         for (RenderableObject object : OverlayObjectHolder.getObjects()) {
             if (!object.isEnabled() || !(object.getObjectRenderer() instanceof ITwoDObjectRenderer)) {
@@ -36,15 +37,15 @@ public class OverlayModuleOverlay implements LayeredDraw.Layer {
             // We need to sort the objects by their weight, some things can't be rendered before something else.
             // For example, when texts are rendered before our circles, rectangles, etc., the other objects can't be transparent anymore
             int weight = object.getObjectRenderer().getWeight();
-            Class<? extends RenderableObject> objectClass = object.getClass();
+            Class<?> objectClass = object.getClass();
 
             // Get or create the batch map for the current weight
-            Map<Class<? extends RenderableObject>, List<RenderableObject>> batchesForWeight = prioritizedBatches.computeIfAbsent(weight, k -> new HashMap<>());
+            Map<Class<?>, List<RenderableObject>> batchesForWeight = prioritizedBatches.computeIfAbsent(weight, k -> new HashMap<>());
             List<RenderableObject> batch = batchesForWeight.computeIfAbsent(objectClass, k -> new ArrayList<>());
             batch.add(object);
         }
 
-        for (Map<Class<? extends RenderableObject>, List<RenderableObject>> batchesForWeight : prioritizedBatches.values()) {
+        for (Map<Class<?>, List<RenderableObject>> batchesForWeight : prioritizedBatches.values()) {
             for (List<RenderableObject> batch : batchesForWeight.values()) {
                 if (batch.isEmpty()) {
                     continue;

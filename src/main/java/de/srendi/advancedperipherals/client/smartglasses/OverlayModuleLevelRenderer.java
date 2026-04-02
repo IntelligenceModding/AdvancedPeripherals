@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.client.smartglasses;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import net.minecraft.world.phys.Vec3;
@@ -23,7 +24,7 @@ public class OverlayModuleLevelRenderer {
         Vec3 view = event.getCamera().getPosition();
 
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
-            Map<Class<? extends RenderableObject>, List<ThreeDimensionalObject>> batches = new HashMap<>();
+            Map<Class<? extends ThreeDimensionalObject>, List<ThreeDimensionalObject>> batches = new HashMap<>();
 
             for (RenderableObject object : OverlayObjectHolder.getObjects()) {
                 if (!object.isEnabled()) {
@@ -44,7 +45,7 @@ public class OverlayModuleLevelRenderer {
             }
 
             for (List<ThreeDimensionalObject> batch : batches.values()) {
-                batch.get(0).getObjectRenderer().renderBatch(batch, event, poseStack, view);
+                ((IThreeDObjectRenderer) batch.get(0).getObjectRenderer()).renderBatch(batch, event, poseStack, view);
             }
         }
     }

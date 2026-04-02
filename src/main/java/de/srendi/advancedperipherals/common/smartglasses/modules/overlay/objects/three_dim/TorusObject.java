@@ -6,18 +6,16 @@ import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.TorusRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class TorusObject extends ThreeDimensionalObject {
     public static final int TYPE_ID = 7;
 
-    private static final IThreeDObjectRenderer RENDERER = new TorusRenderer();
+    private static final TorusRenderer RENDERER = new TorusRenderer();
 
     @FixedPointNumberProperty(min = 1, max = 1024)
     public int sides = 32;
@@ -33,17 +31,15 @@ public class TorusObject extends ThreeDimensionalObject {
 
     public TorusObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
-        reflectivelyMapProperties(arguments);
     }
 
     public TorusObject(UUID player) {
         super(player);
     }
 
-    @LuaFunction
-    public final void setMinorRadius(float radius) {
-        this.minorRadius = radius;
-        getModule().update(this);
+    @Override
+    public int getTypeId() {
+        return TYPE_ID;
     }
 
     @LuaFunction
@@ -52,9 +48,9 @@ public class TorusObject extends ThreeDimensionalObject {
     }
 
     @LuaFunction
-    public final void setMajorRadius(float radius) {
-        this.majorRadius = radius;
-        getModule().update(this);
+    public final void setMinorRadius(float radius) {
+        this.minorRadius = radius;
+        this.sendUpdate();
     }
 
     @LuaFunction
@@ -63,9 +59,9 @@ public class TorusObject extends ThreeDimensionalObject {
     }
 
     @LuaFunction
-    public final void setSides(int sides) {
-        this.sides = sides;
-        getModule().update(this);
+    public final void setMajorRadius(float radius) {
+        this.majorRadius = radius;
+        this.sendUpdate();
     }
 
     @LuaFunction
@@ -74,9 +70,9 @@ public class TorusObject extends ThreeDimensionalObject {
     }
 
     @LuaFunction
-    public final void setRings(int rings) {
-        this.rings = rings;
-        getModule().update(this);
+    public final void setSides(int sides) {
+        this.sides = sides;
+        this.sendUpdate();
     }
 
     @LuaFunction
@@ -84,9 +80,14 @@ public class TorusObject extends ThreeDimensionalObject {
         return rings;
     }
 
+    @LuaFunction
+    public final void setRings(int rings) {
+        this.rings = rings;
+        this.sendUpdate();
+    }
+
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(TYPE_ID);
         super.encode(buffer);
         buffer.writeInt(sides);
         buffer.writeInt(rings);
@@ -94,28 +95,13 @@ public class TorusObject extends ThreeDimensionalObject {
         buffer.writeFloat(majorRadius);
     }
 
-    public static TorusObject decode(FriendlyByteBuf buffer) {
-        Optional<TorusObject> optionalObject = RenderableObject.baseDecode(buffer, TorusObject::new);
-        if (optionalObject.isEmpty())
-            return null;
-
-        boolean disableDepthTest = buffer.readBoolean();
-        boolean disableCulling = buffer.readBoolean();
-
-        int sectors = buffer.readInt();
-        int stacks = buffer.readInt();
-        float minorRadius = buffer.readFloat();
-        float majorRadius = buffer.readFloat();
-
-        TorusObject clientObject = optionalObject.get();
-        clientObject.disableDepthTest = disableDepthTest;
-        clientObject.disableCulling = disableCulling;
-        clientObject.sides = sectors;
-        clientObject.rings = stacks;
-        clientObject.minorRadius = minorRadius;
-        clientObject.majorRadius = majorRadius;
-
-        return clientObject;
+    @Override
+    public void decode(FriendlyByteBuf buffer) {
+        super.decode(buffer);
+        this.sides = buffer.readInt();
+        this.rings = buffer.readInt();
+        this.minorRadius = buffer.readFloat();
+        this.majorRadius = buffer.readFloat();
     }
 
     @Override

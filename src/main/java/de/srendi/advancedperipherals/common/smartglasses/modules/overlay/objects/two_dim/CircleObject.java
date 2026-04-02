@@ -11,13 +11,12 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propert
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class CircleObject extends RenderableObject {
     public static final int TYPE_ID = 1;
 
-    private static final IObjectRenderer RENDERER = new CircleRenderer();
+    private static final CircleRenderer RENDERER = new CircleRenderer();
 
     @FixedPointNumberProperty(min = -32767, max = 32767)
     public int radius = 0;
@@ -36,11 +35,15 @@ public class CircleObject extends RenderableObject {
 
     public CircleObject(OverlayModule module, IArguments arguments) throws LuaException {
         super(module, arguments);
-        reflectivelyMapProperties(arguments);
     }
 
     public CircleObject(UUID player) {
         super(player);
+    }
+
+    @Override
+    public int getTypeId() {
+        return TYPE_ID;
     }
 
     @LuaFunction
@@ -51,7 +54,7 @@ public class CircleObject extends RenderableObject {
     @LuaFunction
     public void setRadius(int radius) {
         this.radius = radius;
-        getModule().update(this);
+        this.sendUpdate();
     }
 
     @LuaFunction
@@ -62,7 +65,7 @@ public class CircleObject extends RenderableObject {
     @LuaFunction
     public void setFilled(boolean filled) {
         this.filled = filled;
-        getModule().update(this);
+        this.sendUpdate();
     }
 
     @LuaFunction
@@ -73,7 +76,7 @@ public class CircleObject extends RenderableObject {
     @LuaFunction
     public void setPixelated(boolean pixelated) {
         this.pixelated = pixelated;
-        getModule().update(this);
+        this.sendUpdate();
     }
 
     @LuaFunction
@@ -84,7 +87,7 @@ public class CircleObject extends RenderableObject {
     @LuaFunction
     public void setBorderWidth(int borderWidth) {
         this.borderWidth = borderWidth;
-        getModule().update(this);
+        this.sendUpdate();
     }
 
     @LuaFunction
@@ -95,12 +98,11 @@ public class CircleObject extends RenderableObject {
     @LuaFunction
     public void setSegments(int segments) {
         this.segments = segments;
-        getModule().update(this);
+        this.sendUpdate();
     }
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(TYPE_ID);
         super.encode(buffer);
         buffer.writeInt(radius);
         buffer.writeBoolean(filled);
@@ -109,25 +111,14 @@ public class CircleObject extends RenderableObject {
         buffer.writeInt(segments);
     }
 
-    public static CircleObject decode(FriendlyByteBuf buffer) {
-        Optional<CircleObject> optionalObject = RenderableObject.baseDecode(buffer, CircleObject::new);
-        if (optionalObject.isEmpty())
-            return null;
-
-        int radius = buffer.readInt();
-        boolean filled = buffer.readBoolean();
-        boolean pixelated = buffer.readBoolean();
-        int borderWidth = buffer.readInt();
-        int segments = buffer.readInt();
-
-        CircleObject clientObject = optionalObject.get();
-        clientObject.radius = radius;
-        clientObject.filled = filled;
-        clientObject.pixelated = pixelated;
-        clientObject.borderWidth = borderWidth;
-        clientObject.segments = segments;
-
-        return clientObject;
+    @Override
+    public void decode(FriendlyByteBuf buffer) {
+        super.decode(buffer);
+        this.radius = buffer.readInt();
+        this.filled = buffer.readBoolean();
+        this.pixelated = buffer.readBoolean();
+        this.borderWidth = buffer.readInt();
+        this.segments = buffer.readInt();
     }
 
     @Override
