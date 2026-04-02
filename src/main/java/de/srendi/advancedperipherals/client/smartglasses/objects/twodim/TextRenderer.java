@@ -22,19 +22,20 @@ public class TextRenderer implements ITwoDObjectRenderer<TextObject> {
             float x = text.x;
 
             if (text.center) {
-                x -= (minecraft.font.width(text.content) * text.fontSize) / 2f;
+                x -= minecraft.font.width(text.content) / 2;
             }
 
             gui.pose().pushPose();
 
-            gui.pose().translate(x / text.fontSize, text.y / text.fontSize, text.z);
+            gui.pose().translate(x, text.y, text.z);
+            gui.pose().scale(text.fontSize, text.fontSize, 1);
             gui.pose().mulPose(Axis.XP.rotationDegrees(rotX));
             gui.pose().mulPose(Axis.YP.rotationDegrees(rotY));
             gui.pose().mulPose(Axis.ZP.rotationDegrees(rotZ));
 
-            gui.pose().scale(text.fontSize, text.fontSize, 1);
+            int color = text.color & 0xffffff | ((int) (Math.min(Math.max(text.opacity, 0), 1) * 0xff) << 24);
 
-            gui.drawString(minecraft.font, text.content, 0, 0, text.color, text.shadow);
+            gui.drawString(minecraft.font, text.content, 0, 0, color, text.shadow);
 
             gui.pose().popPose();
         }

@@ -40,20 +40,28 @@ public abstract class OverlayObject {
         this.player = player;
     }
 
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public OverlayModule getModule() {
-        return module;
+        return this.module;
     }
 
     public UUID getPlayer() {
-        return player;
+        return this.player;
     }
 
     @LuaFunction("getId")
@@ -61,14 +69,14 @@ public abstract class OverlayObject {
         return this.getId();
     }
 
-    @LuaFunction
-    public final boolean isEnabled() {
-        return enabled;
+    @LuaFunction("isEnabled")
+    public final boolean isEnabledLua() {
+        return this.isEnabled();
     }
 
-    @LuaFunction
-    public final void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    @LuaFunction("setEnabled")
+    public final void setEnabledLua(boolean enabled) {
+        this.setEnabled(enabled);
     }
 
     /**

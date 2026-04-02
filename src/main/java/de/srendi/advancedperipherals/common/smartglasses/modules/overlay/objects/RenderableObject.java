@@ -62,6 +62,12 @@ public abstract class RenderableObject extends OverlayObject {
         this.getModule().update(this);
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        this.sendUpdate();
+    }
+
     @LuaFunction
     public final float getOpacity() {
         return opacity;
