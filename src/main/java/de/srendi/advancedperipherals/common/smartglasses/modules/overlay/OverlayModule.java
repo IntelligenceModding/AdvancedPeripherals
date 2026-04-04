@@ -69,6 +69,7 @@ public class OverlayModule implements IModule {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.guiScale = guiScale;
+        this.access.getComputer().queueEvent("overlay_resize");
     }
 
     public int getScreenWidth() {

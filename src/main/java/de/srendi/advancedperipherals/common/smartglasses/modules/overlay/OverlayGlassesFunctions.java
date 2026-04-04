@@ -128,13 +128,13 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final int getObjectsSize() {
+    public final int getObjectsCount() {
         return overlayModule.getObjects().size();
     }
 
     @LuaFunction
-    public final MethodResult getSize() {
-        return MethodResult.of(overlayModule.getScreenWidth(), overlayModule.getScreenHeight());
+    public final MethodResult getGuiSize() {
+        return MethodResult.of(overlayModule.getScreenWidth(), overlayModule.getScreenHeight(), overlayModule.getGuiScale());
     }
 
     @LuaFunction
