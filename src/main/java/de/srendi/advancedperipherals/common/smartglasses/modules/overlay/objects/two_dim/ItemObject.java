@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ItemRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
@@ -13,7 +13,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class ItemObject extends RenderableObject {
@@ -24,12 +26,19 @@ public class ItemObject extends RenderableObject {
     // @StringProperty
     public ResourceKey<Item> item = null;
 
-    public ItemObject(OverlayModule module, IArguments arguments) throws LuaException {
-        super(module, arguments);
+    public ItemObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
+        super(module, initFields);
+        this.setItem(initFields.optString("item"));
     }
 
     public ItemObject(UUID player) {
         super(player);
+    }
+
+    @Override
+    @NotNull
+    public String getType() {
+        return "item";
     }
 
     @Override
@@ -43,10 +52,15 @@ public class ItemObject extends RenderableObject {
     }
 
     @LuaFunction
-    public final void setItem(String item) {
-        ResourceLocation name = ResourceLocation.tryParse(item);
-        this.item = BuiltInRegistries.ITEM.containsKey(name) ? ResourceKey.create(Registries.ITEM, name) : null;
-        this.sendUpdate();
+    public final void setItem(Optional<String> item) {
+        String item0 = item.orElse(null);
+        if (item0 == null) {
+            this.item = null;
+        } else {
+            ResourceLocation name = ResourceLocation.tryParse(item0);
+            this.item = BuiltInRegistries.ITEM.containsKey(name) ? ResourceKey.create(Registries.ITEM, name) : null;
+        }
+        this.tryAutoUpdate();
     }
 
     @Override
@@ -79,8 +93,6 @@ public class ItemObject extends RenderableObject {
                 ", color=" + color +
                 ", x=" + x +
                 ", y=" + y +
-                ", maxX=" + maxX +
-                ", maxY=" + maxY +
                 '}';
     }
 }

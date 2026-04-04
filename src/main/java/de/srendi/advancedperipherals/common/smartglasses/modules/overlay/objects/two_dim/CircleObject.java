@@ -1,8 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.CircleRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
@@ -10,6 +9,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ public class CircleObject extends RenderableObject {
 
     private static final CircleRenderer RENDERER = new CircleRenderer();
 
-    @FixedPointNumberProperty(min = -32767, max = 32767)
+    @FixedPointNumberProperty(min = 0, max = Integer.MAX_VALUE)
     public int radius = 0;
 
     @BooleanProperty
@@ -33,8 +33,8 @@ public class CircleObject extends RenderableObject {
     @FixedPointNumberProperty(min = 0, max = 100)
     public int segments = 25;
 
-    public CircleObject(OverlayModule module, IArguments arguments) throws LuaException {
-        super(module, arguments);
+    public CircleObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
+        super(module, initFields);
     }
 
     public CircleObject(UUID player) {
@@ -42,63 +42,14 @@ public class CircleObject extends RenderableObject {
     }
 
     @Override
+    @NotNull
+    public String getType() {
+        return "circle";
+    }
+
+    @Override
     public int getTypeId() {
         return TYPE_ID;
-    }
-
-    @LuaFunction
-    public int getRadius() {
-        return radius;
-    }
-
-    @LuaFunction
-    public void setRadius(int radius) {
-        this.radius = radius;
-        this.sendUpdate();
-    }
-
-    @LuaFunction
-    public boolean isFilled() {
-        return filled;
-    }
-
-    @LuaFunction
-    public void setFilled(boolean filled) {
-        this.filled = filled;
-        this.sendUpdate();
-    }
-
-    @LuaFunction
-    public boolean isPixelated() {
-        return pixelated;
-    }
-
-    @LuaFunction
-    public void setPixelated(boolean pixelated) {
-        this.pixelated = pixelated;
-        this.sendUpdate();
-    }
-
-    @LuaFunction
-    public int getBorderWidth() {
-        return borderWidth;
-    }
-
-    @LuaFunction
-    public void setBorderWidth(int borderWidth) {
-        this.borderWidth = borderWidth;
-        this.sendUpdate();
-    }
-
-    @LuaFunction
-    public int getSegments() {
-        return segments;
-    }
-
-    @LuaFunction
-    public void setSegments(int segments) {
-        this.segments = segments;
-        this.sendUpdate();
     }
 
     @Override
@@ -134,8 +85,6 @@ public class CircleObject extends RenderableObject {
                 ", color=" + color +
                 ", x=" + x +
                 ", y=" + y +
-                ", maxX=" + maxX +
-                ", maxY=" + maxY +
                 '}';
     }
 }

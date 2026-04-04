@@ -11,5 +11,4 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @ObjectProperty(type = StringType.class)
 public @interface StringProperty {
-
 }

@@ -1,6 +1,16 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
-public class BooleanType implements PropertyType<Boolean> {
+public class BooleanType implements PropertyType<Boolean, BooleanProperty> {
+    private String getterPrefix;
+
+    @Override
+    public void init(BooleanProperty property) {
+        this.getterPrefix = property.getterPrefix();
+    }
+
+    public String getGetterPrefix() {
+        return this.getterPrefix;
+    }
 
     @Override
     public boolean checkIsValid(Object type) {
@@ -8,13 +18,7 @@ public class BooleanType implements PropertyType<Boolean> {
     }
 
     @Override
-    public Boolean mapValue(Object type) {
-        return (Boolean) type;
-    }
-
-    @Override
-    public void init(Object property) {
-        // Nothing to init here, we don't have any filters for booleans
+    public Boolean fixValue(Boolean type) {
+        return type;
     }
 }
-

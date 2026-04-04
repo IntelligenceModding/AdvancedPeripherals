@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
-import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -16,7 +15,11 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.LineObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
+import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Map;
+import java.util.Optional;
 
 public class OverlayGlassesFunctions implements IModuleFunctions {
 
@@ -29,80 +32,79 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final Object createRectangle(IArguments arguments) throws LuaException {
-        RectangleObject rectangle = new RectangleObject(overlayModule, arguments);
+    public final Object createRectangle(Optional<Map<?, ?>> initFields) throws LuaException {
+        RectangleObject rectangle = new RectangleObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(rectangle);
 
         return object;
     }
 
     @LuaFunction
-    public final Object createCircle(IArguments arguments) throws LuaException {
-        CircleObject circle = new CircleObject(overlayModule, arguments);
+    public final Object createCircle(Optional<Map<?, ?>> initFields) throws LuaException {
+        CircleObject circle = new CircleObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(circle);
 
         return object;
     }
 
     @LuaFunction
-    public final Object createLine(IArguments arguments) throws LuaException {
-        LineObject rectangle = new LineObject(overlayModule, arguments);
+    public final Object createLine(Optional<Map<?, ?>> initFields) throws LuaException {
+        LineObject rectangle = new LineObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(rectangle);
 
         return object;
     }
 
     @LuaFunction
-    public final Object createText(IArguments arguments) throws LuaException {
-        TextObject circle = new TextObject(overlayModule, arguments);
+    public final Object createText(Optional<Map<?, ?>> initFields) throws LuaException {
+        TextObject circle = new TextObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(circle);
 
         return object;
     }
 
     @LuaFunction
-    public final Object createItem(IArguments arguments) throws LuaException {
-        ItemObject item = new ItemObject(overlayModule, arguments);
+    public final Object createItem(Optional<Map<?, ?>> initFields) throws LuaException {
+        ItemObject item = new ItemObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(item);
 
         return object;
     }
 
     @LuaFunction
-    public final Object createBlock(IArguments arguments) throws LuaException {
-        BlockObject block = new BlockObject(overlayModule, arguments);
+    public final Object createBlock(Optional<Map<?, ?>> initFields) throws LuaException {
+        BlockObject block = new BlockObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(block);
 
         return object;
     }
 
     @LuaFunction
-    public final Object createBox(IArguments arguments) throws LuaException {
-        BoxObject block = new BoxObject(overlayModule, arguments);
+    public final Object createBox(Optional<Map<?, ?>> initFields) throws LuaException {
+        BoxObject block = new BoxObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(block);
 
         return object;
     }
 
     @LuaFunction
-    public final Object createSphere(IArguments arguments) throws LuaException {
-        SphereObject block = new SphereObject(overlayModule, arguments);
+    public final Object createSphere(Optional<Map<?, ?>> initFields) throws LuaException {
+        SphereObject block = new SphereObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(block);
 
         return object;
     }
 
     @LuaFunction
-    public final Object createTorus(IArguments arguments) throws LuaException {
-        TorusObject block = new TorusObject(overlayModule, arguments);
+    public final Object createTorus(Optional<Map<?, ?>> initFields) throws LuaException {
+        TorusObject block = new TorusObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(block);
 
         return object;
     }
 
     @LuaFunction
-    public final MethodResult getObject(IArguments arguments) throws LuaException {
-        int id = arguments.getInt(0);
+    public final MethodResult getObject(int id) throws LuaException {
         return MethodResult.of(overlayModule.getObjects().get(id));
     }
 

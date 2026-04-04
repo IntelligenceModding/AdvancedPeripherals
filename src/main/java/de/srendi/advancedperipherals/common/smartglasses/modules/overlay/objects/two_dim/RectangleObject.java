@@ -1,11 +1,13 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.RectangleRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -17,8 +19,14 @@ public class RectangleObject extends RenderableObject {
 
     private static final RectangleRenderer RENDERER = new RectangleRenderer();
 
-    public RectangleObject(OverlayModule module, IArguments arguments) throws LuaException {
-        super(module, arguments);
+    @FloatingNumberProperty(min = 0)
+    public float sizeX = 0;
+
+    @FloatingNumberProperty(min = 0)
+    public float sizeY = 0;
+
+    public RectangleObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
+        super(module, initFields);
     }
 
     /**
@@ -28,6 +36,12 @@ public class RectangleObject extends RenderableObject {
      */
     public RectangleObject(UUID player) {
         super(player);
+    }
+
+    @Override
+    @NotNull
+    public String getType() {
+        return "rectangle";
     }
 
     @Override

@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
 
-import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.BlockRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
@@ -12,7 +12,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class BlockObject extends ThreeDimensionalObject {
@@ -23,12 +25,19 @@ public class BlockObject extends ThreeDimensionalObject {
     // @StringProperty
     public ResourceKey<Block> block = null;
 
-    public BlockObject(OverlayModule module, IArguments arguments) throws LuaException {
-        super(module, arguments);
+    public BlockObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
+        super(module, initFields);
+        this.setBlock(initFields.optString("block"));
     }
 
     public BlockObject(UUID player) {
         super(player);
+    }
+
+    @Override
+    @NotNull
+    public String getType() {
+        return "block";
     }
 
     @Override
@@ -42,10 +51,15 @@ public class BlockObject extends ThreeDimensionalObject {
     }
 
     @LuaFunction
-    public final void setBlock(String block) {
-        ResourceLocation name = ResourceLocation.tryParse(block);
-        this.block = BuiltInRegistries.BLOCK.containsKey(name) ? ResourceKey.create(Registries.BLOCK, name) : null;
-        this.sendUpdate();
+    public final void setBlock(Optional<String> block) {
+        String block0 = block.orElse(null);
+        if (block0 == null) {
+            this.block = null;
+        } else {
+            ResourceLocation name = ResourceLocation.tryParse(block0);
+            this.block = BuiltInRegistries.BLOCK.containsKey(name) ? ResourceKey.create(Registries.BLOCK, name) : null;
+        }
+        this.tryAutoUpdate();
     }
 
     @Override

@@ -1,6 +1,10 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
-public class StringType implements PropertyType<String> {
+public class StringType implements PropertyType<String, StringProperty> {
+    @Override
+    public void init(StringProperty property) {
+        // Nothing to init here, we don't have any filters for strings
+    }
 
     @Override
     public boolean checkIsValid(Object type) {
@@ -8,13 +12,7 @@ public class StringType implements PropertyType<String> {
     }
 
     @Override
-    public String mapValue(Object type) {
-        return (String) type;
-    }
-
-    @Override
-    public void init(Object property) {
-        // Nothing to init here, we don't have any filters for strings
+    public String fixValue(String type) {
+        return type;
     }
 }
-

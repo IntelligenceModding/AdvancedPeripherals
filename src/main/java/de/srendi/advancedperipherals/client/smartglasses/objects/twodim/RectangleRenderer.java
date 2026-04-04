@@ -46,9 +46,9 @@ public class RectangleRenderer implements ITwoDObjectRenderer<RectangleObject> {
             float green = RenderUtil.getGreen(obj.color);
             float blue = RenderUtil.getBlue(obj.color);
 
-            bufferBuilder.addVertex(matrix, 0, obj.maxY - obj.y, 0).setColor(red, green, blue, alpha);
-            bufferBuilder.addVertex(matrix, obj.maxX - obj.x, obj.maxY - obj.y, 0).setColor(red, green, blue, alpha);
-            bufferBuilder.addVertex(matrix, obj.maxX - obj.x, 0, 0).setColor(red, green, blue, alpha);
+            bufferBuilder.addVertex(matrix, 0, obj.sizeY, 0).setColor(red, green, blue, alpha);
+            bufferBuilder.addVertex(matrix, obj.sizeX, obj.sizeY, 0).setColor(red, green, blue, alpha);
+            bufferBuilder.addVertex(matrix, obj.sizeX, 0, 0).setColor(red, green, blue, alpha);
             bufferBuilder.addVertex(matrix, 0, 0, 0).setColor(red, green, blue, alpha);
             poseStack.popPose();
 

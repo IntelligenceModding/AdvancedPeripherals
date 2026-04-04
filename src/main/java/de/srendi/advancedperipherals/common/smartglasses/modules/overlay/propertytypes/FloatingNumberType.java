@@ -1,25 +1,25 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
-public class FloatingNumberType implements PropertyType<Number> {
-
-    public float min;
-    public float max;
+public class FloatingNumberType implements PropertyType<Number, FloatingNumberProperty> {
+    public double min;
+    public double max;
 
     @Override
-    public boolean checkIsValid(Object type) {
-        return type instanceof Float || type instanceof Double;
+    public void init(FloatingNumberProperty property) {
+        min = property.min();
+        max = property.max();
     }
 
     @Override
-    public Number mapValue(Object type) {
-        return Math.min(Math.max((float) type, min), max);
+    public boolean checkIsValid(Object value) {
+        return value instanceof Float || value instanceof Double;
     }
 
     @Override
-    public void init(Object property) {
-        FloatingNumberProperty decimalProperty = (FloatingNumberProperty) property;
-        min = decimalProperty.min();
-        max = decimalProperty.max();
+    public Number fixValue(Number value) {
+        if (value instanceof Float) {
+            return Math.min(Math.max(value.floatValue(), (float) min), (float) max);
+        }
+        return Math.min(Math.max(value.doubleValue(), min), max);
     }
 }
-

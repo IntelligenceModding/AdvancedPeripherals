@@ -13,21 +13,21 @@ public interface IThreeDObjectRenderer<O extends ThreeDimensionalObject> extends
 
     void renderBatch(List<O> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view);
 
-    default void onPostRender(O object) {
-        if (object.disableCulling) {
-            RenderSystem.enableCull();
+    default void onPreRender(O object) {
+        if (!object.culling) {
+            RenderSystem.disableCull();
         }
-        if (object.disableDepthTest) {
-            RenderSystem.enableDepthTest();
+        if (!object.depthTest) {
+            RenderSystem.disableDepthTest();
         }
     }
 
-    default void onPreRender(O object) {
-        if (object.disableCulling) {
-            RenderSystem.disableCull();
+    default void onPostRender(O object) {
+        if (!object.culling) {
+            RenderSystem.enableCull();
         }
-        if (object.disableDepthTest) {
-            RenderSystem.disableDepthTest();
+        if (!object.depthTest) {
+            RenderSystem.enableDepthTest();
         }
     }
 }

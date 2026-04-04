@@ -42,11 +42,18 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
 
             poseStack.pushPose();
 
-            poseStack.translate(-view.x + block.getX(), -view.y + block.getY(), -view.z + block.getZ());
-            poseStack.mulPose(new Quaternionf().rotationXYZ((float) Math.toRadians(block.rotX), (float) Math.toRadians(block.rotY), (float) Math.toRadians(block.rotZ)));
+            poseStack.translate(-view.x + block.x, -view.y + block.y, -view.z + block.z);
+            poseStack.mulPose(
+                new Quaternionf()
+                    .rotationYXZ(
+                        (float) Math.toRadians(block.rotY),
+                        (float) Math.toRadians(block.rotX),
+                        (float) Math.toRadians(block.rotZ)
+                    )
+            );
             poseStack.translate(-0.5f, -0.5f, -0.5f);
 
-            BlockPos blockPos = BlockPos.containing(block.getX(), block.getY(), block.getZ());
+            BlockPos blockPos = BlockPos.containing(block.x, block.y, block.z);
 
             blockRenderer.renderBatched(
                 blockToRender.defaultBlockState(),
@@ -61,6 +68,7 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
             poseStack.popPose();
 
             // TODO: apply colors and culling settings
+            // colors may require mixin VertexConsumer.putBulkData
             float alpha = block.opacity;
             float red = RenderUtil.getRed(block.color);
             float green = RenderUtil.getGreen(block.color);

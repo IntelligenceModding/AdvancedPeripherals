@@ -1,25 +1,38 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
+import com.google.common.collect.ImmutableMap;
 import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.IDynamicLuaObject;
+import dan200.computercraft.api.lua.ILuaContext;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
+import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.PropertyType;
-import de.srendi.advancedperipherals.common.util.StringUtil;
 import net.minecraft.network.FriendlyByteBuf;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InaccessibleObjectException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 // TODO: generate setters/getters lua functions out of our Property annotations
-public abstract class OverlayObject {
+public abstract class OverlayObject implements IDynamicLuaObject {
+
+    private final FieldWithPropertyType[] fields;
+    private final String[] getterSetterNames;
+    private final Map<String, FieldWithPropertyType> propertiesMap;
 
     @BooleanProperty
     private boolean enabled = true;
@@ -28,9 +41,53 @@ public abstract class OverlayObject {
     private OverlayModule module;
     private UUID player;
 
-    public OverlayObject(OverlayModule module, IArguments arguments) throws LuaException {
+    public OverlayObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
+        ImmutableMap.Builder<String, FieldWithPropertyType> properties = ImmutableMap.builder();
+        for (Field field : FieldUtils.getAllFieldsList(this.getClass())) {
+            String fieldName = field.getName();
+            ObjectProperty objectProperty = null;
+            Annotation propertyAnnotation = null;
+            for (Annotation annotation : field.getAnnotations()) {
+                objectProperty = annotation.annotationType().getAnnotation(ObjectProperty.class);
+                if (objectProperty != null) {
+                    propertyAnnotation = annotation;
+                    break;
+                }
+            }
+            if (objectProperty == null) {
+                continue;
+            }
+            @SuppressWarnings("rawtypes") PropertyType propertyType = PropertyType.of(objectProperty);
+            if (propertyType == null) {
+                throw new IllegalStateException("Invaild property type for field " + fieldName);
+            }
+            propertyType.init(propertyAnnotation);
+            try {
+                field.setAccessible(true);
+            } catch (InaccessibleObjectException exception) {
+                AdvancedPeripherals.exception("An error occurred while initializing properties.", exception);
+                throw new IllegalStateException("Field " + fieldName + " is inaccessible");
+            }
+            properties.put(fieldName, new FieldWithPropertyType(field, propertyType));
+        }
+        this.propertiesMap = properties.build();
+        this.fields = this.propertiesMap.values().toArray(FieldWithPropertyType[]::new);
+        List<String> getterSetterNames = new ArrayList<>();
+        for (FieldWithPropertyType propField : this.fields) {
+            String name = propField.field().getName();
+            String nameCap = name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
+            getterSetterNames.add(
+                propField.type() instanceof BooleanType bType
+                    ? bType.getGetterPrefix() == null
+                        ? name
+                        : bType.getGetterPrefix() + nameCap
+                    : "get" + nameCap
+            );
+            getterSetterNames.add("set" + nameCap);
+        }
+        this.getterSetterNames = getterSetterNames.toArray(String[]::new);
         this.module = module;
-        this.reflectivelyMapProperties(arguments);
+        this.reflectivelyMapProperties(initFields);
     }
 
     /**
@@ -38,14 +95,16 @@ public abstract class OverlayObject {
      */
     public OverlayObject(UUID player) {
         this.player = player;
+        this.fields = null;
+        this.getterSetterNames = null;
+        this.propertiesMap = null;
     }
+
+    @NotNull
+    public abstract String getType();
 
     public boolean isEnabled() {
         return this.enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public int getId() {
@@ -64,19 +123,61 @@ public abstract class OverlayObject {
         return this.player;
     }
 
+    @LuaFunction("type")
+    public final String getTypeLua() {
+        return this.getType();
+    }
+
     @LuaFunction("getId")
     public final int getIdLua() {
         return this.getId();
     }
 
-    @LuaFunction("isEnabled")
-    public final boolean isEnabledLua() {
-        return this.isEnabled();
+    protected abstract void tryAutoUpdate();
+
+    @Override
+    public String[] getMethodNames() {
+        return this.getterSetterNames;
     }
 
-    @LuaFunction("setEnabled")
-    public final void setEnabledLua(boolean enabled) {
-        this.setEnabled(enabled);
+    @Override
+    public MethodResult callMethod(ILuaContext context, int methodIndex, IArguments args) throws LuaException {
+        boolean isGetter = methodIndex % 2 == 0;
+        int fieldIndex = methodIndex / 2;
+        FieldWithPropertyType propField = this.fields[fieldIndex];
+        if (isGetter) {
+            try {
+                return MethodResult.of(propField.field().get(this));
+            } catch (IllegalAccessException e) {
+                throw new LuaException("Cannot read field " + propField.field().getName());
+            }
+        }
+        Object value = args.get(0);
+        propField.setFor(this, value);
+        this.tryAutoUpdate();
+        return MethodResult.of();
+    }
+
+    @MustBeInvokedByOverriders
+    public void encode(FriendlyByteBuf buffer) {
+        buffer.writeInt(this.id);
+        buffer.writeBoolean(this.enabled);
+    }
+
+    @MustBeInvokedByOverriders
+    public void decode(FriendlyByteBuf buffer) {
+        this.id = buffer.readInt();
+        this.enabled = buffer.readBoolean();
+    }
+
+    @Override
+    public String toString() {
+        return "OverlayObject{" +
+                "id=" + id +
+                ", enabled=" + enabled +
+                ", module=" + module +
+                ", player=" + player +
+                '}';
     }
 
     /**
@@ -97,62 +198,16 @@ public abstract class OverlayObject {
      * @see ObjectProperty
      * @see PropertyType
      */
-    private void reflectivelyMapProperties(IArguments arguments) throws LuaException {
-        Map<?, ?> propMap = arguments.optTable(0).orElse(null);
-        if (propMap == null) {
-            return;
-        }
-
-        Map<String, Object> properties = propMap.entrySet().stream()
-                .filter(entry -> entry.getKey() instanceof String)
-                .collect(Collectors.toMap(entry -> (String) entry.getKey(), Map.Entry::getValue));
-
-        try {
-            Field[] allFields = FieldUtils.getAllFields(this.getClass());
-
-            for (Field field : allFields) {
-                if (properties.containsKey(field.getName())) {
-                    var value = properties.get(field.getName());
-
-                    Annotation[] fieldProperties = field.getAnnotations();
-                    ObjectProperty objectProperty = null;
-                    Annotation propertyAnnotation = null;
-
-                    for (Annotation annotation : fieldProperties) {
-                        objectProperty = annotation.annotationType().getAnnotation(ObjectProperty.class);
-                        if (objectProperty != null) {
-                            propertyAnnotation = annotation;
-                            break;
-                        }
-                    }
-
-                    if (objectProperty == null) {
-                        AdvancedPeripherals.debug("The field " + field.getName() + " has no ObjectProperty annotation and can't be changed.", Level.WARN);
-                        continue;
-                    }
-
-                    PropertyType<?> propertyType = PropertyType.of(objectProperty);
-                    if (propertyType != null) {
-                        value = castValueToFieldType(field, value);
-                        if (propertyType.checkIsValid(value)) {
-                            propertyType.init(propertyAnnotation);
-                            value = propertyType.mapValue(value);
-
-                            // Make the field accessible
-                            field.setAccessible(true);
-
-                            // Set the value of the field
-                            field.set(this, castValueToFieldType(field, value));
-                        } else {
-                            AdvancedPeripherals.debug("The value " + value + " is not valid for the field " + field.getName() + ".", Level.WARN);
-                            continue;
-                        }
-                    }
-                }
+    private void reflectivelyMapProperties(LuaTable<?, ?> initFields) throws LuaException {
+        for (Map.Entry<?, ?> entry : initFields.entrySet()) {
+            if (!(entry.getKey() instanceof String fieldName)) {
+                continue;
             }
-        } catch (IllegalAccessException exception) {
-            AdvancedPeripherals.exception("An error occurred while mapping properties.", exception);
-            throw new LuaException("An error occurred while mapping properties.");
+            FieldWithPropertyType propField = this.propertiesMap.get(fieldName);
+            if (propField == null) {
+                continue;
+            }
+            propField.setFor(this, entry.getValue());
         }
     }
 
@@ -164,53 +219,53 @@ public abstract class OverlayObject {
      * @param value the value to be casted
      * @return the casted value
      */
-    public Object castValueToFieldType(Field field, Object value) {
+    private static Object castValueToFieldType(Field field, Object value) {
         Class<?> fieldType = field.getType();
 
         if (fieldType.isAssignableFrom(value.getClass())) {
             return value;
         }
-        if (fieldType.equals(Integer.TYPE)) {
-            return Double.valueOf(value.toString()).intValue();
-        }
-        if (fieldType.equals(Double.TYPE)) {
-            return Double.valueOf(value.toString());
-        }
-        if (fieldType.equals(Boolean.TYPE)) {
-            return Boolean.valueOf(value.toString());
-        }
-        if (fieldType.equals(Long.TYPE)) {
-            return Long.valueOf(StringUtil.removeFloatingPoints(value.toString()));
-        }
-        if (fieldType.equals(Short.TYPE)) {
-            return Short.valueOf(StringUtil.removeFloatingPoints(value.toString()));
-        }
-        if (fieldType.equals(Byte.TYPE)) {
-            return Byte.valueOf(StringUtil.removeFloatingPoints(value.toString()));
-        }
-        if (fieldType.equals(Float.TYPE)) {
-            return Float.valueOf(value.toString());
+        if (value instanceof Boolean bool) {
+            if (fieldType == Boolean.TYPE) {
+                return bool;
+            }
+        } else if (value instanceof Number number) {
+            if (fieldType == Double.TYPE) {
+                return number.doubleValue();
+            }
+            if (fieldType == Float.TYPE) {
+                return number.floatValue();
+            }
+            if (fieldType == Long.TYPE) {
+                return Math.round(number.doubleValue());
+            }
+            if (fieldType == Integer.TYPE) {
+                return (int) Math.round(number.doubleValue());
+            }
+            if (fieldType == Short.TYPE) {
+                return (short) Math.round(number.doubleValue());
+            }
+            if (fieldType == Byte.TYPE) {
+                return (byte) Math.round(number.doubleValue());
+            }
         }
         AdvancedPeripherals.debug("The field type " + fieldType.getName() + " is not supported for the value " + value + ".", Level.WARN);
         return value;
     }
 
-    @MustBeInvokedByOverriders
-    public void encode(FriendlyByteBuf buffer) {
-        buffer.writeInt(id);
-    }
+    private record FieldWithPropertyType(Field field, PropertyType<?, ?> type) {
+        public void setFor(OverlayObject obj, Object value) throws LuaException {
+            value = castValueToFieldType(this.field, value);
+            if (!this.type.checkIsValid(value)) {
+                throw new LuaException("The value " + value + " is not valid for " + this.field.getName());
+            }
+            value = ((PropertyType) this.type).fixValue(value);
 
-    @MustBeInvokedByOverriders
-    public void decode(FriendlyByteBuf buffer) {
-        this.id = buffer.readInt();
-    }
-
-    @Override
-    public String toString() {
-        return "OverlayObject{" +
-                "enabled=" + enabled +
-                ", module=" + module +
-                ", player=" + player +
-                '}';
+            try {
+                this.field.set(this, value);
+            } catch (IllegalAccessException exception) {
+                throw new IllegalStateException("Cannot set value for " + this.field.getName(), exception);
+            }
+        }
     }
 }

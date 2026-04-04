@@ -1,15 +1,16 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.LineRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -21,14 +22,23 @@ public class LineObject extends RenderableObject {
 
     private static final LineRenderer RENDERER = new LineRenderer();
 
+    @FloatingNumberProperty
+    public float endX = 0;
+
+    @FloatingNumberProperty
+    public float endY = 0;
+
+    @FloatingNumberProperty
+    public float endZ = 0;
+
     @BooleanProperty
     public boolean pixelated = false;
 
     @FixedPointNumberProperty(min = 0, max = 32767)
-    public int pixelSize = 4;
+    public int width = 4;
 
-    public LineObject(OverlayModule module, IArguments arguments) throws LuaException {
-        super(module, arguments);
+    public LineObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
+        super(module, initFields);
     }
 
     /**
@@ -41,44 +51,28 @@ public class LineObject extends RenderableObject {
     }
 
     @Override
+    @NotNull
+    public String getType() {
+        return "line";
+    }
+
+    @Override
     public int getTypeId() {
         return TYPE_ID;
-    }
-
-    @LuaFunction
-    public void setPixelated(boolean pixelated) {
-        this.pixelated = pixelated;
-        this.sendUpdate();
-    }
-
-    @LuaFunction
-    public boolean isPixelated() {
-        return pixelated;
-    }
-
-    @LuaFunction
-    public void setPixelSize(int pixelSize) {
-        this.pixelSize = pixelSize;
-        this.sendUpdate();
-    }
-
-    @LuaFunction
-    public int getPixelSize() {
-        return pixelSize;
     }
 
     @Override
     public void encode(FriendlyByteBuf buffer) {
         super.encode(buffer);
         buffer.writeBoolean(pixelated);
-        buffer.writeInt(pixelSize);
+        buffer.writeInt(width);
     }
 
     @Override
     public void decode(FriendlyByteBuf buffer) {
         super.decode(buffer);
         this.pixelated = buffer.readBoolean();
-        this.pixelSize = buffer.readInt();
+        this.width = buffer.readInt();
     }
 
     @Override

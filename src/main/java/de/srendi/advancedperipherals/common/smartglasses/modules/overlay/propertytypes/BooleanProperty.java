@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @ObjectProperty(type = BooleanType.class)
 public @interface BooleanProperty {
-
+    String getterPrefix() default "is";
 }

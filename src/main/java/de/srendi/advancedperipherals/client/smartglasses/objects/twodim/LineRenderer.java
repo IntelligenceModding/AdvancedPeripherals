@@ -34,9 +34,9 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
             float y1 = line.y;
             float z1 = line.z;
 
-            float x2 = line.maxX;
-            float y2 = line.maxY;
-            float z2 = line.maxZ;
+            float x2 = line.endX;
+            float y2 = line.endY;
+            float z2 = line.endZ;
 
             // Normal, smooth lines
             if (!line.pixelated) {
@@ -56,10 +56,10 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
             float dy = y2 - y1;
             float dz = z2 - z1;
 
-            final float pixelSize = line.pixelSize;
+            final float width = line.width;
 
             float maxDim = Math.max(Math.abs(dx), Math.max(Math.abs(dy), Math.abs(dz)));
-            int numPixels = (int) Math.ceil(maxDim / pixelSize);
+            int numPixels = (int) Math.ceil(maxDim / width);
 
             if (numPixels == 0) {
                 numPixels = 1; // Always draw at least one pixel for very short lines
@@ -76,16 +76,16 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
 
                 // Snap current point to the nearest pixel grid for consistent placement.
                 // This is key for placing pixels at corners or full side of each other.
-                currentX = Math.round(currentX / pixelSize) * pixelSize;
-                currentY = Math.round(currentY / pixelSize) * pixelSize;
-                currentZ = Math.round(currentZ / pixelSize) * pixelSize;
+                currentX = Math.round(currentX / width) * width;
+                currentY = Math.round(currentY / width) * width;
+                currentZ = Math.round(currentZ / width) * width;
 
                 float pX1 = currentX;
                 float pY1 = currentY;
                 float pZ1 = currentZ;
 
-                float pX2 = currentX + pixelSize;
-                float pY2 = currentY + pixelSize;
+                float pX2 = currentX + width;
+                float pY2 = currentY + width;
                 float pZ2 = currentZ;
 
                 bufferBuilder.addVertex(matrix, pX1, pY2, pZ1).setColor(red, green, blue, alpha); // Bottom-left

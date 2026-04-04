@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectProperty;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,23 +8,21 @@ import java.lang.reflect.InvocationTargetException;
  * This interface represents a property type. It is used to check if a value is valid for the property and to map the value to the correct type.
  *
  * @param <T> the type of the property value
+ * @param <A> the type of the property annotation
  * @see ObjectProperty
  */
-public interface PropertyType<T> {
+public interface PropertyType<T, A> {
+    boolean checkIsValid(Object value);
 
-    boolean checkIsValid(Object type);
+    void init(A property);
 
-    T mapValue(Object type);
+    T fixValue(T value);
 
-    static PropertyType<?> of(ObjectProperty property) {
+    static PropertyType<?, ?> of(ObjectProperty property) {
         try {
             return property.type().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException exception) {
-            AdvancedPeripherals.debug("An error occurred while trying to create the property type", exception);
+            return null;
         }
-        return null;
     }
-
-    void init(Object property);
-
 }
