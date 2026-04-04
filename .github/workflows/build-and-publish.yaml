@@ -3,7 +3,7 @@ name: Build and Publish
 on:
   workflow_dispatch:
   push:
-  pull_request_target:
+  pull_request:
     types:
       - opened
       - reopened
@@ -18,7 +18,7 @@ jobs:
       - name: Generate Name
         id: name
         run: |
-          if [[ "${{ github.event_name }}" == 'pull_request_target' ]]; then
+          if [[ "${{ github.event_name }}" == 'pull_request' ]]; then
             suffix="PR ${{ github.event.number }}"
           else
             ref="${{ github.ref }}"
@@ -35,9 +35,9 @@ jobs:
     uses: IntelligenceModding/actions/.github/workflows/build-and-test.yaml@master
     with:
       build_name: ${{ needs.generate-artifact-name.outputs.name }}
-      pr: ${{ github.event_name == 'pull_request_target' && github.event.number || '' }}
-      pr_ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || '' }}
-      pr_repo: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name || '' }}
+      pr: ${{ github.event_name == 'pull_request' && github.event.number || '' }}
+      pr_ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
+      pr_repo: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || '' }}
       check: ${{ github.event_name != 'push' }}
       java-version: ''
 
