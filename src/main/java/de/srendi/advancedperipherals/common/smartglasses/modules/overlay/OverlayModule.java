@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class OverlayModule implements IModule {
 
     public boolean autoUpdate = true;
     private int idCounter = 0;
+
+    private WeakReference<ServerPlayer> lastPlayer = null;
 
     private int screenWidth = 0;
     private int screenHeight = 0;
@@ -56,7 +59,8 @@ public class OverlayModule implements IModule {
     @Override
     public void serverTick(SmartGlassesSideAccess access) {
         ServerPlayer player = this.getOwner();
-        if (player != null && player.level().getGameTime() % 2 == 0) {
+        if (player != null && (this.lastPlayer == null || this.lastPlayer.get() != player)) {
+            this.lastPlayer = new WeakReference<>(player);
             PacketDistributor.sendToPlayer(player, new OverlayModuleClientRequestPacket());
         }
     }

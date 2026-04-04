@@ -1,13 +1,16 @@
 package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.Window;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
+import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
@@ -17,6 +20,29 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientEventSubscriber {
+    private static int lastWidth = 0;
+    private static int lastHeight = 0;
+    private static double lastScale = 0;
+
+    @SubscribeEvent
+    public static void preClientTick(ClientTickEvent.Pre event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.player == null) {
+            return;
+        }
+        Window window = minecraft.getWindow();
+
+        int sizeX = window.getWidth(), sizeY = window.getHeight();
+        double guiScale = window.getGuiScale();
+
+        if (sizeX != lastWidth || sizeY != lastHeight || guiScale != lastScale) {
+            lastWidth = sizeX;
+            lastHeight = sizeY;
+            lastScale = guiScale;
+            OverlayModuleClientInfoPacket.sendCurrentInformation();
+        }
+    }
+
     @SubscribeEvent
     public static void renderingHuds(RenderGuiLayerEvent.Pre event) {
         if (ClientRegistry.SADDLE_TURTLE_OVERLAY.shouldRenderFuelBar() && event.getName().equals(VanillaGuiLayers.EXPERIENCE_BAR)) {
