@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.KeyboardItem;
 import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
@@ -92,7 +93,7 @@ public class KeyboardModule implements IModule {
         boolean captureMouse = this.captureMouse;
         this.lastCaptureMouse = captureMouse;
 
-        computer.queueEvent("keyboard_open");
+        computer.queueEvent(CCEvents.KEYBOARD_OPEN);
 
         if (captureMouse) {
             PacketDistributor.sendToPlayer(player, new KeyboardMouseCapturePacket(true));
@@ -101,6 +102,6 @@ public class KeyboardModule implements IModule {
 
     public void onKeyboardClosed(SmartGlassesSideAccess glasses) {
         this.capturingKeys = false;
-        glasses.getComputer().queueEvent("keyboard_close");
+        glasses.getComputer().queueEvent(CCEvents.KEYBOARD_CLOSE);
     }
 }

@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.lib.misc.DataPublisher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.MessageArgument;
@@ -51,13 +52,13 @@ public class Events {
             }
         }
 
-        putPlayerMessage(new PlayerDimensionEvent("player_join", player.getUUID(), player.getName().getString(), player.level().dimension().location().toString(), null));
+        putPlayerMessage(new PlayerDimensionEvent(CCEvents.PLAYER_JOIN, player.getUUID(), player.getGameProfile().getName(), player.level().dimension().location().toString(), null));
     }
 
     @SubscribeEvent
     public static void onWorldLeave(PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
-        putPlayerMessage(new PlayerDimensionEvent("player_leave", player.getUUID(), player.getName().getString(), player.level().dimension().location().toString(), null));
+        putPlayerMessage(new PlayerDimensionEvent(CCEvents.PLAYER_LEAVE, player.getUUID(), player.getGameProfile().getName(), player.level().dimension().location().toString(), null));
     }
 
     @SubscribeEvent
@@ -66,7 +67,7 @@ public class Events {
         String fromDim = event.getFrom().location().toString();
         String toDim = event.getTo().location().toString();
 
-        putPlayerMessage(new PlayerDimensionEvent("player_changed_dimension", player.getUUID(), player.getName().getString(), fromDim, toDim));
+        putPlayerMessage(new PlayerDimensionEvent(CCEvents.PLAYER_CHANGED_DIMENSION, player.getUUID(), player.getGameProfile().getName(), fromDim, toDim));
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -74,7 +75,7 @@ public class Events {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        putPlayerMessage(new PlayerDeathEvent(player.getUUID(), player.getName().getString(), event.getSource()));
+        putPlayerMessage(new PlayerDeathEvent(player.getUUID(), player.getGameProfile().getName(), event.getSource()));
     }
 
     @SubscribeEvent
@@ -193,7 +194,7 @@ public class Events {
     public record PlayerDeathEvent(UUID playerId, String playerName, DamageSource source) implements IPlayerEvent {
         @Override
         public String eventName() {
-            return "player_death";
+            return CCEvents.PLAYER_DEATH;
         }
 
         @Override

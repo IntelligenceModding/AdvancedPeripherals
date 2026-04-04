@@ -43,7 +43,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         if (player == null) {
             return MethodResult.of();
         }
-        return MethodResult.of(player.getName().getString(), player.getUUID().toString());
+        return MethodResult.of(player.getUUID().toString(), player.getGameProfile().getName());
     }
 
 

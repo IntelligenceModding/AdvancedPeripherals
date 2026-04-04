@@ -8,6 +8,7 @@ import dan200.computercraft.shared.turtle.blocks.TurtleBlockEntity;
 import dan200.computercraft.shared.turtle.core.TurtleBrain;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import de.srendi.advancedperipherals.common.setup.APEntities;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.util.InputKeySet;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -139,22 +140,22 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
         ServerComputer computer = this.getServerComputer();
         if (computer != null && this.inputs != this.oldInputs) {
             if (this.inputs.forward() != this.oldInputs.forward()) {
-                computer.queueEvent("saddle_control", new Object[]{"forward", this.inputs.forward()});
+                computer.queueEvent(CCEvents.SADDLE_CONTROL, new Object[]{"forward", this.inputs.forward()});
             }
             if (this.inputs.back() != this.oldInputs.back()) {
-                computer.queueEvent("saddle_control", new Object[]{"back", this.inputs.back()});
+                computer.queueEvent(CCEvents.SADDLE_CONTROL, new Object[]{"back", this.inputs.back()});
             }
             if (this.inputs.left() != this.oldInputs.left()) {
-                computer.queueEvent("saddle_control", new Object[]{"left", this.inputs.left()});
+                computer.queueEvent(CCEvents.SADDLE_CONTROL, new Object[]{"left", this.inputs.left()});
             }
             if (this.inputs.right() != this.oldInputs.right()) {
-                computer.queueEvent("saddle_control", new Object[]{"right", this.inputs.right()});
+                computer.queueEvent(CCEvents.SADDLE_CONTROL, new Object[]{"right", this.inputs.right()});
             }
             if (this.inputs.up() != this.oldInputs.up()) {
-                computer.queueEvent("saddle_control", new Object[]{"up", this.inputs.up()});
+                computer.queueEvent(CCEvents.SADDLE_CONTROL, new Object[]{"up", this.inputs.up()});
             }
             if (this.inputs.down() != this.oldInputs.down()) {
-                computer.queueEvent("saddle_control", new Object[]{"down", this.inputs.down()});
+                computer.queueEvent(CCEvents.SADDLE_CONTROL, new Object[]{"down", this.inputs.down()});
             }
             this.oldInputs = this.inputs;
         }

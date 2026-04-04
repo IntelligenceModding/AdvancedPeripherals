@@ -6,6 +6,7 @@ import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBul
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectSyncPacket;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
@@ -69,7 +70,7 @@ public class OverlayModule implements IModule {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.guiScale = guiScale;
-        this.access.getComputer().queueEvent("overlay_resize");
+        this.access.getComputer().queueEvent(CCEvents.OVERLAY_RESIZE);
     }
 
     public int getScreenWidth() {

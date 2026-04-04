@@ -1,9 +1,11 @@
 package de.srendi.advancedperipherals.common.blocks;
 
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.PlayerDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -40,7 +42,18 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
             if (level.isClientSide()) {
                 return InteractionResult.SUCCESS;
             }
-            entity.queueEvent("player_click", player.getName().getString(), level.dimension().location().toString());
+            PlayerDetectorPeripheral peripheral = entity.getPeripheral();
+            if (peripheral != null) {
+                peripheral.forEachConnectedComputers(
+                    (computer) -> computer.queueEvent(
+                        CCEvents.PLAYER_CLICK,
+                        computer.getAttachmentName(),
+                        player.getUUID().toString(),
+                        player.getGameProfile().getName(),
+                        level.dimension().location().toString()
+                    )
+                );
+            }
             return InteractionResult.CONSUME;
         }
         return super.useWithoutItem(state, level, pos, player, hit);

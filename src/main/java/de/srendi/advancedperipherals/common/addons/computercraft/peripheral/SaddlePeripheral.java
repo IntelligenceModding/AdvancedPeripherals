@@ -12,6 +12,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.network.toclient.SaddleTurtleInfoPacket;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.TeleportUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
@@ -140,7 +141,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         this.seat = null;
         this.rider = null;
         if (owner.getTurtle() instanceof TurtleBrain brain) {
-            brain.getOwner().createServerComputer().queueEvent("saddle_release");
+            brain.getOwner().createServerComputer().queueEvent(CCEvents.SADDLE_RELEASE);
         }
         return passenger != null;
     }
@@ -171,7 +172,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
                 return MethodResult.of(null, "Entity cannot sit");
             }
             if (owner.getTurtle() instanceof TurtleBrain brain) {
-                brain.getOwner().createServerComputer().queueEvent("saddle_capture");
+                brain.getOwner().createServerComputer().queueEvent(CCEvents.SADDLE_CAPTURE);
             }
             return MethodResult.of(true);
         }, null);

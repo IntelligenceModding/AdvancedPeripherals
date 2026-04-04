@@ -13,6 +13,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.entity.TurtleEnderPearl;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -232,13 +233,14 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
                             return;
                         }
                         BlockPos pos = pearl.blockPosition();
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("name", level.dimension().location().toString());
-                        data.put("pos", LuaConverter.posToLua(pos));
-                        data.put("facing", pearl.getDirection().getName());
-                        data.put("costs", getCostsToLevel(level.dimension()));
-                        data.put("canSpawn", owner.isMovementPossible(level, pos));
-                        data.put("shipId", shipId);
+                        Map<String, Object> data = Map.of(
+                            "name", level.dimension().location().toString(),
+                            "pos", LuaConverter.posToLua(pos),
+                            "facing", pearl.getDirection().getName(),
+                            "costs", getCostsToLevel(level.dimension()),
+                            "canSpawn", owner.isMovementPossible(level, pos),
+                            "shipId", shipId
+                        );
                         shipPearls.put(shipId, pearl);
                         automataCore.queueEvent(PortalPrepareCallback.EVENT_ID, data);
                     });
@@ -301,8 +303,8 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     }
 
     private static final class PortalPrepareCallback implements ILuaCallback {
-        static final String EVENT_ID = "portal_prepare";
-        static final String FAILED_EVENT_ID = "portal_prepare_failed";
+        static final String EVENT_ID = CCEvents.PORTAL_PREPARE;
+        static final String FAILED_EVENT_ID = CCEvents.PORTAL_PREPARE_FAILED;
         final MethodResult pull = MethodResult.pullEvent(null, this);
         private final String id;
 

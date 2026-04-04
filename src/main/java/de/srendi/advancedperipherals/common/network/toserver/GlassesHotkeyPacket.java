@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.network.toserver;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
@@ -45,7 +46,7 @@ public class GlassesHotkeyPacket implements IAPPacket {
             return;
         }
         if (keyPressDuration >= 0) {
-            computer.queueEvent("glasses_key_pressed", new Object[]{keyBind, keyPressDuration});
+            computer.queueEvent(CCEvents.GLASSES_KEY_PRESSED, new Object[]{keyBind, keyPressDuration});
             return;
         }
         SmartGlassesSideAccess glasses = computer.getSmartGlassesModuleAccess();

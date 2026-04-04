@@ -63,7 +63,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     @LuaFunction(mainThread = true)
     public final String[] getOnlinePlayers() {
         return getPlayers()
-            .map(player -> player.getName().getString())
+            .map(player -> player.getGameProfile().getName())
             .toArray(String[]::new);
     }
 
@@ -74,7 +74,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
         return getPlayers()
             .filter(player -> CoordUtil.isInRange(getCenterPos(), player, getLevel(), firstPos, secondPos, MAX_RANGE))
-            .map(player -> player.getName().getString())
+            .map(player -> player.getGameProfile().getName())
             .toList();
     }
 
@@ -82,7 +82,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final List<String> getPlayersInCubic(int x, int y, int z) {
         return getPlayers()
             .filter(player -> CoordUtil.isInRange(getCenterPos(), getLevel(), player, x, y, z, MAX_RANGE))
-            .map(player -> player.getName().getString())
+            .map(player -> player.getGameProfile().getName())
             .toList();
     }
 
@@ -90,7 +90,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     public final List<String> getPlayersInRange(int range) {
         return getPlayers()
             .filter(player -> CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, MAX_RANGE))
-            .map(player -> player.getName().getString())
+            .map(player -> player.getGameProfile().getName())
             .toList();
     }
 
@@ -207,7 +207,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
             info.put("uuid", player.getUUID().toString());
-            info.put("name", player.getName().getString());
+            info.put("name", player.getGameProfile().getName());
             info.put("yaw", player.getYRot());
             info.put("pitch", player.getXRot());
             info.put("dimension", player.level().dimension().location().toString());

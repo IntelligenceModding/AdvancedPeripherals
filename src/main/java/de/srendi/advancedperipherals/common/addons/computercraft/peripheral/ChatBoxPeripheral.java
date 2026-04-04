@@ -18,6 +18,7 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.StringUtil;
@@ -509,10 +510,10 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 }
             }
             queueEvent(
-                "chat",
+                CCEvents.CHAT,
+                message.senderId().toString(),
                 message.senderName(),
                 message.message(),
-                message.senderId(),
                 message.isHidden(),
                 StringUtil.utf8ToByteString(message.message())
             );

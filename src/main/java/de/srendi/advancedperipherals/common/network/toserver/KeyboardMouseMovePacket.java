@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.network.toserver;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -41,7 +42,7 @@ public class KeyboardMouseMovePacket implements IAPPacket {
         if (computer == null) {
             return;
         }
-        computer.queueEvent("player_mouse_move", new Object[]{dx, dy});
+        computer.queueEvent(CCEvents.PLAYER_MOUSE_MOVE, new Object[]{dx, dy});
     }
 
     @Override
