@@ -261,7 +261,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             value = ((PropertyType) this.type).fixValue(value);
 
             try {
-                this.field.set(this, value);
+                this.field.set(obj, value);
             } catch (IllegalAccessException exception) {
                 throw new IllegalStateException("Cannot set value for " + this.field.getName(), exception);
             }

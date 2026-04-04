@@ -19,13 +19,13 @@ public class BoxRenderer implements IThreeDObjectRenderer<BoxObject> {
 
     @Override
     public void renderBatch(List<BoxObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
+        VertexConsumer bufferBuilder = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.debugStructureQuads());
+
         poseStack.pushPose();
 
         for (BoxObject box : batch) {
             this.onPreRender(box);
             poseStack.pushPose();
-            // TODO: we suppose to use bufferSource instead of Tesselator
-            VertexConsumer bufferBuilder = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.debugFilledBox());
 
             Vector4f color = new Vector4f(RenderUtil.getRed(box.color), RenderUtil.getGreen(box.color), RenderUtil.getBlue(box.color), box.opacity);
 

@@ -33,7 +33,7 @@ public class TextRenderer implements ITwoDObjectRenderer<TextObject> {
             gui.pose().mulPose(Axis.YP.rotationDegrees(rotY));
             gui.pose().mulPose(Axis.ZP.rotationDegrees(rotZ));
 
-            int color = text.color & 0xffffff | ((int) (Math.min(Math.max(text.opacity, 0), 1) * 0xff) << 24);
+            int color = (text.color & 0xffffff) | ((int) (Math.min(Math.max(text.opacity, 0), 1) * 0xff) << 24);
 
             gui.drawString(minecraft.font, text.content, 0, 0, color, text.shadow);
 
