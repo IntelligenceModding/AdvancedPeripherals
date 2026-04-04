@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-// TODO: generate setters/getters lua functions out of our Property annotations
 public abstract class OverlayObject implements IDynamicLuaObject {
 
     private final FieldWithPropertyType[] fields;
