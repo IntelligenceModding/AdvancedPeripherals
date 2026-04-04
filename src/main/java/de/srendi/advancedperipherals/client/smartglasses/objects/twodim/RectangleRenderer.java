@@ -1,18 +1,13 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Axis;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import org.joml.Matrix4f;
 
 import java.util.List;
@@ -20,26 +15,18 @@ import java.util.List;
 public class RectangleRenderer implements ITwoDObjectRenderer<RectangleObject> {
 
     @Override
-    public void renderBatch(List<RectangleObject> objects, GuiGraphics gui, PoseStack ignored, DeltaTracker partialTick, int screenWidth, int screenHeight) {
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+    public void renderBatch(List<RectangleObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.debugQuads());
 
         for (RectangleObject obj : objects) {
-            float rotX = obj.rotX;
-            float rotY = obj.rotY;
-            float rotZ = obj.rotZ;
+            gui.pose().pushPose();
+            gui.pose().translate(obj.x, obj.y, obj.z);
+            gui.pose().rotateAround(obj.getRotation(), obj.sizeX / 2, obj.sizeY / 2, 0);
 
-            PoseStack poseStack = new PoseStack();
+            Matrix4f matrix = gui.pose().last().pose();
 
-            poseStack.pushPose();
-
-            poseStack.translate(obj.x, obj.y, obj.z);
-
-            poseStack.mulPose(Axis.XP.rotationDegrees(rotX));
-            poseStack.mulPose(Axis.YP.rotationDegrees(rotY));
-            poseStack.mulPose(Axis.ZP.rotationDegrees(rotZ));
-
-            Matrix4f matrix = poseStack.last().pose();
+            gui.pose().popPose();
 
             float alpha = obj.opacity;
             float red = RenderUtil.getRed(obj.color);
@@ -50,10 +37,9 @@ public class RectangleRenderer implements ITwoDObjectRenderer<RectangleObject> {
             bufferBuilder.addVertex(matrix, obj.sizeX, obj.sizeY, 0).setColor(red, green, blue, alpha);
             bufferBuilder.addVertex(matrix, obj.sizeX, 0, 0).setColor(red, green, blue, alpha);
             bufferBuilder.addVertex(matrix, 0, 0, 0).setColor(red, green, blue, alpha);
-            poseStack.popPose();
 
         }
 
-        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+        bufferSource.endLastBatch();
     }
 }

@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
 
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
@@ -18,8 +16,8 @@ public abstract class ThreeDimensionalObject extends RenderableObject {
     @BooleanProperty
     public boolean culling = true;
 
-    public ThreeDimensionalObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
-        super(module, initFields);
+    public ThreeDimensionalObject(OverlayModule module) {
+        super(module);
     }
 
     public ThreeDimensionalObject(UUID player) {

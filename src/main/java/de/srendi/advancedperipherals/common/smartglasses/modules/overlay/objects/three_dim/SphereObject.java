@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
 
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.SphereRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
@@ -26,8 +24,8 @@ public class SphereObject extends ThreeDimensionalObject {
     @FloatingNumberProperty(min = 0.001f, max = 128)
     public float radius = 1;
 
-    public SphereObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
-        super(module, initFields);
+    public SphereObject(OverlayModule module) {
+        super(module);
     }
 
     public SphereObject(UUID player) {

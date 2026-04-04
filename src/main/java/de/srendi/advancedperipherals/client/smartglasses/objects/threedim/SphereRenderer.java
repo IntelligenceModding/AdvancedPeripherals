@@ -1,15 +1,14 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects.threedim;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.SphereObject;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
@@ -19,12 +18,12 @@ public class SphereRenderer implements IThreeDObjectRenderer<SphereObject> {
 
     @Override
     public void renderBatch(List<SphereObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
-        poseStack.pushPose();
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.debugStructureQuads());
 
         for (SphereObject sphere : batch) {
             this.onPreRender(sphere);
             poseStack.pushPose();
-            BufferBuilder bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
 
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             float alpha = sphere.opacity;
@@ -33,13 +32,14 @@ public class SphereRenderer implements IThreeDObjectRenderer<SphereObject> {
             float blue = RenderUtil.getBlue(sphere.color);
 
             poseStack.translate(-view.x, -view.y, -view.z);
-            RenderUtil.drawSphere(poseStack, bufferBuilder, sphere.radius, sphere.x, sphere.y, sphere.z, sphere.rotX, sphere.rotY, sphere.rotZ, red, green, blue, alpha, sphere.sectors, sphere.stacks);
-            BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+            poseStack.translate(sphere.x, sphere.y, sphere.z);
+            poseStack.mulPose(sphere.getRotation());
+            RenderUtil.drawSphere(poseStack, bufferBuilder, sphere.radius, red, green, blue, alpha, sphere.sectors, sphere.stacks);
 
             poseStack.popPose();
             this.onPostRender(sphere);
         }
 
-        poseStack.popPose();
+        bufferSource.endLastBatch();
     }
 }

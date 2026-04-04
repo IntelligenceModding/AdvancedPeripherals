@@ -5,10 +5,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BoxObject;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -19,9 +19,8 @@ public class BoxRenderer implements IThreeDObjectRenderer<BoxObject> {
 
     @Override
     public void renderBatch(List<BoxObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
-        VertexConsumer bufferBuilder = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.debugStructureQuads());
-
-        poseStack.pushPose();
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.debugStructureQuads());
 
         for (BoxObject box : batch) {
             this.onPreRender(box);
@@ -30,17 +29,19 @@ public class BoxRenderer implements IThreeDObjectRenderer<BoxObject> {
             Vector4f color = new Vector4f(RenderUtil.getRed(box.color), RenderUtil.getGreen(box.color), RenderUtil.getBlue(box.color), box.opacity);
 
             poseStack.translate(-view.x, -view.y, -view.z);
-            Quaternionf rotation = new Quaternionf()
-                .rotationYXZ(
-                    (float) Math.toRadians(box.rotY),
-                    (float) Math.toRadians(box.rotX),
-                    (float) Math.toRadians(box.rotZ)
-                );
-            RenderUtil.drawBox(poseStack, bufferBuilder, FULL_BRIGHT, color, new Vector3f(box.x, box.y, box.z), rotation, new Vector3f(box.sizeX, box.sizeY, box.sizeZ));
+            poseStack.translate(box.x, box.y, box.z);
+            poseStack.mulPose(box.getRotation());
+            RenderUtil.drawBox(
+                poseStack,
+                bufferBuilder,
+                FULL_BRIGHT,
+                color,
+                new Vector3f(box.sizeX, box.sizeY, box.sizeZ)
+            );
             poseStack.popPose();
             this.onPostRender(box);
         }
 
-        poseStack.popPose();
+        bufferSource.endLastBatch();
     }
 }

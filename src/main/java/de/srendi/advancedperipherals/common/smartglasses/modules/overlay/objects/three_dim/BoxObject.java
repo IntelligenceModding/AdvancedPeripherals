@@ -1,11 +1,10 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
 
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.BoxRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -24,8 +23,8 @@ public class BoxObject extends ThreeDimensionalObject {
     @FloatingNumberProperty
     public float sizeZ = 1;
 
-    public BoxObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
-        super(module, initFields);
+    public BoxObject(OverlayModule module) {
+        super(module);
     }
 
     public BoxObject(UUID player) {
@@ -41,6 +40,22 @@ public class BoxObject extends ThreeDimensionalObject {
     @Override
     public int getTypeId() {
         return TYPE_ID;
+    }
+
+    @Override
+    public void encode(FriendlyByteBuf buffer) {
+        super.encode(buffer);
+        buffer.writeFloat(this.sizeX);
+        buffer.writeFloat(this.sizeY);
+        buffer.writeFloat(this.sizeZ);
+    }
+
+    @Override
+    public void decode(FriendlyByteBuf buffer) {
+        super.decode(buffer);
+        this.sizeX = buffer.readFloat();
+        this.sizeY = buffer.readFloat();
+        this.sizeZ = buffer.readFloat();
     }
 
     @Override

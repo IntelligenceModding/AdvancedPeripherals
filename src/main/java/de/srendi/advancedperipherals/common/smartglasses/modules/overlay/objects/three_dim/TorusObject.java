@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
 
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.TorusRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
@@ -29,8 +27,8 @@ public class TorusObject extends ThreeDimensionalObject {
     @FloatingNumberProperty(min = 0.001f, max = 128)
     public float majorRadius = 0.5f;
 
-    public TorusObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
-        super(module, initFields);
+    public TorusObject(OverlayModule module) {
+        super(module);
     }
 
     public TorusObject(UUID player) {

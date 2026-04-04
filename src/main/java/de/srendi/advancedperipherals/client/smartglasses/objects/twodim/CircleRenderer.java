@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Axis;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
 import net.minecraft.client.DeltaTracker;
@@ -19,14 +18,14 @@ import java.util.List;
 
 public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
     @Override
-    public void renderBatch(List<CircleObject> objects, GuiGraphics gui, PoseStack poseStack, DeltaTracker partialTick, int screenWidth, int screenHeight) {
+    public void renderBatch(List<CircleObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
         for (CircleObject circle : objects) {
             float alpha = circle.opacity;
             float red = RenderUtil.getRed(circle.color);
             float green = RenderUtil.getGreen(circle.color);
             float blue = RenderUtil.getBlue(circle.color);
 
-            drawCircle(poseStack, circle, red, green, blue, alpha);
+            drawCircle(gui.pose(), circle, red, green, blue, alpha);
         }
     }
 
@@ -35,9 +34,6 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
         float cx = circle.x;
         float cy = circle.y;
         float cz = circle.z;
-        float rotX = circle.rotX;
-        float rotY = circle.rotY;
-        float rotZ = circle.rotZ;
         float borderWidth = circle.borderWidth;
         int segments = circle.segments;
 
@@ -49,10 +45,7 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
         poseStack.pushPose();
 
         poseStack.translate(cx, cy, cz);
-
-        poseStack.mulPose(Axis.XP.rotationDegrees(rotX));
-        poseStack.mulPose(Axis.YP.rotationDegrees(rotY));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(rotZ));
+        poseStack.mulPose(circle.getRotation());
 
         RenderSystem.disableCull();
 

@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.TextRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
@@ -31,8 +29,8 @@ public class TextObject extends RenderableObject {
     @BooleanProperty
     public boolean center = false;
 
-    public TextObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
-        super(module, initFields);
+    public TextObject(OverlayModule module) {
+        super(module);
     }
 
     public TextObject(UUID player) {

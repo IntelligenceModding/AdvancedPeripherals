@@ -6,6 +6,7 @@ import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface IThreeDObjectRenderer<O extends ThreeDimensionalObject> extends
 
     void renderBatch(List<O> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view);
 
-    default void onPreRender(O object) {
+    default void onPreRender(@NotNull O object) {
         if (!object.culling) {
             RenderSystem.disableCull();
         }
@@ -22,7 +23,7 @@ public interface IThreeDObjectRenderer<O extends ThreeDimensionalObject> extends
         }
     }
 
-    default void onPostRender(O object) {
+    default void onPostRender(@NotNull O object) {
         if (!object.culling) {
             RenderSystem.enableCull();
         }

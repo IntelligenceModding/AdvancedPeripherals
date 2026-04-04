@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.ItemObject;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class ItemRenderer implements ITwoDObjectRenderer<ItemObject> {
     @Override
-    public void renderBatch(List<ItemObject> objects, GuiGraphics gui, PoseStack poseStack, DeltaTracker partialTick, int screenWidth, int screenHeight) {
+    public void renderBatch(List<ItemObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
         for (ItemObject obj : objects) {
             if (obj.item == null) {
                 continue;
@@ -21,7 +20,11 @@ public class ItemRenderer implements ITwoDObjectRenderer<ItemObject> {
             if (renderItem == null) {
                 continue;
             }
-            gui.renderItem(new ItemStack(renderItem), (int) obj.x, (int) obj.y);
+            int x = (int) obj.x, y = (int) obj.y;
+            gui.pose().pushPose();
+            gui.pose().rotateAround(obj.getRotation(), x, y, 0);
+            gui.renderFakeItem(new ItemStack(renderItem), x, y);
+            gui.pose().popPose();
         }
     }
 }

@@ -9,12 +9,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import org.joml.Quaternionf;
 
 import java.util.List;
 
@@ -27,14 +25,9 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.solid());
 
-        poseStack.pushPose();
-
         for (BlockObject block : batch) {
-            if (block.block == null) {
-                return;
-            }
-            Block blockToRender = BuiltInRegistries.BLOCK.get(block.block);
-            if (blockToRender == null) {
+            BlockState blockState = block.getBlockState();
+            if (blockState == null) {
                 continue;
             }
 
@@ -42,21 +35,14 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
 
             poseStack.pushPose();
 
-            poseStack.translate(-view.x + block.x, -view.y + block.y, -view.z + block.z);
-            poseStack.mulPose(
-                new Quaternionf()
-                    .rotationYXZ(
-                        (float) Math.toRadians(block.rotY),
-                        (float) Math.toRadians(block.rotX),
-                        (float) Math.toRadians(block.rotZ)
-                    )
-            );
-            poseStack.translate(-0.5f, -0.5f, -0.5f);
+            poseStack.translate(-view.x, -view.y, -view.z);
+            poseStack.translate(block.x - 0.5, block.y - 0.5, block.z - 0.5);
+            poseStack.rotateAround(block.getRotation(), 0.5f, 0.5f, 0.5f);
 
             BlockPos blockPos = BlockPos.containing(block.x, block.y, block.z);
 
             blockRenderer.renderBatched(
-                blockToRender.defaultBlockState(),
+                blockState,
                 blockPos,
                 level,
                 poseStack,
@@ -77,7 +63,6 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
             this.onPostRender(block);
         }
 
-        poseStack.popPose();
         bufferSource.endLastBatch();
     }
 }

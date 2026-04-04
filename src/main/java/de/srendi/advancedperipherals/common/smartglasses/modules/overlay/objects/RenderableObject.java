@@ -1,13 +1,12 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
+import org.joml.Quaternionf;
 
 import java.util.UUID;
 
@@ -37,8 +36,8 @@ public abstract class RenderableObject extends OverlayObject {
     @FloatingNumberProperty(min = 0, max = 360)
     public float rotZ = 0f;
 
-    public RenderableObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
-        super(module, initFields);
+    public RenderableObject(OverlayModule module) {
+        super(module);
     }
 
     public RenderableObject(UUID player) {
@@ -51,6 +50,15 @@ public abstract class RenderableObject extends OverlayObject {
     @Override
     public void tryAutoUpdate() {
         this.getModule().update(this);
+    }
+
+    public Quaternionf getRotation() {
+        return new Quaternionf()
+            .rotationYXZ(
+                (float) Math.toRadians(this.rotY),
+                (float) Math.toRadians(this.rotX),
+                (float) Math.toRadians(this.rotZ)
+            );
     }
 
     @Override

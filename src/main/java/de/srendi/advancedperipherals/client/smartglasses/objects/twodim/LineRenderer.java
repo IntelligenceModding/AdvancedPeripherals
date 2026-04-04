@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import de.srendi.advancedperipherals.client.RenderUtil;
@@ -19,9 +18,8 @@ import java.util.List;
 public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
 
     @Override
-    public void renderBatch(List<LineObject> objects, GuiGraphics gui, PoseStack poseStack, DeltaTracker partialTick, int screenWidth, int screenHeight) {
+    public void renderBatch(List<LineObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        Matrix4f matrix = poseStack.last().pose();
 
         for (LineObject line : objects) {
             float alpha = line.opacity;
@@ -32,11 +30,16 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
             // Start and end points of the line
             float x1 = line.x;
             float y1 = line.y;
-            float z1 = line.z;
+            float z = line.z;
 
             float x2 = line.endX;
             float y2 = line.endY;
-            float z2 = line.endZ;
+
+            gui.pose().pushPose();
+            gui.pose().rotateAround(line.getRotation(), (x1 + x2) / 2, (y1 + y2) / 2, z);
+
+            Matrix4f matrix = gui.pose().last().pose();
+            gui.pose().popPose();
 
             // Normal, smooth lines
             if (!line.pixelated) {
@@ -54,11 +57,10 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
             // Calculate the delta for each axis
             float dx = x2 - x1;
             float dy = y2 - y1;
-            float dz = z2 - z1;
 
             final float width = line.width;
 
-            float maxDim = Math.max(Math.abs(dx), Math.max(Math.abs(dy), Math.abs(dz)));
+            float maxDim = Math.max(Math.abs(dx), Math.abs(dy));
             int numPixels = (int) Math.ceil(maxDim / width);
 
             if (numPixels == 0) {
@@ -72,7 +74,7 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
                 // Calculate the exact point on the line
                 float currentX = x1 + dx * t;
                 float currentY = y1 + dy * t;
-                float currentZ = z1 + dz * t;
+                float currentZ = z;
 
                 // Snap current point to the nearest pixel grid for consistent placement.
                 // This is key for placing pixels at corners or full side of each other.

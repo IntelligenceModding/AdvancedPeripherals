@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.LineRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
@@ -28,17 +26,14 @@ public class LineObject extends RenderableObject {
     @FloatingNumberProperty
     public float endY = 0;
 
-    @FloatingNumberProperty
-    public float endZ = 0;
-
     @BooleanProperty
     public boolean pixelated = false;
 
     @FixedPointNumberProperty(min = 0, max = 32767)
     public int width = 4;
 
-    public LineObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
-        super(module, initFields);
+    public LineObject(OverlayModule module) {
+        super(module);
     }
 
     /**
@@ -64,13 +59,17 @@ public class LineObject extends RenderableObject {
     @Override
     public void encode(FriendlyByteBuf buffer) {
         super.encode(buffer);
-        buffer.writeBoolean(pixelated);
-        buffer.writeInt(width);
+        buffer.writeFloat(this.endX);
+        buffer.writeFloat(this.endY);
+        buffer.writeBoolean(this.pixelated);
+        buffer.writeInt(this.width);
     }
 
     @Override
     public void decode(FriendlyByteBuf buffer) {
         super.decode(buffer);
+        this.endX = buffer.readFloat();
+        this.endY = buffer.readFloat();
         this.pixelated = buffer.readBoolean();
         this.width = buffer.readInt();
     }

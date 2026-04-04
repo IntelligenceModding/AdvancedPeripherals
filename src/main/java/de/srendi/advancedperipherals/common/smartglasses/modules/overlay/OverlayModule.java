@@ -13,6 +13,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class OverlayModule implements IModule {
     }
 
     @Override
+    @NotNull
     public ResourceLocation getId() {
         return ID;
     }

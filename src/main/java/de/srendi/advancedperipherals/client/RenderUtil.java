@@ -18,32 +18,19 @@ import org.joml.Vector4f;
 public final class RenderUtil {
     private RenderUtil() {}
 
-    public static void drawBox(PoseStack poseStack, VertexConsumer buffer, BoxLightMap lightMap, Vector4f rgba, Vector3f offset, Quaternionf rot, Vector3f size) {
-        poseStack.pushPose();
-
-        poseStack.translate(0.5f, 0.5f, 0.5f);
-        poseStack.mulPose(rot);
-
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.UP, offset, size);
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.DOWN, offset, size);
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.EAST, offset, size);
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.WEST, offset, size);
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.NORTH, offset, size);
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.SOUTH, offset, size);
-        poseStack.popPose();
+    public static void drawBox(PoseStack poseStack, VertexConsumer buffer, BoxLightMap lightMap, Vector4f rgba, Vector3f size) {
+        drawPlane(poseStack, buffer, lightMap, rgba, Direction.UP, size);
+        drawPlane(poseStack, buffer, lightMap, rgba, Direction.DOWN, size);
+        drawPlane(poseStack, buffer, lightMap, rgba, Direction.EAST, size);
+        drawPlane(poseStack, buffer, lightMap, rgba, Direction.WEST, size);
+        drawPlane(poseStack, buffer, lightMap, rgba, Direction.NORTH, size);
+        drawPlane(poseStack, buffer, lightMap, rgba, Direction.SOUTH, size);
     }
 
-    public static void drawPlane(PoseStack posestack, VertexConsumer buffer, BoxLightMap lightMap, Vector4f rgba, Direction perspective, Vector3f offset, Vector3f size) {
-        posestack.pushPose();
+    public static void drawPlane(PoseStack poseStack, VertexConsumer buffer, BoxLightMap lightMap, Vector4f rgba, Direction perspective, Vector3f size) {
+        Matrix4f matrix4f = poseStack.last().pose();
 
-        posestack.translate(offset.x, offset.y, offset.z);
-
-        Matrix4f matrix4f = posestack.last().pose();
-
-        float sX = size.x, sY = size.y, sZ = size.z;
-        sX /= 2;
-        sY /= 2;
-        sZ /= 2;
+        float sX = size.x / 2, sY = size.y / 2, sZ = size.z / 2;
 
         final float r = rgba.x, g = rgba.y, b = rgba.z, a = rgba.w;
 
@@ -85,7 +72,6 @@ public final class RenderUtil {
                 buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.wun).setNormal(-1f, 0f, 0f);
             }
         }
-        posestack.popPose();
     }
 
     public static void drawBoxWithTexture(PoseStack poseStack, VertexConsumer buffer, BoxLightMap lightMap, ModelTextures model, Vector3f rgb, Vector3f offset, Quaternionf rot, Vector3f size, float scale) {
@@ -181,11 +167,7 @@ public final class RenderUtil {
         poseStack.popPose();
     }
 
-    public static void drawSphere(PoseStack poseStack, VertexConsumer consumer, float radius, double pX, double pY, double pZ, float xRot, float yRot, float zRot, float r, float g, float b, float a, int sectors, int stacks) {
-        poseStack.pushPose();
-        poseStack.translate(pX, pY, pZ);
-        poseStack.mulPose(new Quaternionf().rotationXYZ((float) Math.toRadians(xRot), (float) Math.toRadians(yRot), (float) Math.toRadians(zRot)));
-
+    public static void drawSphere(PoseStack poseStack, VertexConsumer consumer, float radius, float r, float g, float b, float a, int sectors, int stacks) {
         Matrix4f matrix4f = poseStack.last().pose();
         TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(ResourceLocation.withDefaultNamespace("block/dirt"));
 
@@ -257,15 +239,9 @@ public final class RenderUtil {
 
             }
         }
-        poseStack.popPose();
-
     }
 
-    public static void drawTorus(PoseStack poseStack, VertexConsumer consumer, float majorRadius, float minorRadius, double pX, double pY, double pZ, float xRot, float yRot, float zRot, float r, float g, float b, float a, int sides, int rings) {
-        poseStack.pushPose();
-        poseStack.translate(pX, pY, pZ);
-        poseStack.mulPose(new Quaternionf().rotationXYZ((float) Math.toRadians(xRot), (float) Math.toRadians(yRot), (float) Math.toRadians(zRot)));
-
+    public static void drawTorus(PoseStack poseStack, VertexConsumer consumer, float majorRadius, float minorRadius, float r, float g, float b, float a, int sides, int rings) {
         Matrix4f matrix4f = poseStack.last().pose();
         TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(ResourceLocation.withDefaultNamespace("block/crimson_stem"));
 
@@ -349,8 +325,6 @@ public final class RenderUtil {
                 consumer.addVertex(matrix4f, x, y, z).setColor(r, g, b, a).setUv(u2, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(nx, ny, nz);
             }
         }
-
-        poseStack.popPose();
     }
 
     private static float getU(double pU, float u1, float u0, float resolution) {

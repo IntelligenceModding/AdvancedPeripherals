@@ -33,7 +33,8 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
 
     @LuaFunction
     public final Object createRectangle(Optional<Map<?, ?>> initFields) throws LuaException {
-        RectangleObject rectangle = new RectangleObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        RectangleObject rectangle = new RectangleObject(overlayModule);
+        rectangle.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(rectangle);
 
         return object;
@@ -41,7 +42,8 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
 
     @LuaFunction
     public final Object createCircle(Optional<Map<?, ?>> initFields) throws LuaException {
-        CircleObject circle = new CircleObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        CircleObject circle = new CircleObject(overlayModule);
+        circle.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(circle);
 
         return object;
@@ -49,23 +51,26 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
 
     @LuaFunction
     public final Object createLine(Optional<Map<?, ?>> initFields) throws LuaException {
-        LineObject rectangle = new LineObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
-        RenderableObject object = overlayModule.addObject(rectangle);
+        LineObject line = new LineObject(overlayModule);
+        line.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        RenderableObject object = overlayModule.addObject(line);
 
         return object;
     }
 
     @LuaFunction
     public final Object createText(Optional<Map<?, ?>> initFields) throws LuaException {
-        TextObject circle = new TextObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
-        RenderableObject object = overlayModule.addObject(circle);
+        TextObject text = new TextObject(overlayModule);
+        text.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        RenderableObject object = overlayModule.addObject(text);
 
         return object;
     }
 
     @LuaFunction
     public final Object createItem(Optional<Map<?, ?>> initFields) throws LuaException {
-        ItemObject item = new ItemObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        ItemObject item = new ItemObject(overlayModule);
+        item.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(item);
 
         return object;
@@ -73,7 +78,8 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
 
     @LuaFunction
     public final Object createBlock(Optional<Map<?, ?>> initFields) throws LuaException {
-        BlockObject block = new BlockObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        BlockObject block = new BlockObject(overlayModule);
+        block.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
         RenderableObject object = overlayModule.addObject(block);
 
         return object;
@@ -81,24 +87,27 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
 
     @LuaFunction
     public final Object createBox(Optional<Map<?, ?>> initFields) throws LuaException {
-        BoxObject block = new BoxObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
-        RenderableObject object = overlayModule.addObject(block);
+        BoxObject box = new BoxObject(overlayModule);
+        box.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        RenderableObject object = overlayModule.addObject(box);
 
         return object;
     }
 
     @LuaFunction
     public final Object createSphere(Optional<Map<?, ?>> initFields) throws LuaException {
-        SphereObject block = new SphereObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
-        RenderableObject object = overlayModule.addObject(block);
+        SphereObject sphere = new SphereObject(overlayModule);
+        sphere.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        RenderableObject object = overlayModule.addObject(sphere);
 
         return object;
     }
 
     @LuaFunction
     public final Object createTorus(Optional<Map<?, ?>> initFields) throws LuaException {
-        TorusObject block = new TorusObject(overlayModule, EmptyLuaTable.orEmpty(initFields.orElse(null)));
-        RenderableObject object = overlayModule.addObject(block);
+        TorusObject torus = new TorusObject(overlayModule);
+        torus.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        RenderableObject object = overlayModule.addObject(torus);
 
         return object;
     }

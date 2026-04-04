@@ -26,9 +26,8 @@ public class ItemObject extends RenderableObject {
     // @StringProperty
     public ResourceKey<Item> item = null;
 
-    public ItemObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
-        super(module, initFields);
-        this.setItem(initFields.optString("item"));
+    public ItemObject(OverlayModule module) {
+        super(module);
     }
 
     public ItemObject(UUID player) {
@@ -61,6 +60,12 @@ public class ItemObject extends RenderableObject {
             this.item = BuiltInRegistries.ITEM.containsKey(name) ? ResourceKey.create(Registries.ITEM, name) : null;
         }
         this.tryAutoUpdate();
+    }
+
+    @Override
+    public void setPropertiesFromTable(LuaTable<?, ?> initFields) throws LuaException {
+        super.setPropertiesFromTable(initFields);
+        this.setItem(initFields.optString("item"));
     }
 
     @Override

@@ -1,7 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.CircleRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
@@ -18,7 +16,7 @@ public class CircleObject extends RenderableObject {
 
     private static final CircleRenderer RENDERER = new CircleRenderer();
 
-    @FixedPointNumberProperty(min = 0, max = Integer.MAX_VALUE)
+    @FixedPointNumberProperty(min = 0)
     public int radius = 0;
 
     @BooleanProperty
@@ -33,8 +31,8 @@ public class CircleObject extends RenderableObject {
     @FixedPointNumberProperty(min = 0, max = 100)
     public int segments = 25;
 
-    public CircleObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
-        super(module, initFields);
+    public CircleObject(OverlayModule module) {
+        super(module);
     }
 
     public CircleObject(UUID player) {

@@ -40,7 +40,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     private OverlayModule module;
     private UUID player;
 
-    public OverlayObject(OverlayModule module, LuaTable<?, ?> initFields) throws LuaException {
+    public OverlayObject(OverlayModule module) {
         ImmutableMap.Builder<String, FieldWithPropertyType> properties = ImmutableMap.builder();
         for (Field field : FieldUtils.getAllFieldsList(this.getClass())) {
             String fieldName = field.getName();
@@ -86,7 +86,6 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
         this.getterSetterNames = getterSetterNames.toArray(String[]::new);
         this.module = module;
-        this.reflectivelyMapProperties(initFields);
     }
 
     /**
@@ -157,6 +156,38 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         return MethodResult.of();
     }
 
+    /**
+     * Maps properties from the provided table to the fields of this class.
+     * <p>
+     * This method uses Java Reflection to map properties from IArguments to the fields of the classes.
+     * It only maps properties that have the annotation {@link ObjectProperty}. If a field does not have this annotation,
+     * a warning message is logged and the method returns.
+     * <p>
+     * If a property is valid, its value is cast to the field type and set as the new value of the field.
+     * If a property is not valid, a warning message is logged and the method returns.
+     * <p>
+     * If an error occurs during the mapping of properties, an exception message is logged and a LuaException is thrown.
+     *
+     * @param initFields the LuaTable containing properties to be mapped
+     * @throws LuaException if an error occurs during the mapping of properties
+     * @see IArguments
+     * @see ObjectProperty
+     * @see PropertyType
+     */
+    public void setPropertiesFromTable(LuaTable<?, ?> initFields) throws LuaException {
+        for (Map.Entry<?, ?> entry : initFields.entrySet()) {
+            if (!(entry.getKey() instanceof String fieldName)) {
+                continue;
+            }
+            FieldWithPropertyType propField = this.propertiesMap.get(fieldName);
+            if (propField == null) {
+                AdvancedPeripherals.debug("Unknown field name " + fieldName + " for class " + this.getClass());
+                continue;
+            }
+            propField.setFor(this, entry.getValue());
+        }
+    }
+
     @MustBeInvokedByOverriders
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(this.id);
@@ -180,37 +211,6 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     }
 
     /**
-     * Maps properties from the provided arguments to the fields of this class.
-     * <p>
-     * This method uses Java Reflection to map properties from IArguments to the fields of the classes.
-     * It only maps properties that have the annotation {@link ObjectProperty}. If a field does not have this annotation,
-     * a warning message is logged and the method returns.
-     * <p>
-     * If a property is valid, its value is cast to the field type and set as the new value of the field.
-     * If a property is not valid, a warning message is logged and the method returns.
-     * <p>
-     * If an error occurs during the mapping of properties, an exception message is logged and a LuaException is thrown.
-     *
-     * @param arguments the IArguments containing properties to be mapped
-     * @throws LuaException if an error occurs during the mapping of properties
-     * @see IArguments
-     * @see ObjectProperty
-     * @see PropertyType
-     */
-    private void reflectivelyMapProperties(LuaTable<?, ?> initFields) throws LuaException {
-        for (Map.Entry<?, ?> entry : initFields.entrySet()) {
-            if (!(entry.getKey() instanceof String fieldName)) {
-                continue;
-            }
-            FieldWithPropertyType propField = this.propertiesMap.get(fieldName);
-            if (propField == null) {
-                continue;
-            }
-            propField.setFor(this, entry.getValue());
-        }
-    }
-
-    /**
      * Casts the given value to the type of the provided field.
      * Can be overwritten if the desired casting is not supported.
      *
@@ -219,6 +219,10 @@ public abstract class OverlayObject implements IDynamicLuaObject {
      * @return the casted value
      */
     private static Object castValueToFieldType(Field field, Object value) {
+        if (value == null) {
+            return null;
+        }
+
         Class<?> fieldType = field.getType();
 
         if (fieldType.isAssignableFrom(value.getClass())) {

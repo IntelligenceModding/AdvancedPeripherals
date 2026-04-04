@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.client.smartglasses;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ITwoDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
@@ -21,12 +20,6 @@ public class OverlayModuleOverlay implements LayeredDraw.Layer {
 
     @Override
     public void render(GuiGraphics gui, DeltaTracker deltaTracker) {
-        this.render(gui, gui.pose(), deltaTracker, gui.guiWidth(), gui.guiHeight());
-    }
-
-    public void render(GuiGraphics gui, PoseStack poseStack, DeltaTracker deltaTracker, int screenWidth, int screenHeight) {
-        poseStack.pushPose();
-
         NavigableMap<Integer, Map<Class<?>, List<RenderableObject>>> prioritizedBatches = new TreeMap<>();
 
         for (RenderableObject object : OverlayObjectHolder.getObjects()) {
@@ -50,12 +43,9 @@ public class OverlayModuleOverlay implements LayeredDraw.Layer {
                 if (batch.isEmpty()) {
                     continue;
                 }
-                ((ITwoDObjectRenderer) batch.get(0).getObjectRenderer())
-                    .renderBatch(batch, gui, poseStack, deltaTracker, screenWidth, screenHeight);
+                ((ITwoDObjectRenderer) batch.get(0).getObjectRenderer()).renderBatch(batch, gui, deltaTracker);
             }
         }
-        poseStack.popPose();
-
     }
 
 }
