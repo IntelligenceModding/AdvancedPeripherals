@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@ObjectProperty(type = StringType.class)
+@ObjectProperty(StringType.class)
 public @interface StringProperty {
 }

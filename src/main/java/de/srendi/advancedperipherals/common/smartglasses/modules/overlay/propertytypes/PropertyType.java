@@ -20,7 +20,7 @@ public interface PropertyType<T, A> {
 
     static PropertyType<?, ?> of(ObjectProperty property) {
         try {
-            return property.type().getDeclaredConstructor().newInstance();
+            return property.value().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException exception) {
             return null;
         }

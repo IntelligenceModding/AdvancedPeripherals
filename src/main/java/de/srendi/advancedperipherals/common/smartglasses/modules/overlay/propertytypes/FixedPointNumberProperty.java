@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@ObjectProperty(type = FixedPointNumberType.class)
+@ObjectProperty(FixedPointNumberType.class)
 public @interface FixedPointNumberProperty {
     long min() default Long.MIN_VALUE;
     long max() default Long.MAX_VALUE;

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@ObjectProperty(type = FloatingNumberType.class)
+@ObjectProperty(FloatingNumberType.class)
 public @interface FloatingNumberProperty {
     double min() default Double.NEGATIVE_INFINITY;
     double max() default Double.POSITIVE_INFINITY;

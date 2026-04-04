@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@ObjectProperty(type = BooleanType.class)
+@ObjectProperty(BooleanType.class)
 public @interface BooleanProperty {
     String getterPrefix() default "is";
 }

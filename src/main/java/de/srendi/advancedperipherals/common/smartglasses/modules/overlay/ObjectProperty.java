@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface ObjectProperty {
-    Class<? extends PropertyType<?, ?>> type();
+    Class<? extends PropertyType<?, ?>> value();
 }
