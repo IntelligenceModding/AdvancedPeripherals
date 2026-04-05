@@ -15,12 +15,12 @@ public class KeyboardMouseScrollPacket implements IAPPacket {
 
     public static final Type<KeyboardMouseScrollPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_scroll"));
 
-    private final int deltaY;
     private final int deltaX;
+    private final int deltaY;
 
-    public KeyboardMouseScrollPacket(int deltaY, int deltaX) {
-        this.deltaY = deltaY;
+    public KeyboardMouseScrollPacket(int deltaX, int deltaY) {
         this.deltaX = deltaX;
+        this.deltaY = deltaY;
     }
 
     public KeyboardMouseScrollPacket(RegistryFriendlyByteBuf buffer) {
@@ -46,8 +46,8 @@ public class KeyboardMouseScrollPacket implements IAPPacket {
 
     @Override
     public void write(RegistryFriendlyByteBuf buffer) {
-        buffer.writeVarInt(this.deltaY);
         buffer.writeVarInt(this.deltaX);
+        buffer.writeVarInt(this.deltaY);
     }
 
     @Override

@@ -174,12 +174,12 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
                 }
                 this.lastScrollX -= scrolledX;
                 this.lastScrollY -= scrolledY;
-                PacketDistributor.sendToServer(new KeyboardMouseScrollPacket(scrolledY, scrolledX));
+                PacketDistributor.sendToServer(new KeyboardMouseScrollPacket(scrolledX, scrolledY));
             });
         } else {
             this.lastScrollX -= scrolledX;
             this.lastScrollY -= scrolledY;
-            minecraft.player.getInventory().swapPaint(scrolledY == 0 ? -scrolledX : scrolledY);
+            this.minecraft.player.getInventory().swapPaint(scrolledY == 0 ? -scrolledX : scrolledY);
         }
         return true;
     }
@@ -194,11 +194,6 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
             }
             return true;
         }
-        // Forward the tab key to the terminal, rather than moving between controls.
-        if (key == GLFW.GLFW_KEY_TAB && getFocused() != null && getFocused() == terminal) {
-            return getFocused().keyPressed(key, scancode, modifiers);
-        }
-
         return super.keyPressed(key, scancode, modifiers);
     }
 

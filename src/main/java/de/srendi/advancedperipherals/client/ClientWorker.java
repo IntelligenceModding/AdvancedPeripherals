@@ -1,9 +1,11 @@
 package de.srendi.advancedperipherals.client;
 
+import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,5 +29,13 @@ public class ClientWorker {
             tasks.remove(id, runnable);
             runnable.run();
         });
+    }
+
+    @SubscribeEvent
+    public static void clientLevelUnload(LevelEvent.Unload event) {
+        if (event.getLevel() != Minecraft.getInstance().level) {
+            return;
+        }
+        tasks.clear();
     }
 }
