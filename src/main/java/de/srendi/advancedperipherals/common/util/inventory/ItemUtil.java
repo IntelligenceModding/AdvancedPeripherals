@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.shared.peripheral.generic.GenericPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.FingerprintUtil;
@@ -32,6 +33,21 @@ public class ItemUtil {
     private ItemUtil() {
     }
 
+    public static IItemHandler extractHandler(IPeripheral peripheral) {
+        Object target = peripheral.getTarget();
+        if (target instanceof IItemHandler handler) {
+            return handler;
+        }
+        if (target instanceof Container container) {
+            return new InvWrapper(container);
+        }
+        if (target instanceof BlockEntity be) {
+            Direction side = peripheral instanceof GenericPeripheral sided ? sided.side() : null;
+            return be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), side);
+        }
+        return null;
+    }
+
     public static IItemHandler extractHandler(@Nullable Object object, @Nullable Level level, @Nullable BlockPos pos, @Nullable Direction direction) {
         if (object instanceof IItemHandler itemHandler) {
             return itemHandler;
@@ -44,7 +60,7 @@ public class ItemUtil {
             level = blockEntity.getLevel();
         }
         if (level != null && pos != null) {
-            return level.getCapability(Capabilities.ItemHandler.BLOCK, pos, direction != null ? direction : Direction.NORTH);
+            return level.getCapability(Capabilities.ItemHandler.BLOCK, pos, direction);
         }
         return null;
     }

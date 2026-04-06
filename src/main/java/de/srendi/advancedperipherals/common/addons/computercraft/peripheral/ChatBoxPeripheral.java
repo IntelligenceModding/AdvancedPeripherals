@@ -82,7 +82,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 formattablePrefix = MutableComponent.Serializer.fromJson(prefix, RegistryAccess.EMPTY);
                 prefixComponent = formattablePrefix;
             } catch (JsonParseException e) {
-                AdvancedPeripherals.debug("Not vaild json prefix, using plain text instead.");
+                AdvancedPeripherals.debug("Not valid json prefix, using plain text instead.");
                 prefixComponent = Component.literal(prefix);
             }
         }
@@ -108,7 +108,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
      * @param brackets the brackets to check
      * @return true if brackets are not in the right format
      */
-    private boolean isInvaildBrackets(Optional<String> brackets) {
+    private boolean isInvalidBrackets(Optional<String> brackets) {
         return brackets.isPresent() && brackets.get().length() != 2;
     }
 
@@ -139,7 +139,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (isInvaildBrackets(brackets)) {
+            if (isInvalidBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
@@ -195,7 +195,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (isInvaildBrackets(brackets)) {
+            if (isInvalidBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
@@ -260,7 +260,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (isInvaildBrackets(brackets)) {
+            if (isInvalidBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
@@ -319,7 +319,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (isInvaildBrackets(brackets)) {
+            if (isInvalidBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
@@ -394,7 +394,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (isInvaildBrackets(brackets)) {
+            if (isInvalidBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
@@ -462,7 +462,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
-            if (isInvaildBrackets(brackets)) {
+            if (isInvalidBrackets(brackets)) {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 

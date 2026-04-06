@@ -321,6 +321,9 @@ dependencies {
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
     // Spark
     runtimeOnly "maven.modrinth:spark:1.10.124-neoforge-1.21.1"
+    // Sophisticated Backpacks
+    runtimeOnly "maven.modrinth:sophisticated-backpacks:${sophisticated_backpacks_version}"
+    runtimeOnly "maven.modrinth:sophisticated-core:${sophisticated_core_version}"
 }
 
 

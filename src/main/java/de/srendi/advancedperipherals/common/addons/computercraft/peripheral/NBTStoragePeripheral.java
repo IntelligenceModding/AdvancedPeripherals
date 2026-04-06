@@ -48,7 +48,7 @@ public class NBTStoragePeripheral extends BasePeripheral<BlockEntityPeripheralOw
     public final MethodResult save(IArguments args) throws LuaException {
         Object data = args.get(0);
         if (data == null) {
-            throw new LuaException("argument #1 must provide a vaild SNBT string or a NBT-like table");
+            throw new LuaException("argument #1 must provide a valid SNBT string or a NBT-like table");
         }
         CompoundTag parsedData;
         if (data instanceof String snbt) {

@@ -58,7 +58,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             }
             @SuppressWarnings("rawtypes") PropertyType propertyType = PropertyType.of(objectProperty);
             if (propertyType == null) {
-                throw new IllegalStateException("Invaild property type for field " + fieldName);
+                throw new IllegalStateException("Invalid property type for field " + fieldName);
             }
             propertyType.init(propertyAnnotation);
             try {

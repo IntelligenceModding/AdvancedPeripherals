@@ -240,15 +240,15 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         }
         ResourceLocation statId = ResourceLocation.tryParse(statName);
         if (statId == null) {
-            return Errors.INVAILD_STAT_ID_RESULT;
+            return Errors.INVALID_STAT_ID_RESULT;
         }
         ResourceLocation statTypeId = ResourceLocation.tryParse(statId.getNamespace().replace('.', ':'));
         if (statTypeId == null) {
-            return Errors.INVAILD_STAT_ID_RESULT;
+            return Errors.INVALID_STAT_ID_RESULT;
         }
         ResourceLocation statValueId = ResourceLocation.tryParse(statId.getPath().replace('.', ':'));
         if (statValueId == null) {
-            return Errors.INVAILD_STAT_ID_RESULT;
+            return Errors.INVALID_STAT_ID_RESULT;
         }
 
         @SuppressWarnings("rawtypes")
@@ -305,12 +305,12 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     private static final class Errors {
-        static final String INVAILD_STAT_ID = "INVAILD_STAT_ID";
+        static final String INVALID_STAT_ID = "INVALID_STAT_ID";
         static final String PLAYER_NOT_EXISTS = "PLAYER_NOT_EXISTS";
         static final String UNKNOWN_STAT_TYPE = "UNKNOWN_STAT_TYPE";
         static final String UNKNOWN_STAT_VALUE = "UNKNOWN_STAT_VALUE";
 
-        static final MethodResult INVAILD_STAT_ID_RESULT = MethodResult.of(null, INVAILD_STAT_ID);
+        static final MethodResult INVALID_STAT_ID_RESULT = MethodResult.of(null, INVALID_STAT_ID);
         static final MethodResult PLAYER_NOT_EXISTS_RESULT = MethodResult.of(null, PLAYER_NOT_EXISTS);
         static final MethodResult UNKNOWN_STAT_TYPE_RESULT = MethodResult.of(null, UNKNOWN_STAT_TYPE);
         static final MethodResult UNKNOWN_STAT_VALUE_RESULT = MethodResult.of(null, UNKNOWN_STAT_VALUE);

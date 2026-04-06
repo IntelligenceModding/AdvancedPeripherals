@@ -91,14 +91,14 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             if (filter.length() > 0 && filter.charAt(0) == '#') {
                 ResourceLocation id = ResourceLocation.tryParse(filter.substring(1));
                 if (id == null) {
-                    throw new LuaException("argument #1 is an invaild tag ID");
+                    throw new LuaException("argument #1 is an invalid tag ID");
                 }
                 TagKey<Block> tag = TagKey.create(Registries.BLOCK, id);
                 blockTester = (b) -> b.is(tag);
             } else {
                 ResourceLocation id = ResourceLocation.tryParse(filter.substring(1));
                 if (id == null) {
-                    throw new LuaException("argument #1 is an invaild block ID");
+                    throw new LuaException("argument #1 is an invalid block ID");
                 }
                 Block block = BuiltInRegistries.BLOCK.get(id);
                 blockTester = block == null ? null : (b) -> b.is(block);
