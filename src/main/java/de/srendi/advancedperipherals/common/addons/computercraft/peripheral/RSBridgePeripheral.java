@@ -36,7 +36,7 @@ import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeripheral;
-import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -100,7 +100,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetInventory == null)
             return MethodResult.of(0, "Target Inventory does not exist");
 
-        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.left()));
+        return MethodResult.of(ItemUtil.moveItem(itemHandler, targetInventory, filter.left()));
     }
 
     /**
@@ -140,7 +140,7 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (targetInventory == null)
             return MethodResult.of(0, "Target Inventory does not exist");
 
-        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.left()));
+        return MethodResult.of(ItemUtil.moveItem(targetInventory, itemHandler, filter.left()));
     }
 
     /**
@@ -376,10 +376,10 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(0);
 
-        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        IItemHandler inventory = ItemUtil.getHandlerFromDirection(arguments.getString(1), owner);
 
         if (inventory == null) {
-            inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+            inventory = ItemUtil.getHandlerFromName(computer, arguments.getString(1));
             if (inventory == null) {
                 return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
             }
@@ -394,10 +394,10 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(0);
 
-        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        IItemHandler inventory = ItemUtil.getHandlerFromDirection(arguments.getString(1), owner);
 
         if (inventory == null) {
-            inventory = InventoryUtil.getHandlerFromName(computer, arguments.getString(1));
+            inventory = ItemUtil.getHandlerFromName(computer, arguments.getString(1));
             if (inventory == null) {
                 return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
             }

@@ -39,7 +39,7 @@ import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
-import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import io.github.projectet.ae2things.item.DISKDrive;
 import io.github.projectet.ae2things.storage.DISKCellHandler;
@@ -583,7 +583,7 @@ public class AEApi {
             StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
             BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
 
-            IItemHandler itemHandler = InventoryUtil.extractHandler(null, bus.getLevel(), connectedInventoryPos, bus.getSide());
+            IItemHandler itemHandler = ItemUtil.extractHandler(null, bus.getLevel(), connectedInventoryPos, bus.getSide());
             if (itemHandler != null) {
                 for (int i = 0; i < itemHandler.getSlots(); i++) {
                     ItemStack stack = itemHandler.getStackInSlot(i);

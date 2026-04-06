@@ -12,7 +12,7 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.Direction;
@@ -105,7 +105,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         }
 
         IItemHandler inventoryFrom = new PlayerInvWrapper(getOwnerPlayerOrError().getInventory());
-        return MethodResult.of(InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
+        return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 
     @LuaFunction(mainThread = true)
@@ -127,7 +127,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         }
 
         IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayerOrError().getInventory());
-        return MethodResult.of(InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
+        return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 
     @LuaFunction(mainThread = true)

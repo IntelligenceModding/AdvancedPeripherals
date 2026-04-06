@@ -33,7 +33,7 @@ import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeripheral;
-import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
@@ -90,7 +90,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(0, filter.right());
 
-        return MethodResult.of(InventoryUtil.moveItem(itemHandler, targetInventory, filter.left()), null);
+        return MethodResult.of(ItemUtil.moveItem(itemHandler, targetInventory, filter.left()), null);
     }
 
     /**
@@ -127,7 +127,7 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (filter.rightPresent())
             return MethodResult.of(0, filter.right());
 
-        return MethodResult.of(InventoryUtil.moveItem(targetInventory, itemHandler, filter.left()), null);
+        return MethodResult.of(ItemUtil.moveItem(targetInventory, itemHandler, filter.left()), null);
     }
 
     /**
@@ -340,10 +340,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         String side = arguments.getString(1);
-        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(side, owner);
+        IItemHandler inventory = ItemUtil.getHandlerFromDirection(side, owner);
 
         if (inventory == null) {
-            inventory = InventoryUtil.getHandlerFromName(computer, side);
+            inventory = ItemUtil.getHandlerFromName(computer, side);
         }
 
         if (inventory == null)
@@ -359,10 +359,10 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         String side = arguments.getString(1);
-        IItemHandler inventory = InventoryUtil.getHandlerFromDirection(side, owner);
+        IItemHandler inventory = ItemUtil.getHandlerFromDirection(side, owner);
 
         if (inventory == null) {
-            inventory = InventoryUtil.getHandlerFromName(computer, side);
+            inventory = ItemUtil.getHandlerFromName(computer, side);
         }
 
         if (inventory == null)
