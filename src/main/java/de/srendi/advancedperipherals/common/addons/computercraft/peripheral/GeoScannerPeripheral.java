@@ -18,15 +18,16 @@ import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.ScanUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.ChunkPos;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +37,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_BLOCKS;
 
@@ -81,26 +84,47 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult chunkAnalyze() throws LuaException {
+    public final MethodResult chunkAnalyze(Optional<String> optFilter) throws LuaException {
+        Predicate<BlockState> blockTester = (b) -> b.is(Tags.Blocks.ORES);
+        String filter = optFilter.orElse(null);
+        if (filter != null) {
+            if (filter.length() > 0 && filter.charAt(0) == '#') {
+                ResourceLocation id = ResourceLocation.tryParse(filter.substring(1));
+                if (id == null) {
+                    throw new LuaException("argument #1 is an invaild tag ID");
+                }
+                TagKey<Block> tag = TagKey.create(Registries.BLOCK, id);
+                blockTester = (b) -> b.is(tag);
+            } else {
+                ResourceLocation id = ResourceLocation.tryParse(filter.substring(1));
+                if (id == null) {
+                    throw new LuaException("argument #1 is an invaild block ID");
+                }
+                Block block = BuiltInRegistries.BLOCK.get(id);
+                blockTester = block == null ? null : (b) -> b.is(block);
+            }
+        }
+        Predicate<BlockState> blockTesterFinal = blockTester;
         return withOperation(SCAN_BLOCKS, SCAN_BLOCKS.free(), null, ignored -> {
+            if (blockTesterFinal == null) {
+                return MethodResult.of(Map.of());
+            }
             Level level = getLevel();
             LevelChunk chunk = level.getChunkAt(getPos());
-            ChunkPos chunkPos = chunk.getPos();
-            Object2IntMap<ResourceLocation> data = new Object2IntOpenHashMap<>();
-            BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-            for (int x = chunkPos.getMinBlockX(); x <= chunkPos.getMaxBlockX(); x++) {
-                for (int z = chunkPos.getMinBlockZ(); z <= chunkPos.getMaxBlockZ(); z++) {
-                    for (int y = level.getMinBuildHeight(); y < level.getHeight(); y++) {
-                        BlockState block = chunk.getBlockState(pos.set(x, y, z));
-                        if (!block.is(Tags.Blocks.ORES)) {
-                            continue;
-                        }
-                        ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block.getBlock());
-                        if (name != null) {
-                            data.put(name, data.getInt(name) + 1);
-                        }
-                    }
+            Object2IntOpenHashMap<ResourceLocation> data = new Object2IntOpenHashMap<>();
+            for (LevelChunkSection section : chunk.getSections()) {
+                if (section.hasOnlyAir()) {
+                    continue;
                 }
+                section.getStates().count((block, count) -> {
+                    if (!blockTesterFinal.test(block)) {
+                        return;
+                    }
+                    ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block.getBlock());
+                    if (name != null) {
+                        data.addTo(name, count);
+                    }
+                });
             }
             return MethodResult.of(
                 Map.ofEntries(
