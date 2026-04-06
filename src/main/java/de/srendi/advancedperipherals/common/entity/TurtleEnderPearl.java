@@ -1,8 +1,6 @@
 package de.srendi.advancedperipherals.common.entity;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
-import dan200.computercraft.shared.computer.core.ServerComputer;
-import dan200.computercraft.shared.turtle.core.TurtleBrain;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.APEntities;
 import de.srendi.advancedperipherals.common.util.ChunkManager;

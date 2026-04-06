@@ -111,8 +111,16 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }
 
     @Override
+    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
+        ContainerHelper.loadAllItems(tag, items, provider);
+        peripheralSettings = tag.getCompound(PERIPHERAL_SETTINGS_KEY);
+        super.loadAdditional(tag, provider);
+    }
+
+    @Override
     protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
+        this.saveShared(tag, provider);
         ContainerHelper.saveAllItems(tag, items, provider);
         if (!peripheralSettings.isEmpty()) {
             tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
@@ -120,11 +128,13 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
-        ContainerHelper.loadAllItems(tag, items, provider);
-        peripheralSettings = tag.getCompound(PERIPHERAL_SETTINGS_KEY);
-        super.loadAdditional(tag, provider);
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        CompoundTag data = super.getUpdateTag(provider);
+        this.saveShared(data, provider);
+        return data;
     }
+
+    protected void saveShared(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {}
 
     @Override
     protected Component getDefaultName() {
@@ -142,12 +152,12 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }
 
     @Override
-    public boolean canPlaceItemThroughFace(int index, @NotNull ItemStack itemStackIn, @Nullable Direction direction) {
+    public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
         return this instanceof IInventoryBlock;
     }
 
     @Override
-    public boolean canTakeItemThroughFace(int index, @NotNull ItemStack stack, @NotNull Direction direction) {
+    public boolean canTakeItemThroughFace(int index, ItemStack stack, @Nullable Direction direction) {
         return this instanceof IInventoryBlock;
     }
 

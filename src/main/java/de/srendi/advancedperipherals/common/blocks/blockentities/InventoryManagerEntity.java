@@ -11,9 +11,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +38,10 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     @NotNull
     protected InventoryManagerPeripheral buildPeripheral() {
         return new InventoryManagerPeripheral(this);
+    }
+
+    public UUID getOwnerUUID() {
+        return this.owner;
     }
 
     @Override
@@ -60,41 +67,43 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
 
     @Override
     public void setItem(int index, @NotNull ItemStack stack) {
-        boolean shouldClearOwner = false;
-        if (stack.getItem() instanceof MemoryCardItem) {
-            if (stack.has(OWNER)) {
-                this.owner = stack.get(OWNER);
-                stack.remove(OWNER);
-            } else if (stack != this.getItem(index)) {
-                // Only clear owner when the new card item is not the current item
-                shouldClearOwner = true;
-            }
-        } else {
-            shouldClearOwner = true;
+        if (this.getLevel() == null || this.getLevel().isClientSide()) {
+            super.setItem(index, stack);
+            return;
         }
-        if (shouldClearOwner && this.getLevel() != null && !this.getLevel().isClientSide()) {
+        if (stack.getItem() instanceof MemoryCardItem && stack.has(OWNER)) {
+            this.owner = stack.remove(OWNER);
+        } else {
             this.owner = null;
         }
         super.setItem(index, stack);
+        this.sendUpdate();
     }
 
     @Override
-    public void loadAdditional(CompoundTag data, @NotNull HolderLookup.Provider provider) {
-        if (data.contains("ownerId")) {
-            this.owner = data.getUUID("ownerId");
-        }
+    protected void loadAdditional(@NotNull CompoundTag data, @NotNull HolderLookup.Provider provider) {
+        this.owner = data.contains("ownerId") ? data.getUUID("ownerId") : null;
         super.loadAdditional(data, provider);
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag data, @NotNull HolderLookup.Provider provider) {
-        super.saveAdditional(data, provider);
+    protected void saveShared(@NotNull CompoundTag data, @NotNull HolderLookup.Provider provider) {
+        super.saveShared(data, provider);
         if (this.owner != null) {
             data.putUUID("ownerId", this.owner);
+        } else {
+            // This magic field is required for loadAdditional to run by an update packet,
+            // since loadAdditional won't execute when the update tag is empty.
+            data.putBoolean("_noOwnerId", true);
         }
     }
 
-    public Player getOwnerPlayer() {
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    public ServerPlayer getOwnerPlayer() {
         if (this.owner == null) {
             return null;
         }

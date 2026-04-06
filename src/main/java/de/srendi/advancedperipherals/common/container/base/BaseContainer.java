@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.container.base;
 
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -19,21 +18,27 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseContainer extends AbstractContainerMenu {
 
     private final IItemHandler inventory;
-    protected PeripheralBlockEntity<?> tileEntity;
+    protected final PeripheralBlockEntity<?> blockEntity;
 
     protected BaseContainer(@Nullable MenuType<?> type, int id, Inventory inventory, BlockPos pos, Level world) {
         super(type, id);
         this.inventory = new InvWrapper(inventory);
+        PeripheralBlockEntity<?> peripheralBlockEntity = null;
         if (world != null && pos != null) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             // for player containers, pos is the position of the player
             // We don't actual need a block entity for player containers
-            // But if a player stands for example on a mekanism cable, setting the tileEntity by casting and without a check
+            // But if a player stands for example on a mekanism cable, setting the BlockEntity by casting and without a check
             // would prevent opening the screen
-            if (blockEntity instanceof PeripheralBlockEntity<?> peripheralBlockEntity) {
-                tileEntity = peripheralBlockEntity;
+            if (blockEntity instanceof PeripheralBlockEntity<?> peripheralBlockEntity0) {
+                peripheralBlockEntity = peripheralBlockEntity0;
             }
         }
+        this.blockEntity = peripheralBlockEntity;
+    }
+
+    public PeripheralBlockEntity<?> getBlockEntity() {
+        return this.blockEntity;
     }
 
     @Override
@@ -44,12 +49,12 @@ public abstract class BaseContainer extends AbstractContainerMenu {
             ItemStack itemstack1 = slot.getItem();
             itemstack = itemstack1.copy();
             if (index >= 36) {
-                if (!this.moveItemStackTo(itemstack, 0, 36, false) && !tileEntity.canTakeItemThroughFace(index, itemstack, Direction.NORTH)) {
+                if (!this.moveItemStackTo(itemstack, 0, 36, false) && (this.blockEntity == null || !this.blockEntity.canTakeItemThroughFace(index, itemstack, null))) {
                     return ItemStack.EMPTY;
                 }
                 slot.onQuickCraft(itemstack, itemstack1);
             } else {
-                if (!this.moveItemStackTo(itemstack, 36, getItems().size(), false) && !tileEntity.canPlaceItemThroughFace(index, itemstack, Direction.NORTH)) {
+                if (!this.moveItemStackTo(itemstack, 36, getItems().size(), false) && (this.blockEntity == null || !this.blockEntity.canPlaceItemThroughFace(index, itemstack, null))) {
                     return ItemStack.EMPTY;
                 }
             }

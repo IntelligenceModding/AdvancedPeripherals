@@ -25,12 +25,12 @@ public abstract class BaseScreen<T extends BaseContainer> extends AbstractContai
 
     @Override
     protected void renderBg(@NotNull GuiGraphics guiGraphics, float partialTicks, int x, int y) {
-        guiGraphics.blit(getTexture(), getGuiLeft(), getGuiTop(), 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(getBackgroundTexture(), getGuiLeft(), getGuiTop(), 0, 0, imageWidth, imageHeight);
     }
 
     public abstract int getSizeX();
 
     public abstract int getSizeY();
 
-    public abstract ResourceLocation getTexture();
+    public abstract ResourceLocation getBackgroundTexture();
 }

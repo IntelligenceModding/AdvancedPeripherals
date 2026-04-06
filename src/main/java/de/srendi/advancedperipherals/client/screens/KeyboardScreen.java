@@ -18,14 +18,12 @@ import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseClickP
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseMovePacket;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseScrollPacket;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -63,15 +61,14 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int x, int y, float partialTicks) {
+    public void renderBackground(GuiGraphics gui, int x, int y, float partialTicks) {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int x, int y, float partialTicks) {
-        super.render(graphics, x, y, partialTicks);
+    public void render(GuiGraphics gui, int x, int y, float partialTicks) {
+        super.render(gui, x, y, partialTicks);
 
-        Minecraft minecraft = Minecraft.getInstance();
-        int screenWidth = minecraft.getWindow().getGuiScaledWidth();
+        int screenWidth = gui.minecraft.getWindow().getGuiScaledWidth();
 
         // float scale = 2f;
         // // Make the text a bit smaller on small screens
@@ -81,7 +78,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         // poseStack.scale(scale, scale, 1);
 
         Component text = Component.translatable("text.advancedperipherals.keyboard.close");
-        graphics.drawCenteredString(minecraft.font, text, screenWidth / 2, 1, 0xFFFFFF);
+        gui.drawCenteredString(gui.minecraft.font, text, screenWidth / 2, 1, 0xFFFFFF);
     }
 
     @Override

@@ -81,6 +81,7 @@ public class PeripheralsConfig implements IAPConfig {
 
     // Inventory Manager
     public final ModConfigSpec.BooleanValue enableInventoryManager;
+    public final ModConfigSpec.BooleanValue enableItemsTransfer;
 
     // Colony integrator
     public final ModConfigSpec.BooleanValue enableColonyIntegrator;
@@ -290,6 +291,9 @@ public class PeripheralsConfig implements IAPConfig {
         enableInventoryManager = builder
             .comment("Enable the inventory manager or not.")
             .define("enableInventoryManager", true);
+        enableItemsTransfer = builder
+            .comment("Enable items transfer methods for inventory manager")
+            .define("enableItemsTransfer", true);
 
         pop("Colony_Integrator", builder);
 

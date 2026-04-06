@@ -50,14 +50,21 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         super(PERIPHERAL_TYPE, PocketPeripheralOwner.of(pocket));
     }
 
-    private boolean isAllowedMultiDimensional() {
-        int maxRange = MAX_RANGE;
-        return APConfig.PERIPHERALS_CONFIG.playerDetMultiDimensional.get() && maxRange == -1;
-    }
-
     @Override
     public boolean isEnabled() {
         return APConfig.PERIPHERALS_CONFIG.enablePlayerDetector.get();
+    }
+
+    @Override
+    protected Map<String, Object> getPeripheralConfiguration() {
+        Map<String, Object> configs = super.getPeripheralConfiguration();
+        configs.put("playerSpyEnabled", APConfig.PERIPHERALS_CONFIG.playerSpy.get());
+        return configs;
+    }
+
+    private boolean isAllowedMultiDimensional() {
+        int maxRange = MAX_RANGE;
+        return APConfig.PERIPHERALS_CONFIG.playerDetMultiDimensional.get() && maxRange == -1;
     }
 
     @LuaFunction(mainThread = true)
@@ -139,7 +146,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     @LuaFunction(mainThread = true)
     public final Map<String, Object> getPlayer(IArguments arguments) throws LuaException {
         if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get()) {
-            throw new LuaException("This function is disabled in the config. Activate it or ask admins if they can activate it.");
+            throw new LuaException("This function is disabled in the config [Player_Detector.playerSpy]. Activate it or ask admins if they can activate it.");
         }
         ServerPlayer player = getPlayer(arguments.getString(0));
         if (player == null) {

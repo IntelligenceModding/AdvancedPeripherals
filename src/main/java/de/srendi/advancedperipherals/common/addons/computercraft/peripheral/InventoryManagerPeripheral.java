@@ -3,10 +3,13 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.lua.ObjectLuaTable;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.shared.peripheral.generic.GenericPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.InventoryManagerOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
@@ -16,6 +19,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
@@ -23,6 +27,7 @@ import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerOwner> {
 
@@ -37,6 +42,21 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         return APConfig.PERIPHERALS_CONFIG.enableInventoryManager.get();
     }
 
+    @Override
+    protected Map<String, Object> getPeripheralConfiguration() {
+        Map<String, Object> configs = super.getPeripheralConfiguration();
+        configs.put("itemsTransferEnabled", APConfig.PERIPHERALS_CONFIG.enableItemsTransfer.get());
+        return configs;
+    }
+
+    private Player getOwnerPlayerOrError() throws LuaException {
+        Player player = owner.getOwner();
+        if (player == null) {
+            throw new LuaException("The Inventory Manager doesn't have a memory card or it isn't bound to a player.");
+        }
+        return player;
+    }
+
     @LuaFunction
     public final MethodResult getOwner() throws LuaException {
         Player player = owner.getOwner();
@@ -46,53 +66,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         return MethodResult.of(player.getUUID().toString(), player.getGameProfile().getName());
     }
 
-
-    // Add the specified item to the player
-    // The item is specified the same as with the RS/ME bridge:
-    // {name="minecraft:enchanted_book", count=1, nbt="ae70053c97f877de546b0248b9ddf525"}
     @LuaFunction(mainThread = true)
-    public final MethodResult addItemToPlayer(String invDirection, Map<?, ?> item) throws LuaException {
-        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(item));
-        if (filter.rightPresent()) {
-            return MethodResult.of(null, filter.right());
-        }
-        return addItemCommon(invDirection, filter.left());
-    }
-
-    private MethodResult addItemCommon(String invDirection, ItemFilter filter) throws LuaException {
-        Direction direction = validateSide(invDirection);
-
-        IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayerOrError().getInventory());
-        IItemHandler inventoryFrom = getLevel().getCapability(Capabilities.ItemHandler.BLOCK, owner.getPos().relative(direction), direction.getOpposite());
-        if (inventoryFrom == null) {
-            return MethodResult.of(null, "INVENTORY_FROM_INVALID");
-        }
-
-        // if (invSlot >= inventoryTo.getSlots() || invSlot < 0)
-        //  throw new LuaException("Inventory out of bounds " + invSlot + " (max: " + (inventoryTo.getSlots() - 1) + ")");
-
-        return MethodResult.of(InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult removeItemFromPlayer(String invDirection, Map<?, ?> item) throws LuaException {
-        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(item));
-        if (filter.rightPresent()) {
-            return MethodResult.of(null, filter.right());
-        }
-        return removeItemCommon(invDirection, filter.left());
-    }
-
-    private MethodResult removeItemCommon(String invDirection, ItemFilter filter) throws LuaException {
-        Direction direction = validateSide(invDirection);
-
-        IItemHandler inventoryFrom = new PlayerInvWrapper(getOwnerPlayerOrError().getInventory());
-        IItemHandler inventoryTo = getLevel().getCapability(Capabilities.ItemHandler.BLOCK, owner.getPos().relative(direction), direction.getOpposite());
-        if (inventoryTo == null) {
-            return MethodResult.of(null, "INVENTORY_TO_INVALID");
-        }
-
-        return MethodResult.of(InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter));
+    public final int size() throws LuaException {
+        return getOwnerPlayerOrError().getInventory().getContainerSize();
     }
 
     @LuaFunction(mainThread = true)
@@ -111,23 +87,47 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult listChest(String target) throws LuaException {
-        Direction direction = validateSide(target);
+    public final MethodResult pushItems(IComputerAccess computer, String toName, Optional<Map<?, ?>> filterTable) throws LuaException {
+        checkAllowItemTransfers();
 
-        IItemHandler inventory = getLevel().getCapability(Capabilities.ItemHandler.BLOCK, owner.getPos().relative(direction), direction.getOpposite());
-        if (inventory == null) {
-            return MethodResult.of(null, "INVENTORY_TO_INVALID");
+        IPeripheral toPeripheral = computer.getAvailablePeripheral(toName);
+        if (toPeripheral == null) {
+            throw new LuaException("Target '" + toName + "' does not exist");
+        }
+        IItemHandler inventoryTo = extractItemHandler(toPeripheral);
+        if (inventoryTo == null) {
+            throw new LuaException("Target '" + toName + "' is not an inventory");
         }
 
-        int size = inventory.getSlots();
-        Map<Integer, Object> items = new HashMap<>(size * 4 / 3 + 1);
-        for (int slot = 0; slot < inventory.getSlots(); slot++) {
-            ItemStack stack = inventory.getStackInSlot(slot);
-            if (!stack.isEmpty()) {
-                items.put(slot + 1, LuaConverter.itemStackToLua(stack));
-            }
+        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
+        if (filter.rightPresent()) {
+            return MethodResult.of(null, filter.right());
         }
-        return MethodResult.of(items);
+
+        IItemHandler inventoryFrom = new PlayerInvWrapper(getOwnerPlayerOrError().getInventory());
+        return MethodResult.of(InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult pullItems(IComputerAccess computer, String fromName, Optional<Map<?, ?>> filterTable) throws LuaException {
+        checkAllowItemTransfers();
+
+        IPeripheral toPeripheral = computer.getAvailablePeripheral(fromName);
+        if (toPeripheral == null) {
+            throw new LuaException("Target '" + fromName + "' does not exist");
+        }
+        IItemHandler inventoryFrom = extractItemHandler(toPeripheral);
+        if (inventoryFrom == null) {
+            throw new LuaException("Target '" + fromName + "' is not an inventory");
+        }
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
+        if (filter.rightPresent()) {
+            return MethodResult.of(null, filter.right());
+        }
+
+        IItemHandler inventoryTo = new PlayerInvWrapper(getOwnerPlayerOrError().getInventory());
+        return MethodResult.of(InventoryUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 
     @LuaFunction(mainThread = true)
@@ -174,11 +174,21 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         return LuaConverter.itemStackToLua(getOwnerPlayerOrError().getOffhandItem());
     }
 
-    private Player getOwnerPlayerOrError() throws LuaException {
-        Player player = owner.getOwner();
-        if (player == null) {
-            throw new LuaException("The Inventory Manager doesn't have a memory card or it isn't bound to a player.");
+    private void checkAllowItemTransfers() throws LuaException {
+        if (!APConfig.PERIPHERALS_CONFIG.enableItemsTransfer.get()) {
+            throw new LuaException("This function is disabled in the config [Inventory_Manager.enableItemsTransfer]. Activate it or ask admins if they can activate it.");
         }
-        return player;
+    }
+
+    private static IItemHandler extractItemHandler(IPeripheral peripheral) {
+        Object target = peripheral.getTarget();
+        if (target instanceof IItemHandler handler) {
+            return handler;
+        }
+        if (target instanceof BlockEntity be) {
+            Direction side = peripheral instanceof GenericPeripheral sided ? sided.side() : null;
+            return be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), side);
+        }
+        return null;
     }
 }
