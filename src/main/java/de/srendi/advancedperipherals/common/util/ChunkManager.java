@@ -51,7 +51,7 @@ public class ChunkManager extends SavedData {
     public static ChunkManager load(@NotNull CompoundTag data, HolderLookup.Provider provider) {
         ChunkManager manager = new ChunkManager();
         CompoundTag forcedData = data.getCompound(FORCED_CHUNKS_TAG);
-        AdvancedPeripherals.debug("Loading chunk manager from NBT " + data, org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug("Loading chunk manager from NBT {}", data);
         for (String key : forcedData.getAllKeys()) {
             manager.forcedChunks.put(UUID.fromString(key), LoadChunkRecord.deserialize(forcedData.getCompound(key)));
         }
@@ -84,12 +84,12 @@ public class ChunkManager extends SavedData {
     }
 
     private static boolean forceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
-        AdvancedPeripherals.debug("Forcing chunk " + pos, org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug("Forcing chunk {}", pos);
         return CONTROLLER.forceChunk(level, owner, pos.x, pos.z, true, true);
     }
 
     private static boolean unforceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
-        AdvancedPeripherals.debug("Unforcing chunk " + pos, org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug("Unforcing chunk {}", pos);
         return CONTROLLER.forceChunk(level, owner, pos.x, pos.z, false, true);
     }
 
@@ -98,7 +98,7 @@ public class ChunkManager extends SavedData {
     }
 
     public boolean addForceChunk(ServerLevel level, UUID owner, ChunkPos pos) {
-        AdvancedPeripherals.debug("Trying to load forced chunk cluster " + pos, org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Trying to load forced chunk cluster {}", pos);
         LoadChunkRecord oldRecord = this.forcedChunks.get(owner);
         if (oldRecord != null) {
             ServerLevel oldLevel = this.server.getLevel(oldRecord.getDimension());
@@ -127,7 +127,7 @@ public class ChunkManager extends SavedData {
     }
 
     public boolean removeForceChunk(ServerLevel level, UUID owner) {
-        AdvancedPeripherals.debug("Attempting to unload forced chunk cluster " + owner, org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Attempting to unload forced chunk cluster {}", owner);
         LoadChunkRecord chunkRecord = this.forcedChunks.get(owner);
         if (chunkRecord == null) {
             return true;
@@ -147,7 +147,7 @@ public class ChunkManager extends SavedData {
         boolean result = true;
         final ChunkPos pos = chunkRecord.getPos();
         final int chunkRadius = chunkRecord.getRadius();
-        AdvancedPeripherals.debug(String.format("Trying to unload forced chunk cluster %s at %s with radius %d", owner, pos, chunkRadius), org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Trying to unload forced chunk cluster {} at {} with radius {}", owner, pos, chunkRadius);
         for (int x = -chunkRadius; x <= chunkRadius; x++) {
             for (int z = -chunkRadius; z <= chunkRadius; z++) {
                 result &= unforceChunk(owner, level, new ChunkPos(pos.x + x, pos.z + z));
@@ -162,18 +162,18 @@ public class ChunkManager extends SavedData {
         }
         this.initialized = true;
 
-        AdvancedPeripherals.debug(String.format("Schedule chunk manager init, forcedChunks = %d", this.forcedChunks.size()), org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Schedule chunk manager init, forcedChunks = {}", this.forcedChunks.size());
         final int chunkRadius = getMaxLoadRadius();
         this.forcedChunks.forEach((uuid, value) -> {
             ResourceKey<Level> dimension = value.getDimension();
             ServerLevel level = this.server.getLevel(dimension);
             if (level == null) {
-                AdvancedPeripherals.debug("Skipped not exists dimension " + dimension, org.apache.logging.log4j.Level.ERROR);
+                AdvancedPeripherals.debug(org.apache.logging.log4j.Level.ERROR, "Skipped not exists dimension {}", dimension);
                 return;
             }
             final ChunkPos pos = value.getPos();
             final int loadedRadius = value.getRadius();
-            AdvancedPeripherals.debug(String.format("Recorded chunk in %s at %s with radius %d", dimension, pos, loadedRadius), org.apache.logging.log4j.Level.INFO);
+            AdvancedPeripherals.debug("Recorded chunk in {} at {} with radius {}", dimension, pos, loadedRadius);
             if (loadedRadius == chunkRadius) {
                 return;
             }
@@ -202,7 +202,7 @@ public class ChunkManager extends SavedData {
     }
 
     public void cleanup() {
-        AdvancedPeripherals.debug("Schedule chunk manager cleanup", org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Schedule chunk manager cleanup");
         final Iterator<Map.Entry<UUID, LoadChunkRecord>> iterator = this.forcedChunks.entrySet().iterator();
         while (iterator.hasNext()) {
             final Map.Entry<UUID, LoadChunkRecord> entry = iterator.next();
@@ -216,7 +216,7 @@ public class ChunkManager extends SavedData {
             if (chunkRecord.isValid()) {
                 continue;
             }
-            AdvancedPeripherals.debug(String.format("Purge forced chunk for %s", uuid), org.apache.logging.log4j.Level.WARN);
+            AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Purge forced chunk for {}", uuid);
             unforceChunkRecord(uuid, chunkRecord, level);
             iterator.remove();
             this.setDirty();
@@ -226,7 +226,7 @@ public class ChunkManager extends SavedData {
     @Override
     @NotNull
     public CompoundTag save(@NotNull CompoundTag data, @NotNull HolderLookup.Provider registries) {
-        AdvancedPeripherals.debug("Schedule chunk manager save, forcedChunks = " + this.forcedChunks.size(), org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Schedule chunk manager save, forcedChunks = {}", this.forcedChunks.size());
         CompoundTag forcedChunksTag = new CompoundTag();
         this.forcedChunks.forEach((key, value) -> forcedChunksTag.put(key.toString(), value.serialize()));
         // !!! DO NOT forget to put forcedChunksTag into data !!!

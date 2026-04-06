@@ -35,7 +35,7 @@ public class ServerWorker {
         for (int remain = callQueue.size(); remain > 0; remain--) {
             final Runnable runnable = callQueue.poll();
             tasksRan++;
-            AdvancedPeripherals.debug("Running task #" + tasksRan + ". Running " + runnable.getClass());
+            AdvancedPeripherals.debug("Running task #{}. Running {}", tasksRan, runnable.getClass());
             runnable.run();
         }
     }

@@ -181,7 +181,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             }
             FieldWithPropertyType propField = this.propertiesMap.get(fieldName);
             if (propField == null) {
-                AdvancedPeripherals.debug("Unknown field name " + fieldName + " for class " + this.getClass());
+                AdvancedPeripherals.debug("Unknown field name {} for class {}", fieldName, this.getClass());
                 continue;
             }
             propField.setFor(this, entry.getValue());
@@ -252,7 +252,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
                 return (byte) Math.round(number.doubleValue());
             }
         }
-        AdvancedPeripherals.debug("The field type " + fieldType.getName() + " is not supported for the value " + value + ".", Level.WARN);
+        AdvancedPeripherals.debug(Level.WARN, "The field type {} is not supported for the value {}.", fieldType.getName(), value);
         return value;
     }
 

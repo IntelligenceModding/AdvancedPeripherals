@@ -217,7 +217,7 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
             try {
                 result.put(branch.toString(), MineColonies.getResearch(branch, globalTree.getPrimaryResearch(branch), colony));
             } catch (CommandSyntaxException ex) {
-                AdvancedPeripherals.debug("Error getting research for branch " + branch + ": " + ex.getMessage(), org.apache.logging.log4j.Level.WARN);
+                AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Error getting research for branch {}: {}", branch, ex.getMessage());
                 ex.printStackTrace();
             }
         }

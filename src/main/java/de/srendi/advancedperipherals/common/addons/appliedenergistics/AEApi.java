@@ -360,7 +360,7 @@ public class AEApi {
         if (APAddon.APP_MEKANISTICS.isLoaded() && (stack.right() instanceof MekanismKey gasKey))
             return parseChemStack(Pair.of(stack.left(), gasKey), service);
 
-        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.right().getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Could not create table from unknown stack {} - Report this to the maintainer of ap", stack.right().getClass());
         return null;
     }
 
@@ -372,7 +372,7 @@ public class AEApi {
         if (stack.what() instanceof AEFluidKey aeFluidKey)
             return parseFluidStack(Pair.of(stack.amount(), aeFluidKey), null);
 
-        AdvancedPeripherals.debug("Could not create table from unknown stack " + stack.getClass() + " - Report this to the maintainer of ap", org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Could not create table from unknown stack {} - Report this to the maintainer of ap", stack.getClass());
         return null;
     }
 

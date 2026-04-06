@@ -581,7 +581,7 @@ public class RSApi {
             }
             return getObjectFromChemicalResource(new ResourceAmount(resource, count), autocraftingComponent);
         }
-        AdvancedPeripherals.debug("Could not create table from unknown resource " + resource.getClass() + " - Report this to the maintainer of ap", Level.WARN);
+        AdvancedPeripherals.debug(Level.WARN, "Could not create table from unknown resource {} - Report this to the maintainer of ap", resource.getClass());
         return Collections.emptyMap();
     }
 
@@ -601,7 +601,7 @@ public class RSApi {
         if (APAddon.REFINEDSTORAGE_MEKANISM.isLoaded() && resourceAmount.resource() instanceof ChemicalResource) {
             return getObjectFromChemicalResource(resourceAmount, autocraftingComponent);
         }
-        AdvancedPeripherals.debug("Could not create table from unknown resourceAmount " + resourceAmount.getClass() + " - Report this to the maintainer of ap", Level.WARN);
+        AdvancedPeripherals.debug(Level.WARN, "Could not create table from unknown resourceAmount {} - Report this to the maintainer of ap", resourceAmount.getClass());
         return Collections.emptyMap();
     }
 

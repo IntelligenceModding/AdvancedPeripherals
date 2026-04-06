@@ -64,14 +64,6 @@ public class TurtleEnderPearl extends ThrowableProjectile {
         this.callback = callback;
     }
 
-    @Nullable
-    private ServerComputer getServerComputer() {
-        if (this.turtle instanceof TurtleBrain brain) {
-            return brain.getOwner().createServerComputer();
-        }
-        return null;
-    }
-
     @Override
     public void readAdditionalSaveData(CompoundTag storage) {}
 
@@ -106,7 +98,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
             this.life = -1;
             this.setDeltaMovement(Vec3.ZERO);
             this.moveTo(Vec3.atCenterOf(this.blockPosition()));
-            AdvancedPeripherals.debug("Turtle Ender Pearl stabled: " + this.toString());
+            AdvancedPeripherals.debug("Turtle Ender Pearl stabled: {}", this.toString());
             if (this.callback != null) {
                 this.callback.accept(this);
             }
@@ -170,7 +162,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
         Entity newEntity = super.changeDimension(transition);
         this.changedDim = newEntity != null;
         if (newEntity instanceof TurtleEnderPearl newPearl) {
-            AdvancedPeripherals.debug("Turtle Ender Pearl crossed to dimension " + newLevel.dimension());
+            AdvancedPeripherals.debug("Turtle Ender Pearl crossed to dimension {}", newLevel.dimension());
             newPearl.spawnPos = newPearl.blockPosition();
             ChunkManager.get(newLevel.getServer()).addForceChunk(newLevel, newPearl.getUUID(), newPearl.chunkPosition());
             if (newLevel.dimension() == Level.END) {
@@ -183,12 +175,12 @@ public class TurtleEnderPearl extends ThrowableProjectile {
                         break;
                     }
                 }
-                AdvancedPeripherals.debug("Turtle Ender Pearl lowest Y: " + lowestY);
+                AdvancedPeripherals.debug("Turtle Ender Pearl lowest Y: {}", lowestY);
                 for (int y = lowestY; y <= maxHeight; y++) {
                     BlockPos pos = newPearl.spawnPos.atY(y);
                     List<TurtleEnderPearl> pearlList = newLevel.getEntities(APEntities.TURTLE_ENDER_PEARL.get(), new AABB(pos), entity -> true);
                     if (pearlList.isEmpty()) {
-                        AdvancedPeripherals.debug("Turtle Ender Pearl moved to " + pos);
+                        AdvancedPeripherals.debug("Turtle Ender Pearl moved to {}", pos);
                         newPearl.moveTo(Vec3.atCenterOf(pos));
                         break;
                     }

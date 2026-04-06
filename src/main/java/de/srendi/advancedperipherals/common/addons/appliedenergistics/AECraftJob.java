@@ -218,14 +218,14 @@ public class AECraftJob extends BasicCraftJob {
         try {
             job = futureJob.get();
         } catch (ExecutionException | InterruptedException ex) {
-            AdvancedPeripherals.debug("Tried to get job, but job calculation is not done. Should be done.", org.apache.logging.log4j.Level.ERROR);
+            AdvancedPeripherals.debug(org.apache.logging.log4j.Level.ERROR, "Tried to get job, but job calculation is not done. Should be done.");
             ex.printStackTrace();
             fireEvent(true, StatusConstants.UNKNOWN_ERROR);
             return;
         }
 
         if (job == null) {
-            AdvancedPeripherals.debug("Job is null, should not be null.", org.apache.logging.log4j.Level.ERROR);
+            AdvancedPeripherals.debug(org.apache.logging.log4j.Level.ERROR, "Job is null, should not be null.");
             fireEvent(true, StatusConstants.UNKNOWN_ERROR);
             return;
         }
@@ -300,7 +300,7 @@ public class AECraftJob extends BasicCraftJob {
                 }
             }
         }
-        AdvancedPeripherals.debug("Could not find CPU or job link even after job started", org.apache.logging.log4j.Level.WARN);
+        AdvancedPeripherals.debug(org.apache.logging.log4j.Level.ERROR, "Could not find CPU or job link even after job started");
     }
 
     private CraftingJobStatus getJobStatus() {

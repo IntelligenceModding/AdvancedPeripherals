@@ -10,6 +10,7 @@ import net.minecraft.client.player.Input;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
@@ -23,6 +24,11 @@ public class ClientEventSubscriber {
     private static int lastWidth = 0;
     private static int lastHeight = 0;
     private static double lastScale = 0;
+
+    @SubscribeEvent
+    public static void onClientLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
+        ClientUUIDCache.reset();
+    }
 
     @SubscribeEvent
     public static void preClientTick(ClientTickEvent.Pre event) {

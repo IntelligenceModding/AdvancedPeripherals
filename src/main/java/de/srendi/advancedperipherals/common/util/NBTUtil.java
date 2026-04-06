@@ -67,7 +67,7 @@ public class NBTUtil {
             return snbt == null ? null : TagParser.parseTag(snbt);
         } catch (CommandSyntaxException ex) {
             if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) {
-                AdvancedPeripherals.debug("Could not parse SNBT to NBT", org.apache.logging.log4j.Level.ERROR);
+                AdvancedPeripherals.debug(org.apache.logging.log4j.Level.ERROR, "Could not parse SNBT to NBT");
                 ex.printStackTrace();
             }
             return null;

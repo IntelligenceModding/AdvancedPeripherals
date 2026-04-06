@@ -59,7 +59,7 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
 
     @Nullable
     private ServerComputer getServerComputer() {
-        Player player = this.getSelfAndPassengers().filter(e -> e instanceof Player).map(e -> (Player) e).findFirst().orElse(null);
+        Player player = this.getSelfAndPassengers().filter(Player.class::isInstance).map(Player.class::cast).findFirst().orElse(null);
         if (player != null && this.turtle instanceof TurtleBrain turtle) {
             TurtleBlockEntity tile = turtle.getOwner();
             if (tile.isUsable(player)) {

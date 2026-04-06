@@ -81,7 +81,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
             itemFilter.count = item.getInt("count");
         }
 
-        AdvancedPeripherals.debug("Parsed item filter: " + itemFilter);
+        AdvancedPeripherals.debug("Parsed item filter: {}", itemFilter);
         return Pair.of(itemFilter, null);
     }
 

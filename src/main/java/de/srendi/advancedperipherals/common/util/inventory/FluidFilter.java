@@ -76,7 +76,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         if (item.containsKey("amount")) {
             fluidFilter.amount = item.getInt("amount");
         }
-        AdvancedPeripherals.debug("Parsed fluid filter: " + fluidFilter);
+        AdvancedPeripherals.debug("Parsed fluid filter: {}", fluidFilter);
 
         return Pair.of(fluidFilter, null);
     }

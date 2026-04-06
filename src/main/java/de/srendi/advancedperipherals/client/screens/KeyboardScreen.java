@@ -228,8 +228,8 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         }
         Window window = this.minecraft.getWindow();
         synchronized (this.lastPosLock) {
-            this.lastX = window.getScreenWidth() / 2;
-            this.lastY = window.getScreenHeight() / 2;
+            this.lastX = window.getScreenWidth() / 2.0;
+            this.lastY = window.getScreenHeight() / 2.0;
             InputConstants.grabOrReleaseMouse(window.getWindow(), InputConstants.CURSOR_DISABLED, this.lastX, this.lastY);
         }
         this.mouseState = MouseState.CAPTURE;
@@ -245,8 +245,8 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         }
         Window window = this.minecraft.getWindow();
         synchronized (this.lastPosLock) {
-            this.lastX = window.getScreenWidth() / 2;
-            this.lastY = window.getScreenHeight() / 2;
+            this.lastX = window.getScreenWidth() / 2.0;
+            this.lastY = window.getScreenHeight() / 2.0;
             InputConstants.grabOrReleaseMouse(window.getWindow(), InputConstants.CURSOR_NORMAL, this.lastX, this.lastY);
         }
         this.mouseState = MouseState.RELEASED;

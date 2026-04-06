@@ -180,7 +180,7 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
                     .getHolder(id)
                     .orElse(null);
             if (pocketUpgrade == null) {
-                AdvancedPeripherals.debug("Pocket upgrade " + id + " does not exist or was removed by a datapack, skipping villager trade");
+                AdvancedPeripherals.debug("Pocket upgrade {} does not exist or was removed by a datapack, skipping villager trade", id);
                 return this;
             }
 
@@ -204,7 +204,7 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
                     .orElse(null);
 
             if (turtleUpgrade == null) {
-                AdvancedPeripherals.debug("Pocket upgrade " + id + " does not exist or was removed by a datapack, skipping villager trade");
+                AdvancedPeripherals.debug("Pocket upgrade {} does not exist or was removed by a datapack, skipping villager trade", id);
                 return this;
             }
 

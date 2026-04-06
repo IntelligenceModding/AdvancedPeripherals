@@ -59,8 +59,15 @@ public class VillageStructures {
         Registry<StructureTemplatePool> templatePoolRegistry = event.getServer().registryAccess().registryOrThrow(Registries.TEMPLATE_POOL);
 
         for (String biome : new String[]{"desert", "snowy", "plains", "savanna", "taiga"}) {
-            AdvancedPeripherals.debug("Register generating scientist_" + biome + " village house");
-            addPieceToPool(templatePoolRegistry, emptyProcessor, ResourceLocation.parse("village/" + biome + "/houses"), AdvancedPeripherals.MOD_ID + ":villages/scientist_" + biome, StructureTemplatePool.Projection.RIGID, APConfig.WORLD_CONFIG.villagerStructureWeight.get());
+            AdvancedPeripherals.debug("Register generating scientist_{} village house", biome);
+            addPieceToPool(
+                templatePoolRegistry,
+                emptyProcessor,
+                ResourceLocation.withDefaultNamespace("village/" + biome + "/houses"),
+                AdvancedPeripherals.getRL("villages/scientist_" + biome).toString(),
+                StructureTemplatePool.Projection.RIGID,
+                APConfig.WORLD_CONFIG.villagerStructureWeight.get()
+            );
         }
     }
 }

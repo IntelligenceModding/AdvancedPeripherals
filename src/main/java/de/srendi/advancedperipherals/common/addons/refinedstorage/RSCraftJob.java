@@ -172,7 +172,7 @@ public class RSCraftJob extends BasicCraftJob {
 
         // TODO: I currently don't exactly know when the optional can be empty after the future is done. So I need to evaluate this.
         if (optionalPreview.isEmpty()) {
-            AdvancedPeripherals.debug("preview optional is empty.", org.apache.logging.log4j.Level.ERROR);
+            AdvancedPeripherals.debug(org.apache.logging.log4j.Level.ERROR, "preview optional is empty.");
             fireEvent(true, StatusConstants.UNKNOWN_ERROR);
             return;
         }

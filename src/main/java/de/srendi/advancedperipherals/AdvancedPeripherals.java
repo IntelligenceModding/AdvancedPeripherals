@@ -74,19 +74,22 @@ public class AdvancedPeripherals {
         return fingerprintMessageDigest;
     }
 
-    public static void debug(String message) {
-        if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
-            LOGGER.info("[DEBUG] {}", message);
+    public static void debug(String message, Object... params) {
+        if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) {
+            LOGGER.info("[DEBUG] " + message, params);
+        }
     }
 
-    public static void debug(String message, Level level) {
-        if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
-            LOGGER.log(level, "[DEBUG] {}", message);
+    public static void debug(Level level, String message, Object... params) {
+        if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) {
+            LOGGER.log(level, "[DEBUG] " + message, params);
+        }
     }
 
     public static void debug(String message, Throwable throwable) {
-        if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
+        if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) {
             LOGGER.error("[DEBUG] " + message, throwable);
+        }
     }
 
     public static void exception(String message, Throwable throwable) {

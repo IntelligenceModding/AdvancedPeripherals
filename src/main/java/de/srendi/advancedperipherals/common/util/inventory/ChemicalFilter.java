@@ -58,7 +58,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
             chemicalFilter.amount = item.getLong("amount");
         }
 
-        AdvancedPeripherals.debug("Parsed item filter: " + chemicalFilter);
+        AdvancedPeripherals.debug("Parsed chemical filter: {}", chemicalFilter);
         return Pair.of(chemicalFilter, null);
     }
 
