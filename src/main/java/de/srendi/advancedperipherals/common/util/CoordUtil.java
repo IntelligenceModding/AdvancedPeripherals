@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.util;
 
-import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.core.computer.ComputerSide;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

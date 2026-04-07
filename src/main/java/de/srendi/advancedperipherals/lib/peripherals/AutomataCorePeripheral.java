@@ -11,7 +11,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.lib.metaphysics.IAutomataCoreTier;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 
 import java.util.ArrayList;
 import java.util.Collections;
