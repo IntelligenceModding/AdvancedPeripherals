@@ -11,6 +11,7 @@ import dan200.computercraft.shared.command.text.TableBuilder;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.core.ServerContext;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
+import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.ChatFormatting;
@@ -21,11 +22,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 import java.util.Comparator;
+import java.util.UUID;
 
 
 @EventBusSubscriber
@@ -36,7 +40,9 @@ public class APCommands {
         "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " help" + " - show this help message\n" +
         "/" + ROOT_LITERAL + " " + FORCELOAD_LITERAL + " dump" + " - show all chunky turtles\n";
     public static final String EXEC_LITERAL = "safe-exec";
+    public static final String CHATBOX_LITERAL = "chatbox";
     public static final String ROOT_SAFE_EXEC_LITERAL = "ap-safe-exec";
+    public static final String ROOT_CHATBOX_LITERAL = "ap-chatbox";
 
     @SubscribeEvent
     public static void register(RegisterCommandsEvent event) {
@@ -44,19 +50,25 @@ public class APCommands {
             .then(Commands.argument("command", StringArgumentType.greedyString())
                 .executes(APCommands::safeExecute))
             .build();
+        LiteralCommandNode<CommandSourceStack> chatBoxNode = Commands.literal(CHATBOX_LITERAL)
+            .then(Commands.argument("message", StringArgumentType.greedyString())
+                .executes(APCommands::chatBox))
+            .build();
         event.getDispatcher().register(Commands.literal(ROOT_LITERAL)
-                .then(Commands.literal("getHashItem")
-                        .executes(context -> getHashItem(context.getSource()))).then(Commands.literal(FORCELOAD_LITERAL)
+            .then(Commands.literal("getHashItem")
+                .executes(context -> getHashItem(context.getSource())))
+            .then(Commands.literal(FORCELOAD_LITERAL)
                 .executes(context -> forceloadHelp(context.getSource()))
                 .then(Commands.literal("help")
                     .executes(context -> forceloadHelp(context.getSource())))
                 .then(Commands.literal("dump")
                     .requires(ModRegistry.Permissions.PERMISSION_DUMP)
-                    .executes(context -> forceloadDump(context.getSource())))
-            )
+                    .executes(context -> forceloadDump(context.getSource()))))
             .then(safeExecNode)
+            .then(chatBoxNode)
         );
         event.getDispatcher().register(Commands.literal(ROOT_SAFE_EXEC_LITERAL).redirect(safeExecNode));
+        event.getDispatcher().register(Commands.literal(ROOT_CHATBOX_LITERAL).redirect(chatBoxNode));
     }
 
     private static int getHashItem(CommandSourceStack source) throws CommandSyntaxException {
@@ -84,14 +96,20 @@ public class APCommands {
     private static int forceloadDump(CommandSourceStack source) throws CommandSyntaxException {
         TableBuilder table = new TableBuilder("ChunkyTurtles", "Computer", "Position");
 
-        ServerComputer[] computers = ServerContext.get(source.getServer()).registry().getComputers().stream().filter((computer) -> {
-            for (ComputerSide side : ComputerSide.values()) {
-                if (computer.getPeripheral(side) instanceof ChunkyPeripheral) {
-                    return true;
+        ServerComputer[] computers = ServerContext.get(source.getServer())
+            .registry()
+            .getComputers()
+            .stream()
+            .filter((computer) -> {
+                for (ComputerSide side : ComputerSide.values()) {
+                    if (computer.getPeripheral(side) instanceof ChunkyPeripheral) {
+                        return true;
+                    }
                 }
-            }
-            return false;
-        }).sorted(Comparator.comparingInt(ServerComputer::getID)).toArray(ServerComputer[]::new);
+                return false;
+            })
+            .sorted(Comparator.comparingInt(ServerComputer::getID))
+            .toArray(ServerComputer[]::new);
 
         for (ServerComputer computer : computers) {
             table.row(
@@ -118,6 +136,23 @@ public class APCommands {
         }
     }
 
+    private static int chatBox(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandSourceStack source = context.getSource();
+        UUID uuid = null;
+        String username = "[say]";
+        Entity sourceEntity = source.getEntity();
+        if (sourceEntity != null) {
+            uuid = sourceEntity.getUUID();
+            username = sourceEntity instanceof Player player
+                ? player.getGameProfile().getName()
+                : sourceEntity.getName().getString();
+        }
+        String message = StringArgumentType.getString(context, "message");
+        Events.putChatMessage(
+            new Events.ChatMessageRecord(uuid, username, message, true, source.getLevel().dimension(), source.getPosition())
+        );
+        return 0;
+    }
 
     private static Component makeComputerDumpCommand(ServerComputer computer) {
         return ChatHelpers.link(
