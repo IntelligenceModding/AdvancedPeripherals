@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,16 +22,16 @@ import java.util.Optional;
 
 // TODO: fluid variant?
 public class PlayerStorageItemWrapper {
-    public static final String PLAYER_INV_MAGIC_NAME = "@";
-
     private final IComputerAccess computer;
+    private final WeakReference<InventoryManagerPeripheral> peripheral;
     private final WeakReference<ServerPlayer> player;
     private final int slot;
     private final ItemStack stack;
     private final IItemHandler handler;
 
-    protected PlayerStorageItemWrapper(IComputerAccess computer, ServerPlayer player, int slot, ItemStack stack, IItemHandler handler) {
+    protected PlayerStorageItemWrapper(IComputerAccess computer, InventoryManagerPeripheral peripheral, ServerPlayer player, int slot, ItemStack stack, IItemHandler handler) {
         this.computer = computer;
+        this.peripheral = new WeakReference<>(peripheral);
         this.player = new WeakReference<>(player);
         this.slot = slot;
         this.stack = stack;
@@ -38,7 +39,7 @@ public class PlayerStorageItemWrapper {
     }
 
     @Nullable
-    public static PlayerStorageItemWrapper create(IComputerAccess computer, @NotNull ServerPlayer player, int slot) {
+    public static PlayerStorageItemWrapper create(IComputerAccess computer, InventoryManagerPeripheral peripheral, @NotNull ServerPlayer player, int slot) {
         ItemStack stack = player.getInventory().getItem(slot);
         if (stack.isEmpty()) {
             return null;
@@ -47,7 +48,7 @@ public class PlayerStorageItemWrapper {
         if (handler == null) {
             return null;
         }
-        return new PlayerStorageItemWrapper(computer, player, slot, stack, handler);
+        return new PlayerStorageItemWrapper(computer, peripheral, player, slot, stack, handler);
     }
 
     public boolean isValid() {
@@ -55,7 +56,14 @@ public class PlayerStorageItemWrapper {
         if (player == null || player.isRemoved()) {
             return false;
         }
-        return player.getInventory().getItem(this.slot) == this.stack;
+        if (player.getInventory().getItem(this.slot) != this.stack) {
+            return false;
+        }
+        InventoryManagerPeripheral peripheral = this.peripheral.get();
+        if (peripheral == null || !peripheral.isAccessValid(this.computer)) {
+            return false;
+        }
+        return peripheral.getOwnerPlayer() == player;
     }
 
     protected final void assertValid() throws LuaException {
@@ -96,7 +104,7 @@ public class PlayerStorageItemWrapper {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult pullItems(String toName, Optional<Map<?, ?>> filterTable) throws LuaException {
+    public final MethodResult pullItems(String fromName, Optional<Map<?, ?>> filterTable) throws LuaException {
         this.assertValid();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
@@ -104,14 +112,14 @@ public class PlayerStorageItemWrapper {
             return MethodResult.of(null, filter.right());
         }
 
-        IItemHandler inventoryFrom = this.getInventoryHandler(toName);
+        IItemHandler inventoryFrom = this.getInventoryHandler(fromName);
 
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, this.handler, filter.left()));
     }
 
     @NotNull
     private IItemHandler getInventoryHandler(String name) throws LuaException {
-        if (name.equals(PLAYER_INV_MAGIC_NAME)) {
+        if (name.equals(InventoryManagerPeripheral.PLAYER_INV_MAGIC_NAME)) {
             ServerPlayer player = this.player.get();
             if (player == null || player.isRemoved()) {
                 throw new LuaException("Storage item outdate");

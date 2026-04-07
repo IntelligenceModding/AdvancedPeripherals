@@ -26,10 +26,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerOwner> {
-
+    public static final String PLAYER_INV_MAGIC_NAME = "@";
     public static final String PERIPHERAL_TYPE = "inventory_manager";
+
+    private final Set<IComputerAccess> computerAccesses = ConcurrentHashMap.newKeySet();
 
     public InventoryManagerPeripheral(InventoryManagerEntity tileEntity) {
         super(PERIPHERAL_TYPE, new InventoryManagerOwner(tileEntity));
@@ -41,10 +45,30 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     }
 
     @Override
+    public void attach(@NotNull IComputerAccess computer) {
+        super.attach(computer);
+        this.computerAccesses.add(computer);
+    }
+
+    @Override
+    public void detach(@NotNull IComputerAccess computer) {
+        this.computerAccesses.remove(computer);
+        super.detach(computer);
+    }
+
+    public boolean isAccessValid(IComputerAccess access) {
+        return this.computerAccesses.contains(access);
+    }
+
+    @Override
     protected Map<String, Object> getPeripheralConfiguration() {
         Map<String, Object> configs = super.getPeripheralConfiguration();
         configs.put("itemsTransferEnabled", APConfig.PERIPHERALS_CONFIG.enableItemsTransfer.get());
         return configs;
+    }
+
+    public Player getOwnerPlayer() {
+        return owner.getOwner();
     }
 
     private ServerPlayer getOwnerPlayerOrError() throws LuaException {
@@ -108,7 +132,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
 
     @LuaFunction(mainThread = true)
     public final PlayerStorageItemWrapper wrapStorageItem(IComputerAccess computer, int slot) throws LuaException {
-        return PlayerStorageItemWrapper.create(computer, this.getOwnerPlayerOrError(), slot - 1);
+        return PlayerStorageItemWrapper.create(computer, this, this.getOwnerPlayerOrError(), slot - 1);
     }
 
     @LuaFunction(mainThread = true)
@@ -158,6 +182,9 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
 
     @NotNull
     private IItemHandler getInventoryHandler(IComputerAccess computer, String name) throws LuaException {
+        if (name.equals(PLAYER_INV_MAGIC_NAME)) {
+            return this.getPlayerInventory();
+        }
         IPeripheral toPeripheral = computer.getAvailablePeripheral(name);
         if (toPeripheral == null) {
             throw new LuaException("Target '" + name + "' does not exist");
