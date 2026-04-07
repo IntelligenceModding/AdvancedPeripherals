@@ -6,6 +6,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketCo
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketDistanceDetectorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEnvironmentUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketGeoScannerUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketInventoryManagerUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetectorUpgrade;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
@@ -22,6 +23,7 @@ public class PocketUpgradesProvider {
         upgrades.register(id(CCRegistration.ID.DISTANCE_POCKET), new PocketDistanceDetectorUpgrade(new ItemStack(APBlocks.DISTANCE_DETECTOR.get())));
         upgrades.register(id(CCRegistration.ID.ENVIRONMENT_POCKET), new PocketEnvironmentUpgrade(new ItemStack(APBlocks.ENVIRONMENT_DETECTOR.get())));
         upgrades.register(id(CCRegistration.ID.GEOSCANNER_POCKET), new PocketGeoScannerUpgrade(new ItemStack(APBlocks.GEO_SCANNER.get())));
+        upgrades.register(id(CCRegistration.ID.INVENTORY_MANAGER_POCKET), new PocketInventoryManagerUpgrade(new ItemStack(APBlocks.INVENTORY_MANAGER.get())));
         upgrades.register(id(CCRegistration.ID.PLAYER_POCKET), new PocketPlayerDetectorUpgrade(new ItemStack(APBlocks.PLAYER_DETECTOR.get())));
     }
 

@@ -36,12 +36,13 @@ public class BlockTagsProvider extends TagsProvider<Block> {
 
     @Override
     protected void addTags(@NotNull HolderLookup.Provider provider) {
-        blockRegistry.getEntries().stream().map(DeferredHolder::get).forEach(block -> {
-            if (!(block instanceof IHarvestableBlock harvesterBlock))
+        for (DeferredHolder<Block, ? extends Block> holder : blockRegistry.getEntries()) {
+            if (!(holder.get() instanceof IHarvestableBlock harvesterBlock)) {
                 throw new IllegalArgumentException("For any block you should define harvester logic!");
-            tag(harvesterBlock.getHarvestTag()).add(BuiltInRegistries.BLOCK.getResourceKey(block).get());
-            tag(harvesterBlock.getToolTag()).add(BuiltInRegistries.BLOCK.getResourceKey(block).get());
-        });
+            }
+            tag(harvesterBlock.getHarvestTag()).add(holder.getKey());
+            tag(harvesterBlock.getToolTag()).add(holder.getKey());
+        }
     }
 
     @Override

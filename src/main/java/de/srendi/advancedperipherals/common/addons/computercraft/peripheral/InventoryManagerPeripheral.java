@@ -5,7 +5,10 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.api.pocket.IPocketAccess;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.InventoryManagerOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
@@ -16,6 +19,7 @@ import de.srendi.advancedperipherals.common.util.inventory.PlayerStorageItemWrap
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -23,20 +27,38 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
-public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerOwner> {
+public class InventoryManagerPeripheral extends BasePeripheral<IPeripheralOwner> {
     public static final String PLAYER_INV_MAGIC_NAME = "@";
     public static final String PERIPHERAL_TYPE = "inventory_manager";
+    private static final List<Function<InventoryManagerPeripheral, IPeripheralPlugin>> PERIPHERAL_PLUGINS = new ArrayList<>();
 
     private final Set<IComputerAccess> computerAccesses = ConcurrentHashMap.newKeySet();
 
+    protected InventoryManagerPeripheral(IPeripheralOwner owner) {
+        super(PERIPHERAL_TYPE, owner);
+        for (Function<InventoryManagerPeripheral, IPeripheralPlugin> plugin : PERIPHERAL_PLUGINS) {
+            this.addPlugin(plugin.apply(this));
+        }
+    }
+
     public InventoryManagerPeripheral(InventoryManagerEntity tileEntity) {
-        super(PERIPHERAL_TYPE, new InventoryManagerOwner(tileEntity));
+        this(new InventoryManagerOwner(tileEntity));
+    }
+
+    public InventoryManagerPeripheral(IPocketAccess pocket) {
+        this(PocketPeripheralOwner.of(pocket));
+    }
+
+    public static void addIntegrationPlugin(Function<InventoryManagerPeripheral, IPeripheralPlugin> plugin) {
+        PERIPHERAL_PLUGINS.add(plugin);
     }
 
     @Override
@@ -68,24 +90,26 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     }
 
     public Player getOwnerPlayer() {
-        return owner.getOwner();
+        return owner instanceof InventoryManagerOwner imOwner
+            ? imOwner.getOwner()
+            : owner.getHoldingEntity() instanceof Player player ? player : null;
     }
 
-    private ServerPlayer getOwnerPlayerOrError() throws LuaException {
-        Player player = owner.getOwner();
+    public ServerPlayer getOwnerPlayerOrError() throws LuaException {
+        Player player = this.getOwnerPlayer();
         if (player == null) {
             throw new LuaException("The Inventory Manager doesn't have a memory card or it isn't bound to a player.");
         }
         return (ServerPlayer) player;
     }
 
-    private IItemHandler getPlayerInventory() throws LuaException {
+    public IItemHandler getPlayerInventory() throws LuaException {
         return new PlayerInvWrapper(this.getOwnerPlayerOrError().getInventory());
     }
 
     @LuaFunction
     public final MethodResult getOwner() throws LuaException {
-        Player player = owner.getOwner();
+        Player player = this.getOwnerPlayer();
         if (player == null) {
             return MethodResult.of();
         }
@@ -98,7 +122,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<Integer, Object> list() throws LuaException {
+    public final Map<Integer, ?> list() throws LuaException {
         return InventoryUtil.list(this.getPlayerInventory());
     }
 
@@ -111,8 +135,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
             return MethodResult.of(null, filter.right());
         }
 
-        IItemHandler inventoryTo = this.getInventoryHandler(computer, toName);
         IItemHandler inventoryFrom = this.getPlayerInventory();
+        IItemHandler inventoryTo = this.getItemHandler(computer, toName);
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 
@@ -125,8 +149,8 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
             return MethodResult.of(null, filter.right());
         }
 
-        IItemHandler inventoryFrom = this.getInventoryHandler(computer, fromName);
         IItemHandler inventoryTo = this.getPlayerInventory();
+        IItemHandler inventoryFrom = this.getItemHandler(computer, fromName);
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 
@@ -174,25 +198,18 @@ public class InventoryManagerPeripheral extends BasePeripheral<InventoryManagerO
         return LuaConverter.itemStackToLua(this.getOwnerPlayerOrError().getOffhandItem());
     }
 
-    private void assertAllowItemTransfers() throws LuaException {
+    public void assertAllowItemTransfers() throws LuaException {
         if (!APConfig.PERIPHERALS_CONFIG.enableItemsTransfer.get()) {
             throw new LuaException("This function is disabled in the config [Inventory_Manager.enableItemsTransfer]. Activate it or ask admins if they can activate it.");
         }
     }
 
+    @Override
     @NotNull
-    private IItemHandler getInventoryHandler(IComputerAccess computer, String name) throws LuaException {
+    public IItemHandler getItemHandler(IComputerAccess computer, String name) throws LuaException {
         if (name.equals(PLAYER_INV_MAGIC_NAME)) {
             return this.getPlayerInventory();
         }
-        IPeripheral toPeripheral = computer.getAvailablePeripheral(name);
-        if (toPeripheral == null) {
-            throw new LuaException("Target '" + name + "' does not exist");
-        }
-        IItemHandler inventory = ItemUtil.extractHandler(toPeripheral);
-        if (inventory == null) {
-            throw new LuaException("Target '" + name + "' is not an inventory");
-        }
-        return inventory;
+        return super.getItemHandler(computer, name);
     }
 }

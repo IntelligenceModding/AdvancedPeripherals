@@ -2,31 +2,27 @@ package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import net.neoforged.fml.ModList;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+import java.lang.reflect.InvocationTargetException;
 
 public class Platform {
-
-    public static Optional<Object> maybeLoadIntegration(final String modid, final String path) {
-        if (!ModList.get().isLoaded(modid)) {
-            AdvancedPeripherals.LOGGER.info("{} not loaded, skip integration loading", modid);
-            return Optional.empty();
-        }
-        return maybeLoadIntegration(path);
-    }
-
-    public static Optional<Object> maybeLoadIntegration(final String path) {
+    @Nullable
+    public static Runnable maybeLoadIntegration(final String path) {
+        String classPath = AdvancedPeripherals.class.getPackage().getName() + ".common.addons." + path;
         try {
-            Class<?> clazz = Class.forName(AdvancedPeripherals.class.getPackage().getName() + ".common.addons." + path);
-            return Optional.of(clazz.getDeclaredConstructor().newInstance());
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException loadException) {
-            if (APConfig.GENERAL_CONFIG.enableDebugMode.get())
-                loadException.printStackTrace();
-            return Optional.empty();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Optional.empty();
+            Class<?> clazz = Class.forName(classPath);
+            return (Runnable) clazz.getDeclaredConstructor().newInstance();
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            throw new IllegalArgumentException("Class " + classPath + " does not have public default constructor", e);
+        } catch (ClassNotFoundException e) {
+            if (APConfig.GENERAL_CONFIG.enableDebugMode.get()) {
+                e.printStackTrace();
+            }
+            return null;
+        } catch (InstantiationException | InvocationTargetException | RuntimeException e) {
+            AdvancedPeripherals.exception("Failed to initialize integration class " + classPath, e);
+            return null;
         }
     }
 }

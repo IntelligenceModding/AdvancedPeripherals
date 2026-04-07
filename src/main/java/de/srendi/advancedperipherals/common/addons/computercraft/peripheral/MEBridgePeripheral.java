@@ -37,6 +37,7 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
+import net.minecraft.core.Direction;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -340,14 +341,20 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         String side = arguments.getString(1);
-        IItemHandler inventory = ItemUtil.getHandlerFromDirection(side, owner);
-
-        if (inventory == null) {
-            inventory = ItemUtil.getHandlerFromName(computer, side);
+        IItemHandler inventory;
+        if (side.length() >= 1 && side.charAt(0) == '@') {
+            Direction dir = this.mapDirection(side.substring(1));
+            if (dir == null) {
+                throw new LuaException("Target '" + side + "' is an invalid direction");
+            }
+            inventory = ItemUtil.getHandlerFromDirection(owner, dir);
+        } else {
+            inventory = ItemUtil.extractHandler(computer.getAvailablePeripheral(side));
         }
 
-        if (inventory == null)
+        if (inventory == null) {
             return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+        }
 
         return importToME(arguments, inventory);
     }
@@ -359,14 +366,20 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
             return notConnected(0);
 
         String side = arguments.getString(1);
-        IItemHandler inventory = ItemUtil.getHandlerFromDirection(side, owner);
-
-        if (inventory == null) {
-            inventory = ItemUtil.getHandlerFromName(computer, side);
+        IItemHandler inventory;
+        if (side.length() >= 1 && side.charAt(0) == '@') {
+            Direction dir = this.mapDirection(side.substring(1));
+            if (dir == null) {
+                throw new LuaException("Target '" + side + "' is an invalid direction");
+            }
+            inventory = ItemUtil.getHandlerFromDirection(owner, dir);
+        } else {
+            inventory = ItemUtil.extractHandler(computer.getAvailablePeripheral(side));
         }
 
-        if (inventory == null)
+        if (inventory == null) {
             return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+        }
 
         return exportToChest(arguments, inventory);
     }

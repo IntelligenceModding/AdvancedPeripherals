@@ -1,11 +1,9 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
-import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.shared.peripheral.generic.GenericPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
-import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,7 +31,11 @@ public class ItemUtil {
     private ItemUtil() {
     }
 
-    public static IItemHandler extractHandler(IPeripheral peripheral) {
+    @Nullable
+    public static IItemHandler extractHandler(@Nullable IPeripheral peripheral) {
+        if (peripheral == null) {
+            return null;
+        }
         Object target = peripheral.getTarget();
         if (target instanceof IItemHandler handler) {
             return handler;
@@ -48,6 +50,7 @@ public class ItemUtil {
         return null;
     }
 
+    @Nullable
     public static IItemHandler extractHandler(@Nullable Object object, @Nullable Level level, @Nullable BlockPos pos, @Nullable Direction direction) {
         if (object instanceof IItemHandler itemHandler) {
             return itemHandler;
@@ -127,26 +130,18 @@ public class ItemUtil {
     }
 
     @Nullable
-    public static IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
-        IPeripheral location = access.getAvailablePeripheral(name);
-        if (location == null) {
-            return null;
-        }
-        return extractHandler(location.getTarget(), null, null, null);
+    public static IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) {
+        return extractHandler(access.getAvailablePeripheral(name));
     }
 
     @Nullable
-    public static IItemHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
+    public static IItemHandler getHandlerFromDirection(@NotNull IPeripheralOwner owner, @NotNull Direction direction) {
         Level level = Objects.requireNonNull(owner.getLevel());
-        Direction relativeDirection = CoordUtil.getDirection(owner.getFrontAndTop(), direction);
-        if (relativeDirection == null) {
-            return null;
-        }
-        BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
+        BlockEntity target = level.getBlockEntity(owner.getPos().relative(direction));
         if (target == null) {
             return null;
         }
-        return extractHandler(target, level, target.getBlockPos(), relativeDirection.getOpposite());
+        return extractHandler(target, level, target.getBlockPos(), direction.getOpposite());
     }
 
     @FunctionalInterface

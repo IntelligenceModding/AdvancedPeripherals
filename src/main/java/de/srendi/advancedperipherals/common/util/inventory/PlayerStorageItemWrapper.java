@@ -84,7 +84,7 @@ public class PlayerStorageItemWrapper {
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<Integer, Object> list() throws LuaException {
+    public final Map<Integer, ?> list() throws LuaException {
         this.assertValid();
         return InventoryUtil.list(this.handler);
     }
@@ -98,7 +98,7 @@ public class PlayerStorageItemWrapper {
             return MethodResult.of(null, filter.right());
         }
 
-        IItemHandler inventoryTo = this.getInventoryHandler(toName);
+        IItemHandler inventoryTo = this.getItemHandler(toName);
 
         return MethodResult.of(ItemUtil.moveItem(this.handler, inventoryTo, filter.left()));
     }
@@ -112,13 +112,13 @@ public class PlayerStorageItemWrapper {
             return MethodResult.of(null, filter.right());
         }
 
-        IItemHandler inventoryFrom = this.getInventoryHandler(fromName);
+        IItemHandler inventoryFrom = this.getItemHandler(fromName);
 
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, this.handler, filter.left()));
     }
 
     @NotNull
-    private IItemHandler getInventoryHandler(String name) throws LuaException {
+    private IItemHandler getItemHandler(String name) throws LuaException {
         if (name.equals(InventoryManagerPeripheral.PLAYER_INV_MAGIC_NAME)) {
             ServerPlayer player = this.player.get();
             if (player == null || player.isRemoved()) {

@@ -12,9 +12,9 @@ public class InventoryUtil {
     private InventoryUtil() {
     }
 
-    public static Map<Integer, Object> list(IItemHandler handler) throws LuaException {
+    public static Map<Integer, Map<String, Object>> list(IItemHandler handler) throws LuaException {
         int size = handler.getSlots();
-        Map<Integer, Object> items = new HashMap<>();
+        Map<Integer, Map<String, Object>> items = new HashMap<>();
         for (int slot = 0; slot < size; slot++) {
             ItemStack stack = handler.getStackInSlot(slot);
             if (!stack.isEmpty()) {

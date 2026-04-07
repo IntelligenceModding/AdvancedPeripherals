@@ -184,9 +184,9 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         String anchor = options.optString("anchor").orElse(null);
         String front = options.optString("front").orElse(null);
         String top = options.optString("top").orElse(null);
-        Direction anchorDir = anchor != null ? automataCore.validateSide(anchor) : null;
-        Direction frontDir = front != null ? automataCore.validateSide(front) : null;
-        Direction topDir = top != null ? automataCore.validateSide(top) : null;
+        Direction anchorDir = anchor != null ? automataCore.mapDirection(anchor) : null;
+        Direction frontDir = front != null ? automataCore.mapDirection(front) : null;
+        Direction topDir = top != null ? automataCore.mapDirection(top) : null;
 
         int distance =
                 Math.max(0, Math.abs(x) - freeDist) +

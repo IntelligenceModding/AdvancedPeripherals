@@ -10,6 +10,7 @@ public enum APAddon {
     AE2THINGS("ae2things"),
     APP_MEKANISTICS("appmek"),
     CURIOS("curios"),
+    DIMSTORAGE("dimstorage"),
     MEKANISM("mekanism"),
     MINECOLONIES("minecolonies"),
     PATCHOULI("patchouli"),

@@ -88,11 +88,6 @@ public abstract class AutomataCorePeripheral extends BasePeripheral<TurtlePeriph
         attributes.put(attribute, true);
     }
 
-    @Override
-    public Direction validateSide(String direction) throws LuaException {
-        return super.validateSide(direction);
-    }
-
     public boolean isDestroyed() {
         return this.destroyed;
     }

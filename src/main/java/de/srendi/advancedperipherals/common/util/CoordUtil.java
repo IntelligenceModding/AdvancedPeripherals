@@ -108,15 +108,16 @@ public class CoordUtil {
     }
 
     @Nullable
-    public static Direction getDirection(FrontAndTop orientation, String computerSide) throws LuaException {
+    public static Direction getDirection(@NotNull FrontAndTop orientation, @Nullable String computerSide) {
         if (computerSide == null) {
             return null;
         }
 
         computerSide = computerSide.toLowerCase(Locale.ROOT);
         Direction dir = Direction.byName(computerSide);
-        if (dir != null)
+        if (dir != null) {
             return dir;
+        }
 
         Direction top = orientation.top();
         Direction front = orientation.front();
@@ -126,23 +127,13 @@ public class CoordUtil {
             return null;
         }
 
-        if (front.getAxis() == Direction.Axis.Y) {
-            return switch (side) {
-                case FRONT -> front;
-                case BACK -> front.getOpposite();
-                case TOP -> top;
-                case BOTTOM -> top.getOpposite();
-                case RIGHT -> top.getClockWise();
-                case LEFT -> top.getCounterClockWise();
-            };
-        }
         return switch (side) {
             case FRONT -> front;
             case BACK -> front.getOpposite();
-            case TOP -> Direction.UP;
-            case BOTTOM -> Direction.DOWN;
-            case RIGHT -> front.getCounterClockWise();
-            case LEFT -> front.getClockWise();
+            case TOP -> top;
+            case BOTTOM -> top.getOpposite();
+            case RIGHT -> front == Direction.UP ? top.getClockWise() : front.getCounterClockWise();
+            case LEFT -> front == Direction.UP ? top.getCounterClockWise() : front.getClockWise();
         };
     }
 

@@ -12,6 +12,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketCo
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketDistanceDetectorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEnvironmentUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketGeoScannerUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketInventoryManagerUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetectorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBoxUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunkyUpgrade;
@@ -51,6 +52,7 @@ public class CCRegistration {
     public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketDistanceDetectorUpgrade>> DISTANCE_DETECTOR_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.DISTANCE_POCKET.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketDistanceDetectorUpgrade::new));
     public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketEnvironmentUpgrade>> ENVIRONMENT_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.ENVIRONMENT_POCKET.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketEnvironmentUpgrade::new));
     public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketGeoScannerUpgrade>> GEO_SCANNER_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.GEOSCANNER_POCKET.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketGeoScannerUpgrade::new));
+    public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketInventoryManagerUpgrade>> INVENTORY_MANAGER_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.INVENTORY_MANAGER_POCKET.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketInventoryManagerUpgrade::new));
     public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketPlayerDetectorUpgrade>> PLAYER_DETECTOR_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.PLAYER_POCKET.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketPlayerDetectorUpgrade::new));
 
     public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketColonyIntegratorUpgrade>> COLONY_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.COLONY_POCKET.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketColonyIntegratorUpgrade::new));
@@ -87,6 +89,7 @@ public class CCRegistration {
         public static final ResourceLocation DISTANCE_POCKET = AdvancedPeripherals.getRL("distance_pocket");
         public static final ResourceLocation ENVIRONMENT_POCKET = AdvancedPeripherals.getRL("environment_pocket");
         public static final ResourceLocation GEOSCANNER_POCKET = AdvancedPeripherals.getRL("geoscanner_pocket");
+        public static final ResourceLocation INVENTORY_MANAGER_POCKET = AdvancedPeripherals.getRL("inventory_manager_pocket");
         public static final ResourceLocation PLAYER_POCKET = AdvancedPeripherals.getRL("player_pocket");
     }
 }

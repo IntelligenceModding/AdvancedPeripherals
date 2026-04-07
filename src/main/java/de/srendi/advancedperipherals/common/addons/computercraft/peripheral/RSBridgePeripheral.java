@@ -39,6 +39,7 @@ import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeriphe
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
+import net.minecraft.core.Direction;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -376,13 +377,20 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(0);
 
-        IItemHandler inventory = ItemUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        String side = arguments.getString(1);
+        IItemHandler inventory;
+        if (side.length() >= 1 && side.charAt(0) == '@') {
+            Direction dir = this.mapDirection(side.substring(1));
+            if (dir == null) {
+                throw new LuaException("Target '" + side + "' is an invalid direction");
+            }
+            inventory = ItemUtil.getHandlerFromDirection(owner, dir);
+        } else {
+            inventory = ItemUtil.extractHandler(computer.getAvailablePeripheral(side));
+        }
 
         if (inventory == null) {
-            inventory = ItemUtil.getHandlerFromName(computer, arguments.getString(1));
-            if (inventory == null) {
-                return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-            }
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
         }
 
         return importToRS(arguments, inventory);
@@ -394,13 +402,20 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         if (!isAvailable())
             return notConnected(0);
 
-        IItemHandler inventory = ItemUtil.getHandlerFromDirection(arguments.getString(1), owner);
+        String side = arguments.getString(1);
+        IItemHandler inventory;
+        if (side.length() >= 1 && side.charAt(0) == '@') {
+            Direction dir = this.mapDirection(side.substring(1));
+            if (dir == null) {
+                throw new LuaException("Target '" + side + "' is an invalid direction");
+            }
+            inventory = ItemUtil.getHandlerFromDirection(owner, dir);
+        } else {
+            inventory = ItemUtil.extractHandler(computer.getAvailablePeripheral(side));
+        }
 
         if (inventory == null) {
-            inventory = ItemUtil.getHandlerFromName(computer, arguments.getString(1));
-            if (inventory == null) {
-                return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-            }
+            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
         }
 
         return exportToChest(arguments, inventory);

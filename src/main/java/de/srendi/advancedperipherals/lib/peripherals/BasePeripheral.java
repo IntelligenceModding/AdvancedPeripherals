@@ -13,10 +13,12 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripher
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,9 +35,9 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     protected final String type;
     @NotNull
     protected final O owner;
-    protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
-    protected boolean initialized = false;
     protected final List<IPeripheralPlugin> plugins = new ArrayList<>();
+    protected boolean initialized = false;
+    protected final List<BoundMethod> pluggedMethods = new ArrayList<>();
     protected String[] methodNames = new String[0];
 
     protected BasePeripheral(String type, @NotNull O owner) {
@@ -52,7 +54,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         this.plugins.stream()
             .filter(plugin -> plugin.isSuitable(this))
             .forEach(plugin -> this.pluggedMethods.addAll(plugin.getMethods()));
-        owner.getAbilities().forEach(ability -> {
+        this.owner.getAbilities().forEach(ability -> {
             if (ability instanceof IPeripheralPlugin peripheralPlugin) {
                 this.pluggedMethods.addAll(peripheralPlugin.getMethods());
             }
@@ -158,7 +160,8 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return BlockPos.containing(this.getPhysicsPos());
     }
 
-    protected Direction validateSide(String direction) throws LuaException {
+    @Nullable
+    public Direction mapDirection(String direction) {
         return CoordUtil.getDirection(owner.getFrontAndTop(), direction);
     }
 
@@ -186,5 +189,29 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
             throw new IllegalStateException("This shouldn't happen at all");
         }
         return operationAbility.performOperation(operation, context, check, method, successCallback, failCallback);
+    }
+
+    @NotNull
+    protected IItemHandler getItemHandler(IComputerAccess computer, String name) throws LuaException {
+        if (name.length() >= 1 && name.charAt(0) == '@') {
+            Direction dir = this.mapDirection(name.substring(1));
+            if (dir == null) {
+                throw new LuaException("Target '" + name + "' is an invalid direction");
+            }
+            IItemHandler inventory = ItemUtil.getHandlerFromDirection(owner, dir);
+            if (inventory == null) {
+                throw new LuaException("Target '" + name + "' is not an inventory");
+            }
+            return inventory;
+        }
+        IPeripheral toPeripheral = computer.getAvailablePeripheral(name);
+        if (toPeripheral == null) {
+            throw new LuaException("Target '" + name + "' does not exist");
+        }
+        IItemHandler inventory = ItemUtil.extractHandler(toPeripheral);
+        if (inventory == null) {
+            throw new LuaException("Target '" + name + "' is not an inventory");
+        }
+        return inventory;
     }
 }
