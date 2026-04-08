@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.LineRenderer;
+import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
@@ -16,10 +16,6 @@ import java.util.UUID;
  * Just a line
  */
 public class LineObject extends RenderableObject {
-    public static final int TYPE_ID = 8;
-
-    private static final LineRenderer RENDERER = new LineRenderer();
-
     @FloatingNumberProperty
     public float endX = 0;
 
@@ -47,13 +43,8 @@ public class LineObject extends RenderableObject {
 
     @Override
     @NotNull
-    public String getType() {
-        return "line";
-    }
-
-    @Override
-    public int getTypeId() {
-        return TYPE_ID;
+    public OverlayObjectType<LineObject> getType() {
+        return APOverlayObjects.LINE.get();
     }
 
     @Override
@@ -72,10 +63,5 @@ public class LineObject extends RenderableObject {
         this.endY = buffer.readFloat();
         this.pixelated = buffer.readBoolean();
         this.width = buffer.readInt();
-    }
-
-    @Override
-    public IObjectRenderer getObjectRenderer() {
-        return RENDERER;
     }
 }

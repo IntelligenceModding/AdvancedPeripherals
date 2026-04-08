@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
 
-import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
@@ -23,9 +22,6 @@ public abstract class ThreeDimensionalObject extends RenderableObject {
     public ThreeDimensionalObject(UUID player) {
         super(player);
     }
-
-    @Override
-    public abstract IThreeDObjectRenderer<?> getObjectRenderer();
 
     @Override
     public void encode(FriendlyByteBuf buffer) {

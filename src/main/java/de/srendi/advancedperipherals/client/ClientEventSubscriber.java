@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
+import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
@@ -28,6 +29,12 @@ public class ClientEventSubscriber {
     @SubscribeEvent
     public static void onClientLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
         ClientUUIDCache.reset();
+    }
+
+    @SubscribeEvent
+    public static void onClientLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        ClientUUIDCache.reset();
+        OverlayObjectHolder.clear();
     }
 
     @SubscribeEvent

@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
-import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
@@ -44,9 +43,6 @@ public abstract class RenderableObject extends OverlayObject {
         super(player);
     }
 
-    // TODO: switch to Registry
-    public abstract int getTypeId();
-
     @Override
     public void tryAutoUpdate() {
         this.getModule().update(this);
@@ -88,8 +84,6 @@ public abstract class RenderableObject extends OverlayObject {
         this.rotY = buffer.readFloat();
         this.rotZ = buffer.readFloat();
     }
-
-    public abstract IObjectRenderer getObjectRenderer();
 
     @Override
     public String toString() {

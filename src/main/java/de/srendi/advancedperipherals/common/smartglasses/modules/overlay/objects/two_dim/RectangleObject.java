@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.RectangleRenderer;
+import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,10 +14,6 @@ import java.util.UUID;
  * Just a rectangle
  */
 public class RectangleObject extends RenderableObject {
-    public static final int TYPE_ID = 0;
-
-    private static final RectangleRenderer RENDERER = new RectangleRenderer();
-
     @FloatingNumberProperty(min = 0)
     public float sizeX = 0;
 
@@ -39,13 +35,8 @@ public class RectangleObject extends RenderableObject {
 
     @Override
     @NotNull
-    public String getType() {
-        return "rectangle";
-    }
-
-    @Override
-    public int getTypeId() {
-        return TYPE_ID;
+    public OverlayObjectType<RectangleObject> getType() {
+        return APOverlayObjects.RECTANGLE.get();
     }
 
     @Override
@@ -60,10 +51,5 @@ public class RectangleObject extends RenderableObject {
         super.decode(buffer);
         this.sizeX = buffer.readFloat();
         this.sizeY = buffer.readFloat();
-    }
-
-    @Override
-    public IObjectRenderer getObjectRenderer() {
-        return RENDERER;
     }
 }

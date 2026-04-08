@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.CircleRenderer;
+import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
@@ -12,10 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class CircleObject extends RenderableObject {
-    public static final int TYPE_ID = 1;
-
-    private static final CircleRenderer RENDERER = new CircleRenderer();
-
     @FixedPointNumberProperty(min = 0)
     public int radius = 0;
 
@@ -41,13 +37,8 @@ public class CircleObject extends RenderableObject {
 
     @Override
     @NotNull
-    public String getType() {
-        return "circle";
-    }
-
-    @Override
-    public int getTypeId() {
-        return TYPE_ID;
+    public OverlayObjectType<CircleObject> getType() {
+        return APOverlayObjects.CIRCLE.get();
     }
 
     @Override
@@ -68,11 +59,6 @@ public class CircleObject extends RenderableObject {
         this.pixelated = buffer.readBoolean();
         this.borderWidth = buffer.readInt();
         this.segments = buffer.readInt();
-    }
-
-    @Override
-    public IObjectRenderer getObjectRenderer() {
-        return RENDERER;
     }
 
     @Override

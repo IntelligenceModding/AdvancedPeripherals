@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
-import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.TextRenderer;
+import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
@@ -13,10 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class TextObject extends RenderableObject {
-    public static final int TYPE_ID = 2;
-
-    private static final TextRenderer RENDERER = new TextRenderer();
-
     @StringProperty
     public String content = "";
 
@@ -39,18 +35,8 @@ public class TextObject extends RenderableObject {
 
     @Override
     @NotNull
-    public String getType() {
-        return "text";
-    }
-
-    @Override
-    public int getTypeId() {
-        return TYPE_ID;
-    }
-
-    @Override
-    public IObjectRenderer getObjectRenderer() {
-        return RENDERER;
+    public OverlayObjectType<TextObject> getType() {
+        return APOverlayObjects.TEXT.get();
     }
 
     @Override

@@ -4,6 +4,7 @@ import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import dan200.computercraft.api.upgrades.UpgradeType;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -15,6 +16,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.RegistryBuilder;
 
 public class APRegistration {
 
@@ -30,6 +33,8 @@ public class APRegistration {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, AdvancedPeripherals.MOD_ID);
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, AdvancedPeripherals.MOD_ID);
 
+    public static final DeferredRegister<OverlayObjectType<?>> OVERLAY_OBJECTS = DeferredRegister.create(APRegistries.OVERLAY_OBJECTS, AdvancedPeripherals.MOD_ID);
+
     public static void register(IEventBus modEventBus) {
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
@@ -42,6 +47,7 @@ public class APRegistration {
         POCKET_SERIALIZER.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
         DATA_COMPONENT_TYPES.register(modEventBus);
+        OVERLAY_OBJECTS.register(modEventBus);
 
         APBlocks.register();
         APItems.register();
@@ -52,9 +58,15 @@ public class APRegistration {
         APEntities.register();
         APCreativeTabs.register();
         APDataComponents.register();
+        APOverlayObjects.register();
         CCRegistration.register();
 
+        modEventBus.addListener(APRegistration::registerRegistries);
         modEventBus.addListener(APRegistration::onCommonSetup);
+    }
+
+    private static void registerRegistries(NewRegistryEvent event) {
+        event.create(new RegistryBuilder<>(OVERLAY_OBJECTS.getRegistryKey()));
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {

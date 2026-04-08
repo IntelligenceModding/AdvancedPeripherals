@@ -10,7 +10,6 @@ import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -25,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class OverlayModule implements IModule {
     private static final ResourceLocation ID = AdvancedPeripherals.getRL("overlay");
 
-    public final ConcurrentHashMap<Integer, RenderableObject> objects = new ConcurrentHashMap<>();
-    public final ConcurrentHashMap<Integer, RenderableObject> objectsToUpdate = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Integer, OverlayObject> objects = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<Integer, OverlayObject> objectsToUpdate = new ConcurrentHashMap<>();
     private final SmartGlassesSideAccess access;
 
     public boolean autoUpdate = true;
@@ -89,18 +88,16 @@ public class OverlayModule implements IModule {
         return access;
     }
 
-    public Map<Integer, RenderableObject> getObjects() {
+    public Map<Integer, OverlayObject> getObjects() {
         return objects;
     }
 
     /**
-     * Adds an object to the module. If the object already exists, it will return the object and stop proceeding
+     * Adds an object to the module.
      *
      * @param object The object which should be added
-     * @return A pair of the object and a boolean. The boolean is true if the object was added successfully and false if not.
-     * The object is the object which was added or the object which already exists(When not successful).
      */
-    public RenderableObject addObject(RenderableObject object) {
+    public void addObject(OverlayObject object) {
         int id = idCounter++;
         object.setId(id);
         if (autoUpdate) {
@@ -110,7 +107,6 @@ public class OverlayModule implements IModule {
         } else {
             objectsToUpdate.put(id, object);
         }
-        return object;
     }
 
     /**
@@ -120,8 +116,8 @@ public class OverlayModule implements IModule {
      * @return true if the object existed and was removed, false if the object was not in the collection
      */
     public boolean removeObject(int id) {
-        RenderableObject removed = objects.remove(id);
-        RenderableObject removedUpdating = objectsToUpdate.remove(id);
+        OverlayObject removed = objects.remove(id);
+        OverlayObject removedUpdating = objectsToUpdate.remove(id);
         if (removed == null) {
             return removedUpdating != null;
         }
@@ -148,7 +144,7 @@ public class OverlayModule implements IModule {
      *
      * @param object the object to sync to the player
      */
-    public void update(RenderableObject object) {
+    public void update(OverlayObject object) {
         if (autoUpdate) {
             ServerPlayer owner = this.getOwner();
             PacketDistributor.sendToPlayer(owner, new RenderableObjectSyncPacket(owner.getUUID(), object));
@@ -164,13 +160,13 @@ public class OverlayModule implements IModule {
         int size = objectsToUpdate.size();
         int packetCount = (size + maxPackets - 1) / maxPackets;
 
-        List<RenderableObject> packedObjects = new ArrayList<>();
+        List<OverlayObject> packedObjects = new ArrayList<>();
         // In some cases, if the user creates a lot of objects above 15k, the packet payload can be too big.
         // We split up the packets for every 15k objects to prevent the payload limit from mc
         for (int i = 0; i < packetCount; i++) {
             int count = 0;
             packedObjects.clear();
-            for (RenderableObject object : objectsToUpdate.values()) {
+            for (OverlayObject object : objectsToUpdate.values()) {
                 packedObjects.add(object);
                 objects.put(object.getId(), object);
                 objectsToUpdate.remove(object.getId());

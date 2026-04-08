@@ -3,9 +3,9 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.object
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.LuaTable;
-import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.BlockRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
+import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,10 +19,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class BlockObject extends ThreeDimensionalObject {
-    public static final int TYPE_ID = 5;
-
-    private static final BlockRenderer RENDERER = new BlockRenderer();
-
     // @StringProperty
     public ResourceKey<Block> block = null;
 
@@ -38,13 +34,8 @@ public class BlockObject extends ThreeDimensionalObject {
 
     @Override
     @NotNull
-    public String getType() {
-        return "block";
-    }
-
-    @Override
-    public int getTypeId() {
-        return TYPE_ID;
+    public OverlayObjectType<BlockObject> getType() {
+        return APOverlayObjects.BLOCK.get();
     }
 
     @LuaFunction
@@ -97,10 +88,5 @@ public class BlockObject extends ThreeDimensionalObject {
     public void decode(FriendlyByteBuf buffer) {
         super.decode(buffer);
         this.block = buffer.readBoolean() ? buffer.readResourceKey(Registries.BLOCK) : null;
-    }
-
-    @Override
-    public IThreeDObjectRenderer getObjectRenderer() {
-        return RENDERER;
     }
 }

@@ -3,9 +3,9 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.object
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.LuaTable;
-import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
-import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ItemRenderer;
+import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -19,10 +19,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class ItemObject extends RenderableObject {
-    public static final int TYPE_ID = 3;
-
-    private static final ItemRenderer RENDERER = new ItemRenderer();
-
     // @StringProperty
     public ResourceKey<Item> item = null;
 
@@ -36,13 +32,8 @@ public class ItemObject extends RenderableObject {
 
     @Override
     @NotNull
-    public String getType() {
-        return "item";
-    }
-
-    @Override
-    public int getTypeId() {
-        return TYPE_ID;
+    public OverlayObjectType<ItemObject> getType() {
+        return APOverlayObjects.ITEM.get();
     }
 
     @LuaFunction
@@ -83,11 +74,6 @@ public class ItemObject extends RenderableObject {
     public void decode(FriendlyByteBuf buffer) {
         super.decode(buffer);
         this.item = buffer.readBoolean() ? buffer.readResourceKey(Registries.ITEM) : null;
-    }
-
-    @Override
-    public IObjectRenderer getObjectRenderer() {
-        return RENDERER;
     }
 
     @Override

@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.client.smartglasses;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -18,15 +18,16 @@ import java.util.Map;
 @EventBusSubscriber(Dist.CLIENT)
 public class OverlayModuleLevelRenderer {
 
+    @SuppressWarnings("rawtypes")
     @SubscribeEvent
     public static void renderLevelState(RenderLevelStageEvent event) {
         PoseStack poseStack = event.getPoseStack();
         Vec3 view = event.getCamera().getPosition();
 
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
-            Map<Class<? extends ThreeDimensionalObject>, List<ThreeDimensionalObject>> batches = new HashMap<>();
+            Map<IThreeDObjectRenderer, List<ThreeDimensionalObject>> batches = new HashMap<>();
 
-            for (RenderableObject object : OverlayObjectHolder.getObjects()) {
+            for (OverlayObject object : OverlayObjectHolder.getObjects()) {
                 if (!object.isEnabled()) {
                     continue;
                 }
@@ -34,18 +35,12 @@ public class OverlayModuleLevelRenderer {
                     continue;
                 }
 
-                Class<? extends ThreeDimensionalObject> objectClass = threeDimObject.getClass();
-
-                List<ThreeDimensionalObject> batchList = batches.get(objectClass);
-                if (batchList == null) {
-                    batchList = new ArrayList<>();
-                    batches.put(objectClass, batchList);
-                }
-                batchList.add(threeDimObject);
+                IThreeDObjectRenderer renderer = (IThreeDObjectRenderer) object.getType().getRenderer();
+                batches.computeIfAbsent(renderer, (r) -> new ArrayList<>()).add(threeDimObject);
             }
 
-            for (List<ThreeDimensionalObject> batch : batches.values()) {
-                ((IThreeDObjectRenderer) batch.get(0).getObjectRenderer()).renderBatch(batch, event, poseStack, view);
+            for (Map.Entry<IThreeDObjectRenderer, List<ThreeDimensionalObject>> entry : batches.entrySet()) {
+                entry.getKey().renderBatch(entry.getValue(), event, poseStack, view);
             }
         }
     }

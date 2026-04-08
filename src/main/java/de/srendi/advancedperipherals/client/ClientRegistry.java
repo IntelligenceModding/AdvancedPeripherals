@@ -9,7 +9,6 @@ import de.srendi.advancedperipherals.client.screens.KeyboardScreen;
 import de.srendi.advancedperipherals.client.screens.SaddleTurtleOverlay;
 import de.srendi.advancedperipherals.client.screens.SmartGlassesScreen;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayModuleOverlay;
-import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
@@ -32,7 +31,6 @@ public class ClientRegistry {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         ItemPropertiesRegistry.register();
-        OverlayObjectHolder.registerDecodeObjects();
     }
 
     @SubscribeEvent
