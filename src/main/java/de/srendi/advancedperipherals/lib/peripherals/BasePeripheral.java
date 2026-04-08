@@ -13,11 +13,14 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripher
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
+import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -191,6 +194,18 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
         return operationAbility.performOperation(operation, context, check, method, successCallback, failCallback);
     }
 
+    @Nullable
+    protected IItemHandler getItemHandlerOrNull(IComputerAccess computer, String name) {
+        if (name.length() >= 1 && name.charAt(0) == '@') {
+            Direction dir = this.mapDirection(name.substring(1));
+            if (dir == null) {
+                return null;
+            }
+            return ItemUtil.getHandlerFromDirection(owner, dir);
+        }
+        return ItemUtil.extractHandler(computer.getAvailablePeripheral(name));
+    }
+
     @NotNull
     protected IItemHandler getItemHandler(IComputerAccess computer, String name) throws LuaException {
         if (name.length() >= 1 && name.charAt(0) == '@') {
@@ -213,5 +228,30 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
             throw new LuaException("Target '" + name + "' is not an inventory");
         }
         return inventory;
+    }
+
+    @Nullable
+    protected IFluidHandler getFluidHandlerOrNull(IComputerAccess computer, String name) {
+        if (name.length() >= 1 && name.charAt(0) == '@') {
+            Direction dir = this.mapDirection(name.substring(1));
+            if (dir == null) {
+                return null;
+            }
+            return FluidUtil.getHandlerFromDirection(owner, dir);
+        }
+        return FluidUtil.extractHandler(computer.getAvailablePeripheral(name));
+    }
+
+
+    @Nullable
+    protected Object /*IChemicalHandler*/ getChemicalHandlerOrNull(IComputerAccess computer, String name) {
+        if (name.length() >= 1 && name.charAt(0) == '@') {
+            Direction dir = this.mapDirection(name.substring(1));
+            if (dir == null) {
+                return null;
+            }
+            return ChemicalUtil.getHandlerFromDirection(owner, dir);
+        }
+        return ChemicalUtil.extractHandler(computer.getAvailablePeripheral(name));
     }
 }

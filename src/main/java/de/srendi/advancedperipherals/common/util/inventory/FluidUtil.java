@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.shared.peripheral.generic.GenericPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.FingerprintUtil;
@@ -66,9 +67,26 @@ public class FluidUtil {
         return filter.getAmount() - needs;
     }
 
+    @Nullable
+    public static IFluidHandler extractHandler(@Nullable IPeripheral peripheral) {
+        if (peripheral == null) {
+            return null;
+        }
+        Object target = peripheral.getTarget();
+        if (target instanceof IFluidHandler handler) {
+            return handler;
+        }
+        if (target instanceof BlockEntity be) {
+            Direction side = peripheral instanceof GenericPeripheral sided ? sided.side() : null;
+            return be.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), side);
+        }
+        return null;
+    }
+
     public static IFluidHandler extractHandler(@Nullable Object object, @Nullable Level level, @Nullable BlockPos pos, @Nullable Direction direction) {
-        if (object instanceof IFluidHandler itemHandler)
-            return itemHandler;
+        if (object instanceof IFluidHandler handler) {
+            return handler;
+        }
         if (object instanceof BlockEntity blockEntity && level == null && pos == null) {
             pos = blockEntity.getBlockPos();
             level = blockEntity.getLevel();
@@ -80,32 +98,13 @@ public class FluidUtil {
     }
 
     @Nullable
-    public static IFluidHandler getHandlerFromDirection(@NotNull String direction, @NotNull IPeripheralOwner owner) throws LuaException {
+    public static IFluidHandler getHandlerFromDirection(@NotNull IPeripheralOwner owner, @NotNull Direction direction) {
         Level level = Objects.requireNonNull(owner.getLevel());
-        Direction relativeDirection = CoordUtil.getDirection(owner.getFrontAndTop(), direction);
-        if (relativeDirection == null) {
-            return null;
-        }
-        BlockEntity target = level.getBlockEntity(owner.getPos().relative(relativeDirection));
+        BlockEntity target = level.getBlockEntity(owner.getPos().relative(direction));
         if (target == null) {
             return null;
         }
-        return extractHandler(target, level, owner.getPos().relative(relativeDirection), relativeDirection);
-    }
-
-    @Nullable
-    public static IFluidHandler getHandlerFromName(@NotNull IComputerAccess access, String name) throws LuaException {
-        IPeripheral location = access.getAvailablePeripheral(name);
-
-        // Tanks/Block Entities can't be accessed if the bridge is not exposed to the same network as the target tank/block entity
-        // This can occur when the bridge was wrapped via a side and not via modems
-        if (location == null)
-            return null;
-
-        IFluidHandler handler = extractHandler(location.getTarget(), null, null, null);
-        if (handler == null)
-            throw new LuaException("Target '" + name + "' is not a fluid handler");
-        return handler;
+        return extractHandler(target, level, target.getBlockPos(), direction.getOpposite());
     }
 
     @NotNull

@@ -130,11 +130,6 @@ public class ItemUtil {
     }
 
     @Nullable
-    public static IItemHandler getHandlerFromName(@NotNull IComputerAccess access, String name) {
-        return extractHandler(access.getAvailablePeripheral(name));
-    }
-
-    @Nullable
     public static IItemHandler getHandlerFromDirection(@NotNull IPeripheralOwner owner, @NotNull Direction direction) {
         Level level = Objects.requireNonNull(owner.getLevel());
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(direction));
