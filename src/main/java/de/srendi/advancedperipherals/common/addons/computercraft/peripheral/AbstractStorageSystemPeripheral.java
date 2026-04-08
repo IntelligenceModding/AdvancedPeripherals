@@ -39,29 +39,14 @@ import java.util.Optional;
  * This ensures that these both bridges use the same methods. This makes it easier to support both in the same script
  * In case there is a new mod which adds new ways to store and craft items, this ensures that the new peripheral
  * has the same functions as the other ones
+ *
+ * @param <O> peripheral owner type
  */
 public abstract class AbstractStorageSystemPeripheral<O extends IPeripheralOwner> extends BasePeripheral<O> {
-    protected AbstractStorageSystemPeripheral(String type, @NotNull O owner) {
-        super(type, owner);
-    }
-
     static final MethodResult NOT_CONNECTED_RESULT = MethodResult.of(null, StatusConstants.NOT_CONNECTED.toString());
 
-    public abstract boolean isAvailable();
-
-    @LuaFunction(mainThread = true)
-    public final boolean isConnected() {
-        return this.isAvailable();
-    }
-
-    public abstract boolean isOnlineImpl();
-
-    @LuaFunction(mainThread = true)
-    public final boolean isOnline() {
-        if (!this.isAvailable()) {
-            return false;
-        }
-        return this.isOnlineImpl();
+    protected AbstractStorageSystemPeripheral(String type, @NotNull O owner) {
+        super(type, owner);
     }
 
     @Nullable
@@ -84,6 +69,23 @@ public abstract class AbstractStorageSystemPeripheral<O extends IPeripheralOwner
     public abstract IFluidHandler getStorageSystemFluidHandler();
     @NotNull
     public abstract Object /*IChemicalHandler*/ getStorageSystemChemicalHandler();
+
+    public abstract boolean isAvailable();
+
+    @LuaFunction(mainThread = true)
+    public final boolean isConnected() {
+        return this.isAvailable();
+    }
+
+    public abstract boolean isOnlineImpl();
+
+    @LuaFunction(mainThread = true)
+    public final boolean isOnline() {
+        if (!this.isAvailable()) {
+            return false;
+        }
+        return this.isOnlineImpl();
+    }
 
     public abstract MethodResult getItemImpl(ItemFilter filter) throws LuaException;
 

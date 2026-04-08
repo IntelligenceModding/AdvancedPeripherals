@@ -38,7 +38,7 @@ public class RSChemicalHandler implements IStorageSystemChemicalHandler {
 
     @Override
     public long extractChemicals(ChemicalFilter filter, StorageProcessor.Large<ChemicalStack> processor, mekanism.api.Action action) {
-        List<ChemicalResource> chemicals = RSApi.getChemicals(network, filter);
+        List<ChemicalResource> chemicals = RSMekanismApi.getChemicals(network, filter);
         if (chemicals.isEmpty()) {
             return 0;
         }

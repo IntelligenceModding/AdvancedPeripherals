@@ -35,7 +35,6 @@ import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
@@ -48,7 +47,6 @@ import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
 import me.ramidzkh.mekae2.item.ChemicalStorageCell;
-import mekanism.api.chemical.ChemicalStack;
 import mekanism.common.tile.TileEntityChemicalTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -144,40 +142,6 @@ public class AEApi {
         return fluids;
     }
 
-    @NotNull
-    public static Pair<Long, MekanismKey> findAEChemicalFromStack(MEStorage monitor, @Nullable ICraftingService crafting, ChemicalStack stack) {
-        return findAEChemicalFromFilter(monitor, crafting, ChemicalFilter.fromStack(stack));
-    }
-
-    @NotNull
-    public static Pair<Long, MekanismKey> findAEChemicalFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, ChemicalFilter filter) {
-        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
-            if (temp.getKey() instanceof MekanismKey key && filter.test(key.getStack()))
-                return Pair.of(temp.getLongValue(), key);
-        }
-
-        if (crafting == null)
-            return Pair.of(0L, null);
-
-        for (var temp : crafting.getCraftables(param -> true)) {
-            if (temp instanceof MekanismKey key && filter.test(key.getStack()))
-                return Pair.of(0L, key);
-        }
-
-        return Pair.of(0L, null);
-    }
-
-    @NotNull
-    public static List<Pair<Long, MekanismKey>> findAEChemicalsFromFilter(MEStorage monitor, ChemicalFilter filter) {
-        List<Pair<Long, MekanismKey>> chemicals = new ArrayList<>();
-        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
-            if (temp.getKey() instanceof MekanismKey key && filter.test(key.getStack())) {
-                chemicals.add(Pair.of(temp.getLongValue(), key));
-            }
-        }
-        return chemicals;
-    }
-
     /**
      * Finds a pattern from filters.
      *
@@ -266,34 +230,12 @@ public class AEApi {
         return items;
     }
 
-    public static List<Object> listChemicals(MEStorage monitor, ICraftingService service, ChemicalFilter filter) {
-        List<Object> items = new ArrayList<>();
-        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
-            if (APAddon.APP_MEKANISTICS.isLoaded() && aeKey.getKey() instanceof MekanismKey mekanismKey && filter.test(mekanismKey.getStack())) {
-                items.add(parseAeStack(Pair.of(aeKey.getLongValue(), mekanismKey), service));
-            }
-        }
-        return items;
-    }
-
     public static List<Object> listCraftableFluids(MEStorage monitor, ICraftingService service, FluidFilter filter) {
         List<Object> items = new ArrayList<>();
         KeyCounter keyCounter = monitor.getAvailableStacks();
         Set<AEKey> craftables = service.getCraftables(AEKeyFilter.none());
         for (AEKey aeKey : craftables) {
             if (aeKey instanceof AEFluidKey fluidKey && filter.test(fluidKey.toStack(1))) {
-                items.add(parseAeStack(Pair.of(keyCounter.get(aeKey), aeKey), service));
-            }
-        }
-        return items;
-    }
-
-    public static List<Object> listCraftableChemicals(MEStorage monitor, ICraftingService service, ChemicalFilter filter) {
-        List<Object> items = new ArrayList<>();
-        KeyCounter keyCounter = monitor.getAvailableStacks();
-        Set<AEKey> craftables = service.getCraftables(AEKeyFilter.none());
-        for (AEKey aeKey : craftables) {
-            if (aeKey instanceof MekanismKey mekanismKey && filter.test(mekanismKey.getStack())) {
                 items.add(parseAeStack(Pair.of(keyCounter.get(aeKey), aeKey), service));
             }
         }
@@ -358,7 +300,7 @@ public class AEApi {
         if (stack.right() instanceof AEFluidKey fluidKey)
             return parseFluidStack(Pair.of(stack.left(), fluidKey), service);
         if (APAddon.APP_MEKANISTICS.isLoaded() && (stack.right() instanceof MekanismKey gasKey))
-            return parseChemStack(Pair.of(stack.left(), gasKey), service);
+            return AEMekanismApi.parseChemStack(Pair.of(stack.left(), gasKey), service);
 
         AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Could not create table from unknown stack {} - Report this to the maintainer of ap", stack.right().getClass());
         return null;
@@ -454,12 +396,6 @@ public class AEApi {
 
     private static Map<String, Object> parseFluidStack(Pair<Long, AEFluidKey> stack, @Nullable ICraftingService craftingService) {
         Map<String, Object> properties = LuaConverter.fluidStackToLua(stack.right().toStack(1), stack.left());
-        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.right()));
-        return properties;
-    }
-
-    private static Map<String, Object> parseChemStack(Pair<Long, MekanismKey> stack, @Nullable ICraftingService craftingService) {
-        Map<String, Object> properties = LuaConverter.chemicalStackToLua(stack.right().withAmount(stack.left()));
         properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.right()));
         return properties;
     }

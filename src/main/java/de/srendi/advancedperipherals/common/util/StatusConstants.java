@@ -38,5 +38,5 @@ public enum StatusConstants {
     NOT_CONNECTED,
     NOT_FOUND, // Generic not found state
     ADDON_NOT_LOADED,
-    UNKNOWN_ERROR;
+    UNKNOWN_ERROR
 }

@@ -13,14 +13,12 @@ import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSFluidHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSItemHandler;
@@ -28,18 +26,12 @@ import de.srendi.advancedperipherals.common.addons.refinedstorage.RSMekanismApi;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RsStorageTypes;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
-import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
-import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeripheral;
-import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
-import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.core.Direction;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -48,8 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<RSBridgeEntity>> implements IStorageSystemPeripheral {
-
+public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEntityPeripheralOwner<RSBridgeEntity>> {
     public static final String PERIPHERAL_TYPE = "rs_bridge";
 
     private final RSBridgeEntity bridge;
@@ -64,12 +55,308 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
         return APAddon.REFINEDSTORAGE.isLoaded() && APConfig.PERIPHERALS_CONFIG.enableRSBridge.get();
     }
 
-    private AbstractNetworkNode getNode() {
-        return (AbstractNetworkNode) owner.getBlockEntity().getNode();
-    }
-
     public Network getNetwork() {
         return getNode().getNetwork();
+    }
+
+    @Override
+    @NotNull
+    public APAddon getChemicalOpAddon() {
+        return APAddon.REFINEDSTORAGE_MEKANISM;
+    }
+
+    @Override
+    @NotNull
+    public IItemHandler getStorageSystemItemHandler() {
+        return new RSItemHandler(getNetwork());
+    }
+
+    @Override
+    @NotNull
+    public IFluidHandler getStorageSystemFluidHandler() {
+        return new RSFluidHandler(getNetwork());
+    }
+
+    @Override
+    @NotNull
+    public Object /*IChemicalHandler*/ getStorageSystemChemicalHandler() {
+        return new RSChemicalHandler(getNetwork());
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return true;
+    }
+
+    @Override
+    public boolean isOnlineImpl() {
+        return getComponent(EnergyNetworkComponent.class).getStored() > 0;
+    }
+
+    @Override
+    public MethodResult getItemImpl(ItemFilter filter) throws LuaException {
+        Map<?, ?> resourceProperties = RSApi.getParsedItem(getNetwork(), filter);
+        if (resourceProperties == null) {
+            return MethodResult.of(null, "NOT_FOUND");
+        }
+        return MethodResult.of(resourceProperties);
+    }
+
+    @Override
+    public MethodResult getFluidImpl(FluidFilter filter) throws LuaException {
+        Map<?, ?> resourceProperties = RSApi.getParsedFluid(getNetwork(), filter);
+        if (resourceProperties == null) {
+            return MethodResult.of(null, "NOT_FOUND");
+        }
+        return MethodResult.of(resourceProperties);
+    }
+
+    @Override
+    public MethodResult getChemicalImpl(Object /*ChemicalFilter*/ filter) throws LuaException {
+        Map<?, ?> resourceProperties = RSMekanismApi.getParsedChemical(getNetwork(), (ChemicalFilter) filter);
+        if (resourceProperties == null) {
+            return MethodResult.of(null, "NOT_FOUND");
+        }
+        return MethodResult.of(resourceProperties);
+    }
+
+    @Override
+    public MethodResult getItemsImpl(ItemFilter filter) throws LuaException {
+        return MethodResult.of(RSApi.getParsedItems(getNetwork(), filter));
+    }
+
+    @Override
+    public MethodResult getFluidsImpl(FluidFilter filter) throws LuaException {
+        return MethodResult.of(RSApi.getParsedFluids(getNetwork(), filter));
+    }
+
+    @Override
+    public MethodResult getChemicalsImpl(Object /*ChemicalFilter*/ filter) throws LuaException {
+        return MethodResult.of(RSMekanismApi.getParsedChemicals(getNetwork(), (ChemicalFilter) filter));
+    }
+
+    @Override
+    public MethodResult getCraftableItemsImpl(ItemFilter filter) throws LuaException {
+        return MethodResult.of(RSApi.getCraftableItems(getNetwork(), filter));
+    }
+
+    @Override
+    public MethodResult getCraftableFluidsImpl(FluidFilter filter) throws LuaException {
+        return MethodResult.of(RSApi.getCraftableFluids(getNetwork(), filter));
+    }
+
+    @Override
+    public MethodResult getCraftableChemicalsImpl(Object /*ChemicalFilter*/ filter) throws LuaException {
+        return MethodResult.of(RSMekanismApi.getCraftableChemicals(getNetwork(), (ChemicalFilter) filter));
+    }
+
+    @Override
+    public List<?> getCellsImpl() {
+        return RSApi.listCells(getNetwork());
+    }
+
+    @Override
+    public List<?> getDrivesImpl() {
+        return RSApi.listDrives(getNetwork());
+    }
+
+    @Override
+    public double getStoredEnergyImpl() {
+        return getNetwork().getComponent(EnergyNetworkComponent.class).getStored();
+    }
+
+    @Override
+    public double getEnergyCapacityImpl() {
+        return getNetwork().getComponent(EnergyNetworkComponent.class).getCapacity();
+    }
+
+    @Override
+    public double getEnergyUsageImpl() {
+        return RSApi.getEnergyUsage(getNetwork());
+    }
+
+    @Override
+    public double getAverageEnergyInputImpl() {
+        // Unsupported by Refined Storage
+        return 0;
+    }
+
+    @Override
+    public double getTotalExternalItemStorageImpl() {
+        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.ITEM);
+    }
+
+    @Override
+    public double getTotalExternalFluidStorageImpl() {
+        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.FLUID);
+    }
+
+    @Override
+    public double getTotalExternalChemicalStorageImpl() {
+        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+    }
+
+    @Override
+    public double getTotalItemStorageImpl() {
+        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.ITEM);
+    }
+
+    @Override
+    public double getTotalFluidStorageImpl() {
+        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.FLUID);
+    }
+
+    @Override
+    public double getTotalChemicalStorageImpl() {
+        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+    }
+
+    @Override
+    public double getUsedExternalItemStorageImpl() {
+        return RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.ITEM);
+    }
+
+    @Override
+    public double getUsedExternalFluidStorageImpl() {
+        return RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.FLUID);
+    }
+
+    @Override
+    public double getUsedExternalChemicalStorageImpl() {
+        return RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+    }
+
+    @Override
+    public double getUsedItemStorageImpl() {
+        return RSApi.getUsedStorage(getNetwork(), RsStorageTypes.ITEM);
+    }
+
+    @Override
+    public double getUsedFluidStorageImpl() {
+        return RSApi.getUsedStorage(getNetwork(), RsStorageTypes.FLUID);
+    }
+
+    @Override
+    public double getUsedChemicalStorageImpl() {
+        return RSApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+    }
+
+    @Override
+    public double getAvailableExternalItemStorageImpl() {
+        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.ITEM) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.ITEM);
+    }
+
+    @Override
+    public double getAvailableExternalFluidStorageImpl() {
+        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.FLUID) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.FLUID);
+    }
+
+    @Override
+    public double getAvailableExternalChemicalStorageImpl() {
+        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+    }
+
+    @Override
+    public double getAvailableItemStorageImpl() {
+        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.ITEM) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.ITEM);
+    }
+
+    @Override
+    public double getAvailableFluidStorageImpl() {
+        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.FLUID) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.FLUID);
+    }
+
+    @Override
+    public double getAvailableChemicalStorageImpl() {
+        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+    }
+
+    @Override
+    public MethodResult craftItemImpl(IComputerAccess computer, IArguments arguments, ItemFilter filter) throws LuaException {
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getCount(), ItemResource.ofItemStack(filter.toItemStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        bridge.addJob(job);
+        return MethodResult.of(job);
+    }
+
+    @Override
+    public MethodResult craftFluidImpl(IComputerAccess computer, IArguments arguments, FluidFilter filter) throws LuaException {
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getAmount(), VariantUtil.ofFluidStack(filter.toFluidStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        bridge.addJob(job);
+        return MethodResult.of(job);
+    }
+
+    @Override
+    public MethodResult craftChemicalImpl(IComputerAccess computer, IArguments arguments, Object /*ChemicalFilter*/ filter0) throws LuaException {
+        ChemicalFilter filter = (ChemicalFilter) filter0;
+
+        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getAmount(), ChemicalResource.ofChemicalStack(filter.toChemicalStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        bridge.addJob(job);
+        return MethodResult.of(job);
+    }
+
+    @Override
+    public List<?> getCraftingTasksImpl() {
+        return RSApi.getCraftingTasks(getNetwork(), bridge);
+    }
+
+    @Override
+    public MethodResult getCraftingTaskImpl(int id) {
+        for (RSCraftJob job : bridge.getJobs()) {
+            if (job.getId() == id) {
+                return MethodResult.of(job);
+            }
+        }
+        return MethodResult.of(null, StatusConstants.NOT_FOUND.toString());
+    }
+
+    @Override
+    public int cancelCraftingTasksImpl(GenericFilter<?> filter) throws LuaException {
+        AutocraftingNetworkComponent craftingManager = getComponent(AutocraftingNetworkComponent.class);
+
+        int canceled = 0;
+        for (TaskStatus status : craftingManager.getStatuses()) {
+            if (filter.testRS(new ResourceAmount(status.info().resource(), 1))) {
+                craftingManager.cancel(status.info().id());
+                canceled++;
+            }
+        }
+        return canceled;
+    }
+
+    @Override
+    public boolean isCraftableImpl(GenericFilter<?> filter) throws LuaException {
+        return RSApi.findPatternFromFilters(getNetwork(), null, filter).leftPresent();
+    }
+
+    @Override
+    public MethodResult isCraftingImpl(IArguments arguments, GenericFilter<?> filter) throws LuaException {
+        AutocraftingNetworkComponent craftingManager = getComponent(AutocraftingNetworkComponent.class);
+
+        for (TaskStatus status : craftingManager.getStatuses()) {
+            if (filter.testRS(new ResourceAmount(status.info().resource(), 1))) {
+                return MethodResult.of(true);
+            }
+        }
+        return MethodResult.of(false);
+    }
+
+    @Override
+    public MethodResult getPatternsImpl(@Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) throws LuaException {
+        if (inputFilter == null && outputFilter == null) {
+            return MethodResult.of(RSApi.getPatterns(getNetwork()));
+        }
+
+        Pair<Pattern, String> pattern = RSApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
+        if (pattern.rightPresent()) {
+            return MethodResult.of(null, pattern.right());
+        }
+
+        AutocraftingNetworkComponent autocrafting = getNetwork().getComponent(AutocraftingNetworkComponent.class);
+        return MethodResult.of(RSApi.parsePattern(pattern.left(), autocrafting));
+    }
+
+    private AbstractNetworkNode getNode() {
+        return (AbstractNetworkNode) owner.getBlockEntity().getNode();
     }
 
     private MethodResult notConnected(@Nullable Object defaultValue) {
@@ -78,814 +365,5 @@ public class RSBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     private <I extends NetworkComponent> I getComponent(@NotNull Class<I> componentClass) {
         return getNetwork().getComponent(componentClass);
-    }
-
-    private boolean isAvailable() {
-        return true;
-    }
-
-    /**
-     * exports an item out of the system to a valid inventory
-     *
-     * @param arguments       the arguments given by the computer
-     * @param targetInventory the give inventory
-     * @return the exportable amount or null with a string if something went wrong
-     */
-    protected MethodResult exportToChest(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        RSItemHandler itemHandler = new RSItemHandler(getNetwork());
-        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.right());
-
-        if (targetInventory == null)
-            return MethodResult.of(0, "Target Inventory does not exist");
-
-        return MethodResult.of(ItemUtil.moveItem(itemHandler, targetInventory, filter.left()));
-    }
-
-    /**
-     * exports a fluid out of the system to a valid tank
-     *
-     * @param arguments  the arguments given by the computer
-     * @param targetTank the give tank
-     * @return the exportable amount or null with a string if something went wrong
-     */
-    protected MethodResult exportToTank(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
-        RSFluidHandler fluidHandler = new RSFluidHandler(getNetwork());
-        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.right());
-
-        if (targetTank == null)
-            return MethodResult.of(0, "Target Tank does not exist");
-
-        return MethodResult.of(FluidUtil.moveFluid(fluidHandler, targetTank, filter.left()));
-    }
-
-    /**
-     * imports an item to the system from a valid inventory
-     *
-     * @param arguments       the arguments given by the computer
-     * @param targetInventory the give inventory
-     * @return the imported amount or null with a string if something went wrong
-     */
-    protected MethodResult importToRS(@NotNull IArguments arguments, @Nullable IItemHandler targetInventory) throws LuaException {
-        RSItemHandler itemHandler = new RSItemHandler(getNetwork());
-        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.right());
-
-        if (targetInventory == null)
-            return MethodResult.of(0, "Target Inventory does not exist");
-
-        return MethodResult.of(ItemUtil.moveItem(targetInventory, itemHandler, filter.left()));
-    }
-
-    /**
-     * imports a fluid to the system from a valid tank
-     *
-     * @param arguments  the arguments given by the computer
-     * @param targetTank the give tank
-     * @return the imported amount or null with a string if something went wrong
-     */
-    protected MethodResult importToRS(@NotNull IArguments arguments, @Nullable IFluidHandler targetTank) throws LuaException {
-        RSFluidHandler fluidHandler = new RSFluidHandler(getNetwork());
-        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.right());
-
-        if (targetTank == null)
-            return MethodResult.of(0, "Target Tank does not exist");
-
-        return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.left()));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final boolean isConnected() {
-        return isAvailable();
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult isOnline() {
-        if (!isAvailable())
-            return notConnected(false);
-
-        return MethodResult.of(getComponent(EnergyNetworkComponent.class).getStored() > 0);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getItem(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        ItemFilter parsedFilter = filter.left();
-        if (parsedFilter.isEmpty())
-            return MethodResult.of(null, "EMPTY_FILTER");
-
-        Map<?, ?> resourceProperties = RSApi.getParsedItem(getNetwork(), parsedFilter);
-        if (resourceProperties == null)
-            return MethodResult.of(null, "NOT_FOUND");
-
-        return MethodResult.of(resourceProperties);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getFluid(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        FluidFilter parsedFilter = filter.left();
-        if (parsedFilter.isEmpty())
-            return MethodResult.of(null, "EMPTY_FILTER");
-
-        Map<?, ?> resourceProperties = RSApi.getParsedFluid(getNetwork(), parsedFilter);
-        if (resourceProperties == null)
-            return MethodResult.of(null, "NOT_FOUND");
-
-        return MethodResult.of(resourceProperties);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getChemical(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM));
-
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        ChemicalFilter parsedFilter = filter.left();
-        if (parsedFilter.isEmpty())
-            return MethodResult.of(null, "EMPTY_FILTER");
-
-        Map<?, ?> resourceProperties = RSApi.getParsedChemical(getNetwork(), parsedFilter);
-        if (resourceProperties == null)
-            return MethodResult.of(null, "NOT_FOUND");
-
-        return MethodResult.of(resourceProperties);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getItems(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        ItemFilter parsedFilter = filter.left();
-
-        List<Map<String, Object>> resourceProperties = RSApi.getParsedItems(getNetwork(), parsedFilter);
-
-        return MethodResult.of(resourceProperties);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getFluids(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        FluidFilter parsedFilter = filter.left();
-
-        List<Map<String, Object>> resourceProperties = RSApi.getParsedFluids(getNetwork(), parsedFilter);
-
-        return MethodResult.of(resourceProperties);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getChemicals(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
-
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        ChemicalFilter parsedFilter = filter.left();
-
-        List<Map<String, Object>> resourceProperties = RSApi.getParsedChemicals(getNetwork(), parsedFilter);
-
-        return MethodResult.of(resourceProperties);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getCraftableItems(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        ItemFilter parsedFilter = filter.left();
-
-        List<Map<String, Object>> resourceProperties = RSApi.getCraftableItems(getNetwork(), parsedFilter);
-
-        return MethodResult.of(resourceProperties);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getCraftableFluids(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        FluidFilter parsedFilter = filter.left();
-
-        List<Map<String, Object>> resourceProperties = RSApi.getCraftableFluids(getNetwork(), parsedFilter);
-
-        return MethodResult.of(resourceProperties);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getCraftableChemicals(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM));
-
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        ChemicalFilter parsedFilter = filter.left();
-
-        List<Map<String, Object>> resourceProperties = RSApi.getCraftableChemicals(getNetwork(), parsedFilter);
-
-        return MethodResult.of(resourceProperties);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getCells() {
-        if (!isAvailable())
-            return notConnected(null);
-
-        return MethodResult.of(RSApi.listCells(getNetwork()));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getDrives() {
-        if (!isAvailable())
-            return notConnected(null);
-
-        return MethodResult.of(RSApi.listDrives(getNetwork()));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult importItem(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(0);
-
-        String side = arguments.getString(1);
-        IItemHandler inventory;
-        if (side.length() >= 1 && side.charAt(0) == '@') {
-            Direction dir = this.mapDirection(side.substring(1));
-            if (dir == null) {
-                throw new LuaException("Target '" + side + "' is an invalid direction");
-            }
-            inventory = ItemUtil.getHandlerFromDirection(owner, dir);
-        } else {
-            inventory = ItemUtil.extractHandler(computer.getAvailablePeripheral(side));
-        }
-
-        if (inventory == null) {
-            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-        }
-
-        return importToRS(arguments, inventory);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult exportItem(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(0);
-
-        String side = arguments.getString(1);
-        IItemHandler inventory;
-        if (side.length() >= 1 && side.charAt(0) == '@') {
-            Direction dir = this.mapDirection(side.substring(1));
-            if (dir == null) {
-                throw new LuaException("Target '" + side + "' is an invalid direction");
-            }
-            inventory = ItemUtil.getHandlerFromDirection(owner, dir);
-        } else {
-            inventory = ItemUtil.extractHandler(computer.getAvailablePeripheral(side));
-        }
-
-        if (inventory == null) {
-            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-        }
-
-        return exportToChest(arguments, inventory);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult importFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(0);
-
-        IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        if (handler == null) {
-            handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
-            if (handler == null) {
-                return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-            }
-        }
-
-        return importToRS(arguments, handler);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult exportFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(0);
-
-        IFluidHandler handler = FluidUtil.getHandlerFromDirection(arguments.getString(1), owner);
-        if (handler == null) {
-            handler = FluidUtil.getHandlerFromName(computer, arguments.getString(1));
-            if (handler == null) {
-                return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-            }
-        }
-
-        return exportToTank(arguments, handler);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult importChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(0);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM));
-
-        return RSMekanismApi.importToRS(arguments, computer, this);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult exportChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(0);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM));
-
-        return RSMekanismApi.exportToTank(arguments, computer, this);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getStoredEnergy() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        EnergyNetworkComponent energyComponent = getNetwork().getComponent(EnergyNetworkComponent.class);
-
-        return MethodResult.of(energyComponent.getStored());
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getEnergyCapacity() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        EnergyNetworkComponent energyComponent = getNetwork().getComponent(EnergyNetworkComponent.class);
-
-        return MethodResult.of(energyComponent.getCapacity());
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getEnergyUsage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getEnergyUsage(getNetwork()));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getAverageEnergyInput() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        // Not supported for Refined Storage
-        return MethodResult.of(0);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternalItemStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.ITEM));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternalFluidStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.FLUID));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternalChemicalStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
-
-        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getTotalItemStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.ITEM));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getTotalFluidStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.FLUID));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getTotalChemicalStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
-
-        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getUsedExternalItemStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.ITEM));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getUsedExternalFluidStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.FLUID));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getUsedExternalChemicalStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
-
-        return MethodResult.of(RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getUsedItemStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getUsedStorage(getNetwork(), RsStorageTypes.ITEM));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getUsedFluidStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getUsedStorage(getNetwork(), RsStorageTypes.FLUID));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getUsedChemicalStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
-
-        return MethodResult.of(RSApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableExternalItemStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.ITEM) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.ITEM));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableExternalFluidStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.FLUID) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.FLUID));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableExternalChemicalStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
-
-        return MethodResult.of(RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableItemStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.ITEM) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.ITEM));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableFluidStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.FLUID) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.FLUID));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableChemicalStorage() {
-        if (!isAvailable())
-            return notConnected(0);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(0, StatusConstants.ADDON_NOT_LOADED.withInfo("RS_MEKANISM"));
-
-        return MethodResult.of(RSApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult craftItem(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        Pair<ItemFilter, String> filter = ItemFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.left().getCount(), ItemResource.ofItemStack(filter.left().toItemStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
-        bridge.addJob(job);
-        return MethodResult.of(job);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult craftFluid(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        Pair<FluidFilter, String> filter = FluidFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.left().getAmount(), VariantUtil.ofFluidStack(filter.left().toFluidStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
-        bridge.addJob(job);
-        return MethodResult.of(job);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        if (!APAddon.REFINEDSTORAGE_MEKANISM.isLoaded())
-            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.withInfo(APAddon.REFINEDSTORAGE_MEKANISM.name()));
-
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.rightPresent())
-            return MethodResult.of(null, filter.right());
-
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.left().getAmount(), ChemicalResource.ofChemicalStack(filter.left().toChemicalStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
-        bridge.addJob(job);
-        return MethodResult.of(job);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getCraftingTasks() {
-        if (!isAvailable())
-            return notConnected(null);
-
-        return MethodResult.of(RSApi.getCraftingTasks(getNetwork(), bridge));
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getCraftingTask(int id) {
-        if (!isAvailable())
-            return notConnected(null);
-
-        for (RSCraftJob job : bridge.getJobs()) {
-            if (job.getId() == id) {
-                return MethodResult.of(job);
-            }
-        }
-        return MethodResult.of(null, StatusConstants.NOT_FOUND);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult cancelCraftingTasks(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(0);
-
-        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.right() != null)
-            return MethodResult.of(0, filter.right());
-
-        GenericFilter<?> parsedFilter = filter.left();
-
-        AutocraftingNetworkComponent craftingManager = getComponent(AutocraftingNetworkComponent.class);
-        int canceled = 0;
-
-        for (TaskStatus status : craftingManager.getStatuses()) {
-            if (parsedFilter.testRS(new ResourceAmount(status.info().resource(), 1))) {
-                craftingManager.cancel(status.info().id());
-                canceled++;
-            }
-        }
-
-        return MethodResult.of(canceled);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult isCraftable(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(false);
-
-        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.right() != null)
-            return MethodResult.of(false, filter.right());
-
-        GenericFilter<?> parsedFilter = filter.left();
-
-        return MethodResult.of(RSApi.findPatternFromFilters(getNetwork(), null, parsedFilter).leftPresent());
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult isCrafting(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(false);
-
-        Pair<? extends GenericFilter<?>, String> filter = GenericFilter.parseGeneric(new ObjectLuaTable(arguments.getTable(0)));
-        if (filter.right() != null)
-            return MethodResult.of(false, filter.right());
-
-        GenericFilter<?> parsedFilter = filter.left();
-
-        AutocraftingNetworkComponent craftingManager = getComponent(AutocraftingNetworkComponent.class);
-
-        for (TaskStatus status : craftingManager.getStatuses()) {
-            if (parsedFilter.testRS(new ResourceAmount(status.info().resource(), 1))) {
-                return MethodResult.of(true);
-            }
-        }
-
-        return MethodResult.of(false);
-    }
-
-    @Override
-    @LuaFunction(mainThread = true)
-    public final MethodResult getPatterns(IArguments arguments) throws LuaException {
-        if (!isAvailable())
-            return notConnected(null);
-
-        // Expected input is a table with either an input table, an output table or both to filter for both
-        // If no table is provided or it's empty, return every pattern
-        LuaTable<?, ?> filterTable = EmptyLuaTable.orEmpty(arguments.optTable(0).orElse(null));
-        if (filterTable.isEmpty()) {
-            return MethodResult.of(RSApi.getPatterns(getNetwork()));
-        }
-
-        boolean hasInputFilter = filterTable.containsKey("input");
-        boolean hasOutputFilter = filterTable.containsKey("output");
-        boolean hasAnyFilter = hasInputFilter || hasOutputFilter;
-
-        // If the player tries to filter for nothing, return nothing.
-        if (!hasAnyFilter)
-            return MethodResult.of(null, "NO_FILTER");
-
-        GenericFilter<?> inputFilter = null;
-        GenericFilter<?> outputFilter = null;
-
-        if (hasInputFilter) {
-            LuaTable<?, ?> inputFilterTable = new ObjectLuaTable( filterTable.getTable("input"));
-
-            Pair<? extends GenericFilter<?>, String> parsedFilter = GenericFilter.parseGeneric(inputFilterTable);
-
-            if (parsedFilter.rightPresent())
-                return MethodResult.of(null, parsedFilter.right());
-
-            inputFilter = parsedFilter.left();
-        }
-        if (hasOutputFilter) {
-            LuaTable<?, ?> outputFilterTable = new ObjectLuaTable(filterTable.getTable("output"));
-
-            Pair<? extends GenericFilter<?>, String> parsedFilter = GenericFilter.parseGeneric(outputFilterTable);
-
-            if (parsedFilter.rightPresent())
-                return MethodResult.of(null, parsedFilter.right());
-
-            outputFilter = parsedFilter.left();
-        }
-
-        Pair<Pattern, String> pattern = RSApi.findPatternFromFilters(getNetwork(), inputFilter, outputFilter);
-
-        if (pattern.rightPresent())
-            return MethodResult.of(null, pattern.right());
-
-        AutocraftingNetworkComponent autocrafting = getNetwork().getComponent(AutocraftingNetworkComponent.class);
-
-        return MethodResult.of(RSApi.parsePattern(pattern.left(), autocrafting));
     }
 }

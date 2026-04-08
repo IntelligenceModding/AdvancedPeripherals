@@ -1,85 +1,79 @@
 package de.srendi.advancedperipherals.common.addons.appliedenergistics;
 
+import appeng.api.networking.crafting.ICraftingService;
+import appeng.api.stacks.AEKey;
+import appeng.api.stacks.KeyCounter;
+import appeng.api.storage.AEKeyFilter;
 import appeng.api.storage.MEStorage;
-import dan200.computercraft.api.lua.IArguments;
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.lua.ObjectLuaTable;
-import dan200.computercraft.api.peripheral.IComputerAccess;
-import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.MEBridgePeripheral;
-import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
+import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
-import mekanism.api.chemical.IChemicalHandler;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
+import me.ramidzkh.mekae2.ae2.MekanismKey;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * Offloading mekanism related ME Bridge functions to prevent class loading errors at runtime
- */
-public class AEMekanismApi {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-    /**
-     * imports a fluid to the system from a valid tank
-     *
-     * @param arguments  the arguments given by the computer
-     * @param computer   the computer connected to the peripheral - used for peripheral attached inventories
-     * @param peripheral the ME Bridge peripheral
-     * @return the imported amount or null with a string if something went wrong
-     */
-    public static MethodResult importToME(@NotNull IArguments arguments, IComputerAccess computer, MEBridgePeripheral peripheral) throws LuaException {
-        MEBridgeEntity bridge = peripheral.getBridge();
-        MEStorage monitor = AEApi.getMonitor(bridge.getActionableNode());
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.right());
-
-        String side = arguments.getString(1);
-        IChemicalHandler targetTank = ChemicalUtil.getHandlerFromDirection(side, peripheral.getPeripheralOwner());
-
-        if (targetTank == null) {
-            targetTank = ChemicalUtil.getHandlerFromName(computer, side);
+public final class AEMekanismApi {
+    @NotNull
+    public static Pair<Long, MekanismKey> findAEChemicalFromFilter(MEStorage monitor, @Nullable ICraftingService crafting, ChemicalFilter filter) {
+        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
+            if (temp.getKey() instanceof MekanismKey key && filter.test(key.getStack()))
+                return Pair.of(temp.getLongValue(), key);
         }
 
-        if (targetTank == null)
-            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
+        if (crafting == null)
+            return Pair.of(0L, null);
 
-        MEChemicalHandler chemicalHandler = new MEChemicalHandler(monitor, bridge);
-
-        return MethodResult.of(ChemicalUtil.moveChemical(targetTank, chemicalHandler, filter.left()));
-    }
-
-    /**
-     * imports a fluid to the system from a valid tank
-     *
-     * @param arguments  the arguments given by the computer
-     * @param computer   the computer connected to the peripheral - used for peripheral attached inventories
-     * @param peripheral the ME Bridge peripheral
-     * @return the exportable amount or null with a string if something went wrong
-     */
-    public static MethodResult exportToTank(@NotNull IArguments arguments, IComputerAccess computer, MEBridgePeripheral peripheral) throws LuaException {
-        MEBridgeEntity bridge = peripheral.getBridge();
-        MEStorage monitor = AEApi.getMonitor(bridge.getActionableNode());
-        Pair<ChemicalFilter, String> filter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-
-        if (filter.rightPresent())
-            return MethodResult.of(0, filter.right());
-
-        String side = arguments.getString(1);
-        IChemicalHandler targetTank = ChemicalUtil.getHandlerFromDirection(side, peripheral.getPeripheralOwner());
-
-        if (targetTank == null) {
-            targetTank = ChemicalUtil.getHandlerFromName(computer, side);
+        for (var temp : crafting.getCraftables(param -> true)) {
+            if (temp instanceof MekanismKey key && filter.test(key.getStack()))
+                return Pair.of(0L, key);
         }
 
-        if (targetTank == null)
-            return MethodResult.of(0, StatusConstants.INVENTORY_NOT_FOUND.name());
-
-        MEChemicalHandler chemicalHandler = new MEChemicalHandler(monitor, bridge);
-
-        return MethodResult.of(ChemicalUtil.moveChemical(chemicalHandler, targetTank, filter.left()));
+        return Pair.of(0L, null);
     }
 
+    @NotNull
+    public static List<Pair<Long, MekanismKey>> findAEChemicalsFromFilter(MEStorage monitor, ChemicalFilter filter) {
+        List<Pair<Long, MekanismKey>> chemicals = new ArrayList<>();
+        for (Object2LongMap.Entry<AEKey> temp : monitor.getAvailableStacks()) {
+            if (temp.getKey() instanceof MekanismKey key && filter.test(key.getStack())) {
+                chemicals.add(Pair.of(temp.getLongValue(), key));
+            }
+        }
+        return chemicals;
+    }
+
+    public static List<Object> listChemicals(MEStorage monitor, ICraftingService service, ChemicalFilter filter) {
+        List<Object> items = new ArrayList<>();
+        for (Object2LongMap.Entry<AEKey> aeKey : monitor.getAvailableStacks()) {
+            if (APAddon.APP_MEKANISTICS.isLoaded() && aeKey.getKey() instanceof MekanismKey mekanismKey && filter.test(mekanismKey.getStack())) {
+                items.add(AEApi.parseAeStack(Pair.of(aeKey.getLongValue(), mekanismKey), service));
+            }
+        }
+        return items;
+    }
+
+    public static List<Object> listCraftableChemicals(MEStorage monitor, ICraftingService service, ChemicalFilter filter) {
+        List<Object> items = new ArrayList<>();
+        KeyCounter keyCounter = monitor.getAvailableStacks();
+        Set<AEKey> craftables = service.getCraftables(AEKeyFilter.none());
+        for (AEKey aeKey : craftables) {
+            if (aeKey instanceof MekanismKey mekanismKey && filter.test(mekanismKey.getStack())) {
+                items.add(AEApi.parseAeStack(Pair.of(keyCounter.get(aeKey), aeKey), service));
+            }
+        }
+        return items;
+    }
+
+    public static Map<String, Object> parseChemStack(Pair<Long, MekanismKey> stack, @Nullable ICraftingService craftingService) {
+        Map<String, Object> properties = LuaConverter.chemicalStackToLua(stack.right().withAmount(stack.left()));
+        properties.put("isCraftable", craftingService != null && craftingService.isCraftable(stack.right()));
+        return properties;
+    }
 }

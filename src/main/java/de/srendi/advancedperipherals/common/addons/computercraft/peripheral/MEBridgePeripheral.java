@@ -16,6 +16,7 @@ import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEMekanismApi;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEFluidHandler;
 import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEItemHandler;
@@ -38,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> {
-
     public static final String PERIPHERAL_TYPE = "me_bridge";
 
     private final MEBridgeEntity bridge;
@@ -57,10 +57,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
     @Override
     public boolean isEnabled() {
         return APConfig.PERIPHERALS_CONFIG.enableMEBridge.get();
-    }
-
-    private ICraftingService getCraftingService() {
-        return node.getGrid().getCraftingService();
     }
 
     public MEBridgeEntity getBridge() {
@@ -91,10 +87,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
         return new MEChemicalHandler(AEApi.getMonitor(node), bridge);
     }
 
-    private MethodResult notConnected(@Nullable Object defaultValue) {
-        return MethodResult.of(defaultValue, StatusConstants.NOT_CONNECTED.toString());
-    }
-
     @Override
     public boolean isAvailable() {
         return node.hasGridBooted();
@@ -117,7 +109,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
 
     @Override
     public MethodResult getChemicalImpl(Object /*ChemicalFilter*/ filter) throws LuaException {
-        return MethodResult.of(AEApi.parseAeStack(AEApi.findAEChemicalFromFilter(AEApi.getMonitor(node), getCraftingService(), (ChemicalFilter) filter), getCraftingService()));
+        return MethodResult.of(AEApi.parseAeStack(AEMekanismApi.findAEChemicalFromFilter(AEApi.getMonitor(node), getCraftingService(), (ChemicalFilter) filter), getCraftingService()));
     }
 
     @Override
@@ -132,7 +124,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
 
     @Override
     public MethodResult getChemicalsImpl(Object /*ChemicalFilter*/ filter) throws LuaException {
-        return MethodResult.of(AEApi.listChemicals(AEApi.getMonitor(node), getCraftingService(), (ChemicalFilter) filter));
+        return MethodResult.of(AEMekanismApi.listChemicals(AEApi.getMonitor(node), getCraftingService(), (ChemicalFilter) filter));
     }
 
     @Override
@@ -147,7 +139,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
 
     @Override
     public MethodResult getCraftableChemicalsImpl(Object /*ChemicalFilter*/ filter) throws LuaException {
-        return MethodResult.of(AEApi.listCraftableChemicals(AEApi.getMonitor(node), getCraftingService(), (ChemicalFilter) filter));
+        return MethodResult.of(AEMekanismApi.listCraftableChemicals(AEApi.getMonitor(node), getCraftingService(), (ChemicalFilter) filter));
     }
 
     @Override
@@ -321,7 +313,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
         }
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, MekanismKey> stack = AEApi.findAEChemicalFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, filter);
+        Pair<Long, MekanismKey> stack = AEMekanismApi.findAEChemicalFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, filter);
         if (stack.right() == null && stack.left() == 0) {
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
         }
@@ -348,29 +340,26 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
 
     @Override
     public Object getCraftingTaskImpl(int id) {
-        AECraftJob foundJob = null;
-
         for (AECraftJob job : bridge.getJobs()) {
             if (job.getId() == id) {
-                foundJob = job;
-                break;
+                return MethodResult.of(job);
             }
         }
-        return foundJob;
+        return MethodResult.of(null, StatusConstants.NOT_FOUND.toString());
     }
 
     @Override
     public int cancelCraftingTasksImpl(GenericFilter<?> filter) throws LuaException {
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
 
-        int jobsCanceled = 0;
+        int canceled = 0;
         for (ICraftingCPU cpu : craftingGrid.getCpus()) {
             if (cpu.getJobStatus() != null && filter.testAE(cpu.getJobStatus().crafting())) {
                 cpu.cancelJob();
-                jobsCanceled++;
+                canceled++;
             }
         }
-        return jobsCanceled;
+        return canceled;
     }
 
     @Override
@@ -413,5 +402,13 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
             map.add(cpu);
         }
         return MethodResult.of(map);
+    }
+
+    private ICraftingService getCraftingService() {
+        return node.getGrid().getCraftingService();
+    }
+
+    private MethodResult notConnected(@Nullable Object defaultValue) {
+        return MethodResult.of(defaultValue, StatusConstants.NOT_CONNECTED.toString());
     }
 }
