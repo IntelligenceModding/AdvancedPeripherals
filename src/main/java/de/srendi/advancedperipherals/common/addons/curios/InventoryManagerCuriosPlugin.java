@@ -105,6 +105,7 @@ public class InventoryManagerCuriosPlugin implements IPeripheralPlugin {
 
     @LuaFunction(mainThread = true)
     public final PlayerStorageItemWrapper wrapCuriosStorageItem(IComputerAccess computer, String curiosId, int slot) throws LuaException {
+        int islot = slot - 1;
         return PlayerStorageItemWrapper.create(computer, this.peripheral, this.peripheral.getOwnerPlayerOrError(), (player) -> {
             final ICuriosItemHandler curiosInv = CuriosApi.getCuriosInventory(player).orElse(null);
             if (curiosInv == null) {
@@ -114,10 +115,13 @@ public class InventoryManagerCuriosPlugin implements IPeripheralPlugin {
             if (handler == null) {
                 return ItemStack.EMPTY;
             }
-            if (slot <= 0 || slot > handler.getSlots()) {
+            if (islot < 0 || islot > handler.getSlots()) {
                 return ItemStack.EMPTY;
             }
-            return handler.getStacks().getStackInSlot(slot - 1);
+            return handler.getStacks().getStackInSlot(islot);
+        }, (player, stack) -> {
+            final ICurioStacksHandler handler = CuriosApi.getCuriosInventory(player).get().getStacksHandler(curiosId).get();
+            handler.getStacks().setStackInSlot(islot, stack);
         });
     }
 }
