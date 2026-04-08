@@ -9,6 +9,7 @@ import dan200.computercraft.api.peripheral.AttachedComputerSet;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IDynamicPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
@@ -196,24 +197,24 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
 
     @Nullable
     protected IItemHandler getItemHandlerOrNull(IComputerAccess computer, String name) {
-        if (name.length() >= 1 && name.charAt(0) == '@') {
+        if (name.length() >= 1 && name.charAt(0) == '@' && this.owner instanceof BlockEntityPeripheralOwner<?> beOwner) {
             Direction dir = this.mapDirection(name.substring(1));
             if (dir == null) {
                 return null;
             }
-            return ItemUtil.getHandlerFromDirection(owner, dir);
+            return ItemUtil.getHandlerFromDirection(beOwner, dir);
         }
         return ItemUtil.extractHandler(computer.getAvailablePeripheral(name));
     }
 
     @NotNull
     protected IItemHandler getItemHandler(IComputerAccess computer, String name) throws LuaException {
-        if (name.length() >= 1 && name.charAt(0) == '@') {
+        if (name.length() >= 1 && name.charAt(0) == '@' && this.owner instanceof BlockEntityPeripheralOwner<?> beOwner) {
             Direction dir = this.mapDirection(name.substring(1));
             if (dir == null) {
                 throw new LuaException("Target '" + name + "' is an invalid direction");
             }
-            IItemHandler inventory = ItemUtil.getHandlerFromDirection(owner, dir);
+            IItemHandler inventory = ItemUtil.getHandlerFromDirection(beOwner, dir);
             if (inventory == null) {
                 throw new LuaException("Target '" + name + "' is not an inventory");
             }
@@ -232,25 +233,48 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
 
     @Nullable
     protected IFluidHandler getFluidHandlerOrNull(IComputerAccess computer, String name) {
-        if (name.length() >= 1 && name.charAt(0) == '@') {
+        if (name.length() >= 1 && name.charAt(0) == '@' && this.owner instanceof BlockEntityPeripheralOwner<?> beOwner) {
             Direction dir = this.mapDirection(name.substring(1));
             if (dir == null) {
                 return null;
             }
-            return FluidUtil.getHandlerFromDirection(owner, dir);
+            return FluidUtil.getHandlerFromDirection(beOwner, dir);
         }
         return FluidUtil.extractHandler(computer.getAvailablePeripheral(name));
     }
 
+    @NotNull
+    protected IFluidHandler getFluidHandler(IComputerAccess computer, String name) throws LuaException {
+        if (name.length() >= 1 && name.charAt(0) == '@' && this.owner instanceof BlockEntityPeripheralOwner<?> beOwner) {
+            Direction dir = this.mapDirection(name.substring(1));
+            if (dir == null) {
+                throw new LuaException("Target '" + name + "' is an invalid direction");
+            }
+            IFluidHandler tank = FluidUtil.getHandlerFromDirection(beOwner, dir);
+            if (tank == null) {
+                throw new LuaException("Target '" + name + "' is not a tank");
+            }
+            return tank;
+        }
+        IPeripheral toPeripheral = computer.getAvailablePeripheral(name);
+        if (toPeripheral == null) {
+            throw new LuaException("Target '" + name + "' does not exist");
+        }
+        IFluidHandler tank = FluidUtil.extractHandler(toPeripheral);
+        if (tank == null) {
+            throw new LuaException("Target '" + name + "' is not a tank");
+        }
+        return tank;
+    }
 
     @Nullable
     protected Object /*IChemicalHandler*/ getChemicalHandlerOrNull(IComputerAccess computer, String name) {
-        if (name.length() >= 1 && name.charAt(0) == '@') {
+        if (name.length() >= 1 && name.charAt(0) == '@' && this.owner instanceof BlockEntityPeripheralOwner<?> beOwner) {
             Direction dir = this.mapDirection(name.substring(1));
             if (dir == null) {
                 return null;
             }
-            return ChemicalUtil.getHandlerFromDirection(owner, dir);
+            return ChemicalUtil.getHandlerFromDirection(beOwner, dir);
         }
         return ChemicalUtil.extractHandler(computer.getAvailablePeripheral(name));
     }

@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.Inve
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -19,36 +20,55 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 // TODO: fluid variant?
 public class PlayerStorageItemWrapper {
     private final IComputerAccess computer;
     private final WeakReference<InventoryManagerPeripheral> peripheral;
     private final WeakReference<ServerPlayer> player;
-    private final int slot;
+    private final Function<ServerPlayer, ItemStack> itemProvider;
     private final ItemStack stack;
-    private final IItemHandler handler;
+    private final IItemHandler itemHandler;
 
-    protected PlayerStorageItemWrapper(IComputerAccess computer, InventoryManagerPeripheral peripheral, ServerPlayer player, int slot, ItemStack stack, IItemHandler handler) {
+    protected PlayerStorageItemWrapper(
+        IComputerAccess computer,
+        InventoryManagerPeripheral peripheral,
+        ServerPlayer player,
+        Function<ServerPlayer, ItemStack> itemProvider,
+        ItemStack stack,
+        IItemHandler itemHandler
+    ) {
         this.computer = computer;
         this.peripheral = new WeakReference<>(peripheral);
         this.player = new WeakReference<>(player);
-        this.slot = slot;
+        this.itemProvider = itemProvider;
         this.stack = stack;
-        this.handler = handler;
+        this.itemHandler = itemHandler;
     }
 
     @Nullable
     public static PlayerStorageItemWrapper create(IComputerAccess computer, InventoryManagerPeripheral peripheral, @NotNull ServerPlayer player, int slot) {
-        ItemStack stack = player.getInventory().getItem(slot);
+        return create(computer, peripheral, player, (p) -> {
+            Inventory inventory = p.getInventory();
+            if (slot < 0 || slot >= inventory.getContainerSize()) {
+                return ItemStack.EMPTY;
+            }
+            return inventory.getItem(slot);
+        });
+    }
+
+    @Nullable
+    public static PlayerStorageItemWrapper create(IComputerAccess computer, InventoryManagerPeripheral peripheral, @NotNull ServerPlayer player, Function<ServerPlayer, ItemStack> itemProvider) {
+        ItemStack stack = itemProvider.apply(player);
         if (stack.isEmpty()) {
             return null;
         }
-        IItemHandler handler = stack.getCapability(Capabilities.ItemHandler.ITEM);
-        if (handler == null) {
+        IItemHandler itemHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
+        if (itemHandler == null) {
             return null;
         }
-        return new PlayerStorageItemWrapper(computer, peripheral, player, slot, stack, handler);
+        return new PlayerStorageItemWrapper(computer, peripheral, player, itemProvider, stack, itemHandler);
     }
 
     public boolean isValid() {
@@ -56,7 +76,7 @@ public class PlayerStorageItemWrapper {
         if (player == null || player.isRemoved()) {
             return false;
         }
-        if (player.getInventory().getItem(this.slot) != this.stack) {
+        if (this.itemProvider.apply(player) != this.stack) {
             return false;
         }
         InventoryManagerPeripheral peripheral = this.peripheral.get();
@@ -80,13 +100,13 @@ public class PlayerStorageItemWrapper {
     @LuaFunction(mainThread = true)
     public final int size() throws LuaException {
         this.assertValid();
-        return this.handler.getSlots();
+        return this.itemHandler.getSlots();
     }
 
     @LuaFunction(mainThread = true)
     public final Map<Integer, ?> list() throws LuaException {
         this.assertValid();
-        return InventoryUtil.list(this.handler);
+        return InventoryUtil.list(this.itemHandler);
     }
 
     @LuaFunction(mainThread = true)
@@ -100,7 +120,7 @@ public class PlayerStorageItemWrapper {
 
         IItemHandler inventoryTo = this.getItemHandler(toName);
 
-        return MethodResult.of(ItemUtil.moveItem(this.handler, inventoryTo, filter.left()));
+        return MethodResult.of(ItemUtil.moveItem(this.itemHandler, inventoryTo, filter.left()));
     }
 
     @LuaFunction(mainThread = true)
@@ -114,7 +134,7 @@ public class PlayerStorageItemWrapper {
 
         IItemHandler inventoryFrom = this.getItemHandler(fromName);
 
-        return MethodResult.of(ItemUtil.moveItem(inventoryFrom, this.handler, filter.left()));
+        return MethodResult.of(ItemUtil.moveItem(inventoryFrom, this.itemHandler, filter.left()));
     }
 
     @NotNull

@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.shared.peripheral.generic.GenericPeripheral;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import net.minecraft.core.BlockPos;
@@ -129,7 +130,7 @@ public class ItemUtil {
     }
 
     @Nullable
-    public static IItemHandler getHandlerFromDirection(@NotNull IPeripheralOwner owner, @NotNull Direction direction) {
+    public static IItemHandler getHandlerFromDirection(@NotNull BlockEntityPeripheralOwner<?> owner, @NotNull Direction direction) {
         Level level = Objects.requireNonNull(owner.getLevel());
         BlockEntity target = level.getBlockEntity(owner.getPos().relative(direction));
         if (target == null) {

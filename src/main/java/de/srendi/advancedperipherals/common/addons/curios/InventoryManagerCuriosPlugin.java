@@ -10,8 +10,10 @@ import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import de.srendi.advancedperipherals.common.util.inventory.PlayerStorageItemWrapper;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -63,13 +65,13 @@ public class InventoryManagerCuriosPlugin implements IPeripheralPlugin {
     }
 
     @NotNull
-    private IDynamicStackHandler getCuriosHandler(String id) throws LuaException {
+    private IDynamicStackHandler getCuriosHandler(String curiosId) throws LuaException {
         final ICuriosItemHandler curiosInv = CuriosApi.getCuriosInventory(this.peripheral.getOwnerPlayerOrError()).orElse(null);
         if (curiosInv == null) {
-            throw new LuaException("Curios slot '" + id + "' does not exist");
+            throw new LuaException("Curios slot '" + curiosId + "' does not exist");
         }
-        return curiosInv.getStacksHandler(id)
-            .orElseThrow(() -> new LuaException("Curios slot '" + id + "' does not exist"))
+        return curiosInv.getStacksHandler(curiosId)
+            .orElseThrow(() -> new LuaException("Curios slot '" + curiosId + "' does not exist"))
             .getStacks();
     }
 
@@ -99,5 +101,23 @@ public class InventoryManagerCuriosPlugin implements IPeripheralPlugin {
         IItemHandler inventoryTo = this.getCuriosHandler(toCurios);
         IItemHandler inventoryFrom = this.peripheral.getItemHandler(computer, fromName);
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final PlayerStorageItemWrapper wrapCuriosStorageItem(IComputerAccess computer, String curiosId, int slot) throws LuaException {
+        return PlayerStorageItemWrapper.create(computer, this.peripheral, this.peripheral.getOwnerPlayerOrError(), (player) -> {
+            final ICuriosItemHandler curiosInv = CuriosApi.getCuriosInventory(player).orElse(null);
+            if (curiosInv == null) {
+                return ItemStack.EMPTY;
+            }
+            final ICurioStacksHandler handler = curiosInv.getStacksHandler(curiosId).orElse(null);
+            if (handler == null) {
+                return ItemStack.EMPTY;
+            }
+            if (slot <= 0 || slot > handler.getSlots()) {
+                return ItemStack.EMPTY;
+            }
+            return handler.getStacks().getStackInSlot(slot - 1);
+        });
     }
 }
