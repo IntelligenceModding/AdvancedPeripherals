@@ -55,7 +55,6 @@ public final class CCEvents {
     // peripheral_name: The player detector's name
     // uuid: Player's UUID
     // name: Player's name
-    // dimension: The dimension ID where the player currently at
     public static final String PLAYER_CLICK = "player_click";
 
     // Fires when a player died

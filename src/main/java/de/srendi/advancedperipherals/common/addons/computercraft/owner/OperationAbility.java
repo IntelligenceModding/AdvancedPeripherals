@@ -132,11 +132,13 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
 
     @Override
     public void collectConfiguration(Map<String, Object> data) {
+        Map<String, Object> operations = new HashMap<>();
         for (IPeripheralOperation<?> operation : allowedOperations.values()) {
             Map<String, Object> operData = operation.computerDescription();
             operData.put("getCost", (ILuaFunction) operation::getCostLua);
-            data.put(operation.settingsName(), operData);
+            operations.put(operation.settingsName(), operData);
         }
+        data.put("operations", operations);
     }
 
     @LuaFunction(mainThread = true)

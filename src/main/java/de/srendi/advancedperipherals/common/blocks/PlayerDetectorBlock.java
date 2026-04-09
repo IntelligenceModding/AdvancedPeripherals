@@ -49,8 +49,7 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
                         CCEvents.PLAYER_CLICK,
                         computer.getAttachmentName(),
                         player.getUUID().toString(),
-                        player.getGameProfile().getName(),
-                        level.dimension().location().toString()
+                        player.getGameProfile().getName()
                     )
                 );
             }
