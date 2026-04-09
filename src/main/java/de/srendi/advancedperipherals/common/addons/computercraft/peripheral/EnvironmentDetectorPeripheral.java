@@ -85,13 +85,13 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     }
 
     @LuaFunction(mainThread = true)
-    public final int getSkyLightLevel() {
-        return getLevel().getBrightness(LightLayer.SKY, this.getPhysicsBlockPos().offset(0, 1, 0));
+    public final int getBlockLightLevel() {
+        return getLevel().getBrightness(LightLayer.BLOCK, this.getPhysicsBlockPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
-    public final int getBlockLightLevel() {
-        return getLevel().getBrightness(LightLayer.BLOCK, this.getPhysicsBlockPos().offset(0, 1, 0));
+    public final int getSkyLightLevel() {
+        return getLevel().getBrightness(LightLayer.SKY, this.getPhysicsBlockPos().offset(0, 1, 0));
     }
 
     @LuaFunction(mainThread = true)
@@ -122,11 +122,6 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final String getDimension() {
         return getLevel().dimension().location().toString();
-    }
-
-    @LuaFunction(mainThread = true)
-    public final boolean isDimension(String dimension) {
-        return getLevel().dimension().location().toString().equals(dimension);
     }
 
     @LuaFunction(mainThread = true)
