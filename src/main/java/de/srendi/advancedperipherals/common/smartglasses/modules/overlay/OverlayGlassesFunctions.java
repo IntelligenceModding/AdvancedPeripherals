@@ -54,46 +54,6 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final Object createRectangle(Optional<Map<?, ?>> initFields) throws LuaException {
-        RectangleObject rectangle = new RectangleObject(overlayModule);
-        rectangle.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
-        overlayModule.addObject(rectangle);
-        return rectangle;
-    }
-
-    @LuaFunction
-    public final Object createCircle(Optional<Map<?, ?>> initFields) throws LuaException {
-        CircleObject circle = new CircleObject(overlayModule);
-        circle.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
-        overlayModule.addObject(circle);
-        return circle;
-    }
-
-    @LuaFunction
-    public final Object createLine(Optional<Map<?, ?>> initFields) throws LuaException {
-        LineObject line = new LineObject(overlayModule);
-        line.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
-        overlayModule.addObject(line);
-        return line;
-    }
-
-    @LuaFunction
-    public final Object createText(Optional<Map<?, ?>> initFields) throws LuaException {
-        TextObject text = new TextObject(overlayModule);
-        text.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
-        overlayModule.addObject(text);
-        return text;
-    }
-
-    @LuaFunction
-    public final Object createItem(Optional<Map<?, ?>> initFields) throws LuaException {
-        ItemObject item = new ItemObject(overlayModule);
-        item.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
-        overlayModule.addObject(item);
-        return item;
-    }
-
-    @LuaFunction
     public final Object createBlock(Optional<Map<?, ?>> initFields) throws LuaException {
         BlockObject block = new BlockObject(overlayModule);
         block.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
@@ -134,6 +94,46 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
+    public final Object createCircle(Optional<Map<?, ?>> initFields) throws LuaException {
+        CircleObject circle = new CircleObject(overlayModule);
+        circle.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        overlayModule.addObject(circle);
+        return circle;
+    }
+
+    @LuaFunction
+    public final Object createItem(Optional<Map<?, ?>> initFields) throws LuaException {
+        ItemObject item = new ItemObject(overlayModule);
+        item.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        overlayModule.addObject(item);
+        return item;
+    }
+
+    @LuaFunction
+    public final Object createLine(Optional<Map<?, ?>> initFields) throws LuaException {
+        LineObject line = new LineObject(overlayModule);
+        line.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        overlayModule.addObject(line);
+        return line;
+    }
+
+    @LuaFunction
+    public final Object createRectangle(Optional<Map<?, ?>> initFields) throws LuaException {
+        RectangleObject rectangle = new RectangleObject(overlayModule);
+        rectangle.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        overlayModule.addObject(rectangle);
+        return rectangle;
+    }
+
+    @LuaFunction
+    public final Object createText(Optional<Map<?, ?>> initFields) throws LuaException {
+        TextObject text = new TextObject(overlayModule);
+        text.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        overlayModule.addObject(text);
+        return text;
+    }
+
+    @LuaFunction
     public final MethodResult getObject(int id) throws LuaException {
         return MethodResult.of(overlayModule.getObjects().get(id));
     }
@@ -156,11 +156,6 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     @LuaFunction
     public final MethodResult getGuiSize() {
         return MethodResult.of(overlayModule.getScreenWidth(), overlayModule.getScreenHeight(), overlayModule.getGuiScale());
-    }
-
-    @LuaFunction
-    public final double getGuiScale() {
-        return overlayModule.getGuiScale();
     }
 
     @LuaFunction

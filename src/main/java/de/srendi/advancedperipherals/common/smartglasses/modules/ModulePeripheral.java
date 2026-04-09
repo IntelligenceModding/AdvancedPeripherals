@@ -47,6 +47,6 @@ public class ModulePeripheral extends BasePeripheral<ModulePeripheralOwner> {
     @LuaFunction
     public final boolean hasModule(String moduleId) {
         ResourceLocation id = ResourceLocation.tryParse(moduleId);
-        return id == null ? false : this.modules.stream().anyMatch(id::equals);
+        return id != null && this.modules.stream().anyMatch(id::equals);
     }
 }
