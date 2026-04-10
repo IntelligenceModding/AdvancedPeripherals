@@ -32,7 +32,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
     private DataComponentPatch components = null;
-    private int count = 64;
+    private int count = Integer.MAX_VALUE;
     private String fingerprint = "";
     public int fromSlot = -1;
     public int toSlot = -1;

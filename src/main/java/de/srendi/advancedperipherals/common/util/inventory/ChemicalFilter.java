@@ -22,7 +22,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
     private Holder<Chemical> chemical = MekanismAPI.EMPTY_CHEMICAL_HOLDER;
     private TagKey<Chemical> tag = null;
-    private long amount = 1000;
+    private long amount = Long.MAX_VALUE;
     private String fingerprint = "";
     public int fromSlot = -1;
     public int toSlot = -1;

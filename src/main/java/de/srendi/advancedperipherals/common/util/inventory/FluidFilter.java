@@ -33,7 +33,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;
     private DataComponentPatch components = null;
-    private int amount = 1000;
+    private int amount = Integer.MAX_VALUE;
     private String fingerprint = "";
 
     private FluidFilter() {
