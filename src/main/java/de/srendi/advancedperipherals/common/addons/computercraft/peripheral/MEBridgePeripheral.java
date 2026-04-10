@@ -20,7 +20,7 @@ import de.srendi.advancedperipherals.common.addons.ae2.AEMekanismApi;
 import de.srendi.advancedperipherals.common.addons.ae2.MEChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MEFluidHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MEItemHandler;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.StorageSystemBlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -28,26 +28,38 @@ import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
+import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHandler;
+import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemItemHandler;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> {
+public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageSystemBlockEntityPeripheralOwner<MEBridgeEntity>> {
     public static final String PERIPHERAL_TYPE = "me_bridge";
 
     private final MEBridgeEntity bridge;
     private IGridNode node;
 
-    public MEBridgePeripheral(MEBridgeEntity tileEntity) {
-        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
-        this.bridge = tileEntity;
-        this.node = tileEntity.getActionableNode();
+    public MEBridgePeripheral(MEBridgeEntity be) {
+        super(PERIPHERAL_TYPE, new StorageSystemBlockEntityPeripheralOwner<>(be) {
+            @Override
+            @NotNull
+            public IStorageSystemItemHandler getStorageSystemItemHandler() {
+                return new MEItemHandler(AEApi.getMonitor(be.getActionableNode()), be);
+            }
+
+            @Override
+            @NotNull
+            public IStorageSystemFluidHandler getStorageSystemFluidHandler() {
+                return new MEFluidHandler(AEApi.getMonitor(be.getActionableNode()), be);
+            }
+        });
+        this.bridge = be;
+        this.node = be.getActionableNode();
     }
 
     public void setNode(IManagedGridNode node) {
@@ -67,18 +79,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
     @NotNull
     public APAddon getChemicalOpAddon() {
         return APAddon.APP_MEKANISTICS;
-    }
-
-    @Override
-    @NotNull
-    public IItemHandler getStorageSystemItemHandler() {
-        return new MEItemHandler(AEApi.getMonitor(node), bridge);
-    }
-
-    @Override
-    @NotNull
-    public IFluidHandler getStorageSystemFluidHandler() {
-        return new MEFluidHandler(AEApi.getMonitor(node), bridge);
     }
 
     @Override

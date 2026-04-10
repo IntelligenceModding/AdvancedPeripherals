@@ -8,7 +8,7 @@ import de.srendi.advancedperipherals.common.addons.APAddon;
 /**
  * To better support third party RS addons and to prevent any jvm loading issues when third party addons are not loaded
  */
-public enum RsStorageTypes {
+public enum RSStorageTypes {
     ITEM {
         @Override
         public StorageType getStorageType() {

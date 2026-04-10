@@ -8,7 +8,7 @@ import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IStorageSystemPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
@@ -42,7 +42,7 @@ import java.util.Optional;
  *
  * @param <O> peripheral owner type
  */
-public abstract class AbstractStorageSystemPeripheral<O extends IPeripheralOwner> extends BasePeripheral<O> {
+public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPeripheralOwner> extends BasePeripheral<O> {
     static final MethodResult NOT_CONNECTED_RESULT = MethodResult.of(null, StatusConstants.NOT_CONNECTED.toString());
 
     protected AbstractStorageSystemPeripheral(String type, @NotNull O owner) {
@@ -64,9 +64,15 @@ public abstract class AbstractStorageSystemPeripheral<O extends IPeripheralOwner
     }
 
     @NotNull
-    public abstract IItemHandler getStorageSystemItemHandler();
+    public IItemHandler getStorageSystemItemHandler() {
+        return this.owner;
+    }
+
     @NotNull
-    public abstract IFluidHandler getStorageSystemFluidHandler();
+    public IFluidHandler getStorageSystemFluidHandler() {
+        return this.owner;
+    }
+
     @NotNull
     public abstract Object /*IChemicalHandler*/ getStorageSystemChemicalHandler();
 

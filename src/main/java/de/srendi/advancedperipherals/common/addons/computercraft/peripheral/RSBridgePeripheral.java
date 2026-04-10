@@ -16,14 +16,14 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.StorageSystemBlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSCraftJob;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSFluidHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSItemHandler;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSMekanismApi;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RsStorageTypes;
+import de.srendi.advancedperipherals.common.addons.refinedstorage.RSStorageTypes;
 import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.Pair;
@@ -31,23 +31,35 @@ import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
+import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHandler;
+import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemItemHandler;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
 
-public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEntityPeripheralOwner<RSBridgeEntity>> {
+public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<StorageSystemBlockEntityPeripheralOwner<RSBridgeEntity>> {
     public static final String PERIPHERAL_TYPE = "rs_bridge";
 
     private final RSBridgeEntity bridge;
 
-    public RSBridgePeripheral(RSBridgeEntity owner) {
-        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(owner));
-        this.bridge = owner;
+    public RSBridgePeripheral(RSBridgeEntity be) {
+        super(PERIPHERAL_TYPE, new StorageSystemBlockEntityPeripheralOwner<>(be) {
+            @Override
+            @NotNull
+            public IStorageSystemItemHandler getStorageSystemItemHandler() {
+                return new RSItemHandler(((AbstractNetworkNode) getBlockEntity().getNode()).getNetwork());
+            }
+
+            @Override
+            @NotNull
+            public IStorageSystemFluidHandler getStorageSystemFluidHandler() {
+                return new RSFluidHandler(((AbstractNetworkNode) getBlockEntity().getNode()).getNetwork());
+            }
+        });
+        this.bridge = be;
     }
 
     @Override
@@ -63,18 +75,6 @@ public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
     @NotNull
     public APAddon getChemicalOpAddon() {
         return APAddon.REFINEDSTORAGE_MEKANISM;
-    }
-
-    @Override
-    @NotNull
-    public IItemHandler getStorageSystemItemHandler() {
-        return new RSItemHandler(getNetwork());
-    }
-
-    @Override
-    @NotNull
-    public IFluidHandler getStorageSystemFluidHandler() {
-        return new RSFluidHandler(getNetwork());
     }
 
     @Override
@@ -183,92 +183,92 @@ public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<BlockEnt
 
     @Override
     public double getTotalExternalItemStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.ITEM);
+        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.ITEM);
     }
 
     @Override
     public double getTotalExternalFluidStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.FLUID);
+        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.FLUID);
     }
 
     @Override
     public double getTotalExternalChemicalStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.CHEMICAL);
     }
 
     @Override
     public double getTotalItemStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.ITEM);
+        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.ITEM);
     }
 
     @Override
     public double getTotalFluidStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.FLUID);
+        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.FLUID);
     }
 
     @Override
     public double getTotalChemicalStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.CHEMICAL);
     }
 
     @Override
     public double getUsedExternalItemStorageImpl() {
-        return RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.ITEM);
+        return RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.ITEM);
     }
 
     @Override
     public double getUsedExternalFluidStorageImpl() {
-        return RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.FLUID);
+        return RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.FLUID);
     }
 
     @Override
     public double getUsedExternalChemicalStorageImpl() {
-        return RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+        return RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.CHEMICAL);
     }
 
     @Override
     public double getUsedItemStorageImpl() {
-        return RSApi.getUsedStorage(getNetwork(), RsStorageTypes.ITEM);
+        return RSApi.getUsedStorage(getNetwork(), RSStorageTypes.ITEM);
     }
 
     @Override
     public double getUsedFluidStorageImpl() {
-        return RSApi.getUsedStorage(getNetwork(), RsStorageTypes.FLUID);
+        return RSApi.getUsedStorage(getNetwork(), RSStorageTypes.FLUID);
     }
 
     @Override
     public double getUsedChemicalStorageImpl() {
-        return RSApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+        return RSApi.getUsedStorage(getNetwork(), RSStorageTypes.CHEMICAL);
     }
 
     @Override
     public double getAvailableExternalItemStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.ITEM) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.ITEM);
+        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.ITEM) - RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.ITEM);
     }
 
     @Override
     public double getAvailableExternalFluidStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.FLUID) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.FLUID);
+        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.FLUID) - RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.FLUID);
     }
 
     @Override
     public double getAvailableExternalChemicalStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RSApi.getUsedExternalStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.CHEMICAL) - RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.CHEMICAL);
     }
 
     @Override
     public double getAvailableItemStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.ITEM) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.ITEM);
+        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.ITEM) - RSApi.getUsedStorage(getNetwork(), RSStorageTypes.ITEM);
     }
 
     @Override
     public double getAvailableFluidStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.FLUID) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.FLUID);
+        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.FLUID) - RSApi.getUsedStorage(getNetwork(), RSStorageTypes.FLUID);
     }
 
     @Override
     public double getAvailableChemicalStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RsStorageTypes.CHEMICAL) - RSApi.getUsedStorage(getNetwork(), RsStorageTypes.CHEMICAL);
+        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.CHEMICAL) - RSApi.getUsedStorage(getNetwork(), RSStorageTypes.CHEMICAL);
     }
 
     @Override

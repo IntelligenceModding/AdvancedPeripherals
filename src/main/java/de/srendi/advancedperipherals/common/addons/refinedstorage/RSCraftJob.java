@@ -64,7 +64,6 @@ public class RSCraftJob extends BasicCraftJob {
         if (craftingTask == null) {
             return -1;
         }
-
         return craftingTask.items().size();
     }
 
@@ -78,7 +77,6 @@ public class RSCraftJob extends BasicCraftJob {
         if (preview == null) {
             return Collections.emptyList();
         }
-
         return preview.items().stream().filter(item -> item.toCraft() > 0).map(item -> RSApi.getObjectFromResourceKey(item.resource(), item.toCraft(), autocraftingComponent)).collect(Collectors.toList());
     }
 
@@ -93,7 +91,6 @@ public class RSCraftJob extends BasicCraftJob {
         if (preview == null) {
             return Collections.emptyList();
         }
-
         return preview.items().stream().filter(item -> item.missing() > 0).map(item -> RSApi.getObjectFromResourceKey(item.resource(), item.missing(), autocraftingComponent)).collect(Collectors.toList());
     }
 
@@ -108,7 +105,6 @@ public class RSCraftJob extends BasicCraftJob {
         if (preview == null) {
             return Collections.emptyList();
         }
-
         return preview.outputsOfPatternWithCycle().stream().map((resource) -> RSApi.getObjectFromResourceAmount(resource, autocraftingComponent)).collect(Collectors.toList());
     }
 

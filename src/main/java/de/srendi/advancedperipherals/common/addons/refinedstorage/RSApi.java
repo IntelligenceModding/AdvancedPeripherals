@@ -341,7 +341,7 @@ public class RSApi {
         return Pair.of(null, "NO_PATTERN_FOUND");
     }
 
-    public static long getTotalStorage(Network network, RsStorageTypes type) {
+    public static long getTotalStorage(Network network, RSStorageTypes type) {
         long total = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
@@ -364,7 +364,7 @@ public class RSApi {
         return total;
     }
 
-    public static long getUsedStorage(Network network, RsStorageTypes type) {
+    public static long getUsedStorage(Network network, RSStorageTypes type) {
         long used = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
@@ -387,7 +387,7 @@ public class RSApi {
         return used;
     }
 
-    public static long getTotalExternalStorage(Network network, RsStorageTypes type) {
+    public static long getTotalExternalStorage(Network network, RSStorageTypes type) {
         long total = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
@@ -401,7 +401,7 @@ public class RSApi {
         return total;
     }
 
-    public static long getUsedExternalStorage(Network network, RsStorageTypes type) {
+    public static long getUsedExternalStorage(Network network, RSStorageTypes type) {
         long used = 0;
 
         // If the storage type if null, it just means that the supplier returns no storage type. That happens when an addon is not loaded
