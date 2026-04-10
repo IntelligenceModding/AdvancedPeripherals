@@ -205,6 +205,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         this.setCalculatePeriodically(shouldCalculatePeriodically);
     }
 
+    @LuaFunction
     public final double maxRange() {
         return this.getMaxRange();
     }
