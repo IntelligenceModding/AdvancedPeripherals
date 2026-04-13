@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
+import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
@@ -37,6 +39,18 @@ public class RectangleObject extends RenderableObject {
     @NotNull
     public OverlayObjectType<RectangleObject> getType() {
         return APOverlayObjects.RECTANGLE.get();
+    }
+
+    @LuaFunction
+    public MethodResult getSizes() {
+        return MethodResult.of(this.sizeX, this.sizeY);
+    }
+
+    @LuaFunction
+    public void setSizes(double x, double y) {
+        this.sizeX = (float) Math.max(x, 0);
+        this.sizeY = (float) Math.max(y, 0);
+        this.tryAutoUpdate();
     }
 
     @Override

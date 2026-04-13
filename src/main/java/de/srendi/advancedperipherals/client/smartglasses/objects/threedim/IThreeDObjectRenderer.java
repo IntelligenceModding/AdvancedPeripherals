@@ -7,12 +7,13 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
 
 import java.util.List;
 
 public interface IThreeDObjectRenderer<O extends ThreeDimensionalObject> extends IObjectRenderer {
 
-    void renderBatch(List<O> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos);
+    void renderBatch(List<O> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos, Quaternionf eyeRotation);
 
     default void onPreRender(@NotNull O object) {
         if (!object.culling) {

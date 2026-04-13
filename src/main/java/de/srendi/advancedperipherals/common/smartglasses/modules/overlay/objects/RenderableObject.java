@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
+import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
@@ -55,6 +57,19 @@ public abstract class RenderableObject extends OverlayObject {
                 (float) Math.toRadians(this.rotX),
                 (float) Math.toRadians(this.rotZ)
             );
+    }
+
+    @LuaFunction
+    public MethodResult getPos() {
+        return MethodResult.of(this.x, this.y, this.z);
+    }
+
+    @LuaFunction
+    public void setPos(double x, double y, double z) {
+        this.x = (float) x;
+        this.y = (float) y;
+        this.z = (float) z;
+        this.tryAutoUpdate();
     }
 
     @Override

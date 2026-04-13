@@ -14,13 +14,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import org.joml.Quaternionf;
 
 import java.util.List;
 
 public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
 
     @Override
-    public void renderBatch(List<BlockObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos) {
+    public void renderBatch(List<BlockObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos, Quaternionf eyeRotation) {
         Camera camera = event.getCamera();
         Level level = camera.getEntity().level();
         BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
@@ -40,7 +41,7 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
             if (block.relativePosition) {
                 poseStack.translate(eyePos.x, eyePos.y, eyePos.z);
                 if (block.relativeRotation) {
-                    poseStack.mulPose(camera.rotation());
+                    poseStack.mulPose(eyeRotation);
                 }
             }
             poseStack.translate(block.x - 0.5, block.y - 0.5, block.z - 0.5);

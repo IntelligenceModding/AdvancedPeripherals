@@ -5,21 +5,20 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TorusObject;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import org.joml.Quaternionf;
 
 import java.util.List;
 
 public class TorusRenderer implements IThreeDObjectRenderer<TorusObject> {
 
     @Override
-    public void renderBatch(List<TorusObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos) {
-        Camera camera = event.getCamera();
+    public void renderBatch(List<TorusObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos, Quaternionf eyeRotation) {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.debugStructureQuads());
 
@@ -36,7 +35,7 @@ public class TorusRenderer implements IThreeDObjectRenderer<TorusObject> {
             if (torus.relativePosition) {
                 poseStack.translate(eyePos.x, eyePos.y, eyePos.z);
                 if (torus.relativeRotation) {
-                    poseStack.mulPose(camera.rotation());
+                    poseStack.mulPose(eyeRotation);
                 }
             }
             poseStack.translate(torus.x, torus.y, torus.z);

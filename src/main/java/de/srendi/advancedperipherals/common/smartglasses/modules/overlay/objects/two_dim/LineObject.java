@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
 
+import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
@@ -45,6 +47,18 @@ public class LineObject extends RenderableObject {
     @NotNull
     public OverlayObjectType<LineObject> getType() {
         return APOverlayObjects.LINE.get();
+    }
+
+    @LuaFunction
+    public MethodResult getEndPos() {
+        return MethodResult.of(this.endX, this.endY);
+    }
+
+    @LuaFunction
+    public void setEndPos(double x, double y) {
+        this.endX = (float) x;
+        this.endY = (float) y;
+        this.tryAutoUpdate();
     }
 
     @Override

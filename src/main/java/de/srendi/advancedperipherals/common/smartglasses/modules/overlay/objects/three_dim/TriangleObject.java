@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
 
+import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
@@ -49,6 +51,45 @@ public class TriangleObject extends ThreeDimensionalObject {
     @NotNull
     public OverlayObjectType<TriangleObject> getType() {
         return APOverlayObjects.TRIANGLE.get();
+    }
+
+    @LuaFunction
+    public MethodResult getPos1() {
+        return MethodResult.of(this.x1, this.y1, this.z1);
+    }
+
+    @LuaFunction
+    public void setPos1(double x, double y, double z) {
+        this.x1 = (float) x;
+        this.y1 = (float) y;
+        this.z1 = (float) z;
+        this.tryAutoUpdate();
+    }
+
+    @LuaFunction
+    public MethodResult getPos2() {
+        return MethodResult.of(this.x2, this.y2, this.z2);
+    }
+
+    @LuaFunction
+    public void setPos2(double x, double y, double z) {
+        this.x2 = (float) x;
+        this.y2 = (float) y;
+        this.z2 = (float) z;
+        this.tryAutoUpdate();
+    }
+
+    @LuaFunction
+    public MethodResult getPos3() {
+        return MethodResult.of(this.x3, this.y3, this.z3);
+    }
+
+    @LuaFunction
+    public void setPos3(double x, double y, double z) {
+        this.x3 = (float) x;
+        this.y3 = (float) y;
+        this.z3 = (float) z;
+        this.tryAutoUpdate();
     }
 
     @Override
