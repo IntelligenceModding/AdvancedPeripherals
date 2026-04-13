@@ -17,6 +17,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleC
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleCompassUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleEnvironmentDetectorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleGeoScannerUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtlePatternGridUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtlePlayerDetectorUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.EndAutomata;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics.HusbandryAutomata;
@@ -35,6 +36,7 @@ public class CCRegistration {
     public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleChunkyUpgrade>> CHUNKY_TURTLE = Registration.TURTLE_SERIALIZER.register(ID.CHUNKY_TURTLE.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleChunkyUpgrade::new));
     public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleGeoScannerUpgrade>> GEO_SCANNER_TURTLE = Registration.TURTLE_SERIALIZER.register(ID.GEOSCANNER_TURTLE.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleGeoScannerUpgrade::new));
     public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleCompassUpgrade>> COMPASS_TURTLE = Registration.TURTLE_SERIALIZER.register(ID.COMPASS_TURTLE.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleCompassUpgrade::new));
+    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtlePatternGridUpgrade>> PATTERN_TURTLE = Registration.TURTLE_SERIALIZER.register(ID.PATTERN_TURTLE.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtlePatternGridUpgrade::new));
     public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<WeakAutomata>> WEAK_TURTLE = Registration.TURTLE_SERIALIZER.register(ID.WEAK_AUTOMATA.getPath(), () -> UpgradeType.simpleWithCustomItem(WeakAutomata::new));
     public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<EndAutomata>> END_TURTLE = Registration.TURTLE_SERIALIZER.register(ID.END_AUTOMATA.getPath(), () -> UpgradeType.simpleWithCustomItem(EndAutomata::new));
     public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<HusbandryAutomata>> HUSBANDRY_TURTLE = Registration.TURTLE_SERIALIZER.register(ID.HUSBANDRY_AUTOMATA.getPath(), () -> UpgradeType.simpleWithCustomItem(HusbandryAutomata::new));
@@ -61,6 +63,7 @@ public class CCRegistration {
         public static final ResourceLocation CHUNKY_TURTLE = AdvancedPeripherals.getRL("chunky_turtle");
         public static final ResourceLocation GEOSCANNER_TURTLE = AdvancedPeripherals.getRL("geoscanner_turtle");
         public static final ResourceLocation COMPASS_TURTLE = AdvancedPeripherals.getRL("compass_turtle");
+        public static final ResourceLocation PATTERN_TURTLE = AdvancedPeripherals.getRL("pattern_turtle");
         public static final ResourceLocation WEAK_AUTOMATA = AdvancedPeripherals.getRL("weak_automata");
         public static final ResourceLocation END_AUTOMATA = AdvancedPeripherals.getRL("end_automata");
         public static final ResourceLocation HUSBANDRY_AUTOMATA = AdvancedPeripherals.getRL("husbandry_automata");
