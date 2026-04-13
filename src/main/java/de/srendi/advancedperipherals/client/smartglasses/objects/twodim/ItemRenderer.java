@@ -20,9 +20,9 @@ public class ItemRenderer implements ITwoDObjectRenderer<ItemObject> {
             if (renderItem == null) {
                 continue;
             }
-            int x = (int) obj.x, y = (int) obj.y;
+            int x = Math.round(obj.x), y = Math.round(obj.y);
             gui.pose().pushPose();
-            gui.pose().rotateAround(obj.getRotation(), x, y, 0);
+            gui.pose().rotateAround(obj.getRotation(), x + 8, y + 8, 150);
             gui.renderFakeItem(new ItemStack(renderItem), x, y);
             gui.pose().popPose();
         }

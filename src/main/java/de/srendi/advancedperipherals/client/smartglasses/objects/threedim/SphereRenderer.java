@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.SphereObject;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,7 +18,8 @@ import java.util.List;
 public class SphereRenderer implements IThreeDObjectRenderer<SphereObject> {
 
     @Override
-    public void renderBatch(List<SphereObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
+    public void renderBatch(List<SphereObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos) {
+        Camera camera = event.getCamera();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.debugStructureQuads());
 
@@ -31,7 +33,12 @@ public class SphereRenderer implements IThreeDObjectRenderer<SphereObject> {
             float green = RenderUtil.getGreen(sphere.color);
             float blue = RenderUtil.getBlue(sphere.color);
 
-            poseStack.translate(-view.x, -view.y, -view.z);
+            if (sphere.relativePosition) {
+                poseStack.translate(eyePos.x, eyePos.y, eyePos.z);
+                if (sphere.relativeRotation) {
+                    poseStack.mulPose(camera.rotation());
+                }
+            }
             poseStack.translate(sphere.x, sphere.y, sphere.z);
             poseStack.mulPose(sphere.getRotation());
             RenderUtil.drawSphere(poseStack, bufferBuilder, sphere.radius, red, green, blue, alpha, sphere.sectors, sphere.stacks);

@@ -11,6 +11,15 @@ import java.util.UUID;
 
 public class TriangleObject extends ThreeDimensionalObject {
     @FloatingNumberProperty
+    public float x1 = 0;
+
+    @FloatingNumberProperty
+    public float y1 = 0;
+
+    @FloatingNumberProperty
+    public float z1 = 0;
+
+    @FloatingNumberProperty
     public float x2 = 0;
 
     @FloatingNumberProperty
@@ -45,6 +54,9 @@ public class TriangleObject extends ThreeDimensionalObject {
     @Override
     public void encode(FriendlyByteBuf buffer) {
         super.encode(buffer);
+        buffer.writeFloat(this.x1);
+        buffer.writeFloat(this.y1);
+        buffer.writeFloat(this.z1);
         buffer.writeFloat(this.x2);
         buffer.writeFloat(this.y2);
         buffer.writeFloat(this.z2);
@@ -56,6 +68,9 @@ public class TriangleObject extends ThreeDimensionalObject {
     @Override
     public void decode(FriendlyByteBuf buffer) {
         super.decode(buffer);
+        this.x1 = buffer.readFloat();
+        this.y1 = buffer.readFloat();
+        this.z1 = buffer.readFloat();
         this.x2 = buffer.readFloat();
         this.y2 = buffer.readFloat();
         this.z2 = buffer.readFloat();

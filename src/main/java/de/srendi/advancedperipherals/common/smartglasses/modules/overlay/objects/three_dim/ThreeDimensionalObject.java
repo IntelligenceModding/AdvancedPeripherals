@@ -9,6 +9,12 @@ import java.util.UUID;
 
 public abstract class ThreeDimensionalObject extends RenderableObject {
 
+    @BooleanProperty
+    public boolean relativePosition = false;
+
+    @BooleanProperty
+    public boolean relativeRotation = false;
+
     @BooleanProperty(getterPrefix = "has")
     public boolean depthTest = true;
 
@@ -26,13 +32,17 @@ public abstract class ThreeDimensionalObject extends RenderableObject {
     @Override
     public void encode(FriendlyByteBuf buffer) {
         super.encode(buffer);
-        buffer.writeBoolean(depthTest);
-        buffer.writeBoolean(culling);
+        buffer.writeBoolean(this.relativePosition);
+        buffer.writeBoolean(this.relativeRotation);
+        buffer.writeBoolean(this.depthTest);
+        buffer.writeBoolean(this.culling);
     }
 
     @Override
     public void decode(FriendlyByteBuf buffer) {
         super.decode(buffer);
+        this.relativePosition = buffer.readBoolean();
+        this.relativeRotation = buffer.readBoolean();
         this.depthTest = buffer.readBoolean();
         this.culling = buffer.readBoolean();
     }

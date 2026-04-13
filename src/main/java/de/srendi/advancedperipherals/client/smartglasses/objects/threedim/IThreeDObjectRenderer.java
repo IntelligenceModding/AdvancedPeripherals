@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface IThreeDObjectRenderer<O extends ThreeDimensionalObject> extends IObjectRenderer {
 
-    void renderBatch(List<O> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view);
+    void renderBatch(List<O> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos);
 
     default void onPreRender(@NotNull O object) {
         if (!object.culling) {

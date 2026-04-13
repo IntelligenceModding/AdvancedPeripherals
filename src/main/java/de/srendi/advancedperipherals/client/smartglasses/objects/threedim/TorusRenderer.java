@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TorusObject;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,7 +18,8 @@ import java.util.List;
 public class TorusRenderer implements IThreeDObjectRenderer<TorusObject> {
 
     @Override
-    public void renderBatch(List<TorusObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
+    public void renderBatch(List<TorusObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos) {
+        Camera camera = event.getCamera();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.debugStructureQuads());
 
@@ -31,7 +33,12 @@ public class TorusRenderer implements IThreeDObjectRenderer<TorusObject> {
             float green = RenderUtil.getGreen(torus.color);
             float blue = RenderUtil.getBlue(torus.color);
 
-            poseStack.translate(-view.x, -view.y, -view.z);
+            if (torus.relativePosition) {
+                poseStack.translate(eyePos.x, eyePos.y, eyePos.z);
+                if (torus.relativeRotation) {
+                    poseStack.mulPose(camera.rotation());
+                }
+            }
             poseStack.translate(torus.x, torus.y, torus.z);
             poseStack.mulPose(torus.getRotation());
             RenderUtil.drawTorus(poseStack, bufferBuilder, torus.majorRadius, torus.minorRadius, red, green, blue, alpha, torus.rings, torus.sides);

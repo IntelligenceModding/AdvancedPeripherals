@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BlockObject;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -19,8 +20,9 @@ import java.util.List;
 public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
 
     @Override
-    public void renderBatch(List<BlockObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 view) {
-        Level level = event.getCamera().getEntity().level();
+    public void renderBatch(List<BlockObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos) {
+        Camera camera = event.getCamera();
+        Level level = camera.getEntity().level();
         BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.solid());
@@ -35,7 +37,12 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
 
             poseStack.pushPose();
 
-            poseStack.translate(-view.x, -view.y, -view.z);
+            if (block.relativePosition) {
+                poseStack.translate(eyePos.x, eyePos.y, eyePos.z);
+                if (block.relativeRotation) {
+                    poseStack.mulPose(camera.rotation());
+                }
+            }
             poseStack.translate(block.x - 0.5, block.y - 0.5, block.z - 0.5);
             poseStack.rotateAround(block.getRotation(), 0.5f, 0.5f, 0.5f);
 

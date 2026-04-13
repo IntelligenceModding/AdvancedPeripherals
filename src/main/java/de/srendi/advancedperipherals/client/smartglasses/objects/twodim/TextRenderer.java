@@ -21,7 +21,7 @@ public class TextRenderer implements ITwoDObjectRenderer<TextObject> {
 
             gui.pose().translate(x, text.y, text.z);
             gui.pose().scale(text.fontSize, text.fontSize, 1);
-            gui.pose().mulPose(text.getRotation());
+            gui.pose().rotateAround(text.getRotation(), width / 2, 9f / 2, 0);
 
             int color = (text.color & 0xffffff) | ((int) (Math.min(Math.max(text.opacity, 0), 1) * 0xff) << 24);
 

@@ -29,7 +29,7 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
         }
     }
 
-    public void drawCircle(PoseStack t, CircleObject circle, float red, float green, float blue, float alpha) {
+    private void drawCircle(PoseStack poseStack, CircleObject circle, float red, float green, float blue, float alpha) {
         float r = circle.radius;
         float cx = circle.x;
         float cy = circle.y;
@@ -39,8 +39,6 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
 
         boolean isFilled = circle.filled;
         boolean isPixelated = circle.pixelated;
-
-        PoseStack poseStack = new PoseStack();
 
         poseStack.pushPose();
 
