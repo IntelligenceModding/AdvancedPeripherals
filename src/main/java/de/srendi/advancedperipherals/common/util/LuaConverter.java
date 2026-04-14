@@ -147,18 +147,18 @@ public class LuaConverter {
         registerEntityConverter(Entity.class, (entity, data, ctx) -> {
             data.put("id", entity.getId());
             data.put("uuid", entity.getStringUUID());
-            if (entity.hasCustomName()) {
-                data.put("customName", entity.getCustomName().getString());
-            }
             EntityType<?> type = entity.getType();
             data.put("displayName", type.getDescription().getString());
             data.put("name", type.builtInRegistryHolder().key().location().toString());
+            if (entity.hasCustomName()) {
+                data.put("customName", entity.getCustomName().getString());
+            }
             if (ctx.detailed()) {
                 data.put("type", type.getDescriptionId());
+                data.put("tags", entity.getTags());
                 data.put("category", type.getCategory().getName());
                 data.put("canBurn", entity.fireImmune());
                 data.put("canFreeze", entity.canFreeze());
-                data.put("tags", entity.getTags());
                 data.put("isGlowing", entity.isCurrentlyGlowing());
                 data.put("isUnderWater", entity.isUnderWater());
                 data.put("isInLava", entity.isInLava());
@@ -264,22 +264,25 @@ public class LuaConverter {
 
     public static Map<String, Object> itemToLua(@NotNull Item item) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", getHolderTags(item.builtInRegistryHolder()));
         properties.put("name", ItemUtil.getRegistryKey(item).toString());
+        properties.put("tags", getHolderTags(item.builtInRegistryHolder()));
         return properties;
     }
 
     public static Map<String, Object> fluidToLua(@NotNull Fluid fluid) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", getHolderTags(fluid.builtInRegistryHolder()));
         properties.put("name", FluidUtil.getRegistryKey(fluid).toString());
+        properties.put("tags", getHolderTags(fluid.builtInRegistryHolder()));
         return properties;
     }
 
-    public static Map<String, Object> chemicalToLua(@NotNull Chemical chemical) {
+    public static Map<String, Object> chemicalToLua(@NotNull Object /*Chemical*/ chemical0) {
+        Chemical chemical = (Chemical) chemical0;
+        Holder<Chemical> chemicalHolder = MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical);
         Map<String, Object> properties = new HashMap<>();
-        properties.put("tags", getHolderTags(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical)));
         properties.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
+        properties.put("tags", getHolderTags(chemicalHolder));
+        properties.put("isGaseous", chemicalHolder.is(MekanismAPITags.Chemicals.GASEOUS));
         properties.put("radioactivity", chemical.isRadioactive());
         return properties;
     }
@@ -312,7 +315,8 @@ public class LuaConverter {
         return properties;
     }
 
-    public static Map<String, Object> chemicalStackToLua(@NotNull ChemicalStack stack) {
+    public static Map<String, Object> chemicalStackToLua(@NotNull Object /*ChemicalStack*/ stack0) {
+        ChemicalStack stack = (ChemicalStack) stack0;
         if (stack.isEmpty()) {
             return null;
         }
@@ -320,7 +324,6 @@ public class LuaConverter {
         properties.put("count", stack.getAmount());
         properties.put("displayName", stack.getTextComponent().getString());
         properties.put("fingerprint", ChemicalUtil.getFingerprint(stack));
-        properties.put("isGaseous", stack.is(MekanismAPITags.Chemicals.GASEOUS));
         return properties;
     }
 
@@ -357,7 +360,8 @@ public class LuaConverter {
         return properties;
     }
 
-    public static Map<String, Object> chemicalStackToLua(@NotNull ChemicalStack chemicalStack, long count) {
+    public static Map<String, Object> chemicalStackToLua(@NotNull Object /*ChemicalStack*/ chemicalStack0, long count) {
+        ChemicalStack chemicalStack = (ChemicalStack) chemicalStack0;
         if (chemicalStack.isEmpty()) {
             return null;
         }
@@ -450,7 +454,7 @@ public class LuaConverter {
         }
         return Map.of(
             "name", team.getName(),
-            "color", team.getColor()
+            "color", team.getColor().getColor()
         );
     }
 
