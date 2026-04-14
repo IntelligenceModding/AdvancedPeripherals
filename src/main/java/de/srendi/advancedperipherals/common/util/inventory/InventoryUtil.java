@@ -126,6 +126,9 @@ public class InventoryUtil {
         if (inventoryTo instanceof IStorageSystemFluidHandler storageSystemHandler) {
             if (filter.test(inventoryFrom.getFluidInTank(0))) {
                 FluidStack toExtract = inventoryFrom.getFluidInTank(0).copy();
+                if (toExtract.isEmpty()) {
+                    return 0;
+                }
                 toExtract.setAmount(amount);
                 FluidStack extracted = inventoryFrom.drain(toExtract, IFluidHandler.FluidAction.SIMULATE);
                 if (extracted.isEmpty())
