@@ -11,18 +11,14 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.Level;
 
-import java.util.UUID;
-
 public class RenderableObjectSyncPacket implements IAPPacket {
 
     public static final CustomPacketPayload.Type<RenderableObjectSyncPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderable_object_sync"));
 
-    private final UUID player;
     private final int id;
     private final RegistryFriendlyByteBuf data;
 
-    public RenderableObjectSyncPacket(UUID player, OverlayObject object) {
-        this.player = player;
+    public RenderableObjectSyncPacket(OverlayObject object) {
         this.id = object.getId();
         RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), ServerLifecycleHooks.getCurrentServer().registryAccess());
         object.encodeUpdated(buf);
@@ -30,7 +26,6 @@ public class RenderableObjectSyncPacket implements IAPPacket {
     }
 
     public RenderableObjectSyncPacket(RegistryFriendlyByteBuf buffer) {
-        this.player = buffer.readUUID();
         this.id = buffer.readVarInt();
         int size = buffer.readVarInt();
         this.data = new RegistryFriendlyByteBuf(Unpooled.buffer(size, size), buffer.registryAccess());
@@ -52,7 +47,6 @@ public class RenderableObjectSyncPacket implements IAPPacket {
 
     @Override
     public void write(RegistryFriendlyByteBuf buffer) {
-        buffer.writeUUID(this.player);
         buffer.writeVarInt(this.id);
         this.data.readerIndex(0);
         buffer.writeVarInt(this.data.readableBytes());

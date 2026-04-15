@@ -15,18 +15,15 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.Level;
 
 import java.util.Collection;
-import java.util.UUID;
 
 public class RenderableObjectBulkSyncPacket implements IAPPacket {
 
     public static final Type<RenderableObjectBulkSyncPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderable_object_bulk_sync"));
 
-    private final UUID player;
     private final int count;
     private final RegistryFriendlyByteBuf data;
 
-    public RenderableObjectBulkSyncPacket(UUID player, Collection<OverlayObject> objects) {
-        this.player = player;
+    public RenderableObjectBulkSyncPacket(Collection<OverlayObject> objects) {
         this.count = objects.size();
         RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), ServerLifecycleHooks.getCurrentServer().registryAccess());
         for (OverlayObject object : objects) {
@@ -38,7 +35,6 @@ public class RenderableObjectBulkSyncPacket implements IAPPacket {
 
     public RenderableObjectBulkSyncPacket(RegistryFriendlyByteBuf buffer) {
         Registry<OverlayObjectType<?>> registry = buffer.registryAccess().registryOrThrow(APRegistries.OVERLAY_OBJECTS);
-        this.player = buffer.readUUID();
         this.count = buffer.readVarInt();
         int size = buffer.readVarInt();
         this.data = new RegistryFriendlyByteBuf(Unpooled.buffer(size, size), buffer.registryAccess());
@@ -64,7 +60,6 @@ public class RenderableObjectBulkSyncPacket implements IAPPacket {
     @Override
     public void write(RegistryFriendlyByteBuf buffer) {
         Registry<OverlayObjectType<?>> registry = buffer.registryAccess().registryOrThrow(APRegistries.OVERLAY_OBJECTS);
-        buffer.writeUUID(this.player);
         buffer.writeVarInt(this.count);
         this.data.readerIndex(0);
         buffer.writeVarInt(this.data.readableBytes());

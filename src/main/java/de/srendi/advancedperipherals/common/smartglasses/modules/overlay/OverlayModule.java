@@ -169,8 +169,7 @@ public class OverlayModule implements IModule {
      */
     public void update(OverlayObject object) {
         if (this.autoUpdate) {
-            ServerPlayer owner = this.getOwner();
-            PacketDistributor.sendToPlayer(owner, new RenderableObjectSyncPacket(owner.getUUID(), object));
+            PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectSyncPacket(object));
             return;
         }
         if (!this.objectsToAdd.containsKey(object.getId())) {
@@ -215,7 +214,7 @@ public class OverlayModule implements IModule {
                         break;
                     }
                 }
-                PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkSyncPacket(owner.getUUID(), List.copyOf(packedObjects)));
+                PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkSyncPacket(List.copyOf(packedObjects)));
             }
         }
 
