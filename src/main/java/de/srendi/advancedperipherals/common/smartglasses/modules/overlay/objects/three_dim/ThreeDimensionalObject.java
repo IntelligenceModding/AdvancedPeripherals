@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.object
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
-import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.UUID;
 
@@ -27,23 +26,5 @@ public abstract class ThreeDimensionalObject extends RenderableObject {
 
     public ThreeDimensionalObject(UUID player) {
         super(player);
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        buffer.writeBoolean(this.relativePosition);
-        buffer.writeBoolean(this.relativeRotation);
-        buffer.writeBoolean(this.depthTest);
-        buffer.writeBoolean(this.culling);
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.relativePosition = buffer.readBoolean();
-        this.relativeRotation = buffer.readBoolean();
-        this.depthTest = buffer.readBoolean();
-        this.culling = buffer.readBoolean();
     }
 }

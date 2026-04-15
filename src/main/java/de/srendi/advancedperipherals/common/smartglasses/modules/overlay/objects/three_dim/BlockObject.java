@@ -6,10 +6,10 @@ import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,10 +17,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 public class BlockObject extends ThreeDimensionalObject {
-    // @StringProperty
-    public ResourceKey<Block> block = null;
+    public Holder<Block> block = null;
 
     private BlockState cachedBlockState = null;
 
@@ -40,7 +40,7 @@ public class BlockObject extends ThreeDimensionalObject {
 
     @LuaFunction
     public final String getBlock() {
-        return this.block == null ? null : this.block.location().toString();
+        return this.block == null ? null : this.block.unwrapKey().get().location().toString();
     }
 
     @LuaFunction
@@ -50,9 +50,9 @@ public class BlockObject extends ThreeDimensionalObject {
             this.block = null;
         } else {
             ResourceLocation name = ResourceLocation.tryParse(block0);
-            this.block = BuiltInRegistries.BLOCK.containsKey(name) ? ResourceKey.create(Registries.BLOCK, name) : null;
+            this.block = BuiltInRegistries.BLOCK.getHolder(name).orElse(null);
         }
-        this.tryAutoUpdate();
+        this.markAndTryUpdate("block");
     }
 
     public BlockState getBlockState() {
@@ -62,31 +62,23 @@ public class BlockObject extends ThreeDimensionalObject {
         if (this.block == null) {
             return null;
         }
-        Block block = BuiltInRegistries.BLOCK.get(this.block);
-        this.cachedBlockState = block.defaultBlockState();
+        this.cachedBlockState = this.block.value().defaultBlockState();
+        // TODO: allow render specific block state
         return this.cachedBlockState;
+    }
+
+    @Override
+    protected void registerFieldEncoders(BiConsumer<String, FieldEncoder<?, ?>> registrar) {
+        registrar.accept("block", new FieldEncoder<>(
+            ByteBufCodecs.optional(ByteBufCodecs.holderRegistry(Registries.BLOCK)),
+            () -> Optional.ofNullable(this.block),
+            (block) -> this.block = block.orElse(null)
+        ));
     }
 
     @Override
     public void setPropertiesFromTable(LuaTable<?, ?> initFields) throws LuaException {
         super.setPropertiesFromTable(initFields);
         this.setBlock(initFields.optString("block"));
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        if (this.block == null) {
-            buffer.writeBoolean(false);
-        } else {
-            buffer.writeBoolean(true);
-            buffer.writeResourceKey(this.block);
-        }
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.block = buffer.readBoolean() ? buffer.readResourceKey(Registries.BLOCK) : null;
     }
 }

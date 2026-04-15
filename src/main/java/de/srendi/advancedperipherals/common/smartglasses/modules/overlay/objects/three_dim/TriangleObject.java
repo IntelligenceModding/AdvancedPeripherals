@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -63,7 +62,7 @@ public class TriangleObject extends ThreeDimensionalObject {
         this.x1 = (float) x;
         this.y1 = (float) y;
         this.z1 = (float) z;
-        this.tryAutoUpdate();
+        this.markAndTryUpdate("x1", "y1", "z1");
     }
 
     @LuaFunction
@@ -76,7 +75,7 @@ public class TriangleObject extends ThreeDimensionalObject {
         this.x2 = (float) x;
         this.y2 = (float) y;
         this.z2 = (float) z;
-        this.tryAutoUpdate();
+        this.markAndTryUpdate("x2", "y2", "z2");
     }
 
     @LuaFunction
@@ -89,34 +88,6 @@ public class TriangleObject extends ThreeDimensionalObject {
         this.x3 = (float) x;
         this.y3 = (float) y;
         this.z3 = (float) z;
-        this.tryAutoUpdate();
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        buffer.writeFloat(this.x1);
-        buffer.writeFloat(this.y1);
-        buffer.writeFloat(this.z1);
-        buffer.writeFloat(this.x2);
-        buffer.writeFloat(this.y2);
-        buffer.writeFloat(this.z2);
-        buffer.writeFloat(this.x3);
-        buffer.writeFloat(this.y3);
-        buffer.writeFloat(this.z3);
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.x1 = buffer.readFloat();
-        this.y1 = buffer.readFloat();
-        this.z1 = buffer.readFloat();
-        this.x2 = buffer.readFloat();
-        this.y2 = buffer.readFloat();
-        this.z2 = buffer.readFloat();
-        this.x3 = buffer.readFloat();
-        this.y3 = buffer.readFloat();
-        this.z3 = buffer.readFloat();
+        this.markAndTryUpdate("x3", "y3", "z3");
     }
 }

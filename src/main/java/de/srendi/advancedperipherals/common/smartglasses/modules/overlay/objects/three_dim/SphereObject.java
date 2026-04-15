@@ -5,7 +5,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.Overlay
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -32,21 +31,5 @@ public class SphereObject extends ThreeDimensionalObject {
     @NotNull
     public OverlayObjectType<SphereObject> getType() {
         return APOverlayObjects.SPHERE.get();
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        buffer.writeInt(sectors);
-        buffer.writeInt(stacks);
-        buffer.writeFloat(radius);
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.sectors = buffer.readInt();
-        this.stacks = buffer.readInt();
-        this.radius = buffer.readFloat();
     }
 }

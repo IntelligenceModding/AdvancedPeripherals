@@ -1,5 +1,9 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+
 public class FixedPointNumberType implements PropertyType<Number, FixedPointNumberProperty> {
     public long min;
     public long max;
@@ -13,6 +17,23 @@ public class FixedPointNumberType implements PropertyType<Number, FixedPointNumb
     @Override
     public boolean checkIsValid(Object value) {
         return value instanceof Long || value instanceof Integer || value instanceof Short || value instanceof Byte;
+    }
+
+    @Override
+    public StreamCodec<ByteBuf, ? extends Number> codec(Class<?> type) {
+        if (type == Long.TYPE || type == Long.class) {
+            return ByteBufCodecs.VAR_LONG;
+        }
+        if (type == Integer.TYPE || type == Integer.class) {
+            return ByteBufCodecs.VAR_INT;
+        }
+        if (type == Short.TYPE || type == Short.class) {
+            return ByteBufCodecs.SHORT;
+        }
+        if (type == Byte.TYPE || type == Byte.class) {
+            return ByteBufCodecs.BYTE;
+        }
+        throw new IllegalArgumentException("Unexpected field type: " + type);
     }
 
     @Override

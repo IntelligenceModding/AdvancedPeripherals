@@ -3,6 +3,8 @@ package de.srendi.advancedperipherals.common.network;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
 import de.srendi.advancedperipherals.common.network.toclient.OverlayModuleClientRequestPacket;
+import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectAddPacket;
+import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkAddPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
@@ -32,6 +34,8 @@ public class APNetworking {
     private static void init(PayloadRegistrar registrar) {
         registrar.playToClient(KeyboardMouseCapturePacket.TYPE, makeReader(KeyboardMouseCapturePacket::new), KeyboardMouseCapturePacket::handle);
         registrar.playToClient(OverlayModuleClientRequestPacket.TYPE, makeReader(OverlayModuleClientRequestPacket::new), OverlayModuleClientRequestPacket::handle);
+        registrar.playToClient(RenderableObjectAddPacket.TYPE, makeReader(RenderableObjectAddPacket::new), RenderableObjectAddPacket::handle);
+        registrar.playToClient(RenderableObjectBulkAddPacket.TYPE, makeReader(RenderableObjectBulkAddPacket::new), RenderableObjectBulkAddPacket::handle);
         registrar.playToClient(RenderableObjectBulkSyncPacket.TYPE, makeReader(RenderableObjectBulkSyncPacket::new), RenderableObjectBulkSyncPacket::handle);
         registrar.playToClient(RenderableObjectClearPacket.TYPE, makeReader(RenderableObjectClearPacket::new), RenderableObjectClearPacket::handle);
         registrar.playToClient(RenderableObjectDeletePacket.TYPE, makeReader(RenderableObjectDeletePacket::new), RenderableObjectDeletePacket::handle);

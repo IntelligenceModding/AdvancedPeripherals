@@ -5,7 +5,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.Overlay
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -35,23 +34,5 @@ public class TorusObject extends ThreeDimensionalObject {
     @NotNull
     public OverlayObjectType<TorusObject> getType() {
         return APOverlayObjects.TORUS.get();
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        buffer.writeInt(sides);
-        buffer.writeInt(rings);
-        buffer.writeFloat(minorRadius);
-        buffer.writeFloat(majorRadius);
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.sides = buffer.readInt();
-        this.rings = buffer.readInt();
-        this.minorRadius = buffer.readFloat();
-        this.majorRadius = buffer.readFloat();
     }
 }

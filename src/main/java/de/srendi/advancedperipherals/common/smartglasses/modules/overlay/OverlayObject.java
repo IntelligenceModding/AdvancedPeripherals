@@ -13,7 +13,10 @@ import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.PropertyType;
-import net.minecraft.network.FriendlyByteBuf;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -23,16 +26,22 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class OverlayObject implements IDynamicLuaObject {
 
     private final FieldWithPropertyType[] fields;
     private final String[] getterSetterNames;
     private final Map<String, FieldWithPropertyType> propertiesMap;
+    private final FieldEncoder<?, ?>[] fieldEncoders;
+    private final Object2IntMap<String> fieldToIndex;
 
     @BooleanProperty
     private boolean enabled = true;
@@ -40,8 +49,9 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     private int id;
     private OverlayModule module;
     private UUID player;
+    private final BitSet updated;
 
-    public OverlayObject(OverlayModule module) {
+    private OverlayObject() {
         ImmutableMap.Builder<String, FieldWithPropertyType> properties = ImmutableMap.builder();
         for (Field field : FieldUtils.getAllFieldsList(this.getClass())) {
             String fieldName = field.getName();
@@ -86,6 +96,46 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             getterSetterNames.add("set" + nameCap);
         }
         this.getterSetterNames = getterSetterNames.toArray(String[]::new);
+
+        List<FieldEncoder<?, ?>> fieldEncoders = new ArrayList<>();
+        this.fieldToIndex = new Object2IntOpenHashMap<>();
+        this.fieldToIndex.defaultReturnValue(-1);
+        BiConsumer<String, FieldEncoder<?, ?>> registrar = (name, encoder) -> {
+            if (this.fieldToIndex.containsKey(name)) {
+                throw new IllegalArgumentException("Field name " + name + " duplicated!");
+            }
+            this.fieldToIndex.put(name, fieldEncoders.size());
+            fieldEncoders.add(encoder);
+        };
+        for (FieldWithPropertyType field : this.fields) {
+            registrar.accept(
+                field.field().getName(),
+                new FieldEncoder<OverlayObject, Object>(
+                    (StreamCodec<RegistryFriendlyByteBuf, Object>) field.type().codec(field.field().getType()),
+                    () -> {
+                        try {
+                            return field.field().get(this);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                    },
+                    (v) -> {
+                        try {
+                            field.field().set(this, v);
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                )
+            );
+        }
+        this.registerFieldEncoders(registrar);
+        this.fieldEncoders = fieldEncoders.toArray(FieldEncoder[]::new);
+        this.updated = new BitSet(this.fieldEncoders.length);
+    }
+
+    public OverlayObject(OverlayModule module) {
+        this();
         this.module = module;
     }
 
@@ -93,10 +143,8 @@ public abstract class OverlayObject implements IDynamicLuaObject {
      * For clientside initialization
      */
     public OverlayObject(UUID player) {
+        this();
         this.player = player;
-        this.fields = null;
-        this.getterSetterNames = null;
-        this.propertiesMap = null;
     }
 
     @NotNull
@@ -132,7 +180,37 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         return this.getId();
     }
 
-    protected abstract void tryAutoUpdate();
+    protected void tryAutoUpdate() {
+        this.getModule().update(this);
+    }
+
+    protected void markUpdated(int fieldIndex) {
+        this.updated.set(fieldIndex);
+    }
+
+    protected final void markAndTryUpdate(int fieldIndex) {
+        this.markUpdated(fieldIndex);
+        this.tryAutoUpdate();
+    }
+
+    protected final void markUpdated(String fieldName) {
+        int index = this.fieldToIndex.getInt(fieldName);
+        if (index == -1) {
+            throw new IllegalArgumentException("Unknown field name: " + fieldName);
+        }
+        this.markUpdated(index);
+    }
+
+    protected final void markAndTryUpdate(String... fieldNames) {
+        for (String fieldName : fieldNames) {
+            this.markUpdated(fieldName);
+        }
+        this.tryAutoUpdate();
+    }
+
+    @MustBeInvokedByOverriders
+    protected void registerFieldEncoders(BiConsumer<String, FieldEncoder<?, ?>> registrar) {
+    }
 
     @Override
     public String[] getMethodNames() {
@@ -153,7 +231,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
         Object value = args.get(0);
         propField.setFor(this, value);
-        this.tryAutoUpdate();
+        this.markAndTryUpdate(fieldIndex);
         return MethodResult.of();
     }
 
@@ -175,6 +253,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
      * @see ObjectProperty
      * @see PropertyType
      */
+    @MustBeInvokedByOverriders
     public void setPropertiesFromTable(LuaTable<?, ?> initFields) throws LuaException {
         for (Map.Entry<?, ?> entry : initFields.entrySet()) {
             if (!(entry.getKey() instanceof String fieldName)) {
@@ -190,15 +269,43 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     }
 
     @MustBeInvokedByOverriders
-    public void encode(FriendlyByteBuf buffer) {
+    public void encode(RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(this.id);
-        buffer.writeBoolean(this.enabled);
+        for (FieldEncoder<?, ?> field : this.fieldEncoders) {
+            field.encode(buffer);
+        }
+        this.updated.clear();
     }
 
     @MustBeInvokedByOverriders
-    public void decode(FriendlyByteBuf buffer) {
+    public void decode(RegistryFriendlyByteBuf buffer) {
         this.id = buffer.readInt();
-        this.enabled = buffer.readBoolean();
+        for (FieldEncoder<?, ?> field : this.fieldEncoders) {
+            field.decode(buffer);
+        }
+    }
+
+    public void encodeUpdated(RegistryFriendlyByteBuf buffer) {
+        buffer.writeBitSet(this.updated);
+        for (int i = 0; i < this.fieldEncoders.length; i++) {
+            if (!this.updated.get(i)) {
+                continue;
+            }
+            FieldEncoder<?, ?> field = this.fieldEncoders[i];
+            field.encode(buffer);
+        }
+        this.updated.clear();
+    }
+
+    public void decodeUpdated(RegistryFriendlyByteBuf buffer) {
+        BitSet updated = buffer.readBitSet();
+        for (int i = 0; i < this.fieldEncoders.length; i++) {
+            if (!updated.get(i)) {
+                continue;
+            }
+            FieldEncoder<?, ?> field = this.fieldEncoders[i];
+            field.decode(buffer);
+        }
     }
 
     @Override
@@ -255,6 +362,20 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
         AdvancedPeripherals.debug(Level.WARN, "The field type {} is not supported for the value {}.", fieldType.getName(), value);
         return value;
+    }
+
+    public record FieldEncoder<O extends OverlayObject, T>(
+        StreamCodec<RegistryFriendlyByteBuf, T> codec,
+        Supplier<T> getter,
+        Consumer<T> setter
+    ) {
+        public void encode(RegistryFriendlyByteBuf buffer) {
+            this.codec.encode(buffer, this.getter.get());
+        }
+
+        public void decode(RegistryFriendlyByteBuf buffer) {
+            this.setter.accept(this.codec.decode(buffer));
+        }
     }
 
     private record FieldWithPropertyType(Field field, PropertyType<?, ?> type) {

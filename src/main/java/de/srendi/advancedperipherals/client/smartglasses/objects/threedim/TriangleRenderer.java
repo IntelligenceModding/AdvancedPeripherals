@@ -24,7 +24,7 @@ public class TriangleRenderer implements IThreeDObjectRenderer<TriangleObject> {
     private static final RenderType TRIANGLE_TYPE = RenderType.create(
         "ap_overlay_triangle",
         DefaultVertexFormat.POSITION_COLOR,
-        VertexFormat.Mode.TRIANGLE_STRIP,
+        VertexFormat.Mode.TRIANGLES,
         1536,
         false,
         true,

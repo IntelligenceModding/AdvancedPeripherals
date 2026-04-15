@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.Overlay
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -50,20 +49,6 @@ public class RectangleObject extends RenderableObject {
     public void setSizes(double x, double y) {
         this.sizeX = (float) Math.max(x, 0);
         this.sizeY = (float) Math.max(y, 0);
-        this.tryAutoUpdate();
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        buffer.writeFloat(this.sizeX);
-        buffer.writeFloat(this.sizeY);
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.sizeX = buffer.readFloat();
-        this.sizeY = buffer.readFloat();
+        this.markAndTryUpdate("sizeX", "sizeY");
     }
 }

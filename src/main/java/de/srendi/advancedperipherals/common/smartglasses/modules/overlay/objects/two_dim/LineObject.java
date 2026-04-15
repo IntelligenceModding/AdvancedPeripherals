@@ -9,7 +9,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -58,24 +57,6 @@ public class LineObject extends RenderableObject {
     public void setEndPos(double x, double y) {
         this.endX = (float) x;
         this.endY = (float) y;
-        this.tryAutoUpdate();
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        buffer.writeFloat(this.endX);
-        buffer.writeFloat(this.endY);
-        buffer.writeBoolean(this.pixelated);
-        buffer.writeInt(this.width);
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.endX = buffer.readFloat();
-        this.endY = buffer.readFloat();
-        this.pixelated = buffer.readBoolean();
-        this.width = buffer.readInt();
+        this.markAndTryUpdate("endX", "endY");
     }
 }

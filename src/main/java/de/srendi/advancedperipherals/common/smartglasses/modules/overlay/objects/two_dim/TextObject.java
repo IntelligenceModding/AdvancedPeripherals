@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -38,23 +37,4 @@ public class TextObject extends RenderableObject {
     public OverlayObjectType<TextObject> getType() {
         return APOverlayObjects.TEXT.get();
     }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        buffer.writeUtf(content);
-        buffer.writeFloat(fontSize);
-        buffer.writeBoolean(shadow);
-        buffer.writeBoolean(center);
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.content = buffer.readUtf();
-        this.fontSize = buffer.readFloat();
-        this.shadow = buffer.readBoolean();
-        this.center = buffer.readBoolean();
-    }
-
 }

@@ -3,13 +3,13 @@ package de.srendi.advancedperipherals.common.network.toclient;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
-import de.srendi.advancedperipherals.common.setup.APRegistries;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
-import net.minecraft.core.Registry;
+import io.netty.buffer.Unpooled;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import org.apache.logging.log4j.Level;
 
 import java.util.UUID;
 
@@ -18,32 +18,45 @@ public class RenderableObjectSyncPacket implements IAPPacket {
     public static final CustomPacketPayload.Type<RenderableObjectSyncPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("renderable_object_sync"));
 
     private final UUID player;
-    private final OverlayObject object;
+    private final int id;
+    private final RegistryFriendlyByteBuf data;
 
     public RenderableObjectSyncPacket(UUID player, OverlayObject object) {
         this.player = player;
-        this.object = object;
+        this.id = object.getId();
+        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), ServerLifecycleHooks.getCurrentServer().registryAccess());
+        object.encodeUpdated(buf);
+        this.data = buf;
     }
 
     public RenderableObjectSyncPacket(RegistryFriendlyByteBuf buffer) {
-        Registry<OverlayObjectType<?>> registry = buffer.registryAccess().registryOrThrow(APRegistries.OVERLAY_OBJECTS);
         this.player = buffer.readUUID();
-        int typeId = buffer.readVarInt();
-        this.object = registry.byIdOrThrow(typeId).createClient(this.player);
-        this.object.decode(buffer);
+        this.id = buffer.readVarInt();
+        int size = buffer.readVarInt();
+        this.data = new RegistryFriendlyByteBuf(Unpooled.buffer(size, size), buffer.registryAccess());
+        buffer.readBytes(this.data, size);
     }
 
     @Override
     public void handle(IPayloadContext context) {
-        OverlayObjectHolder.addOrUpdateObject(this.object);
+        OverlayObject object = OverlayObjectHolder.getObject(this.id);
+        if (object == null) {
+            AdvancedPeripherals.debug(Level.ERROR, "Received update packet for unknown overlay object {}", this.id);
+            return;
+        }
+        context.enqueueWork(() -> {
+            this.data.readerIndex(0);
+            object.decodeUpdated(this.data);
+        });
     }
 
     @Override
     public void write(RegistryFriendlyByteBuf buffer) {
-        Registry<OverlayObjectType<?>> registry = buffer.registryAccess().registryOrThrow(APRegistries.OVERLAY_OBJECTS);
         buffer.writeUUID(this.player);
-        buffer.writeVarInt(registry.getIdOrThrow(this.object.getType()));
-        object.encode(buffer);
+        buffer.writeVarInt(this.id);
+        this.data.readerIndex(0);
+        buffer.writeVarInt(this.data.readableBytes());
+        buffer.writeBytes(this.data);
     }
 
     @Override

@@ -13,13 +13,17 @@ public class OverlayObjectHolder {
 
     public static Map<Integer, OverlayObject> objects = new ConcurrentHashMap<>();
 
-    public static void addOrUpdateObject(OverlayObject object) {
+    public static OverlayObject getObject(int id) {
+        return objects.get(id);
+    }
+
+    public static void putObject(OverlayObject object) {
         objects.put(object.getId(), object);
     }
 
-    public static void addOrUpdateObjects(Collection<OverlayObject> objects) {
+    public static void putObjects(Collection<OverlayObject> objects) {
         for (OverlayObject overlayObject : objects) {
-            addOrUpdateObject(overlayObject);
+            putObject(overlayObject);
         }
     }
 

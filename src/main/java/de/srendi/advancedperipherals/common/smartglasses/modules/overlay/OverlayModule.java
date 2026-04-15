@@ -2,6 +2,8 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.toclient.OverlayModuleClientRequestPacket;
+import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectAddPacket;
+import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkAddPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
@@ -24,11 +26,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class OverlayModule implements IModule {
     private static final ResourceLocation ID = AdvancedPeripherals.getRL("overlay");
 
-    public final ConcurrentHashMap<Integer, OverlayObject> objects = new ConcurrentHashMap<>();
-    public final ConcurrentHashMap<Integer, OverlayObject> objectsToUpdate = new ConcurrentHashMap<>();
+    private final Map<Integer, OverlayObject> objects = new ConcurrentHashMap<>();
+    private final Map<Integer, OverlayObject> objectsToAdd = new ConcurrentHashMap<>();
+    private final Map<Integer, OverlayObject> objectsToUpdate = new ConcurrentHashMap<>();
     private final SmartGlassesSideAccess access;
 
-    public boolean autoUpdate = true;
+    private boolean autoUpdate = true;
     private int idCounter = 0;
 
     private WeakReference<ServerPlayer> lastPlayer = null;
@@ -65,6 +68,11 @@ public class OverlayModule implements IModule {
         }
     }
 
+    @Override
+    public void onUnequipped(SmartGlassesSideAccess smartGlassesAccess) {
+        this.clear();
+    }
+
     public void setScreenSizes(int screenWidth, int screenHeight, double guiScale) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -89,7 +97,21 @@ public class OverlayModule implements IModule {
     }
 
     public Map<Integer, OverlayObject> getObjects() {
-        return objects;
+        return this.objects;
+    }
+
+    public boolean getAutoUpdate() {
+        return this.autoUpdate;
+    }
+
+    public void setAutoUpdate(boolean autoUpdate) {
+        if (this.autoUpdate == autoUpdate) {
+            return;
+        }
+        if (autoUpdate) {
+            this.bulkUpdate();
+        }
+        this.autoUpdate = autoUpdate;
     }
 
     /**
@@ -100,13 +122,13 @@ public class OverlayModule implements IModule {
     public void addObject(OverlayObject object) {
         int id = idCounter++;
         object.setId(id);
-        if (autoUpdate) {
+        if (this.autoUpdate) {
             ServerPlayer owner = this.getOwner();
-            PacketDistributor.sendToPlayer(owner, new RenderableObjectSyncPacket(owner.getUUID(), object));
-            objects.put(id, object);
-        } else {
-            objectsToUpdate.put(id, object);
+            PacketDistributor.sendToPlayer(owner, new RenderableObjectAddPacket(owner.getUUID(), object));
+            this.objects.put(id, object);
+            return;
         }
+        this.objectsToAdd.put(id, object);
     }
 
     /**
@@ -116,10 +138,11 @@ public class OverlayModule implements IModule {
      * @return true if the object existed and was removed, false if the object was not in the collection
      */
     public boolean removeObject(int id) {
-        OverlayObject removed = objects.remove(id);
-        OverlayObject removedUpdating = objectsToUpdate.remove(id);
-        if (removed == null) {
-            return removedUpdating != null;
+        boolean removed = this.objects.remove(id) != null;
+        boolean removedAdding = this.objectsToAdd.remove(id) != null;
+        this.objectsToUpdate.remove(id);
+        if (!removed) {
+            return removedAdding;
         }
         PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectDeletePacket(id));
         return true;
@@ -131,10 +154,10 @@ public class OverlayModule implements IModule {
      * @return the amount of objects cleared
      */
     public int clear() {
-        int size = objects.size();
-        objects.clear();
-        idCounter = 0;
-        objectsToUpdate.clear();
+        int size = this.objects.size();
+        this.objects.clear();
+        this.idCounter = 0;
+        this.objectsToUpdate.clear();
         PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectClearPacket());
         return size;
     }
@@ -145,41 +168,57 @@ public class OverlayModule implements IModule {
      * @param object the object to sync to the player
      */
     public void update(OverlayObject object) {
-        if (autoUpdate) {
+        if (this.autoUpdate) {
             ServerPlayer owner = this.getOwner();
             PacketDistributor.sendToPlayer(owner, new RenderableObjectSyncPacket(owner.getUUID(), object));
             return;
         }
-
-        objectsToUpdate.put(object.getId(), object);
+        if (!this.objectsToAdd.containsKey(object.getId())) {
+            this.objectsToUpdate.put(object.getId(), object);
+        }
     }
 
     public int bulkUpdate() {
         ServerPlayer owner = this.getOwner();
         int maxPackets = 15000;
-        int size = objectsToUpdate.size();
-        int packetCount = (size + maxPackets - 1) / maxPackets;
-
+        int count = 0;
         List<OverlayObject> packedObjects = new ArrayList<>();
-        // In some cases, if the user creates a lot of objects above 15k, the packet payload can be too big.
-        // We split up the packets for every 15k objects to prevent the payload limit from mc
-        for (int i = 0; i < packetCount; i++) {
-            int count = 0;
-            packedObjects.clear();
-            for (OverlayObject object : objectsToUpdate.values()) {
-                packedObjects.add(object);
-                objects.put(object.getId(), object);
-                objectsToUpdate.remove(object.getId());
-                count++;
-
-                if (count >= maxPackets) {
-                    break; // Ensure we don't exceed the packet size limit
+        {
+            // In some cases, if the user creates a lot of objects above 15k, the packet payload can be too big.
+            // We split up the packets for every 15k objects to prevent the payload limit from mc
+            int remaning = this.objectsToAdd.size();
+            count += remaning;
+            while (remaning > 0) {
+                packedObjects.clear();
+                for (OverlayObject object : this.objectsToAdd.values()) {
+                    packedObjects.add(object);
+                    remaning--;
+                    this.objects.put(object.getId(), object);
+                    this.objectsToAdd.remove(object.getId());
+                    if (packedObjects.size() >= maxPackets) {
+                        break; // Ensure we don't exceed the packet size limit
+                    }
                 }
+                PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkAddPacket(owner.getUUID(), List.copyOf(packedObjects)));
             }
-
-            PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkSyncPacket(owner.getUUID(), List.copyOf(packedObjects)));
+        }
+        {
+            int remaning = this.objectsToUpdate.size();
+            count += remaning;
+            while (remaning > 0) {
+                packedObjects.clear();
+                for (OverlayObject object : this.objectsToUpdate.values()) {
+                    packedObjects.add(object);
+                    remaning--;
+                    this.objectsToUpdate.remove(object.getId());
+                    if (packedObjects.size() >= maxPackets) {
+                        break;
+                    }
+                }
+                PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkSyncPacket(owner.getUUID(), List.copyOf(packedObjects)));
+            }
         }
 
-        return size;
+        return count;
     }
 }

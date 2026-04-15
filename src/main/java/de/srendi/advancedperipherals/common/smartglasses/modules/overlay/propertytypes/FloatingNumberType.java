@@ -1,5 +1,9 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+
 public class FloatingNumberType implements PropertyType<Number, FloatingNumberProperty> {
     public double min;
     public double max;
@@ -13,6 +17,17 @@ public class FloatingNumberType implements PropertyType<Number, FloatingNumberPr
     @Override
     public boolean checkIsValid(Object value) {
         return value instanceof Float || value instanceof Double;
+    }
+
+    @Override
+    public StreamCodec<ByteBuf, ? extends Number> codec(Class<?> type) {
+        if (type == Float.TYPE || type == Float.class) {
+            return ByteBufCodecs.FLOAT;
+        }
+        if (type == Double.TYPE || type == Double.class) {
+            return ByteBufCodecs.DOUBLE;
+        }
+        throw new IllegalArgumentException("Unexpected field type: " + type);
     }
 
     @Override

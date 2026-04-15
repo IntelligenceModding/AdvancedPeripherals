@@ -7,20 +7,20 @@ import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 public class ItemObject extends RenderableObject {
-    // @StringProperty
-    public ResourceKey<Item> item = null;
+    public Holder<Item> item = null;
 
     public ItemObject(OverlayModule module) {
         super(module);
@@ -38,7 +38,7 @@ public class ItemObject extends RenderableObject {
 
     @LuaFunction
     public final String getItem() {
-        return this.item == null ? null : this.item.location().toString();
+        return this.item == null ? null : this.item.unwrapKey().get().location().toString();
     }
 
     @LuaFunction
@@ -48,32 +48,24 @@ public class ItemObject extends RenderableObject {
             this.item = null;
         } else {
             ResourceLocation name = ResourceLocation.tryParse(item0);
-            this.item = BuiltInRegistries.ITEM.containsKey(name) ? ResourceKey.create(Registries.ITEM, name) : null;
+            this.item = BuiltInRegistries.ITEM.getHolder(name).orElse(null);
         }
-        this.tryAutoUpdate();
+        this.markAndTryUpdate("item");
+    }
+
+    @Override
+    protected void registerFieldEncoders(BiConsumer<String, FieldEncoder<?, ?>> registrar) {
+        registrar.accept("item", new FieldEncoder<>(
+            ByteBufCodecs.optional(ByteBufCodecs.holderRegistry(Registries.ITEM)),
+            () -> Optional.ofNullable(this.item),
+            (item) -> this.item = item.orElse(null)
+        ));
     }
 
     @Override
     public void setPropertiesFromTable(LuaTable<?, ?> initFields) throws LuaException {
         super.setPropertiesFromTable(initFields);
         this.setItem(initFields.optString("item"));
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        if (this.item == null) {
-            buffer.writeBoolean(false);
-        } else {
-            buffer.writeBoolean(true);
-            buffer.writeResourceKey(this.item);
-        }
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.item = buffer.readBoolean() ? buffer.readResourceKey(Registries.ITEM) : null;
     }
 
     @Override

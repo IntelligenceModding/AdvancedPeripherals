@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.Overlay
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
-import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -39,26 +38,6 @@ public class CircleObject extends RenderableObject {
     @NotNull
     public OverlayObjectType<CircleObject> getType() {
         return APOverlayObjects.CIRCLE.get();
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        buffer.writeInt(radius);
-        buffer.writeBoolean(filled);
-        buffer.writeBoolean(pixelated);
-        buffer.writeInt(borderWidth);
-        buffer.writeInt(segments);
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.radius = buffer.readInt();
-        this.filled = buffer.readBoolean();
-        this.pixelated = buffer.readBoolean();
-        this.borderWidth = buffer.readInt();
-        this.segments = buffer.readInt();
     }
 
     @Override

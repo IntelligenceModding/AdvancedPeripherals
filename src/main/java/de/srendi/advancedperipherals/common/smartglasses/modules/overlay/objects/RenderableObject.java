@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.Overlay
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
-import net.minecraft.network.FriendlyByteBuf;
 import org.joml.Quaternionf;
 
 import java.util.UUID;
@@ -45,11 +44,6 @@ public abstract class RenderableObject extends OverlayObject {
         super(player);
     }
 
-    @Override
-    public void tryAutoUpdate() {
-        this.getModule().update(this);
-    }
-
     public Quaternionf getRotation() {
         return new Quaternionf()
             .rotationYXZ(
@@ -69,35 +63,7 @@ public abstract class RenderableObject extends OverlayObject {
         this.x = (float) x;
         this.y = (float) y;
         this.z = (float) z;
-        this.tryAutoUpdate();
-    }
-
-    @Override
-    public void encode(FriendlyByteBuf buffer) {
-        super.encode(buffer);
-        buffer.writeInt(color);
-        buffer.writeFloat(opacity);
-
-        buffer.writeFloat(x);
-        buffer.writeFloat(y);
-        buffer.writeFloat(z);
-        buffer.writeFloat(rotX);
-        buffer.writeFloat(rotY);
-        buffer.writeFloat(rotZ);
-    }
-
-    @Override
-    public void decode(FriendlyByteBuf buffer) {
-        super.decode(buffer);
-        this.color = buffer.readInt();
-        this.opacity = buffer.readFloat();
-
-        this.x = buffer.readFloat();
-        this.y = buffer.readFloat();
-        this.z = buffer.readFloat();
-        this.rotX = buffer.readFloat();
-        this.rotY = buffer.readFloat();
-        this.rotZ = buffer.readFloat();
+        this.markAndTryUpdate("x", "y", "z");
     }
 
     @Override
