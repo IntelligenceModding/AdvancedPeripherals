@@ -1,4 +1,5 @@
 package de.srendi.advancedperipherals.common.util;
+import java.nio.charset.StandardCharsets;
 
 public class StringUtil {
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
@@ -30,5 +31,13 @@ public class StringUtil {
      */
     public static String convertAndToSectionMark(String str) {
         return str == null ? null : str.replaceAll("(?<!\\\\)&(?=[0-9a-z])", "\u00a7").replaceAll("\\\\&", "&");
+    }
+
+    public static String byteStringToUTF8(String asciiByteString) {
+        return new String(asciiByteString.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+    }
+
+    public static String utf8ToByteString(String utf8String) {
+        return new String(utf8String.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
     }
 }
