@@ -1,14 +1,10 @@
 package de.srendi.advancedperipherals.common.addons.minecolonies;
 
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import com.minecolonies.api.colony.ICitizenData;
 import com.minecolonies.api.colony.IColony;
-import com.minecolonies.api.colony.IColonyManager;
-import com.minecolonies.api.colony.IColonyView;
 import com.minecolonies.api.colony.IVisitorData;
 import com.minecolonies.api.colony.buildings.IBuilding;
-import com.minecolonies.api.colony.buildings.views.IBuildingView;
 import com.minecolonies.api.colony.jobs.IJob;
 import com.minecolonies.api.colony.managers.interfaces.IRegisteredStructureManager;
 import com.minecolonies.api.colony.permissions.Action;
@@ -24,33 +20,30 @@ import com.minecolonies.api.research.ILocalResearch;
 import com.minecolonies.api.research.ILocalResearchTree;
 import com.minecolonies.api.research.IResearchEffect;
 import com.minecolonies.api.research.IResearchRequirement;
+import com.minecolonies.api.research.requirements.BuildingAlternatesResearchRequirement;
 import com.minecolonies.api.research.requirements.BuildingResearchRequirement;
+import com.minecolonies.api.research.requirements.ResearchResearchRequirement;
 import com.minecolonies.api.research.util.ResearchState;
-import com.minecolonies.api.util.ItemStackUtils;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.core.colony.buildings.workerbuildings.BuildingBuilder;
+import com.minecolonies.core.datalistener.model.Disease;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import io.netty.buffer.Unpooled;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.crafting.SizedIngredient;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.network.connection.ConnectionType;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class MineColonies {
 
@@ -70,37 +63,49 @@ public class MineColonies {
         return false;
     }
 
+    private static Map<String, Object> commonCitizenToLua(ICitizenData citizen) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", citizen.getId());
+        map.put("uuid", citizen.getUUID().toString());
+        map.put("name", citizen.getName());
+        map.put("isChild", citizen.isChild());
+        map.put("gender", citizen.isFemale() ? "female" : "male");
+        map.put("saturation", citizen.getSaturation());
+        map.put("happiness", citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony(), citizen));
+        map.put("skills", skillsToLua(citizen.getCitizenSkillHandler().getSkills()));
+        Disease disease = citizen.getCitizenDiseaseHandler().getDisease();
+        map.put("disease", disease == null ? null : disease.id().toString());
+        return map;
+    }
+
     /**
      * Converts a citizen to a map
      *
      * @param citizen the citizen
      * @return a map with information about the citizen
      */
-    public static Object citizenToObject(ICitizenData citizen) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", citizen.getId());
-        map.put("name", citizen.getName());
+    public static Map<String, Object> citizenToLua(ICitizenData citizen) {
+        Map<String, Object> map = commonCitizenToLua(citizen);
         map.put("bedPos", LuaConverter.posToLua(citizen.getBedPos()));
+        map.put("pos", LuaConverter.posToLua(citizen.getLastPosition()));
+        map.put("homeBuilding", citizen.getHomeBuilding() == null ? null : buildingToLua(citizen.getHomeBuilding()));
+        map.put("workBuilding", citizen.getWorkBuilding() == null ? null : jobToLua(citizen.getJob()));
+        map.put("jobStatus", citizen.getJobStatus().name());
+        VisibleCitizenStatus status = citizen.getStatus();
+        map.put("state", status == null ? "Idle" : Component.translatable(status.getTranslationKey()).getString());
+        map.put("isIdle", status == null || status == VisibleCitizenStatus.HOUSE);
+        map.put("isAsleep", citizen.isAsleep());
+        map.put("isMourning", citizen.getCitizenMournHandler().isMourning());
+        map.put("needsBetterFood", citizen.needsBetterFood());
+        ICitizenData partner = citizen.getPartner();
+        map.put("partner", partner == null ? null : partner.getId());
         map.put("children", citizen.getChildren());
-        map.put("location", LuaConverter.posToLua(citizen.getLastPosition()));
-        map.put("state", citizen.getStatus() == null ? "Idle" : Component.translatable(citizen.getStatus().getTranslationKey()).getString());
-        map.put("isChild", citizen.isChild() ? "child" : "adult");
-        map.put("gender", citizen.isFemale() ? "female" : "male");
-        map.put("saturation", citizen.getSaturation());
-        map.put("happiness", citizen.getCitizenHappinessHandler().getHappiness(citizen.getColony(), citizen));
-        map.put("skills", skillsToObject(citizen.getCitizenSkillHandler().getSkills()));
-        map.put("work", citizen.getWorkBuilding() == null ? null : jobToObject(citizen.getWorkBuilding(), citizen.getJob()));
-        map.put("home", citizen.getHomeBuilding() == null ? null : homeToObject(citizen.getHomeBuilding()));
-        map.put("betterFood", citizen.needsBetterFood());
-        map.put("isAsleep", citizen.getStatus() != null && citizen.getStatus().equals(VisibleCitizenStatus.SLEEP));
-        map.put("isIdle", citizen.getStatus() == null || citizen.getStatus().equals(VisibleCitizenStatus.HOUSE));
         citizen.getEntity().ifPresent(entity -> {
             map.put("health", entity.getHealth());
             map.put("maxHealth", entity.getMaxHealth());
             map.put("armor", entity.getAttributeValue(Attributes.ARMOR));
             map.put("toughness", entity.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
         });
-
         return map;
     }
 
@@ -110,51 +115,10 @@ public class MineColonies {
      * @param visitor the visitor
      * @return a map with information about the visitor
      */
-    public static Object visitorToObject(IVisitorData visitor) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", visitor.getId());
-        map.put("name", visitor.getName());
-        map.put("location", LuaConverter.posToLua(visitor.getSittingPosition()));
-        map.put("isChild", visitor.isChild() ? "child" : "adult");
-        map.put("gender", visitor.isFemale() ? "female" : "male");
-        map.put("saturation", visitor.getSaturation());
-        map.put("happiness", visitor.getCitizenHappinessHandler().getHappiness(visitor.getColony(), visitor));
-        map.put("skills", skillsToObject(visitor.getCitizenSkillHandler().getSkills()));
+    public static Map<String, Object> visitorToLua(IVisitorData visitor) {
+        Map<String, Object> map = commonCitizenToLua(visitor);
+        map.put("pos", LuaConverter.posToLua(visitor.getSittingPosition()));
         map.put("recruitCost", LuaConverter.itemStackToLua(visitor.getRecruitCost()));
-
-        return map;
-    }
-
-    /**
-     * Converts a building {@link IBuilding} and job {@link IJob} to a map
-     *
-     * @param work the home building
-     * @param job  the job
-     * @return a map with information about the building and job
-     */
-    public static Object jobToObject(IBuilding work, IJob<?> job) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("location", LuaConverter.posToLua(work.getLocation().getInDimensionLocation()));
-        map.put("type", work.getSchematicName());
-        map.put("level", work.getBuildingLevel());
-        map.put("name", work.getBuildingDisplayName());
-        map.put("job", job.getJobRegistryEntry().getTranslationKey());
-
-        return map;
-    }
-
-    /**
-     * Converts a home {@link IBuilding} to a map
-     *
-     * @param home the home building
-     * @return a map with information about the home building
-     */
-    public static Object homeToObject(IBuilding home) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("location", LuaConverter.posToLua(home.getLocation().getInDimensionLocation()));
-        map.put("type", home.getSchematicName());
-        map.put("level", home.getBuildingLevel());
-
         return map;
     }
 
@@ -164,57 +128,84 @@ public class MineColonies {
      * @param skills skills as list. Can be obtained via {@link ICitizenData#getCitizenSkillHandler}
      * @return a map with information about the skill
      */
-    public static Object skillsToObject(Map<Skill, CitizenSkillHandler.SkillData> skills) {
+    public static Map<String, Object> skillsToLua(Map<Skill, CitizenSkillHandler.SkillData> skills) {
         Map<String, Object> map = new HashMap<>();
-        for (Map.Entry<Skill, CitizenSkillHandler.SkillData> skill : skills.entrySet()) {
-            Map<String, Object> skillData = new HashMap<>();
-            skillData.put("level", skill.getValue().getLevel());
-            skillData.put("xp", skill.getValue().getExperience());
-            map.put(skill.getKey().name(), skillData);
+        for (Map.Entry<Skill, CitizenSkillHandler.SkillData> entry : skills.entrySet()) {
+            CitizenSkillHandler.SkillData data = entry.getValue();
+            map.put(
+                entry.getKey().name(),
+                Map.of(
+                    "level", data.getLevel(),
+                    "xp", data.getExperience()
+                )
+            );
         }
+        return map;
+    }
 
+    /**
+     * Converts a building {@link IBuilding} and job {@link IJob} to a map
+     *
+     * @param work the job building
+     * @param job  the job
+     * @return a map with information about the building and job
+     */
+    public static Map<String, Object> jobToLua(IJob<?> job) {
+        Map<String, Object> map = buildingToLua(job.getWorkBuilding());
+        map.put("job", job.getJobRegistryEntry().getKey().toString());
+        return map;
+    }
+
+    /**
+     * Converts a building {@link IBuilding} to a map
+     *
+     * @param building the building
+     * @return a map with information about the building
+     */
+    public static Map<String, Object> buildingToLua(IBuilding building) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("pos", LuaConverter.posToLua(building.getLocation().getInDimensionLocation()));
+        map.put("type", building.getSchematicName());
+        map.put("level", building.getBuildingLevel());
+        map.put("displayName", building.getBuildingDisplayName());
         return map;
     }
 
     /**
      * Returns information about the building like structure data, the citizens and some other values
      *
-     * @param buildingManager The building manager of the colony
      * @param building        The building as instance
-     * @param pos             The location of the buildings block
+     * @param buildingManager The building manager of the colony
      * @return information about the building
      */
-    public static Object buildingToObject(IRegisteredStructureManager buildingManager, IBuilding building, BlockPos pos) {
-        Map<String, Object> structureData = new HashMap<>();
-        structureData.put("cornerA", LuaConverter.posToLua(building.getCorners().getA()));
-        structureData.put("cornerB", LuaConverter.posToLua(building.getCorners().getB()));
-        structureData.put("rotation", building.getRotationMirror().toString());
-        structureData.put("mirror", building.getRotationMirror().isMirrored());
-
-        List<Object> citizensData = new ArrayList<>();
-        for (ICitizenData citizen : building.getAllAssignedCitizen()) {
-            Map<String, Object> citizenData = new HashMap<>();
-            citizenData.put("id", citizen.getId());
-            citizenData.put("name", citizen.getName());
-            citizensData.add(citizenData);
-        }
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("location", LuaConverter.posToLua(pos));
-        map.put("type", building.getSchematicName());
+    public static Map<String, Object> buildingToLua(IBuilding building, IRegisteredStructureManager buildingManager) {
+        Map<String, Object> map = buildingToLua(building);
         map.put("style", building.getStructurePack());
-        map.put("level", building.getBuildingLevel());
         map.put("maxLevel", building.getMaxBuildingLevel());
-        map.put("name", building.getBuildingDisplayName());
         map.put("built", building.isBuilt());
         map.put("isWorking", building.isPendingConstruction());
         map.put("priority", building.getPickUpPriority());
-        map.put("structure", structureData);
-        map.put("citizens", citizensData);
+        map.put(
+            "structure",
+            Map.of(
+                "cornerA", LuaConverter.posToLua(building.getCorners().getA()),
+                "cornerB", LuaConverter.posToLua(building.getCorners().getB()),
+                "rotation", building.getRotationMirror().rotation().getSerializedName(),
+                "isMirrored", building.getRotationMirror().isMirrored()
+            )
+        );
+        map.put(
+            "citizens",
+            building.getAllAssignedCitizen().stream()
+                .map(citizen -> Map.of(
+                    "id", citizen.getId(),
+                    "name", citizen.getName()
+                ))
+                .toList()
+        );
         map.put("storageBlocks", building.getContainers().size());
-        map.put("storageSlots", getStorageSize(building));
+        map.put("storageSlots", getStorageSlots(building));
         map.put("guarded", buildingManager.hasGuardBuildingNear(building));
-
         return map;
     }
 
@@ -224,39 +215,38 @@ public class MineColonies {
      * @param building the proper building with racks(Or other inventories)
      * @return the size of all inventories in this building
      */
-    public static int getStorageSize(IBuilding building) {
+    public static int getStorageSlots(IBuilding building) {
         int size = 0;
-
         for (IItemHandler itemHandler : building.getHandlers()) {
             size += itemHandler.getSlots();
         }
-
         return size;
     }
 
     public static int getAmountOfConstructionSites(IColony colony) {
         int constructionSites = 0;
-        for (IBuilding building : colony.getBuildingManager().getBuildings().values()) {
-            if (building.isPendingConstruction())
+        for (IBuilding building : colony.getServerBuildingManager().getBuildings().values()) {
+            if (building.isPendingConstruction()) {
                 constructionSites++;
+            }
         }
-
         return constructionSites;
     }
 
-    public static Object workOrderToObject(IWorkOrder workOrder) {
+    public static Map<String, Object> workOrderToLua(IWorkOrder workOrder, IRegisteredStructureManager buildingManager) {
         Map<String, Object> map = new HashMap<>();
-
-        map.put("builder", LuaConverter.posToLua(workOrder.getClaimedBy()));
         map.put("id", workOrder.getID());
+        map.put("pos", LuaConverter.posToLua(workOrder.getLocation()));
+        map.put("type", workOrder.getWorkOrderType().name());
+        map.put("displayName", workOrder.getDisplayName().getString());
         map.put("priority", workOrder.getPriority());
-        map.put("isClaimed", workOrder.isClaimed());
-        map.put("location", LuaConverter.posToLua(workOrder.getLocation()));
-        map.put("type", workOrder.getClass().getSimpleName());
-        map.put("buildingName", workOrder.getDisplayName().getString());
+        map.put("level", workOrder.getCurrentLevel());
         map.put("targetLevel", workOrder.getTargetLevel());
-        map.put("workOrderType", workOrder.getWorkOrderType().toString());
-
+        map.put("stage", workOrder.getStage().name());
+        map.put("isClaimed", workOrder.isClaimed());
+        if (workOrder.isClaimed()) {
+            map.put("builderHome", buildingToLua(buildingManager.getBuilding(workOrder.getClaimedBy())));
+        }
         return map;
     }
 
@@ -268,71 +258,69 @@ public class MineColonies {
      * @param colony     The colony
      * @return a list including maps with all possible researches
      */
-    public static List<Object> getResearch(ResourceLocation branch, List<ResourceLocation> researches, IColony colony) throws CommandSyntaxException {
-        List<Object> result = new ArrayList<>();
-        if (researches != null) {
-            for (ResourceLocation researchName : researches) {
-                //All global possible researches
-                IGlobalResearchTree globalTree = IGlobalResearchTree.getInstance();
-                //The research tree of the colony
-                ILocalResearchTree colonyTree = colony.getResearchManager().getResearchTree();
+    public static List<Map<String, Object>> getResearches(ResourceLocation branch, List<ResourceLocation> researches, IColony colony) throws CommandSyntaxException {
+        if (researches == null) {
+            return List.of();
+        }
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (final ResourceLocation researchName : researches) {
+            //All global possible researches
+            IGlobalResearchTree globalTree = IGlobalResearchTree.getInstance();
+            //The research tree of the colony
+            ILocalResearchTree colonyTree = colony.getResearchManager().getResearchTree();
 
-                IGlobalResearch research = globalTree.getResearch(branch, researchName);
-                if (research == null)
-                    continue;
-                if (research.isHidden())
-                    continue;
-                ILocalResearch colonyResearch = colonyTree.getResearch(branch, researchName);
-
-                List<String> effects = new ArrayList<>();
-                for (IResearchEffect researchEffect : research.getEffects())
-                    effects.add(Component.translatable(researchEffect.getName().getKey(), researchEffect.getName().getArgs()).getString());
-
-                List<Map<String, Object>> cost = new ArrayList<>();
-                for (SizedIngredient item : research.getCostList()) {
-                    Map<String, Object> researchCost = new HashMap<>();
-                    List<Map<String, Object>> researchCostItems = new ArrayList<>();
-
-                    for (ItemStack costItem : item.getItems())
-                        researchCostItems.add(LuaConverter.itemStackToLua(costItem));
-
-                    researchCost.put("validItems", researchCostItems);
-                    researchCost.put("count", item.count());
-
-                    cost.add(researchCost);
-                }
-
-                List<Map<String, Object>> requirements = new ArrayList<>();
-                for (IResearchRequirement requirement : research.getResearchRequirements()) {
-                    Map<String, Object> requirementItem = new HashMap<>();
-                    requirementItem.put("fulfilled", requirement.isFulfilled(colony));
-                    if (requirement instanceof BuildingResearchRequirement buildingRequirement) {
-                        requirementItem.put("type", "building");
-                        requirementItem.put("building", buildingRequirement.getBuilding());
-                        requirementItem.put("level", buildingRequirement.getBuildingLevel());
-                    } else {
-                        requirementItem.put("type", requirement.getClass().getCanonicalName());
-                    }
-                    requirementItem.put("desc", requirement.getDesc().getString());
-                    requirements.add(requirementItem);
-                }
-
-                Map<String, Object> map = new HashMap<>();
-                map.put("id", researchName.toString());
-                map.put("name", Component.translatable(research.getName().getKey(), research.getName().getArgs()).getString());
-                map.put("requirements", requirements);
-                map.put("cost", cost);
-                map.put("researchEffects", effects);
-                map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.toString() : colonyResearch.getState().toString());
-                map.put("requiredTime", colonyResearch == null ? 0 : IGlobalResearchTree.getInstance().getBranchData(colonyResearch.getBranch()).getBaseTime(colonyResearch.getDepth()));
-                map.put("progress", colonyResearch == null ? 0 : colonyResearch.getProgress());
-
-                List<Object> childrenResearch = getResearch(branch, research.getChildren(), colony);
-                if (!childrenResearch.isEmpty())
-                    map.put("children", childrenResearch);
-
-                result.add(map);
+            IGlobalResearch research = globalTree.getResearch(branch, researchName);
+            if (research == null || research.isHidden()) {
+                continue;
             }
+            ILocalResearch colonyResearch = colonyTree.getResearch(branch, researchName);
+
+            List<Map<String, Object>> cost = research.getCostList().stream()
+                .map(ingredient -> Map.of(
+                    "validItems", Stream.of(ingredient.getItems()).map(LuaConverter::itemStackToLua).toList(),
+                    "count", ingredient.count()
+                ))
+                .toList();
+
+            List<Map<String, Object>> requirements = new ArrayList<>();
+            for (IResearchRequirement requirement : research.getResearchRequirements()) {
+                Map<String, Object> requirementItem = new HashMap<>();
+                requirementItem.put("type", requirement.getRegistryEntry().getRegistryName().toString());
+                requirementItem.put("desc", requirement.getDesc().getString());
+                requirementItem.put("fulfilled", requirement.isFulfilled(colony));
+                if (requirement instanceof BuildingResearchRequirement buildingRequirement) {
+                    requirementItem.put("building", buildingRequirement.getBuilding());
+                    requirementItem.put("level", buildingRequirement.getBuildingLevel());
+                } else if (requirement instanceof BuildingAlternatesResearchRequirement buildingAltsRequirement) {
+                    requirementItem.put("buildings", buildingAltsRequirement.getBuildings());
+                    requirementItem.put("level", buildingAltsRequirement.getBuildingLevel());
+                } else if (requirement instanceof ResearchResearchRequirement researchRequirement) {
+                    requirementItem.put("researchId", researchRequirement.getResearchId());
+                }
+                requirements.add(requirementItem);
+            }
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", researchName.toString());
+            map.put("displayName", MutableComponent.create(research.getName()).getString());
+            map.put("requirements", requirements);
+            map.put("cost", cost);
+            map.put("researchEffects", research.getEffects().stream().map(IResearchEffect::getId).map(ResourceLocation::toString).toList());
+            map.put("status", colonyResearch == null ? ResearchState.NOT_STARTED.name() : colonyResearch.getState().name());
+            map.put(
+                "requiredTime",
+                colonyResearch == null
+                    ? 0
+                    : IGlobalResearchTree.getInstance().getBranchData(colonyResearch.getBranch()).getBaseTime(colonyResearch.getDepth())
+            );
+            map.put("progress", colonyResearch == null ? 0 : colonyResearch.getProgress());
+
+            List<Map<String, Object>> childrenResearchs = getResearches(branch, research.getChildren(), colony);
+            if (!childrenResearchs.isEmpty()) {
+                map.put("children", childrenResearchs);
+            }
+
+            result.add(map);
         }
         return result;
     }
@@ -344,52 +332,25 @@ public class MineColonies {
      * @param pos    The position of the builder's hut block
      * @return a map with all needed resources
      */
-    public static Object builderResourcesToObject(IColony colony, BlockPos pos) {
-        IBuilding building = colony.getBuildingManager().getBuilding(pos);
-        if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding))
+    public static List<Map<String, Object>> builderResourcesToLua(IColony colony, IBuilding building) {
+        if (!(building instanceof AbstractBuildingStructureBuilder builderBuilding)) {
             return null;
-
-        //We need to tell the building that we want information about it
-        RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(Unpooled.buffer(), colony.getWorld().registryAccess(), ConnectionType.OTHER);
-        builderBuilding.serializeToView(buffer, false);
-        buffer.release();
-
-        List<BuildingBuilderResource> resources = new ArrayList<>(builderBuilding.getNeededResources().values());
-        resources.sort(new BuildingBuilderResource.ResourceComparator());
-
-        final IColonyView colonyView = IColonyManager.getInstance().getColonyView(colony.getID(), colony.getWorld().dimension());
-        final List<Delivery> deliveries = new ArrayList<>();
-
-        if (colonyView != null) {
-            final IBuildingView buildingView = colonyView.getBuilding(pos);
-            if (buildingView instanceof BuildingBuilder.View builderBuildingView) {
-                for (Map.Entry<Integer, Collection<IToken<?>>> entry : builderBuildingView.getOpenRequestsByCitizen().entrySet()) {
-                    addDeliveryRequestsToList(builderBuildingView, deliveries, ImmutableList.copyOf(entry.getValue()));
-                }
-            }
         }
 
-        List<Object> result = new ArrayList<>();
-        for (BuildingBuilderResource resource : resources) {
-            Map<String, Object> map = new HashMap<>();
-            ItemStack stack = resource.getItemStack().copy();
-
-            map.put("item", LuaConverter.itemStackToLua(stack));
-            map.put("displayName", resource.getName());
-            map.put("available", resource.getAvailable());
-            int amountInDelivery = 0;
-            for (final Delivery delivery : deliveries) {
-                if (ItemStackUtils.compareItemStacksIgnoreStackSize(resource.getItemStack(), delivery.getStack(), false, true)) {
-                    amountInDelivery += delivery.getStack().getCount();
-                }
-            }
-            map.put("delivering", amountInDelivery);
-            map.put("status", resource.getAvailabilityStatus().toString());
-            map.put("needs", resource.getAmount());
-            result.add(map);
-        }
-
-        return result;
+        return builderBuilding.getNeededResources().values().stream()
+            .sorted(new BuildingBuilderResource.ResourceComparator())
+            .map(resource -> {
+                ItemStack stack = resource.getItemStack();
+                Map<String, Object> map = new HashMap<>();
+                map.put("item", LuaConverter.itemStackToLua(stack));
+                map.put("displayName", resource.getName());
+                map.put("status", resource.getAvailabilityStatus().name());
+                map.put("needs", resource.getAmount());
+                map.put("available", resource.getAvailable());
+                map.put("delivering", resource.getAmountInDelivery());
+                return map;
+            })
+            .toList();
     }
 
     /**
@@ -397,20 +358,18 @@ public class MineColonies {
      * <p>
      * See {@link com.minecolonies.core.client.gui.WindowResourceList#addDeliveryRequestsToList(List, ImmutableCollection)}}
      */
-    private static void addDeliveryRequestsToList(BuildingBuilder.View builder, List<Delivery> requestList, ImmutableCollection<IToken<?>> tokensToCheck) {
-        for (final IToken<?> token : tokensToCheck) {
-            final IRequest<?> request = builder.getColony().getRequestManager().getRequestForToken(token);
-            if (request != null) {
-                if (request.getRequest() instanceof Delivery && ((Delivery) request.getRequest()).getTarget().getInDimensionLocation().equals(builder.getID())) {
-                    requestList.add((Delivery) request.getRequest());
-                }
-
-                if (request.hasChildren()) {
-                    addDeliveryRequestsToList(builder, requestList, request.getChildren());
-                }
+    private static void addDeliveryRequestsToList(IBuilding building, List<Delivery> requestList, ImmutableCollection<IToken<?>> tokens) {
+        for (final IToken<?> token : tokens) {
+            final IRequest<?> request = building.getColony().getRequestManager().getRequestForToken(token);
+            if (request == null) {
+                continue;
+            }
+            if (request.getRequest() instanceof Delivery delivery && delivery.getTarget().getInDimensionLocation().equals(building.getID())) {
+                requestList.add(delivery);
+            }
+            if (request.hasChildren()) {
+                addDeliveryRequestsToList(building, requestList, request.getChildren());
             }
         }
     }
-
-
 }
