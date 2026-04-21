@@ -105,17 +105,17 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final double getHappiness() throws LuaException {
-        IColony colony = getColonyOrThrow();
-
-        return colony.getOverallHappiness();
-    }
-
-    @LuaFunction(mainThread = true)
     public final Object getLocation() throws LuaException {
         IColony colony = getColonyOrThrow();
 
         return LuaConverter.posToLua(colony.getCenter());
+    }
+
+    @LuaFunction(mainThread = true)
+    public final double getHappiness() throws LuaException {
+        IColony colony = getColonyOrThrow();
+
+        return colony.getOverallHappiness();
     }
 
     @LuaFunction(mainThread = true)
@@ -205,12 +205,12 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     }
 
     @LuaFunction(mainThread = true)
-    public final Object getResearches() throws LuaException {
+    public final Map<String, List<Map<String, Object>>> getResearches() throws LuaException {
         IColony colony = getColonyOrThrow();
 
         IGlobalResearchTree globalTree = IGlobalResearchTree.getInstance();
 
-        Map<String, Object> result = new HashMap<>();
+        Map<String, List<Map<String, Object>>> result = new HashMap<>();
         for (ResourceLocation branch : globalTree.getBranches()) {
             try {
                 result.put(branch.toString(), MineColonies.getResearches(branch, globalTree.getPrimaryResearch(branch), colony));

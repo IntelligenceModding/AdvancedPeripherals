@@ -289,10 +289,10 @@ public class MineColonies {
                 requirementItem.put("desc", requirement.getDesc().getString());
                 requirementItem.put("fulfilled", requirement.isFulfilled(colony));
                 if (requirement instanceof BuildingResearchRequirement buildingRequirement) {
-                    requirementItem.put("building", buildingRequirement.getBuilding());
+                    requirementItem.put("building", buildingRequirement.getBuilding().toString());
                     requirementItem.put("level", buildingRequirement.getBuildingLevel());
                 } else if (requirement instanceof BuildingAlternatesResearchRequirement buildingAltsRequirement) {
-                    requirementItem.put("buildings", buildingAltsRequirement.getBuildings());
+                    requirementItem.put("buildings", buildingAltsRequirement.getBuildings().stream().map(ResourceLocation::toString).toList());
                     requirementItem.put("level", buildingAltsRequirement.getBuildingLevel());
                 } else if (requirement instanceof ResearchResearchRequirement researchRequirement) {
                     requirementItem.put("researchId", researchRequirement.getResearchId());
