@@ -42,10 +42,10 @@ public class FixedPointNumberType implements PropertyType<Number, FixedPointNumb
             return Math.min(Math.max(valueb.byteValue(), (byte) Math.max(min, Byte.MIN_VALUE)), (byte) Math.min(max, Byte.MAX_VALUE));
         }
         if (value instanceof Short values) {
-            return Math.min(Math.max(values.shortValue(), (short) Math.max(min, Short.MIN_VALUE)), (short) Math.max(max, Short.MAX_VALUE));
+            return Math.min(Math.max(values.shortValue(), (short) Math.max(min, Short.MIN_VALUE)), (short) Math.min(max, Short.MAX_VALUE));
         }
         if (value instanceof Integer valuei) {
-            return Math.min(Math.max(valuei.intValue(), (int) Math.max(min, Integer.MIN_VALUE)), (int) Math.max(max, Integer.MAX_VALUE));
+            return Math.min(Math.max(valuei.intValue(), (int) Math.max(min, Integer.MIN_VALUE)), (int) Math.min(max, Integer.MAX_VALUE));
         }
         return Math.min(Math.max(value.longValue(), min), max);
     }
