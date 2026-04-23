@@ -93,71 +93,69 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
             }
 
             BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+        } else {
+            // Pixelated lines
+            bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-            return;
-        }
+            final float pixelSize = borderWidth; // Defines the size of each "pixel" square
 
-        // Pixelated lines
-        bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            // The thickness of the hollow line in terms of pixel units.
+            // A value of 1.0f means the line will be roughly one pixel thick.
+            final float lineThicknessPixels = 1f;
 
-        final float pixelSize = borderWidth; // Defines the size of each "pixel" square
+            // Calculate the effective min/max coordinates in the relative space
+            float effectiveMinX = -r - pixelSize;
+            float effectiveMaxX = r + pixelSize;
+            float effectiveMinY = -r - pixelSize;
+            float effectiveMaxY = r + pixelSize;
 
-        // The thickness of the hollow line in terms of pixel units.
-        // A value of 1.0f means the line will be roughly one pixel thick.
-        final float lineThicknessPixels = 1f;
-
-        // Calculate the effective min/max coordinates in the relative space
-        float effectiveMinX = -r - pixelSize;
-        float effectiveMaxX = r + pixelSize;
-        float effectiveMinY = -r - pixelSize;
-        float effectiveMaxY = r + pixelSize;
-
-        // Start the loop at the first multiple of PIXEL_SIZE that is less than or equal to effectiveMinX/Y
-        float startX = (float) Math.floor(effectiveMinX / pixelSize) * pixelSize;
-        float startY = (float) Math.floor(effectiveMinY / pixelSize) * pixelSize;
+            // Start the loop at the first multiple of PIXEL_SIZE that is less than or equal to effectiveMinX/Y
+            float startX = (float) Math.floor(effectiveMinX / pixelSize) * pixelSize;
+            float startY = (float) Math.floor(effectiveMinY / pixelSize) * pixelSize;
 
 
-        for (float x = startX; x <= effectiveMaxX; x += pixelSize) {
-            for (float y = startY; y <= effectiveMaxY; y += pixelSize) {
-                // Calculate the center of the current pixel cell.
-                // This is where you determine if the *center* of this block should be drawn.
-                float pixelCenterX = x + (pixelSize / 2.0F);
-                float pixelCenterY = y + (pixelSize / 2.0F);
+            for (float x = startX; x <= effectiveMaxX; x += pixelSize) {
+                for (float y = startY; y <= effectiveMaxY; y += pixelSize) {
+                    // Calculate the center of the current pixel cell.
+                    // This is where you determine if the *center* of this block should be drawn.
+                    float pixelCenterX = x + (pixelSize / 2.0F);
+                    float pixelCenterY = y + (pixelSize / 2.0F);
 
-                // Distance is calculated from (pixelCenterX, pixelCenterY) to (0,0)
-                double distanceToCenter = Math.sqrt(
-                        Math.pow(pixelCenterX, 2) + Math.pow(pixelCenterY, 2)
-                );
+                    // Distance is calculated from (pixelCenterX, pixelCenterY) to (0,0)
+                    double distanceToCenter = Math.sqrt(
+                            Math.pow(pixelCenterX, 2) + Math.pow(pixelCenterY, 2)
+                    );
 
-                boolean shouldDrawPixel;
+                    boolean shouldDrawPixel;
 
-                if (!isFilled) {
-                    float outerRadius = r + (lineThicknessPixels * (pixelSize / 2.0F));
-                    float innerRadius = r - (lineThicknessPixels * (pixelSize / 2.0F));
+                    if (!isFilled) {
+                        float outerRadius = r + (lineThicknessPixels * (pixelSize / 2.0F));
+                        float innerRadius = r - (lineThicknessPixels * (pixelSize / 2.0F));
 
-                    if (innerRadius < 0) innerRadius = 0;
+                        if (innerRadius < 0) innerRadius = 0;
 
-                    shouldDrawPixel = (distanceToCenter <= outerRadius) && (distanceToCenter >= innerRadius);
-                } else {
-                    shouldDrawPixel = distanceToCenter <= r + (pixelSize / 2.0F);
-                }
+                        shouldDrawPixel = (distanceToCenter <= outerRadius) && (distanceToCenter >= innerRadius);
+                    } else {
+                        shouldDrawPixel = distanceToCenter <= r + (pixelSize / 2.0F);
+                    }
 
-                if (shouldDrawPixel) {
-                    // Vertices for the QUAD (a PIXEL_SIZE x PIXEL_SIZE square)
-                    // These coordinates are now relative to the current origin (0,0,0)
-                    float pX1 = x;
-                    float pY1 = y;
-                    float pZ = 0f; // z-coordinate is relative to cz, so 0 in this space
+                    if (shouldDrawPixel) {
+                        // Vertices for the QUAD (a PIXEL_SIZE x PIXEL_SIZE square)
+                        // These coordinates are now relative to the current origin (0,0,0)
+                        float pX1 = x;
+                        float pY1 = y;
+                        float pZ = 0f; // z-coordinate is relative to cz, so 0 in this space
 
-                    float pX2 = x + pixelSize;
-                    float pY2 = y + pixelSize;
+                        float pX2 = x + pixelSize;
+                        float pY2 = y + pixelSize;
 
-                    // Vertices for the QUAD
-                    // Ensure proper winding order (counter-clockwise for front face)
-                    bufferBuilder.addVertex(matrix, pX1, pY2, pZ).setColor(red, green, blue, alpha); // Bottom-left
-                    bufferBuilder.addVertex(matrix, pX2, pY2, pZ).setColor(red, green, blue, alpha); // Bottom-right
-                    bufferBuilder.addVertex(matrix, pX2, pY1, pZ).setColor(red, green, blue, alpha); // Top-right
-                    bufferBuilder.addVertex(matrix, pX1, pY1, pZ).setColor(red, green, blue, alpha); // Top-left
+                        // Vertices for the QUAD
+                        // Ensure proper winding order (counter-clockwise for front face)
+                        bufferBuilder.addVertex(matrix, pX1, pY2, pZ).setColor(red, green, blue, alpha); // Bottom-left
+                        bufferBuilder.addVertex(matrix, pX2, pY2, pZ).setColor(red, green, blue, alpha); // Bottom-right
+                        bufferBuilder.addVertex(matrix, pX2, pY1, pZ).setColor(red, green, blue, alpha); // Top-right
+                        bufferBuilder.addVertex(matrix, pX1, pY1, pZ).setColor(red, green, blue, alpha); // Top-left
+                    }
                 }
             }
         }
