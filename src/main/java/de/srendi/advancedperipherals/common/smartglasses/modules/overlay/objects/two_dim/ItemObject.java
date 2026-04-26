@@ -55,6 +55,7 @@ public class ItemObject extends RenderableObject {
 
     @Override
     protected void registerFieldEncoders(BiConsumer<String, FieldEncoder<?, ?>> registrar) {
+        super.registerFieldEncoders(registrar);
         registrar.accept("item", new FieldEncoder<>(
             ByteBufCodecs.optional(ByteBufCodecs.holderRegistry(Registries.ITEM)),
             () -> Optional.ofNullable(this.item),

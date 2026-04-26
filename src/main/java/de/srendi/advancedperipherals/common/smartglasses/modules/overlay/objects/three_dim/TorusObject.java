@@ -32,7 +32,7 @@ public class TorusObject extends ThreeDimensionalObject {
 
     @Override
     @NotNull
-    public OverlayObjectType<TorusObject> getType() {
+    public OverlayObjectType<?> getType() {
         return APOverlayObjects.TORUS.get();
     }
 }

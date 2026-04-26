@@ -15,8 +15,8 @@ public abstract class RenderableObject extends OverlayObject {
     @FloatingNumberProperty(min = 0, max = 1)
     public float opacity = 1;
 
-    @FixedPointNumberProperty(min = 0, max = 0xffffff)
-    public int color = 0xffffff;
+    @FixedPointNumberProperty(min = -1, max = 0xffffff)
+    public int color = -1;
 
     @FloatingNumberProperty
     public float x = 0;

@@ -127,7 +127,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
     }
 
     @LuaFunction
-    public final boolean laserVisibility() {
+    public final boolean getLaserVisibility() {
         return this.getShowLaser();
     }
 
@@ -136,8 +136,8 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         this.setShowLaser(laser);
     }
 
-    @LuaFunction
-    public final boolean ignoresTransparency() {
+    @LuaFunction("getIgnoreTransparent")
+    public final boolean getIgnoreTransparentLua() {
         return this.getIgnoreTransparent();
     }
 
@@ -147,19 +147,19 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
     }
 
     @LuaFunction
-    public final boolean detectsEntities() {
+    public final boolean detectingEntities() {
         return this.getDetectionType().detectEntity();
     }
 
     @LuaFunction
-    public final boolean detectsBlocks() {
+    public final boolean detectingBlocks() {
         return this.getDetectionType().detectBlock();
     }
 
     @LuaFunction
-    public final MethodResult detectionMode() {
+    public final MethodResult getDetectionMode() {
         DetectionType type = this.getDetectionType();
-        return MethodResult.of(type.toString(), type.ordinal());
+        return MethodResult.of(type.name(), type.ordinal());
     }
 
     @LuaFunction
@@ -186,7 +186,7 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
     }
 
     @LuaFunction
-    public final double distance() {
+    public final double getDistance() {
         return this.getCurrentDistance();
     }
 
@@ -195,8 +195,8 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         return this.calculateAndUpdateDistance();
     }
 
-    @LuaFunction
-    public final boolean shouldCalculatePeriodically() {
+    @LuaFunction("getCalculatePeriodically")
+    public final boolean getCalculatePeriodicallyLua() {
         return this.getCalculatePeriodically();
     }
 
@@ -205,8 +205,8 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
         this.setCalculatePeriodically(shouldCalculatePeriodically);
     }
 
-    @LuaFunction
-    public final double maxRange() {
+    @LuaFunction("getMaxRange")
+    public final double getMaxRangeLua() {
         return this.getMaxRange();
     }
 

@@ -170,7 +170,7 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
     }
 
     @LuaFunction
-    public final boolean autoUpdate() {
+    public final boolean isAutoUpdating() {
         return overlayModule.getAutoUpdate();
     }
 

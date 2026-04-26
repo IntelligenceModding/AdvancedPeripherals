@@ -29,7 +29,7 @@ public class SphereObject extends ThreeDimensionalObject {
 
     @Override
     @NotNull
-    public OverlayObjectType<SphereObject> getType() {
+    public OverlayObjectType<?> getType() {
         return APOverlayObjects.SPHERE.get();
     }
 }

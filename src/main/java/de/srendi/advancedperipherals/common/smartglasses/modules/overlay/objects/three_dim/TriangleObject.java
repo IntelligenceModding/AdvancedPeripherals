@@ -48,7 +48,7 @@ public class TriangleObject extends ThreeDimensionalObject {
 
     @Override
     @NotNull
-    public OverlayObjectType<TriangleObject> getType() {
+    public OverlayObjectType<?> getType() {
         return APOverlayObjects.TRIANGLE.get();
     }
 

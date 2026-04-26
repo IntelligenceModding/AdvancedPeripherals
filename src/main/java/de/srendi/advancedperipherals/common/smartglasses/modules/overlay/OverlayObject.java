@@ -41,7 +41,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     private final String[] getterSetterNames;
     private final Map<String, FieldWithPropertyType> propertiesMap;
     private final FieldEncoder<?, ?>[] fieldEncoders;
-    private final Object2IntMap<String> fieldToIndex;
+    private final Object2IntMap<String> fieldNameToIndex;
 
     @BooleanProperty
     private boolean enabled = true;
@@ -98,13 +98,13 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         this.getterSetterNames = getterSetterNames.toArray(String[]::new);
 
         List<FieldEncoder<?, ?>> fieldEncoders = new ArrayList<>();
-        this.fieldToIndex = new Object2IntOpenHashMap<>();
-        this.fieldToIndex.defaultReturnValue(-1);
+        this.fieldNameToIndex = new Object2IntOpenHashMap<>();
+        this.fieldNameToIndex.defaultReturnValue(-1);
         BiConsumer<String, FieldEncoder<?, ?>> registrar = (name, encoder) -> {
-            if (this.fieldToIndex.containsKey(name)) {
+            if (this.fieldNameToIndex.containsKey(name)) {
                 throw new IllegalArgumentException("Field name " + name + " duplicated!");
             }
-            this.fieldToIndex.put(name, fieldEncoders.size());
+            this.fieldNameToIndex.put(name, fieldEncoders.size());
             fieldEncoders.add(encoder);
         };
         for (FieldWithPropertyType field : this.fields) {
@@ -194,7 +194,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     }
 
     protected final void markUpdated(String fieldName) {
-        int index = this.fieldToIndex.getInt(fieldName);
+        int index = this.fieldNameToIndex.getInt(fieldName);
         if (index == -1) {
             throw new IllegalArgumentException("Unknown field name: " + fieldName);
         }

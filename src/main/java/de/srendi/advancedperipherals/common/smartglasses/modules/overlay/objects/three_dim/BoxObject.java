@@ -30,7 +30,7 @@ public class BoxObject extends ThreeDimensionalObject {
 
     @Override
     @NotNull
-    public OverlayObjectType<BoxObject> getType() {
+    public OverlayObjectType<?> getType() {
         return APOverlayObjects.BOX.get();
     }
 

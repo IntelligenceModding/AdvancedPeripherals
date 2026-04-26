@@ -1,23 +1,22 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import de.srendi.advancedperipherals.client.APRenderTypes;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import org.joml.Matrix4f;
 
 import java.util.List;
 
 public class RectangleRenderer implements ITwoDObjectRenderer<RectangleObject> {
-
     @Override
     public void renderBatch(List<RectangleObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        VertexConsumer bufferBuilder = bufferSource.getBuffer(RenderType.debugQuads());
+        VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.QUADS_2D);
 
         for (RectangleObject obj : objects) {
             gui.pose().pushPose();
@@ -39,7 +38,5 @@ public class RectangleRenderer implements ITwoDObjectRenderer<RectangleObject> {
             bufferBuilder.addVertex(matrix, 0, 0, 0).setColor(red, green, blue, alpha);
 
         }
-
-        bufferSource.endLastBatch();
     }
 }

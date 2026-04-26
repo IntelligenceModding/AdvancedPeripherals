@@ -1,17 +1,14 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import de.srendi.advancedperipherals.client.APRenderTypes;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import org.joml.Matrix4f;
 
 import java.util.List;
@@ -19,17 +16,18 @@ import java.util.List;
 public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
     @Override
     public void renderBatch(List<CircleObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         for (CircleObject circle : objects) {
             float alpha = circle.opacity;
             float red = RenderUtil.getRed(circle.color);
             float green = RenderUtil.getGreen(circle.color);
             float blue = RenderUtil.getBlue(circle.color);
 
-            drawCircle(gui.pose(), circle, red, green, blue, alpha);
+            drawCircle(bufferSource, gui.pose(), circle, red, green, blue, alpha);
         }
     }
 
-    private void drawCircle(PoseStack poseStack, CircleObject circle, float red, float green, float blue, float alpha) {
+    private void drawCircle(MultiBufferSource.BufferSource bufferSource, PoseStack poseStack, CircleObject circle, float red, float green, float blue, float alpha) {
         float r = circle.radius;
         float cx = circle.x;
         float cy = circle.y;
@@ -45,38 +43,29 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
         poseStack.translate(cx, cy, cz);
         poseStack.mulPose(circle.getRotation());
 
-        RenderSystem.disableCull();
-
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        BufferBuilder bufferBuilder;
-
         Matrix4f matrix = poseStack.last().pose();
 
         // Normal, smooth lines
         if (!isPixelated) {
             if (isFilled) {
-                bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+                VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.TRIANGLE_FAN_2D);
 
                 bufferBuilder.addVertex(matrix, 0, 0, 0f).setColor(red, green, blue, alpha);
 
                 double angleStep = Math.PI * 2 / segments;
-
                 for (int i = 0; i <= segments; i++) {
                     double angle = i * angleStep;
                     double x = r * Math.sin(angle);
                     double y = r * Math.cos(angle);
-
                     bufferBuilder.addVertex(matrix, (float) x, (float) y, 0).setColor(red, green, blue, alpha);
                 }
-
             } else {
-                bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+                VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.TRIANGLE_STRIP_2D);
 
                 float outerRadius = r;
                 float innerRadius = r - borderWidth;
 
                 double angleStep = Math.PI * 2 / segments;
-
                 for (int i = 0; i <= segments; i++) {
                     double angle = i * angleStep;
 
@@ -91,11 +80,9 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
                     bufferBuilder.addVertex(matrix, (float) innerX, (float) innerY, 0f).setColor(red, green, blue, alpha);
                 }
             }
-
-            BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
         } else {
             // Pixelated lines
-            bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.QUADS_2D);
 
             final float pixelSize = borderWidth; // Defines the size of each "pixel" square
 
@@ -127,13 +114,12 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
                     );
 
                     boolean shouldDrawPixel;
-
                     if (!isFilled) {
                         float outerRadius = r + (lineThicknessPixels * (pixelSize / 2.0F));
                         float innerRadius = r - (lineThicknessPixels * (pixelSize / 2.0F));
-
-                        if (innerRadius < 0) innerRadius = 0;
-
+                        if (innerRadius < 0) {
+                            innerRadius = 0;
+                        }
                         shouldDrawPixel = (distanceToCenter <= outerRadius) && (distanceToCenter >= innerRadius);
                     } else {
                         shouldDrawPixel = distanceToCenter <= r + (pixelSize / 2.0F);
@@ -159,11 +145,6 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
                 }
             }
         }
-
-        RenderSystem.enableCull();
-
-        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
-
         poseStack.popPose();
     }
 }
