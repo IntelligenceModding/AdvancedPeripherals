@@ -19,6 +19,10 @@ public class RectangleRenderer implements ITwoDObjectRenderer<RectangleObject> {
         VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.QUADS_2D);
 
         for (RectangleObject obj : objects) {
+            if (obj.sizeX == 0 || obj.sizeY == 0) {
+                continue;
+            }
+
             gui.pose().pushPose();
             gui.pose().translate(obj.x, obj.y, obj.z);
             gui.pose().rotateAround(obj.getRotation(), obj.sizeX / 2, obj.sizeY / 2, 0);

@@ -7,7 +7,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.Overlay
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,8 +25,8 @@ public class LineObject extends RenderableObject {
     @BooleanProperty
     public boolean pixelated = false;
 
-    @FixedPointNumberProperty(min = 0, max = 32767)
-    public int width = 4;
+    @FloatingNumberProperty(min = 0, max = 32767)
+    public float width = 4;
 
     public LineObject(OverlayModule module) {
         super(module);

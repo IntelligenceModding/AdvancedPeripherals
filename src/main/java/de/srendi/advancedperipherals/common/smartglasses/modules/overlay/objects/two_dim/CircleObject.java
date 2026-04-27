@@ -23,7 +23,7 @@ public class CircleObject extends RenderableObject {
     @FixedPointNumberProperty(min = 0, max = 32767)
     public int borderWidth = 4;
 
-    @FixedPointNumberProperty(min = 0, max = 100)
+    @FixedPointNumberProperty(min = 0, max = 256)
     public int segments = 25;
 
     public CircleObject(OverlayModule module) {

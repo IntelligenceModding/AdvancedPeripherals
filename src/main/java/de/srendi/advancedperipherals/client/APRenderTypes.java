@@ -12,22 +12,6 @@ import java.util.Objects;
 import java.util.function.Function;
 
 public class APRenderTypes {
-    public static final RenderType LINE_2D = RenderType.create(
-        "ap_overlay_2d_line",
-        DefaultVertexFormat.POSITION_COLOR,
-        VertexFormat.Mode.LINE_STRIP,
-        1536,
-        false,
-        false,
-        RenderType.CompositeState.builder()
-            .setShaderState(RenderStateShard.RENDERTYPE_LINES_SHADER)
-            .setLineState(RenderStateShard.DEFAULT_LINE)
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
-            .setCullState(RenderStateShard.NO_CULL)
-            .createCompositeState(false)
-    );
-
     public static final RenderType TRIANGLE_FAN_2D = RenderType.create(
         "ap_overlay_2d_triangle_fan",
         DefaultVertexFormat.POSITION_COLOR,

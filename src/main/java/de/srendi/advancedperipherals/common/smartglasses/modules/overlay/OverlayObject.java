@@ -170,7 +170,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         return this.player;
     }
 
-    @LuaFunction("type")
+    @LuaFunction("getType")
     public final String getTypeLua() {
         return APRegistration.OVERLAY_OBJECTS.getRegistry().get().getKey(this.getType()).toString();
     }

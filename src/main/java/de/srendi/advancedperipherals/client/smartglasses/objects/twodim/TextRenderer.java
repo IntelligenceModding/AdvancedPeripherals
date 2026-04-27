@@ -11,6 +11,10 @@ public class TextRenderer implements ITwoDObjectRenderer<TextObject> {
     @Override
     public void renderBatch(List<TextObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
         for (TextObject text : objects) {
+            if (text.fontSize == 0) {
+                continue;
+            }
+
             float x = text.x;
             float width = gui.minecraft.font.width(text.content);
             if (text.center) {
