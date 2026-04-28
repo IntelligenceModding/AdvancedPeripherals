@@ -5,10 +5,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 public class APRenderTypes {
@@ -109,62 +106,41 @@ public class APRenderTypes {
         boolean sortOnUpload,
         RenderType.CompositeState.CompositeStateBuilder stateBuilder
     ) {
-        Map<@NotNull RenderTypeState, @NotNull RenderType> map = Map.of(
-            new RenderTypeState(true, true),
-            RenderType.create(
-                name,
+        int size = 2 * 2;
+        RenderType[] types = new RenderType[size];
+        for (int i = 0; i < size; i++) {
+            boolean culling = RenderTypeStateFlag.CULL.has(i);
+            boolean depthTest = RenderTypeStateFlag.DEPTH_TEST.has(i);
+            types[i] = RenderType.create(
+                name
+                    + (culling ? "" : "_nocull")
+                    + (depthTest ? "" : "_nodepth"),
                 format,
                 mode,
                 bufferSize,
                 affectsCrumbling,
                 sortOnUpload,
                 stateBuilder
-                    .setCullState(RenderStateShard.CULL)
-                    .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+                    .setCullState(culling ? RenderStateShard.CULL : RenderStateShard.NO_CULL)
+                    .setDepthTestState(depthTest ? RenderStateShard.LEQUAL_DEPTH_TEST : RenderStateShard.NO_DEPTH_TEST)
                     .createCompositeState(false)
-            ),
-            new RenderTypeState(true, false),
-            RenderType.create(
-                name + "_nodepth",
-                format,
-                mode,
-                bufferSize,
-                affectsCrumbling,
-                sortOnUpload,
-                stateBuilder
-                    .setCullState(RenderStateShard.CULL)
-                    .setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
-                    .createCompositeState(false)
-            ),
-            new RenderTypeState(false, true),
-            RenderType.create(
-                name + "_nocull",
-                format,
-                mode,
-                bufferSize,
-                affectsCrumbling,
-                sortOnUpload,
-                stateBuilder
-                    .setCullState(RenderStateShard.NO_CULL)
-                    .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
-                    .createCompositeState(false)
-            ),
-            new RenderTypeState(false, false),
-            RenderType.create(
-                name + "_nocull_nodepth",
-                format,
-                mode,
-                bufferSize,
-                affectsCrumbling,
-                sortOnUpload,
-                stateBuilder
-                    .setCullState(RenderStateShard.NO_CULL)
-                    .setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
-                    .createCompositeState(false)
-            )
-        );
-        return (o) -> Objects.requireNonNull(map.get(new RenderTypeState(o.culling, o.depthTest)), "render type getter assert");
+            );
+        }
+        return (o) -> types[RenderTypeStateFlag.combineFlags(o.culling, o.depthTest)];
     }
 
-    private record RenderTypeState(boolean cull, boolean depthTest) {}
+    private enum RenderTypeStateFlag {
+        CULL,
+        DEPTH_TEST;
+
+        public boolean has(int flags) {
+            return (flags & (1 << this.ordinal())) != 0;
+        }
+
+        static int combineFlags(boolean culling, boolean depthTest) {
+            return
+                (culling ? (1 << CULL.ordinal()) : 0) |
+                (depthTest ? (1 << DEPTH_TEST.ordinal()) : 0);
+        }
+    }
 }
