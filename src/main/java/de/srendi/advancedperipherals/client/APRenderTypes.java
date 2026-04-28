@@ -81,8 +81,9 @@ public class APRenderTypes {
         true,
         RenderType.CompositeState.builder()
             .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
-            .setLayeringState(RenderStateShard.VIEW_OFFSET_Z_LAYERING)
             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+            .setWriteMaskState(RenderStateShard.COLOR_WRITE)
+            .setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
     );
 
     public static final Function<ThreeDimensionalObject, RenderType> QUADS_3D_MAP = create3DRenderTypeGetter(
@@ -95,9 +96,11 @@ public class APRenderTypes {
         RenderType.CompositeState.builder()
             .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+            .setWriteMaskState(RenderStateShard.COLOR_WRITE)
+            .setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
     );
 
-    public static Function<ThreeDimensionalObject, RenderType> create3DRenderTypeGetter(
+    private static Function<ThreeDimensionalObject, RenderType> create3DRenderTypeGetter(
         String name,
         VertexFormat format,
         VertexFormat.Mode mode,
@@ -163,5 +166,5 @@ public class APRenderTypes {
         return (o) -> Objects.requireNonNull(map.get(new RenderTypeState(o.culling, o.depthTest)), "render type getter assert");
     }
 
-    public record RenderTypeState(boolean cull, boolean depthTest) {}
+    private record RenderTypeState(boolean cull, boolean depthTest) {}
 }
