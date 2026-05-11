@@ -65,7 +65,10 @@ public class BaseBlock extends Block implements IHarvestableBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        Direction front = context.getNearestLookingDirection().getOpposite();
+        Direction front = context.getNearestLookingDirection();
+        if (!context.isSecondaryUseActive()) {
+            front = front.getOpposite();
+        }
         Direction top = switch (front) {
             case UP -> context.getHorizontalDirection();
             case DOWN -> context.getHorizontalDirection().getOpposite();
