@@ -14,11 +14,14 @@ public abstract class ThreeDimensionalObject extends RenderableObject {
     @BooleanProperty
     public boolean relativeRotation = false;
 
+    @BooleanProperty
+    public boolean culling = true;
+
     @BooleanProperty(getterPrefix = "has")
     public boolean depthTest = true;
 
-    @BooleanProperty
-    public boolean culling = true;
+    @BooleanProperty(getterPrefix = "has")
+    public boolean depthMask = true;
 
     public ThreeDimensionalObject(OverlayModule module) {
         super(module);

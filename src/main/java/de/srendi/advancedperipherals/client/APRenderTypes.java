@@ -79,7 +79,6 @@ public class APRenderTypes {
         RenderType.CompositeState.builder()
             .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setWriteMaskState(RenderStateShard.COLOR_WRITE)
             .setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
     );
 
@@ -93,7 +92,6 @@ public class APRenderTypes {
         RenderType.CompositeState.builder()
             .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setWriteMaskState(RenderStateShard.COLOR_WRITE)
             .setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
     );
 
@@ -111,10 +109,12 @@ public class APRenderTypes {
         for (int i = 0; i < size; i++) {
             boolean culling = RenderTypeStateFlag.CULL.has(i);
             boolean depthTest = RenderTypeStateFlag.DEPTH_TEST.has(i);
+            boolean depthMask = RenderTypeStateFlag.DEPTH_MASK.has(i);
             types[i] = RenderType.create(
                 name
                     + (culling ? "" : "_nocull")
-                    + (depthTest ? "" : "_nodepth"),
+                    + (depthTest ? "" : "_nodepth")
+                    + (depthMask ? "" : "_nodmask"),
                 format,
                 mode,
                 bufferSize,
@@ -123,24 +123,31 @@ public class APRenderTypes {
                 stateBuilder
                     .setCullState(culling ? RenderStateShard.CULL : RenderStateShard.NO_CULL)
                     .setDepthTestState(depthTest ? RenderStateShard.LEQUAL_DEPTH_TEST : RenderStateShard.NO_DEPTH_TEST)
+                    .setWriteMaskState(depthMask ? RenderStateShard.COLOR_DEPTH_WRITE : RenderStateShard.COLOR_WRITE)
                     .createCompositeState(false)
             );
         }
-        return (o) -> types[RenderTypeStateFlag.combineFlags(o.culling, o.depthTest)];
+        return (o) -> types[RenderTypeStateFlag.combineFlags(o.culling, o.depthTest, o.depthMask)];
     }
 
     private enum RenderTypeStateFlag {
         CULL,
-        DEPTH_TEST;
+        DEPTH_TEST,
+        DEPTH_MASK;
 
         public boolean has(int flags) {
             return (flags & (1 << this.ordinal())) != 0;
         }
 
-        static int combineFlags(boolean culling, boolean depthTest) {
+        static int combineFlags(
+            boolean culling,
+            boolean depthTest,
+            boolean depthMask
+        ) {
             return
                 (culling ? (1 << CULL.ordinal()) : 0) |
-                (depthTest ? (1 << DEPTH_TEST.ordinal()) : 0);
+                (depthTest ? (1 << DEPTH_TEST.ordinal()) : 0) |
+                (depthMask ? (1 << DEPTH_MASK.ordinal()) : 0);
         }
     }
 }
