@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.client.smartglasses;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import net.minecraft.client.Camera;
@@ -32,16 +33,17 @@ public class OverlayModuleLevelRenderer {
         PoseStack poseStack = event.getPoseStack();
         Camera camera = event.getCamera();
         Entity entity = camera.getEntity();
-        if (entity == null) {
+        if (!(entity instanceof LivingEntity livingEntity)) {
             return;
         }
-        float partialTicks = camera.getPartialTickTime();
-        Quaternionf eyeRotation = new Quaternionf();
-        if (entity instanceof LivingEntity livingEntity) {
-            eyeRotation
-                .rotationY(Mth.DEG_TO_RAD * (180 - livingEntity.getViewYRot(partialTicks)))
-                .rotateX(Mth.DEG_TO_RAD * -livingEntity.getViewXRot(partialTicks));
+        if (SmartGlassesItem.getEquipped(livingEntity).isEmpty()) {
+            return;
         }
+
+        float partialTicks = camera.getPartialTickTime();
+        Quaternionf eyeRotation = new Quaternionf()
+            .rotationY(Mth.DEG_TO_RAD * (180 - livingEntity.getViewYRot(partialTicks)))
+            .rotateX(Mth.DEG_TO_RAD * -livingEntity.getViewXRot(partialTicks));
 
         Vec3 view = camera.getPosition();
         Vec3 eyePos = entity.getEyePosition(camera.getPartialTickTime());

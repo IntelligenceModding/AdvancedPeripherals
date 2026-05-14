@@ -2,10 +2,12 @@ package de.srendi.advancedperipherals.client.smartglasses;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ITwoDObjectRenderer;
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
@@ -21,6 +23,14 @@ public class OverlayModuleOverlay implements LayeredDraw.Layer {
     @SuppressWarnings("rawtypes")
     @Override
     public void render(GuiGraphics gui, DeltaTracker deltaTracker) {
+        LocalPlayer player = gui.minecraft.player;
+        if (player == null) {
+            return;
+        }
+        if (SmartGlassesItem.getEquipped(player).isEmpty()) {
+            return;
+        }
+
         NavigableMap<Integer, Map<ITwoDObjectRenderer, List<OverlayObject>>> prioritizedBatches = new TreeMap<>();
 
         for (OverlayObject object : OverlayObjectHolder.getObjects()) {
