@@ -104,7 +104,7 @@ public class APRenderTypes {
         boolean sortOnUpload,
         RenderType.CompositeState.CompositeStateBuilder stateBuilder
     ) {
-        int size = 2 * 2;
+        int size = 2 * 2 * 2;
         RenderType[] types = new RenderType[size];
         for (int i = 0; i < size; i++) {
             boolean culling = RenderTypeStateFlag.CULL.has(i);
