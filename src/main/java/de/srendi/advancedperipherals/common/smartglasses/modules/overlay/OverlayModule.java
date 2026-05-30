@@ -157,6 +157,7 @@ public class OverlayModule implements IModule {
         int size = this.objects.size();
         this.objects.clear();
         this.idCounter = 0;
+        this.objectsToAdd.clear();
         this.objectsToUpdate.clear();
         PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectClearPacket());
         return size;
