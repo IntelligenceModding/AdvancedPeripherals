@@ -38,10 +38,10 @@ public class TextureRenderer implements IThreeDObjectRenderer<TextureObject> {
             poseStack.rotateAround(obj.getRotation(), obj.x, obj.y, obj.z);
 
             Matrix4f mat = poseStack.last().pose();
-            buffer.addVertex(mat, obj.x, obj.y, obj.z).setUv(0, 0);
-            buffer.addVertex(mat, obj.x + obj.sizeX, obj.y, obj.z).setUv(1, 0);
-            buffer.addVertex(mat, obj.x + obj.sizeX, obj.y + obj.sizeY, obj.z).setUv(1, 1);
-            buffer.addVertex(mat, obj.x, obj.y + obj.sizeY, obj.z).setUv(0, 1);
+            buffer.addVertex(mat, obj.x, obj.y, obj.z).setUv(0, 1);
+            buffer.addVertex(mat, obj.x + obj.sizeX, obj.y, obj.z).setUv(1, 1);
+            buffer.addVertex(mat, obj.x + obj.sizeX, obj.y + obj.sizeY, obj.z).setUv(1, 0);
+            buffer.addVertex(mat, obj.x, obj.y + obj.sizeY, obj.z).setUv(0, 0);
 
             poseStack.popPose();
         }

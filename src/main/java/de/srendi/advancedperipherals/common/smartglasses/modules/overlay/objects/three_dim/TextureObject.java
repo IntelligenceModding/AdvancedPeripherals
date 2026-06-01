@@ -223,8 +223,8 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
             this.imageChanged = false;
             int minX = this.changedMinX;
             int minY = this.changedMinY;
-            int width = this.changedMaxX - this.changedMinX + 1;
-            int height = this.changedMaxY - this.changedMinY + 1;
+            int width = this.changedMaxX - this.changedMinX;
+            int height = this.changedMaxY - this.changedMinY;
             buffer.writeVarInt(minX);
             buffer.writeVarInt(minY);
             buffer.writeVarInt(width);
@@ -329,16 +329,15 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
         Int2IntMap toPalette = new Int2IntOpenHashMap(16);
         toPalette.defaultReturnValue(-1);
         for (int y = 0; y < height; y++) {
-            int row = y * width;
             for (int x = 0; x < width; x++) {
-                int b = image[row + minY * imageWidth + minX + x];
+                int b = image[(minY + y) * imageWidth + minX + x];
                 int p = toPalette.get(b);
                 if (p == -1) {
                     p = palette.size();
                     palette.add(b);
                     toPalette.put(b, p);
                 }
-                data[row + x] = p;
+                data[y * width + x] = p;
             }
         }
 
@@ -359,11 +358,10 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
         }
 
         for (int y = 0; y < height; y++) {
-            int row = minY * imageWidth + y * width;
             for (int x = 0; x < width; x++) {
                 int p = buffer.readVarInt();
                 int b = palette[p];
-                image[row + minX + x] = b;
+                image[(minY + y) * imageWidth + minX + x] = b;
             }
         }
     }
@@ -388,7 +386,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
             int width, height;
             int[] data;
 
-            boolean isFlat = image.get(1) instanceof Number;
+            boolean isFlat = image.get(1) instanceof Number || image.get(1.0) instanceof Number;
             if (isFlat) {
                 if (optWidth == 0 || optHeight == 0) {
                     throw new LuaException("must provide both width and height with flattened image");
