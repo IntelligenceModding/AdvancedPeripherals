@@ -54,6 +54,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     private int changedMaxY;
 
     private ResourceLocation textureId;
+    @SuppressWarnings("rawtypes")
     private Function renderTypesMap;
     private Object /*DynamicTexture*/ texture = null;
 
@@ -121,12 +122,30 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     }
 
     @LuaFunction
-    public final long getPixel(int x, int y) {
+    public final long getPixel(int x, int y) throws LuaException {
+        if (x <= 0 || x > this.width) {
+            throw new LuaException("x out of bounds [1, width]");
+        }
+        if (y <= 0 || y > this.height) {
+            throw new LuaException("y out of bounds [1, height]");
+        }
+        x--;
+        y--;
+
         return native2luaColor(this.image[y * this.width + x]);
     }
 
     @LuaFunction
-    public final void setPixel(int x, int y, int color) {
+    public final void setPixel(int x, int y, int color) throws LuaException {
+        if (x <= 0 || x > this.width) {
+            throw new LuaException("x out of bounds [1, width]");
+        }
+        if (y <= 0 || y > this.height) {
+            throw new LuaException("y out of bounds [1, height]");
+        }
+        x--;
+        y--;
+
         this.setColor(x, y, lua2nativeColor(color));
         this.tryAutoUpdate();
     }
@@ -143,7 +162,22 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     }
 
     @LuaFunction
-    public final Long[][] getPixels(int minX, int minY, int width, int height) {
+    public final Long[][] getPixels(int minX, int minY, int width, int height) throws LuaException {
+        if (minX <= 0 || minX > this.width) {
+            throw new LuaException("minX out of bounds [1, width]");
+        }
+        if (minY <= 0 || minY > this.height) {
+            throw new LuaException("minY out of bounds [1, height]");
+        }
+        minX--;
+        minY--;
+        if (width <= 0 || minX + width > this.width) {
+            throw new LuaException("width out of bounds");
+        }
+        if (height <= 0 || minY + height > this.height) {
+            throw new LuaException("height out of bounds");
+        }
+
         Long[][] data = new Long[height][width];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -160,10 +194,25 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
         int width = 0, height = 0;
         Map<?, ?> imageData;
 
+        if (minX <= 0 || minX > this.width) {
+            throw new LuaException("minX out of bounds [1, width]");
+        }
+        if (minY <= 0 || minY > this.height) {
+            throw new LuaException("minY out of bounds [1, height]");
+        }
+        minX--;
+        minY--;
+
         if (args.get(2) instanceof Number) {
             width = args.getInt(2);
             height = args.getInt(3);
             imageData = args.getTable(4);
+            if (width <= 0 || minX + width > this.width) {
+                throw new LuaException("width out of bounds");
+            }
+            if (height <= 0 || minY + height > this.height) {
+                throw new LuaException("height out of bounds");
+            }
         } else {
             imageData = args.getTable(2);
         }
@@ -176,6 +225,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
         this.tryAutoUpdate();
     }
 
+    @SuppressWarnings("rawtypes")
     @Nullable
     public Function updateAndGetRenderTypes() {
         DynamicTexture texture = (DynamicTexture) this.texture;
@@ -329,10 +379,8 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     }
 
     protected void replace(int minX, int minY, int width, int height, int[] newData) {
+        this.replace0(minX, minY, width, height, newData);
         int maxX = minX + width - 1, maxY = minY + height - 1;
-        for (int y = minY; y < maxY; y++) {
-            System.arraycopy(newData, y * width, this.image, (minY + y) * this.width + minX, width);
-        }
         if (!this.imageChanged) {
             this.imageChanged = true;
             this.changedMinX = minX;
