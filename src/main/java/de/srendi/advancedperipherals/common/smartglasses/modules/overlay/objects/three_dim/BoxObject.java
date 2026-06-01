@@ -35,12 +35,12 @@ public class BoxObject extends ThreeDimensionalObject {
     }
 
     @LuaFunction
-    public MethodResult getSizes() {
+    public final MethodResult getSizes() {
         return MethodResult.of(this.sizeX, this.sizeY, this.sizeZ);
     }
 
     @LuaFunction
-    public void setSizes(double x, double y, double z) {
+    public final void setSizes(double x, double y, double z) {
         this.sizeX = (float) Math.max(x, 0);
         this.sizeY = (float) Math.max(y, 0);
         this.sizeZ = (float) Math.max(z, 0);

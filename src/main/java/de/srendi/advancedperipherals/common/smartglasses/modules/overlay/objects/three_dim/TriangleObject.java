@@ -53,12 +53,12 @@ public class TriangleObject extends ThreeDimensionalObject {
     }
 
     @LuaFunction
-    public MethodResult getPos1() {
+    public final MethodResult getPos1() {
         return MethodResult.of(this.x1, this.y1, this.z1);
     }
 
     @LuaFunction
-    public void setPos1(double x, double y, double z) {
+    public final void setPos1(double x, double y, double z) {
         this.x1 = (float) x;
         this.y1 = (float) y;
         this.z1 = (float) z;
@@ -66,12 +66,12 @@ public class TriangleObject extends ThreeDimensionalObject {
     }
 
     @LuaFunction
-    public MethodResult getPos2() {
+    public final MethodResult getPos2() {
         return MethodResult.of(this.x2, this.y2, this.z2);
     }
 
     @LuaFunction
-    public void setPos2(double x, double y, double z) {
+    public final void setPos2(double x, double y, double z) {
         this.x2 = (float) x;
         this.y2 = (float) y;
         this.z2 = (float) z;
@@ -79,12 +79,12 @@ public class TriangleObject extends ThreeDimensionalObject {
     }
 
     @LuaFunction
-    public MethodResult getPos3() {
+    public final MethodResult getPos3() {
         return MethodResult.of(this.x3, this.y3, this.z3);
     }
 
     @LuaFunction
-    public void setPos3(double x, double y, double z) {
+    public final void setPos3(double x, double y, double z) {
         this.x3 = (float) x;
         this.y3 = (float) y;
         this.z3 = (float) z;

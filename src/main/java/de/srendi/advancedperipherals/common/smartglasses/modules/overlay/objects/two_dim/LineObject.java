@@ -48,12 +48,12 @@ public class LineObject extends RenderableObject {
     }
 
     @LuaFunction
-    public MethodResult getEndPos() {
+    public final MethodResult getEndPos() {
         return MethodResult.of(this.endX, this.endY);
     }
 
     @LuaFunction
-    public void setEndPos(double x, double y) {
+    public final void setEndPos(double x, double y) {
         this.endX = (float) x;
         this.endY = (float) y;
         this.markAndTryUpdate("endX", "endY");

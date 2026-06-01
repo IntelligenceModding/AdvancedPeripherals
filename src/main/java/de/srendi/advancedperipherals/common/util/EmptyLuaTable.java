@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class EmptyLuaTable implements LuaTable<Object, Object> {
@@ -60,5 +61,9 @@ public class EmptyLuaTable implements LuaTable<Object, Object> {
 
     public static LuaTable<Object, Object> orEmpty(@Nullable Map<?, ?> table) {
         return table == null ? INSTANCE : new ObjectLuaTable(table);
+    }
+
+    public static LuaTable<Object, Object> orEmpty(Optional<Map<?, ?>> optTable) {
+        return orEmpty(optTable.orElse(null));
     }
 }

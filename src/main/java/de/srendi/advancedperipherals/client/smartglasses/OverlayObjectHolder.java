@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.client.smartglasses;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,7 +29,14 @@ public class OverlayObjectHolder {
     }
 
     public static void removeObject(int id) {
-        objects.remove(id);
+        OverlayObject obj = objects.remove(id);
+        if (obj instanceof AutoCloseable closeable) {
+            try {
+                closeable.close();
+            } catch (Exception e) {
+                throw new RuntimeException("Exception when releasing overlay object " + obj.toString(), e);
+            }
+        }
     }
 
     public static Collection<OverlayObject> getObjects() {
@@ -36,6 +44,17 @@ public class OverlayObjectHolder {
     }
 
     public static void clear() {
-        objects.clear();
+        List<Map.Entry<Integer, OverlayObject>> entries = List.copyOf(objects.entrySet());
+        objects.entrySet().removeAll(entries);
+        for (Map.Entry<Integer, OverlayObject> entry : entries) {
+            OverlayObject obj = entry.getValue();
+            if (obj instanceof AutoCloseable closeable) {
+                try {
+                    closeable.close();
+                } catch (Exception e) {
+                    throw new RuntimeException("Exception when releasing overlay object " + obj.toString(), e);
+                }
+            }
+        }
     }
 }

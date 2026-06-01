@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 
@@ -94,6 +95,22 @@ public class APRenderTypes {
             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
             .setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
     );
+
+    public static Function<ThreeDimensionalObject, RenderType> createQuadsTex3DMap(ResourceLocation texture) {
+        return create3DRenderTypeGetter(
+            "ap_overlay_3d_quads_tex",
+            DefaultVertexFormat.POSITION_TEX,
+            VertexFormat.Mode.QUADS,
+            1536,
+            false,
+            true,
+            RenderType.CompositeState.builder()
+                .setShaderState(RenderStateShard.POSITION_TEX_SHADER)
+                .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                .setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
+        );
+    }
 
     private static Function<ThreeDimensionalObject, RenderType> create3DRenderTypeGetter(
         String name,

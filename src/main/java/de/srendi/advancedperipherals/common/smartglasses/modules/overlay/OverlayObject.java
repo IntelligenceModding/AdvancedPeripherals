@@ -111,7 +111,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             registrar.accept(
                 field.field().getName(),
                 new FieldEncoder<OverlayObject, Object>(
-                    (StreamCodec<RegistryFriendlyByteBuf, Object>) field.type().codec(field.field().getType()),
+                    (StreamCodec<? super RegistryFriendlyByteBuf, Object>) field.type().codec(field.field().getType()),
                     () -> {
                         try {
                             return field.field().get(this);
@@ -365,7 +365,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     }
 
     public record FieldEncoder<O extends OverlayObject, T>(
-        StreamCodec<RegistryFriendlyByteBuf, T> codec,
+        StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
         Supplier<T> getter,
         Consumer<T> setter
     ) {

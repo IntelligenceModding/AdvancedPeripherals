@@ -41,12 +41,12 @@ public class RectangleObject extends RenderableObject {
     }
 
     @LuaFunction
-    public MethodResult getSizes() {
+    public final MethodResult getSizes() {
         return MethodResult.of(this.sizeX, this.sizeY);
     }
 
     @LuaFunction
-    public void setSizes(double x, double y) {
+    public final void setSizes(double x, double y) {
         this.sizeX = (float) Math.max(x, 0);
         this.sizeY = (float) Math.max(y, 0);
         this.markAndTryUpdate("sizeX", "sizeY");

@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.setup;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.BlockRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.BoxRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.SphereRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.TextureRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.TorusRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.TriangleRenderer;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.CircleRenderer;
@@ -14,6 +15,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.Overlay
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BlockObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BoxObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.SphereObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TextureObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TorusObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TriangleObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
@@ -32,6 +34,8 @@ public final class APOverlayObjects {
         APRegistration.OVERLAY_OBJECTS.register("sphere", () -> new OverlayObjectType<>(SphereObject::new, SphereObject::new, () -> new SphereRenderer()));
     public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<TorusObject>> TORUS =
         APRegistration.OVERLAY_OBJECTS.register("torus", () -> new OverlayObjectType<>(TorusObject::new, TorusObject::new, () -> new TorusRenderer()));
+    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<TextureObject>> TEXTURE =
+        APRegistration.OVERLAY_OBJECTS.register("texture", () -> new OverlayObjectType<>(TextureObject::new, TextureObject::new, () -> new TextureRenderer()));
     public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<TriangleObject>> TRIANGLE =
         APRegistration.OVERLAY_OBJECTS.register("triangle", () -> new OverlayObjectType<>(TriangleObject::new, TriangleObject::new, () -> TriangleRenderer.INSTANCE));
     public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<CircleObject>> CIRCLE =

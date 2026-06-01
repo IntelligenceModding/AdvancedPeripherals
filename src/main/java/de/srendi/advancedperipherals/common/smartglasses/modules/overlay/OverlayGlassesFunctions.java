@@ -10,6 +10,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BlockObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BoxObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.SphereObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TextureObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TorusObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TriangleObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
@@ -75,6 +76,14 @@ public class OverlayGlassesFunctions implements IModuleFunctions {
         sphere.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
         overlayModule.addObject(sphere);
         return sphere;
+    }
+
+    @LuaFunction
+    public final Object createTexture(Optional<Map<?, ?>> initFields) throws LuaException {
+        TextureObject texture = new TextureObject(overlayModule);
+        texture.setPropertiesFromTable(EmptyLuaTable.orEmpty(initFields.orElse(null)));
+        overlayModule.addObject(texture);
+        return texture;
     }
 
     @LuaFunction
