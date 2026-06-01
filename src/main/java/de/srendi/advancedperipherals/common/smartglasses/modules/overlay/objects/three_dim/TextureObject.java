@@ -121,9 +121,36 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     }
 
     @LuaFunction
+    public final long getPixel(int x, int y) {
+        return native2luaColor(this.image[y * this.width + x]);
+    }
+
+    @LuaFunction
     public final void setPixel(int x, int y, int color) {
-        this.setColor(x, y, color);
+        this.setColor(x, y, lua2nativeColor(color));
         this.tryAutoUpdate();
+    }
+
+    @LuaFunction
+    public final Long[][] getAllPixels() {
+        Long[][] data = new Long[this.height][this.width];
+        for (int y = 0; y < this.height; y++) {
+            for (int x = 0; x < this.width; x++) {
+                data[y][x] = native2luaColor(this.image[y * this.width + x]);
+            }
+        }
+        return data;
+    }
+
+    @LuaFunction
+    public final Long[][] getPixels(int minX, int minY, int width, int height) {
+        Long[][] data = new Long[height][width];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                data[y][x] = native2luaColor(this.image[(minY + y) * this.width + minX + x]);
+            }
+        }
+        return data;
     }
 
     @LuaFunction
@@ -200,7 +227,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     @Override
     public void decode(RegistryFriendlyByteBuf buffer) {
         super.decode(buffer);
-        this.textureId = AdvancedPeripherals.getRL("_texture_object_d_" + this.getId());
+        this.textureId = AdvancedPeripherals.getRL("__texture_object_d_" + this.getId());
         this.renderTypesMap = APRenderTypes.createQuadsTex3DMap(this.textureId);
         this.width = buffer.readVarInt();
         this.height = buffer.readVarInt();
@@ -223,8 +250,8 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
             this.imageChanged = false;
             int minX = this.changedMinX;
             int minY = this.changedMinY;
-            int width = this.changedMaxX - this.changedMinX;
-            int height = this.changedMaxY - this.changedMinY;
+            int width = this.changedMaxX - this.changedMinX + 1;
+            int height = this.changedMaxY - this.changedMinY + 1;
             buffer.writeVarInt(minX);
             buffer.writeVarInt(minY);
             buffer.writeVarInt(width);
@@ -280,7 +307,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     }
 
     protected void setColor(int x, int y, int color) {
-        this.image[y * width + x] = color;
+        this.image[y * this.width + x] = color;
         if (!this.imageChanged) {
             this.imageChanged = true;
             this.changedMinX = x;
@@ -296,18 +323,15 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     }
 
     protected void replace0(int minX, int minY, int width, int height, int[] newData) {
-        int[] data = this.image;
-        int maxX = minX + width, maxY = minY + height;
-        for (int y = minY; y < maxY; y++) {
-            System.arraycopy(data, y * width + minX, newData, (y - minY) * width, maxX - minX);
+        for (int y = 0; y < height; y++) {
+            System.arraycopy(newData, y * width, this.image, (minY + y) * this.width + minX, width);
         }
     }
 
     protected void replace(int minX, int minY, int width, int height, int[] newData) {
-        int[] data = this.image;
-        int maxX = minX + width, maxY = minY + height;
+        int maxX = minX + width - 1, maxY = minY + height - 1;
         for (int y = minY; y < maxY; y++) {
-            System.arraycopy(data, y * width + minX, newData, (y - minY) * width, maxX - minX);
+            System.arraycopy(newData, y * width, this.image, (minY + y) * this.width + minX, width);
         }
         if (!this.imageChanged) {
             this.imageChanged = true;
@@ -376,6 +400,22 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
         return dim;
     }
 
+    private static int lua2nativeColor(int color) {
+        int alpha = (color >> 24) & 0xff;
+        int red = (color >> 16) & 0xff;
+        int green = (color >> 8) & 0xff;
+        int blue = color & 0xff;
+        return (alpha << 24) | (blue << 16) | (green << 8) | red;
+    }
+
+    private static long native2luaColor(int color) {
+        int alpha = (color >> 24) & 0xff;
+        int blue = (color >> 16) & 0xff;
+        int green = (color >> 8) & 0xff;
+        int red = color & 0xff;
+        return ((alpha << 24) | (red << 16) | (green << 8) | blue) & 0xffffffffl;
+    }
+
     private record FlattenedImage(int width, int height, int[] data) {
         static FlattenedImage tryFlatten(LuaTable<?, ?> image, int optWidth, int optHeight) throws LuaException {
             int length = image.length();
@@ -397,8 +437,8 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
                 width = optWidth;
                 height = optHeight;
                 data = new int[length];
-                for (int i = 1; i <= length; i++) {
-                    data[i] = image.getInt(i);
+                for (int i = 0; i < length; i++) {
+                    data[i] = lua2nativeColor(image.getInt(i + 1));
                 }
             } else {
                 height = length;
@@ -417,7 +457,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
                     LuaTable<?, ?> row = rows[y];
                     int w = row.length();
                     for (int x = 0; x < w; x++) {
-                        data[y * width + x] = row.getInt(x + 1);
+                        data[y * width + x] = lua2nativeColor(row.getInt(x + 1));
                     }
                 }
             }

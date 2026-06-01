@@ -120,7 +120,7 @@ public class OverlayModule implements IModule {
      * @param object The object which should be added
      */
     public void addObject(OverlayObject object) {
-        int id = idCounter++;
+        int id = ++idCounter;
         object.setId(id);
         if (this.autoUpdate) {
             ServerPlayer owner = this.getOwner();
