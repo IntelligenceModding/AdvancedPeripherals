@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -22,29 +23,31 @@ public class BoxRenderer implements IThreeDObjectRenderer<BoxObject> {
     public void renderBatch(List<BoxObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos, Quaternionf eyeRotation) {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
+        Matrix4f lastPose = poseStack.last().pose();
+        Matrix4f mat = new Matrix4f();
+
         for (BoxObject box : batch) {
             VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.QUADS_3D_MAP.apply(box));
 
-            poseStack.pushPose();
+            mat.set(lastPose);
 
             Vector4f color = new Vector4f(RenderUtil.getRed(box.color), RenderUtil.getGreen(box.color), RenderUtil.getBlue(box.color), box.opacity);
 
             if (box.relativePosition) {
-                poseStack.translate(eyePos.x, eyePos.y, eyePos.z);
+                mat.translate((float) eyePos.x, (float) eyePos.y, (float) eyePos.z);
                 if (box.relativeRotation) {
-                    poseStack.mulPose(eyeRotation);
+                    mat.rotate(eyeRotation);
                 }
             }
-            poseStack.translate(box.x, box.y, box.z);
-            poseStack.mulPose(box.getRotation());
+            mat.translate(box.x, box.y, box.z);
+            mat.rotate(box.getRotation());
             RenderUtil.drawBox(
-                poseStack,
+                mat,
                 bufferBuilder,
                 FULL_BRIGHT,
                 color,
                 new Vector3f(box.sizeX, box.sizeY, box.sizeZ)
             );
-            poseStack.popPose();
         }
     }
 }

@@ -36,6 +36,11 @@ public abstract class RenderableObject extends OverlayObject {
     @FloatingNumberProperty(min = 0, max = 360)
     public float rotZ = 0f;
 
+    private Quaternionf cachedRotation = null;
+    private float cachedRotX;
+    private float cachedRotY;
+    private float cachedRotZ;
+
     public RenderableObject(OverlayModule module) {
         super(module);
     }
@@ -45,12 +50,19 @@ public abstract class RenderableObject extends OverlayObject {
     }
 
     public Quaternionf getRotation() {
-        return new Quaternionf()
+        if (this.cachedRotation != null && this.cachedRotX == this.rotX && this.cachedRotY == this.rotY && this.cachedRotZ == this.rotZ) {
+            return this.cachedRotation;
+        }
+        this.cachedRotX = this.rotX;
+        this.cachedRotY = this.rotY;
+        this.cachedRotZ = this.rotZ;
+        this.cachedRotation = new Quaternionf()
             .rotationYXZ(
                 (float) Math.toRadians(this.rotY),
                 (float) Math.toRadians(this.rotX),
                 (float) Math.toRadians(this.rotZ)
             );
+        return this.cachedRotation;
     }
 
     @LuaFunction

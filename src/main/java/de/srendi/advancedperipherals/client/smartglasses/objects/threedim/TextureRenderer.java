@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.client.smartglasses.objects.threedim;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.TextureObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
 import net.minecraft.client.Minecraft;
@@ -20,6 +21,9 @@ public class TextureRenderer implements IThreeDObjectRenderer<TextureObject> {
     public void renderBatch(List<TextureObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos, Quaternionf eyeRotation) {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
+        Matrix4f lastPose = poseStack.last().pose();
+        Matrix4f mat = new Matrix4f();
+
         for (TextureObject obj : batch) {
             Function<ThreeDimensionalObject, RenderType> renderTypesMap = obj.updateAndGetRenderTypes();
             if (renderTypesMap == null) {
@@ -27,23 +31,23 @@ public class TextureRenderer implements IThreeDObjectRenderer<TextureObject> {
             }
             VertexConsumer buffer = bufferSource.getBuffer(renderTypesMap.apply(obj));
 
-            poseStack.pushPose();
+            mat.set(lastPose);
+
+            float r = RenderUtil.getRed(obj.color), g = RenderUtil.getGreen(obj.color), b = RenderUtil.getBlue(obj.color), a = obj.opacity;
 
             if (obj.relativePosition) {
-                poseStack.translate(eyePos.x, eyePos.y, eyePos.z);
+                mat.translate((float) eyePos.x, (float) eyePos.y, (float) eyePos.z);
                 if (obj.relativeRotation) {
-                    poseStack.mulPose(eyeRotation);
+                    mat.rotate(eyeRotation);
                 }
             }
-            poseStack.rotateAround(obj.getRotation(), obj.x, obj.y, obj.z);
+            mat.translate(obj.x, obj.y, obj.z);
+            mat.rotate(obj.getRotation());
 
-            Matrix4f mat = poseStack.last().pose();
-            buffer.addVertex(mat, obj.x, obj.y, obj.z).setUv(0, 1);
-            buffer.addVertex(mat, obj.x + obj.sizeX, obj.y, obj.z).setUv(1, 1);
-            buffer.addVertex(mat, obj.x + obj.sizeX, obj.y + obj.sizeY, obj.z).setUv(1, 0);
-            buffer.addVertex(mat, obj.x, obj.y + obj.sizeY, obj.z).setUv(0, 0);
-
-            poseStack.popPose();
+            buffer.addVertex(mat, 0, 0, 0).setColor(r, g, b, a).setUv(0, 1);
+            buffer.addVertex(mat, obj.sizeX, 0, 0).setColor(r, g, b, a).setUv(1, 1);
+            buffer.addVertex(mat, obj.sizeX, obj.sizeY, 0).setColor(r, g, b, a).setUv(1, 0);
+            buffer.addVertex(mat, 0, obj.sizeY, 0).setColor(r, g, b, a).setUv(0, 0);
         }
     }
 }

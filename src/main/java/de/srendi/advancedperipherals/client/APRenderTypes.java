@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.client;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.function.Function;
 
 public class APRenderTypes {
+    public static final RenderStateShard.ShaderStateShard POSITION_TEX_COLOR_SHADER = new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader);
+
     public static final RenderType TRIANGLE_FAN_2D = RenderType.create(
         "ap_overlay_2d_triangle_fan",
         DefaultVertexFormat.POSITION_COLOR,
@@ -99,13 +102,13 @@ public class APRenderTypes {
     public static Function<ThreeDimensionalObject, RenderType> createQuadsTex3DMap(ResourceLocation texture) {
         return create3DRenderTypeGetter(
             "ap_overlay_3d_quads_tex",
-            DefaultVertexFormat.POSITION_TEX,
+            DefaultVertexFormat.POSITION_TEX_COLOR,
             VertexFormat.Mode.QUADS,
             1536,
             false,
             true,
             RenderType.CompositeState.builder()
-                .setShaderState(RenderStateShard.POSITION_TEX_SHADER)
+                .setShaderState(POSITION_TEX_COLOR_SHADER)
                 .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
                 .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                 .setOutputState(RenderStateShard.TRANSLUCENT_TARGET)

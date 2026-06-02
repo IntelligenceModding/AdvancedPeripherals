@@ -32,6 +32,9 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
 
         RandomSource random = RandomSource.create();
 
+        PoseStack.Pose lastPose = poseStack.last();
+        poseStack.pushPose();
+
         for (BlockObject block : batch) {
             BlockState state = block.getBlockState();
             if (state == null) {
@@ -40,7 +43,8 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
 
             VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.BLOCK_MAP.apply(block));
 
-            poseStack.pushPose();
+            poseStack.last().pose().set(lastPose.pose());
+            poseStack.last().normal().set(lastPose.normal());
 
             if (block.relativePosition) {
                 poseStack.translate(eyePos.x, eyePos.y, eyePos.z);
@@ -51,7 +55,7 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
             poseStack.translate(block.x, block.y, block.z);
             poseStack.mulPose(block.getRotation());
             poseStack.scale(block.sizeX, block.sizeY, block.sizeZ);
-            poseStack.translate(-0.5, -0.5, -0.5);
+            poseStack.translate(-0.5f, -0.5f, -0.5f);
 
             float alpha = block.opacity;
 
@@ -68,9 +72,8 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
                 OverlayTexture.NO_OVERLAY,
                 random
             );
-
-            poseStack.popPose();
         }
+        poseStack.popPose();
     }
 
     private void renderBlockModel(

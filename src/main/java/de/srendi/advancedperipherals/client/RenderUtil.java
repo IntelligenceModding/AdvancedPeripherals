@@ -18,58 +18,56 @@ import org.joml.Vector4f;
 public final class RenderUtil {
     private RenderUtil() {}
 
-    public static void drawBox(PoseStack poseStack, VertexConsumer buffer, BoxLightMap lightMap, Vector4f rgba, Vector3f size) {
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.UP, size);
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.DOWN, size);
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.EAST, size);
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.WEST, size);
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.NORTH, size);
-        drawPlane(poseStack, buffer, lightMap, rgba, Direction.SOUTH, size);
+    public static void drawBox(Matrix4f pose, VertexConsumer buffer, BoxLightMap lightMap, Vector4f rgba, Vector3f size) {
+        drawPlane(pose, buffer, lightMap, rgba, Direction.UP, size);
+        drawPlane(pose, buffer, lightMap, rgba, Direction.DOWN, size);
+        drawPlane(pose, buffer, lightMap, rgba, Direction.EAST, size);
+        drawPlane(pose, buffer, lightMap, rgba, Direction.WEST, size);
+        drawPlane(pose, buffer, lightMap, rgba, Direction.NORTH, size);
+        drawPlane(pose, buffer, lightMap, rgba, Direction.SOUTH, size);
     }
 
-    public static void drawPlane(PoseStack poseStack, VertexConsumer buffer, BoxLightMap lightMap, Vector4f rgba, Direction perspective, Vector3f size) {
-        Matrix4f matrix4f = poseStack.last().pose();
-
+    public static void drawPlane(Matrix4f pose, VertexConsumer buffer, BoxLightMap lightMap, Vector4f rgba, Direction perspective, Vector3f size) {
         float sX = size.x / 2, sY = size.y / 2, sZ = size.z / 2;
 
         final float r = rgba.x, g = rgba.y, b = rgba.z, a = rgba.w;
 
         switch (perspective) {
             case UP -> {
-                buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.usw).setNormal(0f, 1f, 0f);
-                buffer.addVertex(matrix4f, sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.use).setNormal(0f, 1f, 0f);
-                buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.une).setNormal(0f, 1f, 0f);
-                buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.unw).setNormal(0f, 1f, 0f);
+                buffer.addVertex(pose, -sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.usw).setNormal(0f, 1f, 0f);
+                buffer.addVertex(pose, sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.use).setNormal(0f, 1f, 0f);
+                buffer.addVertex(pose, sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.une).setNormal(0f, 1f, 0f);
+                buffer.addVertex(pose, -sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.unw).setNormal(0f, 1f, 0f);
             }
             case DOWN -> {
-                buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.dsw).setNormal(0f, -1f, 0f);
-                buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.dnw).setNormal(0f, -1f, 0f);
-                buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.dne).setNormal(0f, -1f, 0f);
-                buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.dse).setNormal(0f, -1f, 0f);
+                buffer.addVertex(pose, -sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.dsw).setNormal(0f, -1f, 0f);
+                buffer.addVertex(pose, -sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.dnw).setNormal(0f, -1f, 0f);
+                buffer.addVertex(pose, sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.dne).setNormal(0f, -1f, 0f);
+                buffer.addVertex(pose, sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.dse).setNormal(0f, -1f, 0f);
             }
             case SOUTH -> {
-                buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.sde).setNormal(0f, 0f, 1f);
-                buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.sdw).setNormal(0f, 0f, 1f);
-                buffer.addVertex(matrix4f, sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.sue).setNormal(0f, 0f, 1f);
-                buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.suw).setNormal(0f, 0f, 1f);
+                buffer.addVertex(pose, -sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.sde).setNormal(0f, 0f, 1f);
+                buffer.addVertex(pose, sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.sdw).setNormal(0f, 0f, 1f);
+                buffer.addVertex(pose, sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.sue).setNormal(0f, 0f, 1f);
+                buffer.addVertex(pose, -sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.suw).setNormal(0f, 0f, 1f);
             }
             case NORTH -> {
-                buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.ndw).setNormal(0f, 0f, -1f);
-                buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.nuw).setNormal(0f, 0f, -1f);
-                buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.nue).setNormal(0f, 0f, -1f);
-                buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.nde).setNormal(0f, 0f, -1f);
+                buffer.addVertex(pose, -sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.ndw).setNormal(0f, 0f, -1f);
+                buffer.addVertex(pose, -sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.nuw).setNormal(0f, 0f, -1f);
+                buffer.addVertex(pose, sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.nue).setNormal(0f, 0f, -1f);
+                buffer.addVertex(pose, sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.nde).setNormal(0f, 0f, -1f);
             }
             case EAST -> {
-                buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.edn).setNormal(1f, 0f, 0f);
-                buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.eun).setNormal(1f, 0f, 0f);
-                buffer.addVertex(matrix4f, sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.eus).setNormal(1f, 0f, 0f);
-                buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.eds).setNormal(1f, 0f, 0f);
+                buffer.addVertex(pose, sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.edn).setNormal(1f, 0f, 0f);
+                buffer.addVertex(pose, sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.eun).setNormal(1f, 0f, 0f);
+                buffer.addVertex(pose, sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.eus).setNormal(1f, 0f, 0f);
+                buffer.addVertex(pose, sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.eds).setNormal(1f, 0f, 0f);
             }
             case WEST -> {
-                buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.wdn).setNormal(-1f, 0f, 0f);
-                buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.wds).setNormal(-1f, 0f, 0f);
-                buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.wus).setNormal(-1f, 0f, 0f);
-                buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.wun).setNormal(-1f, 0f, 0f);
+                buffer.addVertex(pose, -sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.wdn).setNormal(-1f, 0f, 0f);
+                buffer.addVertex(pose, -sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.wds).setNormal(-1f, 0f, 0f);
+                buffer.addVertex(pose, -sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.wus).setNormal(-1f, 0f, 0f);
+                buffer.addVertex(pose, -sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.wun).setNormal(-1f, 0f, 0f);
             }
         }
     }
