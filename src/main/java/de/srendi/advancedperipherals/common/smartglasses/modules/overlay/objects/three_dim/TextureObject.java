@@ -18,6 +18,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import javax.imageio.ImageIO;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.FriendlyByteBuf;
@@ -27,7 +28,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.system.MemoryUtil;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.IntBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -225,6 +230,40 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
         this.tryAutoUpdate();
     }
 
+    @LuaFunction
+    public final void load(String data) throws LuaException {
+        byte[] bytes = data.getBytes(StandardCharsets.ISO_8859_1);
+        BufferedImage imageBuf;
+        try {
+            imageBuf = ImageIO.read(new ByteArrayInputStream(bytes));
+        } catch (IOException e) {
+            throw new LuaException("error when parsing image: " + e.getMessage());
+        }
+        if (imageBuf == null) {
+            throw new LuaException("invalid image data");
+        }
+        int width = imageBuf.getWidth(), height = imageBuf.getHeight();
+        if (this.width != width || this.height != height) {
+            this.width = width;
+            this.height = height;
+            this.image = new int[width * height];
+            this.resized = true;
+        }
+
+        int[] image = this.image;
+        imageBuf.getRGB(0, 0, width, height, image, 0, width);
+        for (int i = 0; i < image.length; i++) {
+            image[i] = lua2nativeColor(image[i]);
+        }
+
+        this.imageChanged = true;
+        this.changedMinX = 0;
+        this.changedMinY = 0;
+        this.changedMaxX = width - 1;
+        this.changedMaxY = height - 1;
+        this.tryAutoUpdate();
+    }
+
     @SuppressWarnings("rawtypes")
     @Nullable
     public Function updateAndGetRenderTypes() {
@@ -277,7 +316,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     @Override
     public void decode(RegistryFriendlyByteBuf buffer) {
         super.decode(buffer);
-        this.textureId = AdvancedPeripherals.getRL("__texture_object_d_" + this.getId());
+        this.textureId = AdvancedPeripherals.getRL("programmable/texture_object/id_" + this.getId());
         this.renderTypesMap = APRenderTypes.createQuadsTex3DMap(this.textureId);
         this.width = buffer.readVarInt();
         this.height = buffer.readVarInt();
@@ -313,11 +352,11 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     @Override
     public void decodeUpdated(RegistryFriendlyByteBuf buffer) {
         super.decodeUpdated(buffer);
+        int resizingWidth = 0, resizingHeight = 0;
         boolean resized = buffer.readBoolean();
         if (resized) {
-            int width = buffer.readVarInt();
-            int height = buffer.readVarInt();
-            this.resize(width, height);
+            resizingWidth = buffer.readVarInt();
+            resizingHeight = buffer.readVarInt();
         }
         boolean imageChanged = buffer.readBoolean();
         if (imageChanged) {
@@ -326,34 +365,46 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
             int minY = buffer.readVarInt();
             int width = buffer.readVarInt();
             int height = buffer.readVarInt();
+            if (resized) {
+                if (minX == 0 && minY == 0 && width == resizingWidth && height == resizingHeight) {
+                    this.resize0(resizingWidth, resizingHeight);
+                } else {
+                    this.resize(resizingWidth, resizingHeight);
+                }
+            }
             decodeImage(buffer, this.image, this.width, minX, minY, width, height);
+        } else if (resized) {
+            this.resize(resizingWidth, resizingHeight);
         }
     }
 
     @Override
     public void close() {
-        if (this.texture instanceof DynamicTexture texture) {
-            this.texture = null;
-            texture.close();
+        if (this.textureId != null) {
+            Minecraft.getInstance().getTextureManager().release(this.textureId);
         }
+    }
+
+    protected void resize0(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.image = new int[height * width];
     }
 
     protected void resize(int width, int height) {
         int oldWidth = this.width, oldHeight = this.height;
+        int[] oldData = this.image;
 
-        int[] newData = new int[height * width];
+        this.resize0(width, height);
+
+        int[] newData = this.image;
 
         if (height != 0 && width != 0 && oldHeight != 0 && oldWidth != 0) {
-            int[] oldData = this.image;
             int h = Math.min(height, oldHeight), w = Math.min(width, oldWidth);
             for (int y = 0; y < h; y++) {
-                System.arraycopy(oldData, y * width, newData, y * width, w);
+                System.arraycopy(oldData, y * oldWidth, newData, y * width, w);
             }
         }
-
-        this.width = width;
-        this.height = height;
-        this.image = newData;
     }
 
     protected void setColor(int x, int y, int color) {
