@@ -151,7 +151,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
         x--;
         y--;
 
-        this.setColor(x, y, lua2nativeColor(color));
+        this.setColor(x, y, argb2nativeColor(color));
         this.tryAutoUpdate();
     }
 
@@ -243,6 +243,11 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
             throw new LuaException("invalid image data");
         }
         int width = imageBuf.getWidth(), height = imageBuf.getHeight();
+
+        if (width > MAX_DIM || height > MAX_DIM) {
+            throw new LuaException("image too large");
+        }
+
         if (this.width != width || this.height != height) {
             this.width = width;
             this.height = height;
@@ -253,7 +258,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
         int[] image = this.image;
         imageBuf.getRGB(0, 0, width, height, image, 0, width);
         for (int i = 0; i < image.length; i++) {
-            image[i] = lua2nativeColor(image[i]);
+            image[i] = argb2nativeColor(image[i]);
         }
 
         this.imageChanged = true;
@@ -499,7 +504,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
         return dim;
     }
 
-    private static int lua2nativeColor(int color) {
+    private static int argb2nativeColor(int color) {
         int alpha = (color >> 24) & 0xff;
         int red = (color >> 16) & 0xff;
         int green = (color >> 8) & 0xff;
@@ -537,7 +542,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
                 height = optHeight;
                 data = new int[length];
                 for (int i = 0; i < length; i++) {
-                    data[i] = lua2nativeColor(image.getInt(i + 1));
+                    data[i] = argb2nativeColor(image.getInt(i + 1));
                 }
             } else {
                 height = length;
@@ -556,7 +561,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
                     LuaTable<?, ?> row = rows[y];
                     int w = row.length();
                     for (int x = 0; x < w; x++) {
-                        data[y * width + x] = lua2nativeColor(row.getInt(x + 1));
+                        data[y * width + x] = argb2nativeColor(row.getInt(x + 1));
                     }
                 }
             }
