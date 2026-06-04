@@ -19,6 +19,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -285,7 +286,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
             texture = new DynamicTexture(this.width, this.height, false);
             this.texture = texture;
             this.imageChanged = true;
-            Minecraft.getInstance().getTextureManager().register(this.textureId, texture);
+            Minecraft.getInstance().getTextureManager().register(this.textureId, (AbstractTexture) (Object) texture);
         }
         if (this.imageChanged) {
             this.imageChanged = false;
