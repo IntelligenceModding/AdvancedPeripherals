@@ -142,7 +142,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         if (this.mouseState != MouseState.CAPTURE) {
             return false;
         }
-        PacketDistributor.sendToServer(new KeyboardMouseClickPacket(button, false));
+        PacketDistributor.sendToServer(new KeyboardMouseClickPacket(button + 1, false));
         return true;
     }
 
@@ -151,7 +151,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         if (this.mouseState != MouseState.CAPTURE) {
             return false;
         }
-        PacketDistributor.sendToServer(new KeyboardMouseClickPacket(button, true));
+        PacketDistributor.sendToServer(new KeyboardMouseClickPacket(button + 1, true));
         return true;
     }
 

@@ -39,7 +39,7 @@ import java.util.function.Function;
 import javax.imageio.ImageIO;
 
 public class TextureObject extends ThreeDimensionalObject implements AutoCloseable {
-    private static final int MAX_DIM = 0xffff;
+    private static final int MAX_DIM = 0xfff;
     private static final int[] ZERO_DATA = new int[0];
 
     @FloatingNumberProperty
