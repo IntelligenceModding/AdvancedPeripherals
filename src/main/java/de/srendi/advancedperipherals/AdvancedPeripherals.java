@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.blocks.base.ICapabilityProvider;
+import de.srendi.advancedperipherals.common.blocks.blockentities.GasDetectorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APItems;
@@ -137,6 +138,13 @@ public class AdvancedPeripherals {
                 (blockEntity, side) -> blockEntity instanceof ICapabilityProvider provider
                     ? provider.createEnergyStorageCap(side)
                     : null
+            );
+            event.registerBlockEntity(
+                    mekanism.common.capabilities.Capabilities.CHEMICAL.block(),
+                    entry.get(),
+                    (blockEntity, side) -> blockEntity instanceof GasDetectorEntity provider
+                            ? provider.createProxy()
+                            : null
             );
         });
 
