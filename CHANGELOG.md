@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Changes
+- Bumped minimum minecolonies version to 1.20.1-1.1.1186-snapshot
+- Bumped minimum neoforge version to 47.1.106
+
+### Fixed
+- [#793] Fixed an issue where functions throw an error when an empty filter is applied.
+- [#801] Fixed that the energy detector can cause a stackoverflow in some cases.
+
+### Added
+- [#820] Backported chat box utf-8 support from 1.21.1 - Thanks to @Kondrashka177
+
 ## [1.20.1-0.7.46r] - 2025-10-08
 
 ### Added
