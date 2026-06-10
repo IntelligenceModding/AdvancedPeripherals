@@ -8,8 +8,13 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.meta
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.lib.turtle.ClockwiseAnimatedTurtleUpgrade;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
+
+import static de.srendi.advancedperipherals.common.setup.DataComponents.POINT_DATA_MARK;
 
 public class EndAutomata extends ClockwiseAnimatedTurtleUpgrade<EndAutomataCorePeripheral> {
 
@@ -35,5 +40,10 @@ public class EndAutomata extends ClockwiseAnimatedTurtleUpgrade<EndAutomataCoreP
     @Override
     public UpgradeType<? extends ITurtleUpgrade> getType() {
         return CCRegistration.END_TURTLE.get();
+    }
+
+    @Override
+    public Set<DataComponentType<?>> dataTypesToIgnore() {
+        return Set.of(POINT_DATA_MARK.get());
     }
 }

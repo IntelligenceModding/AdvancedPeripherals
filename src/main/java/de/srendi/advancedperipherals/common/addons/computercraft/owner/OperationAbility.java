@@ -44,7 +44,8 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
             }
 
             PatchedDataComponentMap patch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, owner.getDataStorage());
-            if (!patch.has(ABILITY_COOLDOWN.get())) patch.set(ABILITY_COOLDOWN.get(), DataComponentPatch.EMPTY);
+            if (!patch.has(ABILITY_COOLDOWN.get()))
+                patch.set(ABILITY_COOLDOWN.get(), DataComponentPatch.EMPTY);
 
             PatchedDataComponentMap operationPatch = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, patch.get(ABILITY_COOLDOWN.get()));
             operationPatch.set(operation.dataComponentType(), (long) cooldown);
