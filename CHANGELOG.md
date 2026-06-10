@@ -8,6 +8,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 ## [1.21.1-0.7.62b] - 2026-06-10
 ## [1.21.1-0.7.62b] - 2026-06-10
+## [1.21.1-0.7.62b] - 2026-06-10
 
 ### Fixed
 - [#816] Fixed a Class Cast Exception when trying to use the getFluid function of the RS Bridge.
