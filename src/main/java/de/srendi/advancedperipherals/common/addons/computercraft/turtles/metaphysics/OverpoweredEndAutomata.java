@@ -6,7 +6,6 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.upgrades.UpgradeType;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.OverpoweredEndAutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
-import de.srendi.advancedperipherals.common.setup.DataComponents;
 import de.srendi.advancedperipherals.lib.turtle.ClockwiseAnimatedTurtleUpgrade;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.component.DataComponentType;
