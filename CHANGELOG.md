@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- [#816] Fixed a Class Cast Exception when trying to use the getFluid function of the RS Bridge.
+
 ## [1.21.1-0.7.61b] - 2026-03-29
 
 ### Fixed

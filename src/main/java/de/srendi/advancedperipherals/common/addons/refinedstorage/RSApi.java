@@ -189,7 +189,7 @@ public class RSApi {
 
         for (ResourceAmount resourceAmount : storage.getAll()) {
             if (resourceAmount.resource() instanceof FluidResource fluidResource && filter.test(VariantUtil.toFluidStack(fluidResource, resourceAmount.amount()))) {
-                return getObjectFromItemResource(resourceAmount, autocrafting);
+                return getObjectFromFluidResource(resourceAmount, autocrafting);
             }
         }
         return null;
