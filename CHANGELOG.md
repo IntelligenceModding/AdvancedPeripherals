@@ -9,6 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 - [#816] Fixed a Class Cast Exception when trying to use the getFluid function of the RS Bridge.
+- [#815] Prevent a game crash when minecolonies is not loaded and the colony integrator is placed.
+- [#732] Ignore certain data components so upgrades can be placed into the turtle after they were used before.
 
 ## [1.21.1-0.7.61b] - 2026-03-29
 
