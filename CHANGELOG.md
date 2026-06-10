@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Fixed
+- [#821] Fixed minimum version requirement of RS
+
 ## [1.20.1-0.7.47r] - 2026-06-09
 
 ### Changes
