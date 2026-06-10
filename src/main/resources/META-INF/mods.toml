@@ -46,7 +46,7 @@ side = "BOTH"
 [[dependencies.${mod_id}]]
 modId = "refinedstorage"
 mandatory = false
-versionRange = "[${refinedstorage_version},)"
+versionRange = "[$1.12.4,)"
 ordnering = "NONE"
 side = "BOTH"
 [[dependencies.${mod_id}]]
