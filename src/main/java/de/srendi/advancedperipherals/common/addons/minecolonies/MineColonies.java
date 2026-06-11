@@ -27,6 +27,7 @@ import com.minecolonies.api.research.util.ResearchState;
 import com.minecolonies.core.colony.buildings.AbstractBuildingStructureBuilder;
 import com.minecolonies.core.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.core.datalistener.model.Disease;
+import com.minecolonies.core.entity.ai.workers.util.BuildingProgressStage;
 import com.minecolonies.core.entity.citizen.citizenhandlers.CitizenSkillHandler;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -242,7 +243,8 @@ public class MineColonies {
         map.put("priority", workOrder.getPriority());
         map.put("level", workOrder.getCurrentLevel());
         map.put("targetLevel", workOrder.getTargetLevel());
-        map.put("stage", workOrder.getStage().name());
+        BuildingProgressStage stage = workOrder.getStage();
+        map.put("stage", stage == null ? null : stage.name());
         map.put("isClaimed", workOrder.isClaimed());
         if (workOrder.isClaimed()) {
             map.put("builderHome", buildingToLua(buildingManager.getBuilding(workOrder.getClaimedBy())));
