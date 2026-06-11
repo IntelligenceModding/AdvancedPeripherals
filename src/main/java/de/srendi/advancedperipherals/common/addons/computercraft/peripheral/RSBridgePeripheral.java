@@ -359,10 +359,6 @@ public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
         return (AbstractNetworkNode) owner.getBlockEntity().getNode();
     }
 
-    private MethodResult notConnected(@Nullable Object defaultValue) {
-        return MethodResult.of(defaultValue, StatusConstants.NOT_CONNECTED.toString());
-    }
-
     private <I extends NetworkComponent> I getComponent(@NotNull Class<I> componentClass) {
         return getNetwork().getComponent(componentClass);
     }

@@ -156,7 +156,7 @@ public class BlockObject extends BoxObject {
     }
 
     @Override
-    protected void registerFieldEncoders(BiConsumer<String, FieldEncoder<?, ?>> registrar) {
+    protected void registerFieldEncoders(BiConsumer<String, FieldEncoder<?>> registrar) {
         super.registerFieldEncoders(registrar);
         registrar.accept("block", new FieldEncoder<>(
             BLOCKSTATE_STREAM_CODEC,

@@ -26,9 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class OverlayModule implements IModule {
     private static final ResourceLocation ID = AdvancedPeripherals.getRL("overlay");
 
-    private final Map<Integer, OverlayObject> objects = new ConcurrentHashMap<>();
-    private final Map<Integer, OverlayObject> objectsToAdd = new ConcurrentHashMap<>();
-    private final Map<Integer, OverlayObject> objectsToUpdate = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, OverlayObject> objects = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, OverlayObject> objectsToAdd = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, OverlayObject> objectsToUpdate = new ConcurrentHashMap<>();
     private final SmartGlassesSideAccess access;
 
     private boolean autoUpdate = true;

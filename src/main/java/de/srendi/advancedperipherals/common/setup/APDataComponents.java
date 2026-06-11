@@ -28,6 +28,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.UnaryOperator;
 
+@SuppressWarnings("UnusedMethod")
 public class APDataComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Map<String, Long>>> ABILITY_COOLDOWNS = registerStringKeyMap("cooldowns", Codec.LONG, ByteBufCodecs.VAR_LONG);

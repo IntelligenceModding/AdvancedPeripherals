@@ -521,6 +521,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
         return ((alpha << 24) | (red << 16) | (green << 8) | blue) & 0xffffffffl;
     }
 
+    @SuppressWarnings("ArrayRecordComponent")
     private record FlattenedImage(int width, int height, int[] data) {
         static FlattenedImage tryFlatten(LuaTable<?, ?> image, int optWidth, int optHeight) throws LuaException {
             int length = image.length();

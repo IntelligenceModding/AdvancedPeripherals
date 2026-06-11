@@ -407,8 +407,4 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     private ICraftingService getCraftingService() {
         return node.getGrid().getCraftingService();
     }
-
-    private MethodResult notConnected(@Nullable Object defaultValue) {
-        return MethodResult.of(defaultValue, StatusConstants.NOT_CONNECTED.toString());
-    }
 }

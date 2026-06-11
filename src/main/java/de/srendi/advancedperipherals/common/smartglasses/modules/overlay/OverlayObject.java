@@ -40,7 +40,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     private final FieldWithPropertyType[] fields;
     private final String[] getterSetterNames;
     private final Map<String, FieldWithPropertyType> propertiesMap;
-    private final FieldEncoder<?, ?>[] fieldEncoders;
+    private final FieldEncoder<?>[] fieldEncoders;
     private final Object2IntMap<String> fieldNameToIndex;
 
     @BooleanProperty
@@ -97,10 +97,10 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
         this.getterSetterNames = getterSetterNames.toArray(String[]::new);
 
-        List<FieldEncoder<?, ?>> fieldEncoders = new ArrayList<>();
+        List<FieldEncoder<?>> fieldEncoders = new ArrayList<>();
         this.fieldNameToIndex = new Object2IntOpenHashMap<>();
         this.fieldNameToIndex.defaultReturnValue(-1);
-        BiConsumer<String, FieldEncoder<?, ?>> registrar = (name, encoder) -> {
+        BiConsumer<String, FieldEncoder<?>> registrar = (name, encoder) -> {
             if (this.fieldNameToIndex.containsKey(name)) {
                 throw new IllegalArgumentException("Field name " + name + " duplicated!");
             }
@@ -110,7 +110,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         for (FieldWithPropertyType field : this.fields) {
             registrar.accept(
                 field.field().getName(),
-                new FieldEncoder<OverlayObject, Object>(
+                new FieldEncoder<>(
                     (StreamCodec<? super RegistryFriendlyByteBuf, Object>) field.type().codec(field.field().getType()),
                     () -> {
                         try {
@@ -209,7 +209,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     }
 
     @MustBeInvokedByOverriders
-    protected void registerFieldEncoders(BiConsumer<String, FieldEncoder<?, ?>> registrar) {
+    protected void registerFieldEncoders(BiConsumer<String, FieldEncoder<?>> registrar) {
     }
 
     @Override
@@ -271,7 +271,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     @MustBeInvokedByOverriders
     public void encode(RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(this.id);
-        for (FieldEncoder<?, ?> field : this.fieldEncoders) {
+        for (FieldEncoder<?> field : this.fieldEncoders) {
             field.encode(buffer);
         }
         this.updated.clear();
@@ -280,7 +280,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     @MustBeInvokedByOverriders
     public void decode(RegistryFriendlyByteBuf buffer) {
         this.id = buffer.readInt();
-        for (FieldEncoder<?, ?> field : this.fieldEncoders) {
+        for (FieldEncoder<?> field : this.fieldEncoders) {
             field.decode(buffer);
         }
     }
@@ -291,7 +291,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             if (!this.updated.get(i)) {
                 continue;
             }
-            FieldEncoder<?, ?> field = this.fieldEncoders[i];
+            FieldEncoder<?> field = this.fieldEncoders[i];
             field.encode(buffer);
         }
         this.updated.clear();
@@ -303,7 +303,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             if (!updated.get(i)) {
                 continue;
             }
-            FieldEncoder<?, ?> field = this.fieldEncoders[i];
+            FieldEncoder<?> field = this.fieldEncoders[i];
             field.decode(buffer);
         }
     }
@@ -364,7 +364,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         return value;
     }
 
-    public record FieldEncoder<O extends OverlayObject, T>(
+    public record FieldEncoder<T>(
         StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
         Supplier<T> getter,
         Consumer<T> setter
@@ -379,6 +379,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     }
 
     private record FieldWithPropertyType(Field field, PropertyType<?, ?> type) {
+        @SuppressWarnings("rawtypes")
         public void setFor(OverlayObject obj, Object value) throws LuaException {
             value = castValueToFieldType(this.field, value);
             if (!this.type.checkIsValid(value)) {

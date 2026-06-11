@@ -3,11 +3,8 @@ package de.srendi.advancedperipherals.common.network.toclient;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
-import de.srendi.advancedperipherals.common.setup.APRegistries;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import io.netty.buffer.Unpooled;
-import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -34,7 +31,6 @@ public class RenderableObjectBulkSyncPacket implements IAPPacket {
     }
 
     public RenderableObjectBulkSyncPacket(RegistryFriendlyByteBuf buffer) {
-        Registry<OverlayObjectType<?>> registry = buffer.registryAccess().registryOrThrow(APRegistries.OVERLAY_OBJECTS);
         this.count = buffer.readVarInt();
         int size = buffer.readVarInt();
         this.data = new RegistryFriendlyByteBuf(Unpooled.buffer(size, size), buffer.registryAccess());
@@ -59,7 +55,6 @@ public class RenderableObjectBulkSyncPacket implements IAPPacket {
 
     @Override
     public void write(RegistryFriendlyByteBuf buffer) {
-        Registry<OverlayObjectType<?>> registry = buffer.registryAccess().registryOrThrow(APRegistries.OVERLAY_OBJECTS);
         buffer.writeVarInt(this.count);
         this.data.readerIndex(0);
         buffer.writeVarInt(this.data.readableBytes());

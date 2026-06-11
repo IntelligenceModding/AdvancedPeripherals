@@ -147,7 +147,6 @@ public class MineColonies {
     /**
      * Converts a building {@link IBuilding} and job {@link IJob} to a map
      *
-     * @param work the job building
      * @param job  the job
      * @return a map with information about the building and job
      */
@@ -328,10 +327,10 @@ public class MineColonies {
     }
 
     /**
-     * Returns the resources(As items) which the builder needs
+     * Returns the resource items which the builder needs
      *
      * @param colony The colony
-     * @param pos    The position of the builder's hut block
+     * @param building The builder's building
      * @return a map with all needed resources
      */
     public static List<Map<String, Object>> builderResourcesToLua(IColony colony, IBuilding building) {
