@@ -56,12 +56,12 @@ public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHan
             }
             FluidStack transferring = resource.copyWithAmount((int) Math.min(resource.getAmount(), this.getTransferRate()));
             int transferred = storage.fill(transferring, action);
-            if (!action.simulate()) {
-                this.wasReady = BuiltInRegistries.FLUID.getKey(resource.getFluid());
-                if (transferred > 0) {
-                    this.onTransfered(transferred);
-                    this.lastTransfered = this.wasReady;
-                }
+            ResourceLocation id = BuiltInRegistries.FLUID.getKey(resource.getFluid());
+            // TODO: what if filler may transfer multiple types of fluids?
+            this.wasReady = id;
+            if (!action.simulate() && transferred > 0) {
+                this.onTransfered(transferred);
+                this.lastTransfered = id;
             }
             return transferred;
         } finally {

@@ -1,10 +1,17 @@
 package de.srendi.advancedperipherals.common.setup;
 
+import dan200.computercraft.api.media.MediaCapability;
+import dan200.computercraft.api.peripheral.PeripheralCapability;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import dan200.computercraft.api.upgrades.UpgradeType;
+import dan200.computercraft.shared.media.MountMedia;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProviders;
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
+import mekanism.api.chemical.IChemicalHandler;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -12,12 +19,17 @@ import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
+import top.theillusivec4.curios.api.CuriosCapability;
+import top.theillusivec4.curios.api.type.capability.ICurio;
 
 public class APRegistration {
 
@@ -62,6 +74,7 @@ public class APRegistration {
         CCRegistration.register();
 
         modEventBus.addListener(APRegistration::registerRegistries);
+        modEventBus.addListener(APRegistration::registerCapabilities);
         modEventBus.addListener(APRegistration::onCommonSetup);
     }
 
@@ -74,5 +87,68 @@ public class APRegistration {
             // CC:T's registries are not thread safe
             CCRegistration.registerMain();
         });
+    }
+
+    private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        BLOCK_ENTITIES.getEntries().forEach((entry) -> {
+            @SuppressWarnings("rawtypes")
+            BlockEntityType beType = entry.get();
+
+            event.registerBlockEntity(
+                PeripheralCapability.get(),
+                beType,
+                (blockEntity, side) -> blockEntity instanceof BlockCapabilityProviders.Peripheral provider
+                    ? provider.createPeripheralCap(side)
+                    : null
+            );
+            event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                beType,
+                (blockEntity, side) -> blockEntity instanceof BlockCapabilityProviders.ItemHandler provider
+                    ? provider.createItemHandlerCap(side)
+                    : null
+            );
+            event.registerBlockEntity(
+                Capabilities.FluidHandler.BLOCK,
+                beType,
+                (blockEntity, side) -> blockEntity instanceof BlockCapabilityProviders.FluidHandler provider
+                    ? provider.createFluidHandlerCap(side)
+                    : null
+            );
+            event.registerBlockEntity(
+                Capabilities.EnergyStorage.BLOCK,
+                beType,
+                (blockEntity, side) -> blockEntity instanceof BlockCapabilityProviders.EnergyStorage provider
+                    ? provider.createEnergyStorageCap(side)
+                    : null
+            );
+            if (APAddon.MEKANISM.isLoaded()) {
+                event.registerBlockEntity(
+                    mekanism.common.capabilities.Capabilities.CHEMICAL.block(),
+                    beType,
+                    (blockEntity, side) -> blockEntity instanceof BlockCapabilityProviders.ChemicalHandler provider
+                        ? (IChemicalHandler) provider.createChemicalHandlerCap(side)
+                        : null
+                );
+            }
+        });
+
+        ItemLike[] smartGlasses = new ItemLike[]{
+            APItems.SMART_GLASSES.get(),
+            APItems.SMART_GLASSES_NETHERITE.get(),
+        };
+        event.registerItem(MediaCapability.get(), (stack, ignored) -> MountMedia.COMPUTER, smartGlasses);
+        event.registerItem(
+            Capabilities.ItemHandler.ITEM,
+            (stack, ignored) -> ((SmartGlassesItem) stack.getItem()).createItemHandlerCap(stack),
+            smartGlasses
+        );
+        if (APAddon.CURIOS.isLoaded()) {
+            event.registerItem(
+                CuriosCapability.ITEM,
+                (stack, ignored) -> (ICurio) ((SmartGlassesItem) stack.getItem()).createCurioCap(stack),
+                smartGlasses
+            );
+        }
     }
 }

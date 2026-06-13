@@ -21,19 +21,16 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, IPeripheralBlockEntity, ICapabilityProvider, VarNameable {
+public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, IPeripheralBlockEntity, BlockCapabilityProviders.ItemHandler, BlockCapabilityProviders.Peripheral, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
     private IItemHandler itemHandler = null;
-    private IFluidHandler fluidHandler = null;
     private IPeripheral peripheral = null;
 
     protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
@@ -57,15 +54,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
             this.itemHandler = new SidedInvWrapper(this, null);
         }
         return this.itemHandler;
-    }
-
-    @Override
-    @NotNull
-    public IFluidHandler createFluidHandlerCap(@Nullable Direction side) {
-        if (this.fluidHandler == null) {
-            this.fluidHandler = new FluidTank(0);
-        }
-        return this.fluidHandler;
     }
 
     @Override

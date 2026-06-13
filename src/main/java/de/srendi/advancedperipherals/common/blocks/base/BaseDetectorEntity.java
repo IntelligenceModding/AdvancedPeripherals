@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <S> The storage proxy type, must implements/extends both {@code <T>} and {@link IStorageProxy}
  * @param <P> The peripheral type, must extends {@link BasePeripheral}
  */
-public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends BasePeripheral<?>> extends PeripheralBlockEntity<P> implements ICapabilityProvider<BlockEntity, Direction, Object> {
+public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends BasePeripheral<?>> extends PeripheralBlockEntity<P> {
 
     private static final String RATE_LIMIT_TAG = "RateLimit";
 
@@ -103,19 +102,19 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
         return this.getBlockState().getValue(BaseBlock.ORIENTATION).front().getOpposite();
     }
 
-    @Override
-    public @Nullable Object getCapability(BlockEntity self, Direction context) {
+    @Nullable
+    public T getCapability(Direction context) {
         Direction inputDirection = this.getInputDirection();
         Direction outputDirection = this.getOutputDirection();
         if (context == inputDirection) {
-            return this.getStorageProxy();
-        } else if (context == outputDirection) {
+            return (T) this.getStorageProxy();
+        }
+        if (context == outputDirection) {
             if (this.zeroStorageCap == null) {
                 this.zeroStorageCap = this.getZeroStorage();
             }
             return this.zeroStorageCap;
         }
-
         return null;
     }
 

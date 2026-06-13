@@ -1,35 +1,23 @@
 package de.srendi.advancedperipherals;
 
-import dan200.computercraft.api.media.MediaCapability;
-import dan200.computercraft.api.peripheral.PeripheralCapability;
-import dan200.computercraft.shared.media.MountMedia;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.AEApi;
 import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
-import de.srendi.advancedperipherals.common.blocks.base.ICapabilityProvider;
-import de.srendi.advancedperipherals.common.blocks.blockentities.GasDetectorEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
-import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.ItemLike;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.curios.api.CuriosCapability;
-import top.theillusivec4.curios.api.type.capability.ICurio;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
@@ -110,62 +98,6 @@ public class AdvancedPeripherals {
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
-        APRegistration.BLOCK_ENTITIES.getEntries().forEach((entry) -> {
-            event.registerBlockEntity(
-                PeripheralCapability.get(),
-                entry.get(),
-                (blockEntity, side) -> blockEntity instanceof ICapabilityProvider provider
-                    ? provider.createPeripheralCap(side)
-                    : null
-            );
-            event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                entry.get(),
-                (blockEntity, side) -> blockEntity instanceof ICapabilityProvider provider
-                    ? provider.createItemHandlerCap(side)
-                    : null
-            );
-            event.registerBlockEntity(
-                Capabilities.FluidHandler.BLOCK,
-                entry.get(),
-                (blockEntity, side) -> blockEntity instanceof ICapabilityProvider provider
-                    ? provider.createFluidHandlerCap(side)
-                    : null
-            );
-            event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
-                entry.get(),
-                (blockEntity, side) -> blockEntity instanceof ICapabilityProvider provider
-                    ? provider.createEnergyStorageCap(side)
-                    : null
-            );
-            event.registerBlockEntity(
-                    mekanism.common.capabilities.Capabilities.CHEMICAL.block(),
-                    entry.get(),
-                    (blockEntity, side) -> blockEntity instanceof GasDetectorEntity provider
-                            ? provider.createProxy()
-                            : null
-            );
-        });
-
-        ItemLike[] smartGlasses = new ItemLike[]{
-            APItems.SMART_GLASSES.get(),
-            APItems.SMART_GLASSES_NETHERITE.get(),
-        };
-        event.registerItem(MediaCapability.get(), (stack, ignored) -> MountMedia.COMPUTER, smartGlasses);
-        event.registerItem(
-            Capabilities.ItemHandler.ITEM,
-            (stack, ignored) -> ((SmartGlassesItem) stack.getItem()).createItemHandlerCap(stack),
-            smartGlasses
-        );
-        if (APAddon.CURIOS.isLoaded()) {
-            event.registerItem(
-                CuriosCapability.ITEM,
-                (stack, ignored) -> (ICurio) ((SmartGlassesItem) stack.getItem()).createCurioCap(stack),
-                smartGlasses
-            );
-        }
-
         if (APAddon.AE2.isLoaded()) {
             AEApi.registerCapabilities(event);
         }

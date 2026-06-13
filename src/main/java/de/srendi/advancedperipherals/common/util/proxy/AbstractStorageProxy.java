@@ -22,7 +22,7 @@ public abstract class AbstractStorageProxy implements IStorageProxy {
 
     @Override
     public void setTransferRate(long rate) {
-        this.transferRate = Math.min(rate, this.maxTransferRate);
+        this.transferRate = Math.min(Math.max(rate, 0), this.maxTransferRate);
     }
 
     protected void resetStatus() {
