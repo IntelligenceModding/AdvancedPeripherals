@@ -34,7 +34,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
      * @return if the smart glasses is equipped
      */
     @LuaFunction(mainThread = true)
-    public final boolean isEquipped() {
+    public boolean isEquipped() {
         return this.equipped.getAsBoolean();
     }
 }

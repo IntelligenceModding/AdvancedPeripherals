@@ -1,12 +1,10 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectAddPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkAddPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
-import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectSyncPacket;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;

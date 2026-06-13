@@ -30,7 +30,7 @@ public final class APLuaAPI implements ILuaAPI {
     }
 
     @LuaFunction
-    public final Map<String, String> getAddonVersions() {
+    public Map<String, String> getAddonVersions() {
         ModList modList = ModList.get();
         Map<String, String> modVersions = new HashMap<>();
 
@@ -43,7 +43,7 @@ public final class APLuaAPI implements ILuaAPI {
     }
 
     @LuaFunction
-    public final String getMCVersion() throws LuaException {
+    public String getMCVersion() throws LuaException {
         Optional<? extends ModContainer> minecraftContainer = ModList.get().getModContainerById("minecraft");
 
         return minecraftContainer.map(modContainer -> modContainer.getModInfo().getVersion().toString())
@@ -52,7 +52,7 @@ public final class APLuaAPI implements ILuaAPI {
     }
 
     @LuaFunction
-    public final String getAPVersion() throws LuaException {
+    public String getAPVersion() throws LuaException {
         Optional<? extends ModContainer> minecraftContainer = ModList.get().getModContainerById(AdvancedPeripherals.MOD_ID);
 
         return minecraftContainer.map(modContainer -> modContainer.getModInfo().getVersion().toString())
@@ -60,7 +60,7 @@ public final class APLuaAPI implements ILuaAPI {
     }
 
     @LuaFunction
-    public final ILuaFunction iterPlayerStatKeys() {
+    public ILuaFunction iterPlayerStatKeys() {
         return new StatTypeIterator();
     }
 
