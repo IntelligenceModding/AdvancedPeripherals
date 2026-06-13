@@ -193,7 +193,7 @@ public class LuaConverter {
             data.put("score", entity.getScore());
             data.put("luck", entity.getLuck());
             Inventory inv = entity.getInventory();
-            data.put("handSlot", inv.selected);
+            data.put("handSlot", inv.selected + 1);
             if (ctx.detailed()) {
                 Map<Integer, Object> invMap = new HashMap<>();
                 for (int slot = 0; slot < inv.getContainerSize(); slot++) {
