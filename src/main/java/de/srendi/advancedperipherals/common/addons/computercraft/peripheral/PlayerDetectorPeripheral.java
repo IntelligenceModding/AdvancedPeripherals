@@ -169,7 +169,9 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     private Map<String, Object> getPlayerInfo(ServerPlayer player, boolean isOwner) {
         boolean showAbsCoords = true;
 
-        Map<String, Object> info = new HashMap<>();
+        Map<String, Object> info = APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()
+            ? LuaConverter.entityToLua(player)
+            : new HashMap<>();
 
         Vec3 selfPos = this.getPhysicsPos();
         Vec3 playerPos = player.position();
@@ -213,19 +215,12 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         CoordUtil.putFRUCoords(info, x - selfPos.x, y - selfPos.y, z - selfPos.z, owner.getOrientation());
 
         if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
-            info.put("uuid", player.getUUID().toString());
-            info.put("name", player.getGameProfile().getName());
-            info.put("yaw", player.getYRot());
-            info.put("pitch", player.getXRot());
-            info.put("dimension", player.level().dimension().location().toString());
-            info.put("eyeHeight", player.getEyeHeight());
-            info.put("health", player.getHealth());
-            info.put("maxHealth", player.getMaxHealth());
-            info.put("airSupply", player.getAirSupply());
+            // TODO: should we put those into lua converter as well?
             info.put("respawnPosition", LuaConverter.posToLua(player.getRespawnPosition()));
             info.put("respawnDimension", player.getRespawnDimension().location().toString());
             info.put("respawnAngle", player.getRespawnAngle());
         }
+
         WeakReference<ServerPlayer> playerRef = new WeakReference<>(player);
         if (APConfig.PERIPHERALS_CONFIG.playerSpyStatistics.get()) {
             info.put("getStat", (ILuaFunction) (args) -> this.getPlayerStat(playerRef, args.getString(0)));
