@@ -303,6 +303,9 @@ public class SmartGlassesItem extends ArmorItem {
     }
 
     public static ItemStack getEquippedCurios(final LivingEntity entity) {
+        if (!APAddon.CURIOS.isLoaded()) {
+            return ItemStack.EMPTY;
+        }
         final ICuriosItemHandler curiosInv = CuriosApi.getCuriosInventory(entity).orElse(null);
         if (curiosInv == null) {
             return ItemStack.EMPTY;
