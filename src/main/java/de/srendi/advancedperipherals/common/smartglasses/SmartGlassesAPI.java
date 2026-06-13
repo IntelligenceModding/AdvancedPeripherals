@@ -7,7 +7,7 @@ import de.srendi.advancedperipherals.common.setup.APComputerComponents;
 
 import java.util.function.BooleanSupplier;
 
-public class SmartGlassesAPI implements ILuaAPI {
+public final class SmartGlassesAPI implements ILuaAPI {
     private final BooleanSupplier equipped;
 
     private SmartGlassesAPI(BooleanSupplier equipped) {
@@ -34,7 +34,7 @@ public class SmartGlassesAPI implements ILuaAPI {
      * @return if the smart glasses is equipped
      */
     @LuaFunction(mainThread = true)
-    public boolean isEquipped() {
+    public final boolean isEquipped() {
         return this.equipped.getAsBoolean();
     }
 }

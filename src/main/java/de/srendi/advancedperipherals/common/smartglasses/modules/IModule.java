@@ -28,6 +28,11 @@ public interface IModule {
      */
     default void serverTick(SmartGlassesSideAccess smartGlassesAccess) {}
 
+    /**
+     * Invoke when the module is removed from smart glasses, or smart glasses is unequipped from the entity's head slot.
+     *
+     * @param smartGlassesAccess smart glasses computer access
+     */
     default void onUnequipped(SmartGlassesSideAccess smartGlassesAccess) {}
 
     /**

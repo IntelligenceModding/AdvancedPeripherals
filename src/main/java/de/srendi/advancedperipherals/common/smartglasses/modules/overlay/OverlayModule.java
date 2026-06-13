@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.network.toclient.OverlayModuleClientRequestPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectAddPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkAddPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
@@ -19,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +31,7 @@ public class OverlayModule implements IModule {
     private final ConcurrentHashMap<Integer, OverlayObject> objectsToUpdate = new ConcurrentHashMap<>();
     private final SmartGlassesSideAccess access;
 
+    private boolean equipped = false;
     private boolean autoUpdate = true;
     private int idCounter = 0;
 
@@ -61,16 +62,22 @@ public class OverlayModule implements IModule {
 
     @Override
     public void serverTick(SmartGlassesSideAccess access) {
-        ServerPlayer player = this.getOwner();
-        if (player != null && (this.lastPlayer == null || this.lastPlayer.get() != player)) {
-            this.lastPlayer = new WeakReference<>(player);
-            PacketDistributor.sendToPlayer(player, new OverlayModuleClientRequestPacket());
+        if (!access.getComputer().isEquipped()) {
+            return;
+        }
+        if (!this.equipped) {
+            this.equipped = true;
+            this.sendAllObjects();
+        }
+        if (this.autoUpdate) {
+            this.bulkUpdate();
         }
     }
 
     @Override
     public void onUnequipped(SmartGlassesSideAccess smartGlassesAccess) {
-        this.clear();
+        this.equipped = false;
+        PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectClearPacket());
     }
 
     public void setScreenSizes(int screenWidth, int screenHeight, double guiScale) {
@@ -108,9 +115,6 @@ public class OverlayModule implements IModule {
         if (this.autoUpdate == autoUpdate) {
             return;
         }
-        if (autoUpdate) {
-            this.bulkUpdate();
-        }
         this.autoUpdate = autoUpdate;
     }
 
@@ -122,12 +126,12 @@ public class OverlayModule implements IModule {
     public void addObject(OverlayObject object) {
         int id = ++idCounter;
         object.setId(id);
-        if (this.autoUpdate) {
-            ServerPlayer owner = this.getOwner();
-            PacketDistributor.sendToPlayer(owner, new RenderableObjectAddPacket(owner.getUUID(), object));
-            this.objects.put(id, object);
-            return;
-        }
+        // if (this.autoUpdate) {
+        //     ServerPlayer owner = this.getOwner();
+        //     PacketDistributor.sendToPlayer(owner, new RenderableObjectAddPacket(owner.getUUID(), object));
+        //     this.objects.put(id, object);
+        //     return;
+        // }
         this.objectsToAdd.put(id, object);
     }
 
@@ -169,30 +173,44 @@ public class OverlayModule implements IModule {
      * @param object the object to sync to the player
      */
     public void update(OverlayObject object) {
-        if (this.autoUpdate) {
-            PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectSyncPacket(object));
-            return;
-        }
+        // if (this.autoUpdate) {
+        //     PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectSyncPacket(object));
+        //     return;
+        // }
         if (!this.objectsToAdd.containsKey(object.getId())) {
             this.objectsToUpdate.put(object.getId(), object);
         }
     }
 
+    private void sendAllObjects() {
+        ServerPlayer owner = this.getOwner();
+        int maxPackets = 10000;
+        List<OverlayObject> packedObjects = new ArrayList<>();
+        Iterator<OverlayObject> iter = this.objects.values().iterator();
+        while (iter.hasNext()) {
+            packedObjects.clear();
+            do {
+                packedObjects.add(iter.next());
+            } while (iter.hasNext() && packedObjects.size() < maxPackets);
+            PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkAddPacket(owner.getUUID(), List.copyOf(packedObjects)));
+        }
+    }
+
     public int bulkUpdate() {
         ServerPlayer owner = this.getOwner();
-        int maxPackets = 15000;
+        int maxPackets = 10000;
         int count = 0;
         List<OverlayObject> packedObjects = new ArrayList<>();
         {
-            // In some cases, if the user creates a lot of objects above 15k, the packet payload can be too big.
-            // We split up the packets for every 15k objects to prevent the payload limit from mc
-            int remaning = this.objectsToAdd.size();
-            count += remaning;
-            while (remaning > 0) {
+            // In some cases, if the user creates a lot of objects, the packet payload can be too big.
+            // We split up the packets for every 10k objects to prevent the payload limit from mc
+            int remaining = this.objectsToAdd.size();
+            count += remaining;
+            while (remaining > 0) {
                 packedObjects.clear();
                 for (OverlayObject object : this.objectsToAdd.values()) {
                     packedObjects.add(object);
-                    remaning--;
+                    remaining--;
                     this.objects.put(object.getId(), object);
                     this.objectsToAdd.remove(object.getId());
                     if (packedObjects.size() >= maxPackets) {
@@ -203,13 +221,13 @@ public class OverlayModule implements IModule {
             }
         }
         {
-            int remaning = this.objectsToUpdate.size();
-            count += remaning;
-            while (remaning > 0) {
+            int remaining = this.objectsToUpdate.size();
+            count += remaining;
+            while (remaining > 0) {
                 packedObjects.clear();
                 for (OverlayObject object : this.objectsToUpdate.values()) {
                     packedObjects.add(object);
-                    remaning--;
+                    remaining--;
                     this.objectsToUpdate.remove(object.getId());
                     if (packedObjects.size() >= maxPackets) {
                         break;

@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
-public class APLuaAPI implements ILuaAPI {
+public final class APLuaAPI implements ILuaAPI {
     public static final APLuaAPI INSTANCE = new APLuaAPI();
 
     private static final String NAME = AdvancedPeripherals.MOD_ID;

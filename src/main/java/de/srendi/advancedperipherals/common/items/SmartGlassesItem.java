@@ -73,6 +73,26 @@ public class SmartGlassesItem extends ArmorItem {
         return new SmartGlassesCurio(this, stack);
     }
 
+    @Override
+    public boolean canEquip(ItemStack stack, EquipmentSlot armorType, LivingEntity entity) {
+        if (!super.canEquip(stack, armorType, entity)) {
+            return false;
+        }
+        if (!getEquippedCurios(entity).isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> swapWithEquipmentSlot(Item item, Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!item.canEquip(stack, EquipmentSlot.HEAD, player)) {
+            return InteractionResultHolder.pass(stack);
+        }
+        return super.swapWithEquipmentSlot(item, level, player, hand);
+    }
+
     private boolean postInventoryTick(ItemStack stack, ServerLevel level, Entity entity, SmartGlassesComputer computer) {
         computer.setPosition(level, entity != null ? entity.blockPosition() : computer.getPosition());
 
@@ -165,6 +185,21 @@ public class SmartGlassesItem extends ArmorItem {
         }
         if (computer != null && postInventoryTick(stack, (ServerLevel) level, entity, computer) && entity instanceof Player player) {
             player.getInventory().setChanged();
+        }
+    }
+
+    public void onUnequip(ItemStack stack, ServerLevel level, LivingEntity entity) {
+        SmartGlassesComputer computer = getServerComputer(level.getServer(), stack);
+        if (computer == null) {
+            return;
+        }
+
+        SmartGlassesSideAccess smartGlassesModuleAccess = computer.getSmartGlassesModuleAccess();
+        for (int i = 0; i < SmartGlassesSlot.MODULE_SLOTS; i++) {
+            IModule module = computer.getModuleBySlot(i);
+            if (module != null) {
+                module.onUnequipped(smartGlassesModuleAccess);
+            }
         }
     }
 

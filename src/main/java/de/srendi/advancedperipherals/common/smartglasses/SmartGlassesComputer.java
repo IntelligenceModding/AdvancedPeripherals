@@ -228,6 +228,8 @@ public class SmartGlassesComputer extends ServerComputer {
         this.moduleItems.set(slot, stack);
         this.modulesUpdated = true;
 
+        boolean isEquipped = this.isEquipped();
+
         SmartGlassesSideAccess smartGlassesModuleAccess = this.getSmartGlassesModuleAccess();
         IModule oldModule = this.modules[slot];
         if (stack.getItem() instanceof IModuleItem moduleItem) {
@@ -236,11 +238,15 @@ public class SmartGlassesComputer extends ServerComputer {
                 if (oldModule.getId().equals(newModule.getId())) {
                     return;
                 }
-                oldModule.onUnequipped(smartGlassesModuleAccess);
+                if (isEquipped) {
+                    oldModule.onUnequipped(smartGlassesModuleAccess);
+                }
             }
             this.modules[slot] = newModule;
         } else if (oldModule != null) {
-            oldModule.onUnequipped(smartGlassesModuleAccess);
+            if (isEquipped) {
+                oldModule.onUnequipped(smartGlassesModuleAccess);
+            }
             this.modules[slot] = null;
         }
         this.modulePeripheral.updateModules(Stream.of(this.modules).filter(Objects::nonNull).toList());
