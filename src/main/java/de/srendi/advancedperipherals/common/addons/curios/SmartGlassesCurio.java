@@ -99,6 +99,6 @@ public class SmartGlassesCurio implements ICurio {
         if (owner.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof SmartGlassesItem) {
             return;
         }
-        this.item.onEquippedTick(this.stack, owner.level(), owner, true);
+        this.item.onEquippedTick(this.stack, owner.level(), owner);
     }
 }

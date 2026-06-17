@@ -150,16 +150,11 @@ public class SmartGlassesItem extends ArmorItem {
             }
         }
         if (livingEntity.getItemBySlot(EquipmentSlot.HEAD) == stack) {
-            this.onEquippedTick(stack, level, livingEntity, false);
-        }
-        if (computer != null) {
-            if (postInventoryTick(stack, (ServerLevel) level, entity, computer) && entity instanceof Player player) {
-                player.getInventory().setChanged();
-            }
+            this.onEquippedTick(stack, level, livingEntity);
         }
     }
 
-    public void onEquippedTick(ItemStack stack, Level level, LivingEntity entity, boolean isCurios) {
+    public void onEquippedTick(ItemStack stack, Level level, LivingEntity entity) {
         SmartGlassesComputer computer = null;
         if (level instanceof ServerLevel serverLevel) {
             computer = getOrCreateComputer(serverLevel, entity, stack);
@@ -179,9 +174,6 @@ public class SmartGlassesItem extends ArmorItem {
                 module = computer.getModuleBySlot(slot);
             }
             moduleItem.moduleTick(level, entity, slot, glassesAccess, module);
-        }
-        if (!isCurios) {
-            return;
         }
         if (computer != null && postInventoryTick(stack, (ServerLevel) level, entity, computer) && entity instanceof Player player) {
             player.getInventory().setChanged();
@@ -291,6 +283,10 @@ public class SmartGlassesItem extends ArmorItem {
         DataComponentUtil.setCustomName(stack, label);
     }
 
+    private static boolean isMarkedOn(ItemStack stack) {
+        return stack.getOrDefault(ModRegistry.DataComponents.ON.get(), false);
+    }
+
     public static ItemStack getEquipped(final LivingEntity entity) {
         final ItemStack glasses = entity.getItemBySlot(EquipmentSlot.HEAD);
         if (glasses.getItem() instanceof SmartGlassesItem) {
@@ -330,9 +326,5 @@ public class SmartGlassesItem extends ArmorItem {
             return false;
         }
         return curiosInv.findFirstCurio(tester).isPresent();
-    }
-
-    private static boolean isMarkedOn(ItemStack stack) {
-        return stack.getOrDefault(ModRegistry.DataComponents.ON.get(), false);
     }
 }

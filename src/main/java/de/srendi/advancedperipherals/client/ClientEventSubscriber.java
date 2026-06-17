@@ -4,10 +4,13 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -25,10 +28,12 @@ public class ClientEventSubscriber {
     private static int lastWidth = 0;
     private static int lastHeight = 0;
     private static double lastScale = 0;
+    private static int lastGlassesId = -1;
 
     @SubscribeEvent
     public static void onClientLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
         ClientUUIDCache.reset();
+        lastGlassesId = -1;
     }
 
     @SubscribeEvent
@@ -40,18 +45,25 @@ public class ClientEventSubscriber {
     @SubscribeEvent
     public static void preClientTick(ClientTickEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null) {
+        LocalPlayer player = minecraft.player;
+        if (player == null) {
             return;
         }
+        ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
+        if (smartGlasses.isEmpty()) {
+            return;
+        }
+        int glassesId = SmartGlassesItem.getComputerID(smartGlasses);
         Window window = minecraft.getWindow();
 
         int sizeX = window.getWidth(), sizeY = window.getHeight();
         double guiScale = window.getGuiScale();
 
-        if (sizeX != lastWidth || sizeY != lastHeight || guiScale != lastScale) {
+        if (sizeX != lastWidth || sizeY != lastHeight || guiScale != lastScale || glassesId != lastGlassesId) {
             lastWidth = sizeX;
             lastHeight = sizeY;
             lastScale = guiScale;
+            lastGlassesId = glassesId;
             OverlayModuleClientInfoPacket.sendCurrentInformation();
         }
     }
