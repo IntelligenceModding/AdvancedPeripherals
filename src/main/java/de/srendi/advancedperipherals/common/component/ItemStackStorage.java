@@ -104,12 +104,39 @@ public final class ItemStackStorage {
         if (this == other) {
             return true;
         }
-        return other instanceof ItemStackStorage storage && Arrays.equals(this.items, storage.items);
+        if (!(other instanceof ItemStackStorage storage)) {
+            return false;
+        }
+        int length = this.items.length;
+        if (length != storage.items.length) {
+            return false;
+        }
+        for (int i = 0; i < length; i++) {
+            if (!ItemStack.isSameItemSameComponents(this.items[i], storage.items[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public int hashCode() {
         return Arrays.hashCode(this.items);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder()
+            .append("ItemStackStorage[");
+        for (int i = 0; i < this.items.length; i++) {
+            if (i > 0) {
+                builder.append(", ");
+            }
+            builder.append(this.items[i].toString());
+        }
+        return builder
+            .append("]")
+            .toString();
     }
 
     private static ItemStack[] copyItems(ItemStack[] items) {

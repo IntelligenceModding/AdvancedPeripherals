@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,14 +25,14 @@ public class NightVisionModuleItem extends BaseItem implements IModuleItem<Night
 
     @Override
     public void moduleTick(Level level, LivingEntity entity, int moduleSlot, SmartGlassesSideAccess access, NightVisionModule module) {
-        if (level.isClientSide() || !(entity instanceof Player player)) {
+        if (level.isClientSide()) {
             return;
         }
 
         if (!module.isNightVisionEnabled()) {
-            player.removeEffect(MobEffects.NIGHT_VISION);
+            entity.removeEffect(MobEffects.NIGHT_VISION);
             return;
         }
-        player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, NIGHT_VISION_TICKS, 0, false, false, true));
+        entity.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, NIGHT_VISION_TICKS, 0, false, false, true));
     }
 }
