@@ -49,25 +49,25 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
             // Normal, smooth lines
             if (!line.pixelated) {
                 if (y1 == y2) {
-                    bufferBuilder.addVertex(matrix, x1, y1 - halfWidth, 0).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1, y1 + halfWidth, 0).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x2, y1 + halfWidth, 0).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x2, y1 - halfWidth, 0).setColor(red, green, blue, alpha);
+                    bufferBuilder.addVertex(matrix, x1, y1 - halfWidth, z).setColor(red, green, blue, alpha);
+                    bufferBuilder.addVertex(matrix, x1, y1 + halfWidth, z).setColor(red, green, blue, alpha);
+                    bufferBuilder.addVertex(matrix, x2, y1 + halfWidth, z).setColor(red, green, blue, alpha);
+                    bufferBuilder.addVertex(matrix, x2, y1 - halfWidth, z).setColor(red, green, blue, alpha);
                     continue;
                 }
                 if (x1 == x2) {
-                    bufferBuilder.addVertex(matrix, x1 - halfWidth, y1, 0).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1 + halfWidth, y1, 0).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1 + halfWidth, y2, 0).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1 - halfWidth, y2, 0).setColor(red, green, blue, alpha);
+                    bufferBuilder.addVertex(matrix, x1 - halfWidth, y1, z).setColor(red, green, blue, alpha);
+                    bufferBuilder.addVertex(matrix, x1 + halfWidth, y1, z).setColor(red, green, blue, alpha);
+                    bufferBuilder.addVertex(matrix, x1 + halfWidth, y2, z).setColor(red, green, blue, alpha);
+                    bufferBuilder.addVertex(matrix, x1 - halfWidth, y2, z).setColor(red, green, blue, alpha);
                     continue;
                 }
                 float l = (float) Math.sqrt(dx * dx + dy * dy);
                 float rx = -dy / l * halfWidth, ry = dx / l * halfWidth;
-                bufferBuilder.addVertex(matrix, x1 - rx, y1 - ry, 0).setColor(red, green, blue, alpha);
-                bufferBuilder.addVertex(matrix, x1 + rx, y1 + ry, 0).setColor(red, green, blue, alpha);
-                bufferBuilder.addVertex(matrix, x2 + rx, y2 + ry, 0).setColor(red, green, blue, alpha);
-                bufferBuilder.addVertex(matrix, x2 - rx, y2 - ry, 0).setColor(red, green, blue, alpha);
+                bufferBuilder.addVertex(matrix, x1 - rx, y1 - ry, z).setColor(red, green, blue, alpha);
+                bufferBuilder.addVertex(matrix, x1 + rx, y1 + ry, z).setColor(red, green, blue, alpha);
+                bufferBuilder.addVertex(matrix, x2 + rx, y2 + ry, z).setColor(red, green, blue, alpha);
+                bufferBuilder.addVertex(matrix, x2 - rx, y2 - ry, z).setColor(red, green, blue, alpha);
                 continue;
             }
 
@@ -87,26 +87,22 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
                 // Calculate the exact point on the line
                 float currentX = x1 + dx * t;
                 float currentY = y1 + dy * t;
-                float currentZ = z;
 
                 // Snap current point to the nearest pixel grid for consistent placement.
                 // This is key for placing pixels at corners or full side of each other.
                 currentX = Math.round(currentX / width) * width;
                 currentY = Math.round(currentY / width) * width;
-                currentZ = Math.round(currentZ / width) * width;
 
                 float pX1 = currentX;
                 float pY1 = currentY;
-                float pZ1 = currentZ;
 
                 float pX2 = currentX + width;
                 float pY2 = currentY + width;
-                float pZ2 = currentZ;
 
-                bufferBuilder.addVertex(matrix, pX1, pY2, pZ1).setColor(red, green, blue, alpha); // Bottom-left
-                bufferBuilder.addVertex(matrix, pX2, pY2, pZ1).setColor(red, green, blue, alpha); // Bottom-right
-                bufferBuilder.addVertex(matrix, pX2, pY1, pZ2).setColor(red, green, blue, alpha); // Top-right
-                bufferBuilder.addVertex(matrix, pX1, pY1, pZ2).setColor(red, green, blue, alpha); // Top-left
+                bufferBuilder.addVertex(matrix, pX1, pY2, z).setColor(red, green, blue, alpha); // Bottom-left
+                bufferBuilder.addVertex(matrix, pX2, pY2, z).setColor(red, green, blue, alpha); // Bottom-right
+                bufferBuilder.addVertex(matrix, pX2, pY1, z).setColor(red, green, blue, alpha); // Top-right
+                bufferBuilder.addVertex(matrix, pX1, pY1, z).setColor(red, green, blue, alpha); // Top-left
             }
         }
     }

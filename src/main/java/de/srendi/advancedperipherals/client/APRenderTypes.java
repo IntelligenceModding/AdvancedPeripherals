@@ -19,7 +19,7 @@ public class APRenderTypes {
         VertexFormat.Mode.TRIANGLE_FAN,
         1536,
         false,
-        false,
+        true,
         RenderType.CompositeState.builder()
             .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
@@ -34,7 +34,7 @@ public class APRenderTypes {
         VertexFormat.Mode.TRIANGLE_STRIP,
         1536,
         false,
-        false,
+        true,
         RenderType.CompositeState.builder()
             .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
@@ -49,7 +49,7 @@ public class APRenderTypes {
         VertexFormat.Mode.QUADS,
         1536,
         false,
-        false,
+        true,
         RenderType.CompositeState.builder()
             .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
