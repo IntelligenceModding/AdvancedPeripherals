@@ -11,6 +11,7 @@ import de.srendi.advancedperipherals.common.component.ItemStackStorage;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APComputerComponents;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.ModulePeripheral;
@@ -238,20 +239,21 @@ public class SmartGlassesComputer extends ServerComputer {
                 if (oldModule.getId().equals(newModule.getId())) {
                     return;
                 }
+                this.queueEvent(CCEvents.GLASSES_MODULE_DETACH, new Object[]{oldModule.getId().toString()});
                 if (isEquipped) {
                     oldModule.onUnequipped(smartGlassesModuleAccess);
                 }
             }
+            this.queueEvent(CCEvents.GLASSES_MODULE, new Object[]{newModule.getId().toString()});
             this.modules[slot] = newModule;
         } else if (oldModule != null) {
+            this.queueEvent(CCEvents.GLASSES_MODULE_DETACH, new Object[]{oldModule.getId().toString()});
             if (isEquipped) {
                 oldModule.onUnequipped(smartGlassesModuleAccess);
             }
             this.modules[slot] = null;
         }
         this.modulePeripheral.updateModules(Stream.of(this.modules).filter(Objects::nonNull).toList());
-        this.setPeripheral(ComputerSide.BACK, null);
-        this.setPeripheral(ComputerSide.BACK, this.modulePeripheral);
     }
 
     @Override

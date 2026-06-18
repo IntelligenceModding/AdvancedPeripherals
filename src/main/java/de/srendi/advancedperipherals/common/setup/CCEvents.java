@@ -155,5 +155,19 @@ public final class CCEvents {
     // "saddle_release"
     public static final String SADDLE_RELEASE = "saddle_release";
 
+    // Fires when a module added to the smartglasses
+    // by: smartglasses
+    //
+    // "glasses_module"
+    // id: The module ID
+    public static final String GLASSES_MODULE = "glasses_module";
+
+    // Fires when a module removed from the smartglasses
+    // by: smartglasses
+    //
+    // "glasses_module_detach"
+    // id: The module ID
+    public static final String GLASSES_MODULE_DETACH = "glasses_module_detach";
+
     private CCEvents() {}
 }
