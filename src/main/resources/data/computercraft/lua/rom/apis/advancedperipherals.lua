@@ -1,12 +1,23 @@
+-- Copyright 2026 The authors of AdvancePeripherals
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--     http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
 
 local native = advancedperipherals
 
-local env = _ENV
-
-env.INVENTORY_SIZE = 36
-env.INVENTORY_ARMOR_OFFSET = env.INVENTORY_SIZE
-env.INVENTORY_OFFHAND_SLOT = 40
+_ENV.INVENTORY_SIZE = 36
+_ENV.INVENTORY_ARMOR_OFFSET = _ENV.INVENTORY_SIZE
+_ENV.INVENTORY_OFFHAND_SLOT = 40
 
 for k, v in pairs(native) do
-	env[k] = v
+	_ENV[k] = v
 end

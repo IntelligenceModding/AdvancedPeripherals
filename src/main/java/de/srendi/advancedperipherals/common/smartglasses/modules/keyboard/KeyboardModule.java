@@ -33,6 +33,11 @@ public class KeyboardModule implements IModule {
     }
 
     @Override
+    public String getLuaAlias() {
+        return "keyboard";
+    }
+
+    @Override
     @NotNull
     public IModuleFunctions getFunctions(SmartGlassesSideAccess access) {
         return new KeyboardFunctions(this);

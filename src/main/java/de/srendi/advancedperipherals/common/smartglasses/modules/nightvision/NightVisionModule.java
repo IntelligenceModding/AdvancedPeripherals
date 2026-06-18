@@ -25,6 +25,11 @@ public class NightVisionModule implements IModule {
     }
 
     @Override
+    public String getLuaAlias() {
+        return "nightVision";
+    }
+
+    @Override
     @Nullable
     public IModuleFunctions getFunctions(SmartGlassesSideAccess access) {
         return new NightVisionFunctions(this);

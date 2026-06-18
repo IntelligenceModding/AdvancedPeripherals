@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class OverlayModule implements IModule {
         this.access = access;
     }
 
+    @Nullable
     private ServerPlayer getOwner() {
         return this.access.getEntity() instanceof ServerPlayer player ? player : null;
     }
@@ -51,6 +53,11 @@ public class OverlayModule implements IModule {
     @NotNull
     public ResourceLocation getId() {
         return ID;
+    }
+
+    @Override
+    public String getLuaAlias() {
+        return "overlay";
     }
 
     @Override
@@ -63,6 +70,9 @@ public class OverlayModule implements IModule {
         if (!access.getComputer().isEquipped()) {
             return;
         }
+        if (!(access.getEntity() instanceof ServerPlayer)) {
+            return;
+        }
         if (!this.equipped) {
             this.equipped = true;
             this.sendAllObjects();
@@ -73,9 +83,12 @@ public class OverlayModule implements IModule {
     }
 
     @Override
-    public void onUnequipped(SmartGlassesSideAccess smartGlassesAccess) {
+    public void onUnequipped(SmartGlassesSideAccess access) {
+        if (!(access.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
         this.equipped = false;
-        PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectClearPacket());
+        PacketDistributor.sendToPlayer(player, new RenderableObjectClearPacket());
     }
 
     public void setScreenSizes(int screenWidth, int screenHeight, double guiScale) {
@@ -126,6 +139,9 @@ public class OverlayModule implements IModule {
         object.setId(id);
         // if (this.autoUpdate) {
         //     ServerPlayer owner = this.getOwner();
+        //     if (owner == null) {
+        //         return;
+        //     }
         //     PacketDistributor.sendToPlayer(owner, new RenderableObjectAddPacket(owner.getUUID(), object));
         //     this.objects.put(id, object);
         //     return;
@@ -146,7 +162,10 @@ public class OverlayModule implements IModule {
         if (!removed) {
             return removedAdding;
         }
-        PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectDeletePacket(id));
+        ServerPlayer owner = this.getOwner();
+        if (owner != null) {
+            PacketDistributor.sendToPlayer(owner, new RenderableObjectDeletePacket(id));
+        }
         return true;
     }
 
@@ -161,7 +180,10 @@ public class OverlayModule implements IModule {
         this.idCounter = 0;
         this.objectsToAdd.clear();
         this.objectsToUpdate.clear();
-        PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectClearPacket());
+        ServerPlayer owner = this.getOwner();
+        if (owner != null) {
+            PacketDistributor.sendToPlayer(owner, new RenderableObjectClearPacket());
+        }
         return size;
     }
 
@@ -172,7 +194,10 @@ public class OverlayModule implements IModule {
      */
     public void update(OverlayObject object) {
         // if (this.autoUpdate) {
-        //     PacketDistributor.sendToPlayer(this.getOwner(), new RenderableObjectSyncPacket(object));
+        //     ServerPlayer owner = this.getOwner();
+        //     if (owner != null) {
+        //         PacketDistributor.sendToPlayer(owner, new RenderableObjectSyncPacket(object));
+        //     }
         //     return;
         // }
         if (!this.objectsToAdd.containsKey(object.getId())) {
@@ -182,6 +207,9 @@ public class OverlayModule implements IModule {
 
     private void sendAllObjects() {
         ServerPlayer owner = this.getOwner();
+        if (owner == null) {
+            return;
+        }
         int maxPackets = 10000;
         List<OverlayObject> packedObjects = new ArrayList<>();
         Iterator<OverlayObject> iter = this.objects.values().iterator();
@@ -195,41 +223,81 @@ public class OverlayModule implements IModule {
     }
 
     public int bulkUpdate() {
-        ServerPlayer owner = this.getOwner();
-        int maxPackets = 10000;
         int count = 0;
+
+        ServerPlayer owner = this.getOwner();
+        if (owner == null) {
+            {
+                int remaining = this.objectsToAdd.size();
+                for (int id : this.objectsToAdd.keySet()) {
+                    if (remaining <= 0) {
+                        break;
+                    }
+                    OverlayObject object = this.objectsToAdd.remove(id);
+                    if (object == null) {
+                        continue;
+                    }
+                    this.objects.put(id, object);
+                    remaining--;
+                    count++;
+                }
+            }
+            {
+                int remaining = this.objectsToUpdate.size();
+                for (int id : this.objectsToUpdate.keySet()) {
+                    if (remaining <= 0) {
+                        break;
+                    }
+                    OverlayObject object = this.objectsToUpdate.remove(id);
+                    if (object == null) {
+                        continue;
+                    }
+                    remaining--;
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        int maxPackets = 10000;
         List<OverlayObject> packedObjects = new ArrayList<>();
         {
             // In some cases, if the user creates a lot of objects, the packet payload can be too big.
             // We split up the packets for every 10k objects to prevent the payload limit from mc
             int remaining = this.objectsToAdd.size();
-            count += remaining;
             while (remaining > 0) {
                 packedObjects.clear();
-                for (OverlayObject object : this.objectsToAdd.values()) {
+                for (int id : this.objectsToAdd.keySet()) {
+                    if (remaining <= 0 || packedObjects.size() >= maxPackets) {
+                        break;
+                    }
+                    OverlayObject object = this.objectsToAdd.remove(id);
+                    if (object == null) {
+                        continue;
+                    }
+                    this.objects.put(id, object);
                     packedObjects.add(object);
                     remaining--;
-                    this.objects.put(object.getId(), object);
-                    this.objectsToAdd.remove(object.getId());
-                    if (packedObjects.size() >= maxPackets) {
-                        break; // Ensure we don't exceed the packet size limit
-                    }
+                    count++;
                 }
                 PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkAddPacket(owner.getUUID(), List.copyOf(packedObjects)));
             }
         }
         {
             int remaining = this.objectsToUpdate.size();
-            count += remaining;
             while (remaining > 0) {
                 packedObjects.clear();
-                for (OverlayObject object : this.objectsToUpdate.values()) {
-                    packedObjects.add(object);
-                    remaining--;
-                    this.objectsToUpdate.remove(object.getId());
-                    if (packedObjects.size() >= maxPackets) {
+                for (int id : this.objectsToUpdate.keySet()) {
+                    if (remaining <= 0 || packedObjects.size() >= maxPackets) {
                         break;
                     }
+                    OverlayObject object = this.objectsToUpdate.remove(id);
+                    if (object == null) {
+                        continue;
+                    }
+                    packedObjects.add(object);
+                    remaining--;
+                    count++;
                 }
                 PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkSyncPacket(List.copyOf(packedObjects)));
             }

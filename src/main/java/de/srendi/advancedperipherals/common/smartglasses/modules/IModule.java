@@ -11,11 +11,22 @@ public interface IModule {
     ResourceLocation getId();
 
     /**
+     * Used to access this module via {@code smartglasses.modules.<alias>}.
+     * If two modules have the same alias, a random module will be used.
+     *
+     * @return a friendly Lua alias name
+     */
+    @Nullable
+    default String getLuaAlias() {
+        return null;
+    }
+
+    /**
      * Used to define the available functions of the module. This method only gets called once when indexing the modules
      * <p>
      * Return null if the module does not have any functions
      *
-     * @return an object containing lua functions {@link dan200.computercraft.api.lua.LuaFunction}
+     * @return an object containing Lua functions {@link dan200.computercraft.api.lua.LuaFunction}
      */
     @Nullable
     IModuleFunctions getFunctions(SmartGlassesSideAccess smartGlassesAccess);
