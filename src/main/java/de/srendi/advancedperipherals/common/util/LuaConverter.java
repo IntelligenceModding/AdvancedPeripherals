@@ -147,6 +147,8 @@ public class LuaConverter {
         registerEntityConverter(Entity.class, (entity, data, ctx) -> {
             data.put("id", entity.getId());
             data.put("uuid", entity.getStringUUID());
+            data.put("yaw", entity.getYRot());
+            data.put("pitch", entity.getXRot());
             EntityType<?> type = entity.getType();
             data.put("displayName", type.getDescription().getString());
             data.put("name", type.builtInRegistryHolder().key().location().toString());
