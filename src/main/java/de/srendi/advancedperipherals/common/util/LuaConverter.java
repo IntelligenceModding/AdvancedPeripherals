@@ -147,14 +147,15 @@ public class LuaConverter {
         registerEntityConverter(Entity.class, (entity, data, ctx) -> {
             data.put("id", entity.getId());
             data.put("uuid", entity.getStringUUID());
-            data.put("yaw", entity.getYRot());
-            data.put("pitch", entity.getXRot());
             EntityType<?> type = entity.getType();
             data.put("displayName", type.getDescription().getString());
             data.put("name", type.builtInRegistryHolder().key().location().toString());
             if (entity.hasCustomName()) {
                 data.put("customName", entity.getCustomName().getString());
             }
+            data.put("yaw", entity.getYRot());
+            data.put("pitch", entity.getXRot());
+            data.put("eyeHeight", entity.getEyeHeight());
             if (ctx.detailed()) {
                 data.put("type", type.getDescriptionId());
                 data.put("tags", entity.getTags());
@@ -166,6 +167,8 @@ public class LuaConverter {
                 data.put("isInLava", entity.isInLava());
                 data.put("isInWall", entity.isInWall());
                 data.put("team", teamToLua(entity.getTeam()));
+                data.put("airSupply", entity.getAirSupply());
+                data.put("maxAirSupply", entity.getMaxAirSupply());
             }
         });
         registerEntityConverter(LivingEntity.class, (entity, data, ctx) -> {

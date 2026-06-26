@@ -1,13 +1,14 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.IArguments;
-import dan200.computercraft.api.lua.ILuaFunction;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaValues;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
+import dan200.computercraft.shared.platform.PlatformHelper;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPeripheralOwner;
@@ -17,6 +18,7 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,10 +28,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.StatType;
 import net.minecraft.world.phys.Vec3;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
@@ -59,7 +62,21 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
     protected Map<String, Object> getPeripheralConfiguration() {
         Map<String, Object> configs = super.getPeripheralConfiguration();
         configs.put("playerSpyEnabled", APConfig.PERIPHERALS_CONFIG.playerSpy.get());
+        configs.put("playerSpyStatEnabled", APConfig.PERIPHERALS_CONFIG.playerSpyStatistics.get());
         return configs;
+    }
+
+    protected void assertSpyEnabled() throws LuaException {
+        if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get()) {
+            throw new LuaException("This function is disabled in the config [Player_Detector.playerSpy]. Activate it or ask admins if they can activate it.");
+        }
+    }
+
+    protected void assertSpyStatEnabled() throws LuaException {
+        assertSpyEnabled();
+        if (!APConfig.PERIPHERALS_CONFIG.playerSpyStatistics.get()) {
+            throw new LuaException("This function is disabled in the config [Player_Detector.playerSpyStatistics]. Activate it or ask admins if they can activate it.");
+        }
     }
 
     private boolean isAllowedMultiDimensional() {
@@ -143,34 +160,33 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         return player != null && CoordUtil.isInRange(getCenterPos(), getLevel(), player, range, MAX_RANGE);
     }
 
-    @LuaFunction(mainThread = true)
-    public final Map<String, Object> getPlayer(IArguments arguments) throws LuaException {
-        if (!APConfig.PERIPHERALS_CONFIG.playerSpy.get()) {
-            throw new LuaException("This function is disabled in the config [Player_Detector.playerSpy]. Activate it or ask admins if they can activate it.");
-        }
-        ServerPlayer player = getPlayer(arguments.getString(0));
+    @LuaFunction(value = "getPlayer", mainThread = true)
+    public final Map<String, Object> getPlayerLua(String playerName, Optional<Boolean> detailed) throws LuaException {
+        assertSpyEnabled();
+
+        ServerPlayer player = getPlayer(playerName);
         if (player == null) {
             return null;
         }
         if (MAX_RANGE != -1 && !CoordUtil.isInRange(getCenterPos(), getLevel(), player, MAX_RANGE, MAX_RANGE)) {
             return null;
         }
-        return getPlayerInfo(player, player == owner.getHoldingEntity());
+        return getPlayerInfo(player, player == owner.getHoldingEntity(), detailed.orElse(false));
     }
 
     @LuaFunction(mainThread = true)
-    public final Map<String, Object> getOwner() throws LuaException {
+    public final Map<String, Object> getOwner(Optional<Boolean> detailed) throws LuaException {
         if (!(owner.getHoldingEntity() instanceof ServerPlayer player)) {
             return null;
         }
-        return getPlayerInfo(player, true);
+        return getPlayerInfo(player, true, detailed.orElse(false));
     }
 
-    private Map<String, Object> getPlayerInfo(ServerPlayer player, boolean isOwner) {
+    private Map<String, Object> getPlayerInfo(ServerPlayer player, boolean isOwner, boolean detailed) {
         boolean showAbsCoords = true;
 
         Map<String, Object> info = APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()
-            ? LuaConverter.entityToLua(player)
+            ? LuaConverter.entityToLua(player, LuaConverter.entityContextBuilder().detailed(detailed).build())
             : new HashMap<>();
 
         Vec3 selfPos = this.getPhysicsPos();
@@ -220,42 +236,65 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             info.put("respawnDimension", player.getRespawnDimension().location().toString());
             info.put("respawnAngle", player.getRespawnAngle());
         }
-
-        WeakReference<ServerPlayer> playerRef = new WeakReference<>(player);
-        if (APConfig.PERIPHERALS_CONFIG.playerSpyStatistics.get()) {
-            info.put("getStat", (ILuaFunction) (args) -> this.getPlayerStat(playerRef, args.getString(0)));
-        }
         return info;
     }
 
-    private MethodResult getPlayerStat(WeakReference<ServerPlayer> playerRef, String statName) {
-        ServerPlayer player = playerRef.get();
-        if (player == null || player.isRemoved()) {
+    @LuaFunction(mainThread = true)
+    public final MethodResult getPlayerStat(IArguments arguments) throws LuaException {
+        assertSpyStatEnabled();
+
+        String playerName = arguments.getString(0);
+        ServerPlayer player = getPlayer(playerName);
+        if (player == null) {
             return Errors.PLAYER_NOT_EXISTS_RESULT;
         }
-        ResourceLocation statId = ResourceLocation.tryParse(statName);
-        if (statId == null) {
-            return Errors.INVALID_STAT_ID_RESULT;
-        }
-        ResourceLocation statTypeId = ResourceLocation.tryParse(statId.getNamespace().replace('.', ':'));
-        if (statTypeId == null) {
-            return Errors.INVALID_STAT_ID_RESULT;
-        }
-        ResourceLocation statValueId = ResourceLocation.tryParse(statId.getPath().replace('.', ':'));
-        if (statValueId == null) {
-            return Errors.INVALID_STAT_ID_RESULT;
+        if (MAX_RANGE != -1 && !CoordUtil.isInRange(getCenterPos(), getLevel(), player, MAX_RANGE, MAX_RANGE)) {
+            return Errors.PLAYER_NOT_EXISTS_RESULT;
         }
 
-        @SuppressWarnings("rawtypes")
-        StatType statType = BuiltInRegistries.STAT_TYPE.get(statTypeId);
-        if (statType == null) {
-            return Errors.UNKNOWN_STAT_TYPE_RESULT;
+        int count = arguments.count() - 1;
+        if (count <= 0) {
+            throw LuaValues.badArgument(1, "string", "nil");
         }
-        Object statValue = statType.getRegistry().get(statValueId);
-        if (statValue == null) {
-            return Errors.UNKNOWN_STAT_VALUE_RESULT;
+
+        int index = 0;
+        Object[] result = new Object[count];
+        while (index < count) {
+            String statName = arguments.getString(index + 1);
+            Pair<ResourceLocation, ResourceLocation> statId = parseStatId(statName);
+            if (statId == null) {
+                return Errors.INVALID_STAT_ID_RESULT;
+            }
+
+            @SuppressWarnings("rawtypes")
+            StatType statType = BuiltInRegistries.STAT_TYPE.get(statId.left());
+            if (statType == null) {
+                return Errors.UNKNOWN_STAT_TYPE_RESULT;
+            }
+            Object statValue = statType.getRegistry().get(statId.right());
+            if (statValue == null) {
+                return Errors.UNKNOWN_STAT_VALUE_RESULT;
+            }
+            result[index] = player.getStats().getValue(statType.get(statValue));
+            index++;
         }
-        return MethodResult.of(player.getStats().getValue(statType.get(statValue)));
+        return MethodResult.of(result);
+    }
+
+    private static final Pair<ResourceLocation, ResourceLocation> parseStatId(String statName) {
+        ResourceLocation statId = ResourceLocation.tryParse(statName);
+        if (statId == null) {
+            return null;
+        }
+        ResourceLocation typeId = ResourceLocation.tryParse(statId.getNamespace().replace('.', ':'));
+        if (typeId == null) {
+            return null;
+        }
+        ResourceLocation valueId = ResourceLocation.tryParse(statId.getPath().replace('.', ':'));
+        if (valueId == null) {
+            return null;
+        }
+        return Pair.of(typeId, valueId);
     }
 
     private Stream<ServerPlayer> getPlayers() {
@@ -277,9 +316,25 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (level == null) {
             return null;
         }
-        // Note: getPlayerByName still has O(N) time complexity but doesn't matter
-        ServerPlayer player = level.getServer().getPlayerList().getPlayerByName(username);
+
+        UUID uuid = null;
+        try {
+            uuid = UUID.fromString(username);
+        } catch (IllegalArgumentException e) {
+        }
+
+        ServerPlayer player;
+        if (uuid != null) {
+            player = level.getServer().getPlayerList().getPlayer(uuid);
+        } else {
+            // Note: getPlayerByName still has O(N) time complexity but doesn't matter
+            player = level.getServer().getPlayerList().getPlayerByName(username);
+        }
+
         if (player == null) {
+            return null;
+        }
+        if (PlatformHelper.get().isFakePlayer(player)) {
             return null;
         }
         if (!isAllowedMultiDimensional() && player.level() != level) {
@@ -293,8 +348,14 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Override
     public void update() {
+        ServerLevel level = getLevel();
         lastConsumedMessage = Events.traversePlayerMessages(lastConsumedMessage, message -> {
-            // TODO: distance check?
+            if (message.restrictedRange() && MAX_RANGE != -1) {
+                ServerPlayer player = level.getServer().getPlayerList().getPlayer(message.playerId());
+                if (player == null || !CoordUtil.isInRange(getCenterPos(), getLevel(), player, MAX_RANGE, MAX_RANGE)) {
+                    return;
+                }
+            }
             queueEvent(message.eventName(), message.eventArgs());
         });
     }

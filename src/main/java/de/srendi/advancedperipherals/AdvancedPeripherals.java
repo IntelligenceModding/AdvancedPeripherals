@@ -119,7 +119,11 @@ public class AdvancedPeripherals {
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         ItemStack stack = event.getFrom();
+        ItemStack newStack = event.getTo();
         if (stack.getItem() instanceof SmartGlassesItem glassesItem) {
+            if (newStack.getItem() == glassesItem && SmartGlassesItem.getComputerID(stack) == SmartGlassesItem.getComputerID(newStack)) {
+                return;
+            }
             glassesItem.onUnequip(stack, (ServerLevel) event.getEntity().level(), event.getEntity());
         }
     }

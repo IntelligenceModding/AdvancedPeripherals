@@ -6,6 +6,7 @@ import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBul
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectDeletePacket;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
@@ -67,10 +68,18 @@ public class OverlayModule implements IModule {
 
     @Override
     public void serverTick(SmartGlassesSideAccess access) {
-        if (!access.getComputer().isEquipped()) {
+        SmartGlassesComputer computer = access.getComputer();
+        if (!computer.isOn()) {
+            if (this.equipped) {
+                this.equipped = false;
+                this.clear();
+            }
             return;
         }
-        if (!(access.getEntity() instanceof ServerPlayer)) {
+        if (!computer.isEquipped()) {
+            return;
+        }
+        if (!(computer.getEntity() instanceof ServerPlayer)) {
             return;
         }
         if (!this.equipped) {

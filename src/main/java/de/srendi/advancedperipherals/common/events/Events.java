@@ -176,6 +176,8 @@ public class Events {
     public interface IPlayerEvent {
         String eventName();
         Object[] eventArgs();
+        UUID playerId();
+        boolean restrictedRange();
     }
 
     public record PlayerDimensionEvent(
@@ -189,6 +191,11 @@ public class Events {
         public Object[] eventArgs() {
             return new Object[]{this.playerId.toString(), this.playerName, this.fromDimension, this.toDimension};
         }
+
+        @Override
+        public boolean restrictedRange() {
+            return this.eventName.equals(CCEvents.PLAYER_CHANGED_DIMENSION);
+        }
     }
 
     public record PlayerDeathEvent(UUID playerId, String playerName, DamageSource source) implements IPlayerEvent {
@@ -200,6 +207,11 @@ public class Events {
         @Override
         public Object[] eventArgs() {
             return new Object[]{this.playerId.toString(), this.playerName, this.source.typeHolder().getRegisteredName()};
+        }
+
+        @Override
+        public boolean restrictedRange() {
+            return true;
         }
     }
 }

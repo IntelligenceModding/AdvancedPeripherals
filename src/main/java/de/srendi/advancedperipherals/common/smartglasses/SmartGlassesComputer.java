@@ -257,7 +257,7 @@ public class SmartGlassesComputer extends ServerComputer {
     }
 
     @Override
-    public void tickServer() {
+    protected void tickServer() {
         Entity entity = this.entity;
         if (entity != null) {
             this.setPosition((ServerLevel) entity.level(), BlockPos.containing(entity.getEyePosition()));
