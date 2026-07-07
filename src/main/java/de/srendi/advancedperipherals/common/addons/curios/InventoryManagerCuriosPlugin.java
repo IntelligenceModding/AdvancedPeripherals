@@ -76,21 +76,7 @@ public class InventoryManagerCuriosPlugin implements IPeripheralPlugin {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult pushCuriosItems(IComputerAccess computer, String fromCurios, String toName, Optional<Map<?, ?>> filterTable) throws LuaException {
-        this.peripheral.assertAllowItemTransfers();
-
-        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
-        if (filter.rightPresent()) {
-            return MethodResult.of(null, filter.right());
-        }
-
-        IItemHandler inventoryFrom = this.getCuriosHandler(fromCurios);
-        IItemHandler inventoryTo = this.peripheral.getItemHandler(computer, toName);
-        return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult pullCuriosItems(IComputerAccess computer, String toCurios, String fromName, Optional<Map<?, ?>> filterTable) throws LuaException {
+    public final MethodResult importCuriosItems(IComputerAccess computer, String toCurios, String fromName, Optional<Map<?, ?>> filterTable) throws LuaException {
         this.peripheral.assertAllowItemTransfers();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
@@ -100,6 +86,20 @@ public class InventoryManagerCuriosPlugin implements IPeripheralPlugin {
 
         IItemHandler inventoryTo = this.getCuriosHandler(toCurios);
         IItemHandler inventoryFrom = this.peripheral.getItemHandler(computer, fromName);
+        return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportCuriosItems(IComputerAccess computer, String fromCurios, String toName, Optional<Map<?, ?>> filterTable) throws LuaException {
+        this.peripheral.assertAllowItemTransfers();
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
+        if (filter.rightPresent()) {
+            return MethodResult.of(null, filter.right());
+        }
+
+        IItemHandler inventoryFrom = this.getCuriosHandler(fromCurios);
+        IItemHandler inventoryTo = this.peripheral.getItemHandler(computer, toName);
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 
