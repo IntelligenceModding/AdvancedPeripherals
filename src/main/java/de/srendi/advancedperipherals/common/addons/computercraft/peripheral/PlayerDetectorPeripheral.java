@@ -281,7 +281,7 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         return MethodResult.of(result);
     }
 
-    private static final Pair<ResourceLocation, ResourceLocation> parseStatId(String statName) {
+    private static Pair<ResourceLocation, ResourceLocation> parseStatId(String statName) {
         ResourceLocation statId = ResourceLocation.tryParse(statName);
         if (statId == null) {
             return null;
@@ -317,10 +317,11 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
             return null;
         }
 
-        UUID uuid = null;
+        UUID uuid;
         try {
             uuid = UUID.fromString(username);
         } catch (IllegalArgumentException e) {
+            uuid = null;
         }
 
         ServerPlayer player;
