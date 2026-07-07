@@ -25,7 +25,7 @@ public interface IStorageSystemFluidHandler extends IFluidHandler {
 
     /**
      * These 5 methods below are ignored in our transferring logic.
-     * Storage Systems do not respect tanks directly and to extract we need a filter
+     * Storage Systems do not respect tanks directly and to extract we need a filter.
      */
 
     @Override

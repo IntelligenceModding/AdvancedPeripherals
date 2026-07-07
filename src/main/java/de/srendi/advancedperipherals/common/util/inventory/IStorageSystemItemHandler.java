@@ -22,38 +22,39 @@ public interface IStorageSystemItemHandler extends IItemHandler {
 
     /**
      * These 6 methods below are ignored in our transferring logic.
-     * Storage Systems do not respect slots and to extract we need a filter
+     * Storage Systems do not respect slots and to extract we need a filter.
+     * Implemented to import item only via CC:T peripheral target.
      */
 
     @Override
     default int getSlots() {
-        throw new UnsupportedOperationException();
+        return 1;
     }
 
     @Override
     default int getSlotLimit(int slot) {
-        throw new UnsupportedOperationException();
+        return Integer.MAX_VALUE;
     }
 
     @Override
     default ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-        throw new UnsupportedOperationException();
+        return this.insertItem(stack, simulate);
     }
 
     @Override
     @NotNull
-    default ItemStack extractItem(int slot, int amount, boolean simulate) {
-        throw new UnsupportedOperationException();
+    default ItemStack extractItem(int slot, int count, boolean simulate) {
+        return ItemStack.EMPTY;
     }
 
     @Override
     @NotNull
     default ItemStack getStackInSlot(int slot) {
-        throw new UnsupportedOperationException();
+        return ItemStack.EMPTY;
     }
 
     @Override
     default boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        throw new UnsupportedOperationException();
+        return slot == 0;
     }
 }

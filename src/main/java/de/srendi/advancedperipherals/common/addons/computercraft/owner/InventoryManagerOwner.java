@@ -1,10 +1,14 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
 import org.jetbrains.annotations.Nullable;
 
-public class InventoryManagerOwner extends BlockEntityPeripheralOwner<InventoryManagerEntity> {
+public class InventoryManagerOwner extends BlockEntityPeripheralOwner<InventoryManagerEntity> implements IItemHandler {
     public InventoryManagerOwner(InventoryManagerEntity tile) {
         super(tile);
     }
@@ -12,6 +16,69 @@ public class InventoryManagerOwner extends BlockEntityPeripheralOwner<InventoryM
     @Override
     @Nullable
     public Player getOwner() {
-        return getBlockEntity().getOwnerPlayer();
+        return this.getBlockEntity().getOwnerPlayer();
+    }
+
+    @Nullable
+    protected Inventory getInventory() {
+        Player owner = this.getOwner();
+        if (owner == null) {
+            return null;
+        }
+        return owner.getInventory();
+    }
+
+    @Override
+    public int getSlots() {
+        Inventory inv = this.getInventory();
+        if (inv == null) {
+            return 0;
+        }
+        return inv.getContainerSize();
+    }
+
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        Inventory inv = this.getInventory();
+        if (inv == null) {
+            return ItemStack.EMPTY;
+        }
+        return inv.getItem(slot);
+    }
+
+    @Override
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        Inventory inv = this.getInventory();
+        if (inv == null) {
+            return stack;
+        }
+        return new PlayerInvWrapper(inv).insertItem(slot, stack, simulate);
+    }
+
+    @Override
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        Inventory inv = this.getInventory();
+        if (inv == null) {
+            return ItemStack.EMPTY;
+        }
+        return new PlayerInvWrapper(inv).extractItem(slot, amount, simulate);
+    }
+
+    @Override
+    public int getSlotLimit(int slot) {
+        Inventory inv = this.getInventory();
+        if (inv == null) {
+            return 0;
+        }
+        return new PlayerInvWrapper(inv).getSlotLimit(slot);
+    }
+
+    @Override
+    public boolean isItemValid(int slot, ItemStack stack) {
+        Inventory inv = this.getInventory();
+        if (inv == null) {
+            return false;
+        }
+        return new PlayerInvWrapper(inv).isItemValid(slot, stack);
     }
 }

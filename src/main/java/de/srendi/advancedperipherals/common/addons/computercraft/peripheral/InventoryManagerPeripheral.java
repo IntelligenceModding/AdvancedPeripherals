@@ -127,21 +127,7 @@ public class InventoryManagerPeripheral extends BasePeripheral<IPeripheralOwner>
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult pushItems(IComputerAccess computer, String toName, Optional<Map<?, ?>> filterTable) throws LuaException {
-        this.assertAllowItemTransfers();
-
-        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
-        if (filter.rightPresent()) {
-            return MethodResult.of(null, filter.right());
-        }
-
-        IItemHandler inventoryFrom = this.getPlayerInventory();
-        IItemHandler inventoryTo = this.getItemHandler(computer, toName);
-        return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult pullItems(IComputerAccess computer, String fromName, Optional<Map<?, ?>> filterTable) throws LuaException {
+    public final MethodResult importItem(IComputerAccess computer, String fromName, Optional<Map<?, ?>> filterTable) throws LuaException {
         this.assertAllowItemTransfers();
 
         Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
@@ -151,6 +137,20 @@ public class InventoryManagerPeripheral extends BasePeripheral<IPeripheralOwner>
 
         IItemHandler inventoryTo = this.getPlayerInventory();
         IItemHandler inventoryFrom = this.getItemHandler(computer, fromName);
+        return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportItem(IComputerAccess computer, String toName, Optional<Map<?, ?>> filterTable) throws LuaException {
+        this.assertAllowItemTransfers();
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
+        if (filter.rightPresent()) {
+            return MethodResult.of(null, filter.right());
+        }
+
+        IItemHandler inventoryFrom = this.getPlayerInventory();
+        IItemHandler inventoryTo = this.getItemHandler(computer, toName);
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 

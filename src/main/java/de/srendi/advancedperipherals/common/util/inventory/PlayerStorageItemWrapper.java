@@ -155,21 +155,7 @@ public class PlayerStorageItemWrapper {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult pushItems(String toName, Optional<Map<?, ?>> filterTable) throws LuaException {
-        this.assertValidItemHandler();
-
-        IItemHandler inventoryTo = this.getItemHandler(toName);
-
-        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
-        if (filter.rightPresent()) {
-            return MethodResult.of(null, filter.right());
-        }
-
-        return MethodResult.of(ItemUtil.moveItem(this.itemHandler, inventoryTo, filter.left()));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult pullItems(String fromName, Optional<Map<?, ?>> filterTable) throws LuaException {
+    public final MethodResult importItem(String fromName, Optional<Map<?, ?>> filterTable) throws LuaException {
         this.assertValidItemHandler();
 
         IItemHandler inventoryFrom = this.getItemHandler(fromName);
@@ -180,6 +166,20 @@ public class PlayerStorageItemWrapper {
         }
 
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, this.itemHandler, filter.left()));
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportItem(String toName, Optional<Map<?, ?>> filterTable) throws LuaException {
+        this.assertValidItemHandler();
+
+        IItemHandler inventoryTo = this.getItemHandler(toName);
+
+        Pair<ItemFilter, String> filter = ItemFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
+        if (filter.rightPresent()) {
+            return MethodResult.of(null, filter.right());
+        }
+
+        return MethodResult.of(ItemUtil.moveItem(this.itemHandler, inventoryTo, filter.left()));
     }
 
     //// END ITEM METHODS ////
@@ -198,23 +198,7 @@ public class PlayerStorageItemWrapper {
     }
 
     @LuaFunction(mainThread = true)
-    public final MethodResult pushFluid(String toName, Optional<Map<?, ?>> filterTable) throws LuaException {
-        this.assertValidFluidHandler();
-
-        IFluidHandler inventoryTo = this.peripheral.getFluidHandler(this.computer, toName);
-
-        Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
-        if (filter.rightPresent()) {
-            return MethodResult.of(null, filter.right());
-        }
-
-        int amount = FluidUtil.moveFluid(this.fluidHandler, inventoryTo, filter.left());
-        this.postFluidUpdate();
-        return MethodResult.of(amount);
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult pullFluid(String fromName, Optional<Map<?, ?>> filterTable) throws LuaException {
+    public final MethodResult importFluid(String fromName, Optional<Map<?, ?>> filterTable) throws LuaException {
         this.assertValidFluidHandler();
 
         IFluidHandler inventoryFrom = this.peripheral.getFluidHandler(this.computer, fromName);
@@ -225,6 +209,22 @@ public class PlayerStorageItemWrapper {
         }
 
         int amount = FluidUtil.moveFluid(inventoryFrom, this.fluidHandler, filter.left());
+        this.postFluidUpdate();
+        return MethodResult.of(amount);
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult exportFluid(String toName, Optional<Map<?, ?>> filterTable) throws LuaException {
+        this.assertValidFluidHandler();
+
+        IFluidHandler inventoryTo = this.peripheral.getFluidHandler(this.computer, toName);
+
+        Pair<FluidFilter, String> filter = FluidFilter.parse(EmptyLuaTable.orEmpty(filterTable.orElse(null)));
+        if (filter.rightPresent()) {
+            return MethodResult.of(null, filter.right());
+        }
+
+        int amount = FluidUtil.moveFluid(this.fluidHandler, inventoryTo, filter.left());
         this.postFluidUpdate();
         return MethodResult.of(amount);
     }
