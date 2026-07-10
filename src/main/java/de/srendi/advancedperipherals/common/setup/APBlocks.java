@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.blocks.BlockReaderBlock;
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
@@ -27,7 +28,7 @@ public class APBlocks {
     public static final DeferredHolder<Block, APBlockEntityBlock<?>> FLUID_DETECTOR = register("fluid_detector", () -> new APBlockEntityBlock<>(APBlockEntityTypes.FLUID_DETECTOR), () -> new APBlockItem(APBlocks.FLUID_DETECTOR.get(), APConfig.PERIPHERALS_CONFIG.enableFluidDetector));
     public static final DeferredHolder<Block, APBlockEntityBlock<?>> GAS_DETECTOR = register("gas_detector", () -> new APBlockEntityBlock<>(APAddon.MEKANISM.isLoaded() ? APBlockEntityTypes.GAS_DETECTOR : null), () -> new APBlockItem(APBlocks.GAS_DETECTOR.get(), APConfig.PERIPHERALS_CONFIG.enableGasDetector));
 
-    public static final DeferredHolder<Block, APBlockEntityBlock<?>> BLOCK_READER = register("block_reader", () -> new APBlockEntityBlock<>(APBlockEntityTypes.BLOCK_READER), () -> new APBlockItem(APBlocks.BLOCK_READER.get(), APConfig.PERIPHERALS_CONFIG.enableBlockReader));
+    public static final DeferredHolder<Block, APBlockEntityBlock<?>> BLOCK_READER = register("block_reader", BlockReaderBlock::new, () -> new APBlockItem(APBlocks.BLOCK_READER.get(), APConfig.PERIPHERALS_CONFIG.enableBlockReader));
     public static final DeferredHolder<Block, APBlockEntityBlock<?>> NBT_STORAGE = register("nbt_storage", () -> new APBlockEntityBlock<>(APBlockEntityTypes.NBT_STORAGE), () -> new APBlockItem(APBlocks.NBT_STORAGE.get(), APConfig.PERIPHERALS_CONFIG.enableNBTStorage));
 
     public static final DeferredHolder<Block, APBlockEntityBlock<?>> INVENTORY_MANAGER = register("inventory_manager", () -> new APBlockEntityBlock<>(APBlockEntityTypes.INVENTORY_MANAGER), () -> new APBlockItem(APBlocks.INVENTORY_MANAGER.get(), APConfig.PERIPHERALS_CONFIG.enableInventoryManager));

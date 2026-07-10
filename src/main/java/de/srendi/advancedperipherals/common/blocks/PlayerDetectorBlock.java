@@ -37,25 +37,25 @@ public class PlayerDetectorBlock extends APBlockEntityBlock<PlayerDetectorEntity
             return super.useWithoutItem(state, level, pos, player, hit);
         }
         BlockEntity tileEntity = level.getBlockEntity(pos);
-        if (tileEntity instanceof PlayerDetectorEntity entity) {
-            level.playSound(player, pos, SoundEvents.NETHER_WOOD_BUTTON_CLICK_ON, SoundSource.BLOCKS);
-            if (level.isClientSide()) {
-                return InteractionResult.SUCCESS;
-            }
-            PlayerDetectorPeripheral peripheral = entity.getPeripheral();
-            if (peripheral != null) {
-                peripheral.forEachConnectedComputers(
-                    (computer) -> computer.queueEvent(
-                        CCEvents.PLAYER_CLICK,
-                        computer.getAttachmentName(),
-                        player.getUUID().toString(),
-                        player.getGameProfile().getName()
-                    )
-                );
-            }
-            return InteractionResult.CONSUME;
+        if (!(tileEntity instanceof PlayerDetectorEntity entity)) {
+            return super.useWithoutItem(state, level, pos, player, hit);
         }
-        return super.useWithoutItem(state, level, pos, player, hit);
+        level.playSound(player, pos, SoundEvents.NETHER_WOOD_BUTTON_CLICK_ON, SoundSource.BLOCKS);
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        PlayerDetectorPeripheral peripheral = entity.getPeripheral();
+        if (peripheral != null) {
+            peripheral.forEachConnectedComputers(
+                (computer) -> computer.queueEvent(
+                    CCEvents.PLAYER_CLICK,
+                    computer.getAttachmentName(),
+                    player.getUUID().toString(),
+                    player.getGameProfile().getName()
+                )
+            );
+        }
+        return InteractionResult.CONSUME;
     }
 
 }

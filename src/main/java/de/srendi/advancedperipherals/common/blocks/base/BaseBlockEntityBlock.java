@@ -38,7 +38,7 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
 
     @Override
     @NotNull
-    protected ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         BlockEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof VarNameable nameable && stack.getItem() instanceof NameTagItem) {
             if (level.isClientSide()) {

@@ -20,6 +20,14 @@ public final class CCEvents {
     // pressed_duration: The duration the key pressed down. in ms
     public static final String GLASSES_KEY_PRESSED = "glasses_key_pressed";
 
+    // Fires when a player clicked the block reader with an item in hand.
+    // by: block_reader
+    //
+    // "item_click", peripheral_name: string, item: table
+    // peripheral_name: The player detector's name
+    // item: Item's data
+    public static final String ITEM_CLICK = "item_click";
+
     // Fires when a player closed keyboard while equipping a smartglasses with keyboard module.
     // by: keyboard_module
     //

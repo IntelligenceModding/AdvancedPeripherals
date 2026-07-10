@@ -37,14 +37,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SimpleFreeOperation.CHAT_MESSAGE;
 
 public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "chat_box";
-    private static final Pattern UUID_PATTERN = Pattern.compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$");
 
     private long lastConsumedMessage = Events.getLastChatMessageID();
 
@@ -96,8 +94,14 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
      */
     private ServerPlayer getPlayer(String argument) {
         MinecraftServer server = getLevel().getServer();
-        if (UUID_PATTERN.matcher(argument).matches()) {
-            return server.getPlayerList().getPlayer(UUID.fromString(argument));
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(argument);
+        } catch (IllegalArgumentException e) {
+            uuid = null;
+        }
+        if (uuid != null) {
+            return server.getPlayerList().getPlayer(uuid);
         }
         return server.getPlayerList().getPlayerByName(argument);
     }
