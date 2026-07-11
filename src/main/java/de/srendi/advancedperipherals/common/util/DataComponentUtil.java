@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.util;
 
-import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 
 import net.minecraft.core.RegistryAccess;
@@ -44,8 +43,20 @@ public class DataComponentUtil {
     }
 
     public static Map<String, Object> patchToLua(DataComponentPatch patch, RegistryAccess registryAccess) {
-        // TODO: write an Codec to convert to java objects?
-        return (Map<String, Object>) NBTUtil.toLua(patchToNbt(patch, registryAccess));
+        return (Map<String, Object>) DataComponentPatch.CODEC
+            .encodeStart(RegistryOps.create(LuaOps.INSTANCE, registryAccess), patch)
+            .getOrThrow();
+    }
+
+    public static DataComponentPatch luaToPatch(Map<?, ?> map) {
+        return luaToPatch(map, ServerLifecycleHooks.getCurrentServer().registryAccess());
+    }
+
+    public static DataComponentPatch luaToPatch(Map<?, ?> map, RegistryAccess registryAccess) {
+        return DataComponentPatch.CODEC
+            .parse(RegistryOps.create(LuaOps.INSTANCE, registryAccess), map)
+            .resultOrPartial()
+            .orElse(DataComponentPatch.EMPTY);
     }
 
     public static DataComponentPatch getStoredDataFromItem(ItemStack stack) {

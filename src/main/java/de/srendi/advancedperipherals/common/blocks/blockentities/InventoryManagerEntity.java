@@ -51,7 +51,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     }
 
     @Override
-    protected InventoryManagerContainer createMenu(int id, Inventory playerInventory) {
+    protected InventoryManagerContainer createMenu(int id, @NotNull Inventory playerInventory) {
         return new InventoryManagerContainer(id, playerInventory, this.getBlockPos(), this.getLevel());
     }
 
