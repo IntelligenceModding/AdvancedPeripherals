@@ -75,12 +75,12 @@ public final class CreateFilter {
         if (stack.getClass() == FilterItemStack.class) {
             return Map.of(
                 "type", "item",
-                "item", LuaConverter.itemStackToLua(stack.item())
+                "item", LuaConverter.itemStackToLuaNoCount(stack.item())
             );
         }
         return Map.of(
             "type", "unknown",
-            "item", LuaConverter.itemStackToLua(stack.item())
+            "item", LuaConverter.itemStackToLuaNoCount(stack.item())
         );
     }
 

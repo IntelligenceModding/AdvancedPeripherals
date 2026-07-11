@@ -11,13 +11,18 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public record CreateBehaviourLookup(BehaviourType<?> behaviourType) implements ComponentLookup {
+import java.util.function.BiFunction;
+
+public record CreateBehaviourLookup<T extends BlockEntityBehaviour>(BehaviourType<T> behaviourType, BiFunction<T, SmartBlockEntity, ?> mapper) implements ComponentLookup {
     @Override
     @Nullable
     public Object find(ServerLevel level, BlockPos pos, BlockState state, BlockEntity be, Direction side) {
         if (be instanceof SmartBlockEntity smartBe) {
-            BlockEntityBehaviour behaviour = smartBe.getBehaviour(this.behaviourType);
+            T behaviour = smartBe.getBehaviour(this.behaviourType);
             if (behaviour != null) {
+                if (mapper != null) {
+                    return mapper.apply(behaviour, smartBe);
+                }
                 return behaviour;
             }
         }

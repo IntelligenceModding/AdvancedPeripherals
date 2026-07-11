@@ -16,12 +16,12 @@ public class ScrollValueBehaviourIntegration implements APGenericPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public final int getScrollValue(ScrollValueBehaviour scrollBehaviour) {
-        return scrollBehaviour.getValue();
+    public final int getScrollValue(ScrollValueBehaviour behaviour) {
+        return behaviour.getValue();
     }
 
     @LuaFunction(mainThread = true)
-    public final void setScrollValue(ScrollValueBehaviour scrollBehaviour, int speed) {
-        scrollBehaviour.setValue(speed);
+    public final void setScrollValue(ScrollValueBehaviour behaviour, int speed) {
+        behaviour.setValue(speed);
     }
 }

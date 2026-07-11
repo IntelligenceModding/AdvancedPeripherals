@@ -292,17 +292,25 @@ public class LuaConverter {
         return properties;
     }
 
-    public static Map<String, Object> itemStackToLua(@NotNull ItemStack stack) {
+    public static Map<String, Object> itemStackToLuaNoCount(@NotNull ItemStack stack) {
         if (stack.isEmpty()) {
             return null;
         }
         Map<String, Object> properties = itemToLua(stack.getItem());
         DataComponentPatch components = stack.getComponentsPatch();
-        properties.put("count", stack.getCount());
         properties.put("displayName", stack.getDisplayName().getString());
         properties.put("maxStackSize", stack.getMaxStackSize());
         properties.put("components", DataComponentUtil.patchToLua(components));
         properties.put("fingerprint", ItemUtil.getFingerprint(stack));
+        return properties;
+    }
+
+    public static Map<String, Object> itemStackToLua(@NotNull ItemStack stack) {
+        if (stack.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> properties = itemStackToLuaNoCount(stack);
+        properties.put("count", stack.getCount());
         return properties;
     }
 
@@ -351,7 +359,7 @@ public class LuaConverter {
         if (itemStack.isEmpty()) {
             return null;
         }
-        Map<String, Object> properties = itemStackToLua(itemStack);
+        Map<String, Object> properties = itemStackToLuaNoCount(itemStack);
         properties.put("count", count);
         return properties;
     }
