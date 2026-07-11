@@ -37,7 +37,7 @@ import java.util.Map;
 public final class CreateFilter {
     private CreateFilter() {}
 
-    public static final Map<String, ?> filterToLua(FilterItemStack stack, RegistryAccess registryAccess) {
+    public static Map<String, ?> filterToLua(FilterItemStack stack, RegistryAccess registryAccess) {
         if (stack.isEmpty()) {
             return null;
         }
@@ -84,7 +84,7 @@ public final class CreateFilter {
         );
     }
 
-    public static final Pair<ItemStack, String> updateFilter(@Nullable ItemStack stack, LuaTable<?, ?> data, RegistryAccess registryAccess) throws LuaException {
+    public static Pair<ItemStack, String> updateFilter(@Nullable ItemStack stack, LuaTable<?, ?> data, RegistryAccess registryAccess) throws LuaException {
         if (data == null) {
             return Pair.onlyLeft(ItemStack.EMPTY);
         }

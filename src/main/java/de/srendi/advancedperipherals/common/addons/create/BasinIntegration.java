@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public class BasinIntegration implements APGenericPeripheral {
-    @NotNull
     @Override
+    @NotNull
     public String getPeripheralType() {
         return "basin";
     }

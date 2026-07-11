@@ -14,6 +14,6 @@ public interface APGenericPeripheral extends GenericPeripheral {
 
     @Override
     default PeripheralType getType() {
-        return PeripheralType.ofType(getPeripheralType());
+        return PeripheralType.ofAdditional(getPeripheralType());
     }
 }
