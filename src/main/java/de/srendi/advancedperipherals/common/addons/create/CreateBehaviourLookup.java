@@ -15,10 +15,8 @@ public record CreateBehaviourLookup(BehaviourType<?> behaviourType) implements C
     @Override
     @Nullable
     public Object find(ServerLevel level, BlockPos pos, BlockState state, BlockEntity be, Direction side) {
-        System.out.println("lookup behaviour " + this.behaviourType + " on " + state + " " + be);
         if (be instanceof SmartBlockEntity smartBe) {
             BlockEntityBehaviour behaviour = smartBe.getBehaviour(this.behaviourType);
-            System.out.println(behaviour);
             if (behaviour != null) {
                 return behaviour;
             }
