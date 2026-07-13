@@ -12,7 +12,6 @@ import mekanism.api.chemical.ChemicalStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -297,10 +296,10 @@ public class LuaConverter {
             return null;
         }
         Map<String, Object> properties = itemToLua(stack.getItem());
-        DataComponentPatch components = stack.getComponentsPatch();
         properties.put("displayName", stack.getDisplayName().getString());
         properties.put("maxStackSize", stack.getMaxStackSize());
-        properties.put("components", DataComponentUtil.patchToLua(components));
+        properties.put("prototype", DataComponentUtil.mapToLua(stack.getPrototype()));
+        properties.put("components", DataComponentUtil.patchToLua(stack.getComponentsPatch()));
         properties.put("fingerprint", ItemUtil.getFingerprint(stack));
         return properties;
     }
@@ -319,11 +318,10 @@ public class LuaConverter {
             return null;
         }
         Map<String, Object> properties = fluidToLua(stack.getFluid());
-        DataComponentPatch components = stack.getComponentsPatch();
         properties.put("count", stack.getAmount());
         properties.put("displayName", stack.getHoverName().getString());
         properties.put("type", fluidTypeToLua(stack.getFluidType()));
-        properties.put("components", DataComponentUtil.patchToLua(components));
+        properties.put("components", DataComponentUtil.patchToLua(stack.getComponentsPatch()));
         properties.put("fingerprint", FluidUtil.getFingerprint(stack));
         return properties;
     }

@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -36,6 +37,16 @@ public class DataComponentUtil {
             .parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag)
             .resultOrPartial()
             .orElse(DataComponentPatch.EMPTY);
+    }
+
+    public static Map<String, Object> mapToLua(DataComponentMap patch) {
+        return mapToLua(patch, ServerLifecycleHooks.getCurrentServer().registryAccess());
+    }
+
+    public static Map<String, Object> mapToLua(DataComponentMap patch, RegistryAccess registryAccess) {
+        return (Map<String, Object>) DataComponentMap.CODEC
+            .encodeStart(RegistryOps.create(LuaOps.INSTANCE, registryAccess), patch)
+            .getOrThrow();
     }
 
     public static Map<String, Object> patchToLua(DataComponentPatch patch) {
