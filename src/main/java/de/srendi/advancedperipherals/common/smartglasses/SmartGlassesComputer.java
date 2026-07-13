@@ -18,7 +18,10 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.ModulePeriphera
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Stream;
 
@@ -79,6 +83,7 @@ public class SmartGlassesComputer extends ServerComputer {
             this.moduleItems.set(slot, moduleStack);
             if (moduleStack.getItem() instanceof IModuleItem moduleItem) {
                 IModule newModule = moduleItem.createModule(smartGlassesModuleAccess);
+                checkModuleId(moduleItem, newModule);
                 this.modules[slot] = newModule;
             }
         }
@@ -163,6 +168,25 @@ public class SmartGlassesComputer extends ServerComputer {
         this.moduleDatasUpdated = true;
     }
 
+    public <T> T getModuleData(final DataComponentType<? extends T> component, final T defaultValue) {
+        Optional<T> value = (Optional<T>) this.moduleDatas.get(component);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value.orElse(defaultValue);
+    }
+
+    public <T> void setModuleData(final DataComponentType<? super T> component, final @Nullable T value) {
+        if (value == null) {
+            this.moduleDatas = this.moduleDatas.forget(component::equals);
+        } else {
+            PatchedDataComponentMap datas = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, this.moduleDatas);
+            datas.set(component, value);
+            this.moduleDatas = datas.asPatch();
+        }
+        this.moduleDatasUpdated = true;
+    }
+
     public UpgradeData<IPocketUpgrade> getUpgrade(@NotNull ComputerSide side) {
         synchronized (this.upgrades) {
             return this.upgrades[SmartGlassesSlot.sideToIndex(side)];
@@ -235,6 +259,7 @@ public class SmartGlassesComputer extends ServerComputer {
         IModule oldModule = this.modules[slot];
         if (stack.getItem() instanceof IModuleItem moduleItem) {
             IModule newModule = moduleItem.createModule(smartGlassesModuleAccess);
+            checkModuleId(moduleItem, newModule);
             if (oldModule != null) {
                 if (oldModule.getId().equals(newModule.getId())) {
                     return;
@@ -313,6 +338,16 @@ public class SmartGlassesComputer extends ServerComputer {
     private static void checkUpgradeSide(ComputerSide side) throws IllegalArgumentException {
         if (side == ComputerSide.BACK) {
             throw new IllegalArgumentException("upgrade side cannot be BACK");
+        }
+    }
+
+    private static void checkModuleId(IModuleItem<?> moduleItem, IModule module) throws IllegalStateException {
+        if (!moduleItem.moduleId().equals(module.getId())) {
+            throw new IllegalStateException(
+                "Incorrect implementation of smartglasses module: " +
+                moduleItem.getClass() + ".moduleId() [" + moduleItem.moduleId() + "] mismatch " +
+                module.getClass() + ".getId() [" + module.getId() + "]"
+            );
         }
     }
 

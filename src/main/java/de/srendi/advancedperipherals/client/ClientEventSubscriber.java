@@ -6,7 +6,10 @@ import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
+import de.srendi.advancedperipherals.common.network.toserver.PlayerInteractionPacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
@@ -130,5 +133,32 @@ public class ClientEventSubscriber {
             lastSneak = sneaking;
             PacketDistributor.sendToServer(new SaddleTurtleControlPacket(input.up, input.down, input.left, input.right, input.jumping, sneaking));
         }
+    }
+
+    @SubscribeEvent
+    public static void playerInteraction(InputEvent.InteractionKeyMappingTriggered event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = minecraft.player;
+        if (player == null) {
+            return;
+        }
+
+        int button = event.isAttack() ? 0 : event.isUseItem() ? 1 : event.isPickBlock() ? 2 : -1;
+        if (button == -1) {
+            return;
+        }
+
+        ItemStack glasses = SmartGlassesItem.getEquipped(player);
+        if (glasses.isEmpty()) {
+            return;
+        }
+        int buttons = SmartGlassesItem.getModuleData(glasses, KeyboardModule.ID, APDataComponents.HANDLING_INTERACTION_BUTTONS.get(), (byte) 0);
+
+        if (((1 << button) & buttons) == 0) {
+            return;
+        }
+        event.setSwingHand(true);
+        event.setCanceled(true);
+        PacketDistributor.sendToServer(new PlayerInteractionPacket(button + 1));
     }
 }

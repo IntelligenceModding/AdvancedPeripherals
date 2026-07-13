@@ -74,6 +74,13 @@ public final class CCEvents {
     // damageSource: The damage source ID
     public static final String PLAYER_DEATH = "player_death";
 
+    // Fires when a player used an interaction button
+    // by: keyboard_module
+    //
+    // "player_interaction", button: number
+    // button: The button being held down
+    public static final String PLAYER_INTERACTION = "player_interaction";
+
     // Fires when a player joined the game
     // by: player_detector
     //

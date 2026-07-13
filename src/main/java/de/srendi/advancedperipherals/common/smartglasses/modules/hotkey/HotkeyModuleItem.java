@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.util.KeybindUtil;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -21,6 +22,11 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem<HotkeyModu
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public ResourceLocation moduleId() {
+        return HotkeyModule.ID;
     }
 
     @Override

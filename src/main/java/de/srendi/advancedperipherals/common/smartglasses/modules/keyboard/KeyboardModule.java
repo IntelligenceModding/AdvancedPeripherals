@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.KeyboardItem;
 import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
@@ -15,7 +16,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class KeyboardModule implements IModule {
-    private static final ResourceLocation ID = AdvancedPeripherals.getRL("keyboard");
+    public static final ResourceLocation ID = AdvancedPeripherals.getRL("keyboard");
 
     private final KeyboardItem keyboardItem;
     private volatile boolean capturingKeys = false;
@@ -40,7 +41,8 @@ public class KeyboardModule implements IModule {
     @Override
     @NotNull
     public IModuleFunctions getFunctions(SmartGlassesSideAccess access) {
-        return new KeyboardFunctions(this);
+        access.getComputer().setModuleData(APDataComponents.HANDLING_INTERACTION_BUTTONS.get(), null);
+        return new KeyboardFunctions(this, access);
     }
 
     public boolean isCapturingKeys() {
@@ -72,6 +74,7 @@ public class KeyboardModule implements IModule {
 
     @Override
     public void onUnequipped(SmartGlassesSideAccess glasses) {
+        glasses.getComputer().setModuleData(APDataComponents.HANDLING_INTERACTION_BUTTONS.get(), null);
         if (!(glasses.getEntity() instanceof ServerPlayer player)) {
             return;
         }

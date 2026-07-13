@@ -1,11 +1,20 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules;
 
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public interface IModuleItem<T extends IModule> {
+
+    /**
+     * returns exactly same ID as {@link IModule#getId}
+     *
+     * @return module ID
+     */
+    @NotNull
+    ResourceLocation moduleId();
 
     @NotNull
     T createModule(SmartGlassesSideAccess access);

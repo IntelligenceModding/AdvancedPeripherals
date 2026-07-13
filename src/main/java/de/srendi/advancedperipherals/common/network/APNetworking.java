@@ -16,6 +16,7 @@ import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseClickP
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseMovePacket;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseScrollPacket;
 import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
+import de.srendi.advancedperipherals.common.network.toserver.PlayerInteractionPacket;
 import de.srendi.advancedperipherals.common.network.toserver.RetrieveUsernamePacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -47,6 +48,7 @@ public class APNetworking {
         registrar.playToServer(KeyboardMouseMovePacket.TYPE, makeReader(KeyboardMouseMovePacket::new), KeyboardMouseMovePacket::handle);
         registrar.playToServer(KeyboardMouseScrollPacket.TYPE, makeReader(KeyboardMouseScrollPacket::new), KeyboardMouseScrollPacket::handle);
         registrar.playToServer(OverlayModuleClientInfoPacket.TYPE, makeReader(OverlayModuleClientInfoPacket::new), OverlayModuleClientInfoPacket::handle);
+        registrar.playToServer(PlayerInteractionPacket.TYPE, makeReader(PlayerInteractionPacket::new), PlayerInteractionPacket::handle);
         registrar.playToServer(RetrieveUsernamePacket.TYPE, makeReader(RetrieveUsernamePacket::new), RetrieveUsernamePacket::handle);
         registrar.playToServer(SaddleTurtleControlPacket.TYPE, makeReader(SaddleTurtleControlPacket::new), SaddleTurtleControlPacket::handle);
     }

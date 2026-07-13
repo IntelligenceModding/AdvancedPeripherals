@@ -14,6 +14,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.Keyboa
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -47,6 +48,11 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public ResourceLocation moduleId() {
+        return KeyboardModule.ID;
     }
 
     @Override

@@ -3,12 +3,18 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.nightvision;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public class NightVisionModuleItem extends BaseItem implements IModuleItem<NightVisionModule> {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public ResourceLocation moduleId() {
+        return NightVisionModule.ID;
     }
 
     @Override

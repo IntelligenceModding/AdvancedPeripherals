@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class OverlayModule implements IModule {
-    private static final ResourceLocation ID = AdvancedPeripherals.getRL("overlay");
+    public static final ResourceLocation ID = AdvancedPeripherals.getRL("overlay");
 
     private final ConcurrentHashMap<Integer, OverlayObject> objects = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Integer, OverlayObject> objectsToAdd = new ConcurrentHashMap<>();

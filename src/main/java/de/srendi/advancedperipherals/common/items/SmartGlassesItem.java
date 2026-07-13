@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.items;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import com.google.common.base.Objects;
@@ -20,6 +21,7 @@ import dan200.computercraft.shared.util.StorageCapacity;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.curios.SmartGlassesCurio;
 import de.srendi.advancedperipherals.common.component.ItemStackStorage;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesMenuProvider;
@@ -29,6 +31,9 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -329,5 +334,21 @@ public class SmartGlassesItem extends ArmorItem {
             return false;
         }
         return curiosInv.findFirstCurio(tester).isPresent();
+    }
+
+    public static <T> T getModuleData(final ItemStack stack, final ResourceLocation moduleID, final DataComponentType<? extends T> component, final T defaultValue) {
+        DataComponentPatch moduleDatas = stack.getOrDefault(APDataComponents.MODULE_DATAS.get(), DataComponentPatch.EMPTY);
+        Optional<T> value = (Optional<T>) moduleDatas.get(component);
+        if (value == null) {
+            return defaultValue;
+        }
+        ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
+        for (int slot = 0; slot < SmartGlassesSlot.MODULE_SLOTS; slot++) {
+            ItemStack moduleStack = items.get(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET);
+            if (moduleStack.getItem() instanceof IModuleItem moduleItem && moduleItem.moduleId().equals(moduleID)) {
+                return value.orElse(defaultValue);
+            }
+        }
+        return defaultValue;
     }
 }

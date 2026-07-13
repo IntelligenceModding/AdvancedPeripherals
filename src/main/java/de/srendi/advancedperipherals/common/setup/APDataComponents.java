@@ -46,12 +46,13 @@ public class APDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> STORED_DATA = registerDataComponent("stored_data");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WORLD_DATA_MARK = registerString("world_data_mark");
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> MAX_RANGE = registerFloat("max_range");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> CURRENT_DISTANCE = registerFloat("current_distance");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> SHOW_LASER = registerBoolean("show_laser");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CALCULATE_PERIODICALLY = registerBoolean("calculate_periodically");
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> IGNORE_TRANSPARENT = registerBoolean("ignore_transparent");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> CURRENT_DISTANCE = registerFloat("current_distance");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DetectionType>> DETECTION_TYPE = registerEnum("detection_type", DetectionType.values());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Byte>> HANDLING_INTERACTION_BUTTONS = registerByte("handling_interaction_buttons");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> IGNORE_TRANSPARENT = registerBoolean("ignore_transparent");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> MAX_RANGE = registerFloat("max_range");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> SHOW_LASER = registerBoolean("show_laser");
 
     public static void register() {
     }
@@ -73,6 +74,11 @@ public class APDataComponents {
     private static DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> registerDataComponent(String name) {
         return simple(name, builder -> builder.persistent(DataComponentPatch.CODEC)
                 .networkSynchronized(DataComponentPatch.STREAM_CODEC));
+    }
+
+    private static DeferredHolder<DataComponentType<?>, DataComponentType<Byte>> registerByte(String name) {
+        return simple(name, builder -> builder.persistent(Codec.BYTE)
+                .networkSynchronized(ByteBufCodecs.BYTE));
     }
 
     private static DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> registerNonNegativeInt(String name) {

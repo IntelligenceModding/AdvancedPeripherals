@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class NightVisionModule implements IModule {
-    private static final ResourceLocation ID = AdvancedPeripherals.getRL("night_vision");
+    public static final ResourceLocation ID = AdvancedPeripherals.getRL("night_vision");
     private static final int NIGHT_VISION_TICKS = 20 * 13 - 1; // minus 1 tick then the client timing won't flash
 
     private volatile boolean nightVisionEnabled = true;
