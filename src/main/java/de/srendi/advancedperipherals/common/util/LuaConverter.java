@@ -14,7 +14,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -27,6 +26,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.joml.Matrix3dc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -244,13 +245,16 @@ public class LuaConverter {
     @Unmodifiable
     public static Map<String, Object> blockStateToLua(BlockState state0) {
         return BLOCKSTATES_CACHE.computeIfAbsent(state0, (state) -> {
+            Map<String, Object> data = new HashMap<>(8);
             Block block = state.getBlock();
-            ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block);
-            return Map.of(
-                "name", name == null ? null : name.toString(),
-                "tags", getHolderTags(block.builtInRegistryHolder()),
-                "state", blockStateValuesToLua(state)
-            );
+            data.put("name", BuiltInRegistries.BLOCK.getKey(block).toString());
+            data.put("tags", getHolderTags(block.builtInRegistryHolder()));
+            Item blockItem = block.asItem();
+            if (blockItem != Items.AIR) {
+                data.put("item", ItemUtil.getRegistryKey(blockItem).toString());
+            }
+            data.put("state", blockStateValuesToLua(state));
+            return Collections.unmodifiableMap(data);
         });
     }
 

@@ -77,8 +77,10 @@ public final class CCEvents {
     // Fires when a player used an interaction button
     // by: keyboard_module
     //
-    // "player_interaction", button: number
+    // "player_interaction", button: number, block_state: table | nil, entity_uuid: string | nil
     // button: The button being held down
+    // block_state: Looking block, if exists
+    // entity_uuid: Looking entity, if exists
     public static final String PLAYER_INTERACTION = "player_interaction";
 
     // Fires when a player joined the game

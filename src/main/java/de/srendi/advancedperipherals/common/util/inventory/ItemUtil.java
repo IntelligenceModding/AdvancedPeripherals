@@ -170,6 +170,6 @@ public class ItemUtil {
     }
 
     public static ResourceLocation getRegistryKey(ItemStack item) {
-        return BuiltInRegistries.ITEM.getKey(item.copy().getItem());
+        return getRegistryKey(item.getItem());
     }
 }

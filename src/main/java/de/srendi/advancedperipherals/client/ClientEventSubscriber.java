@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
+import dan200.computercraft.shared.ModRegistry;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
@@ -10,10 +11,17 @@ import de.srendi.advancedperipherals.common.network.toserver.PlayerInteractionPa
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
+import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -25,6 +33,8 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.entity.EntityMountEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.UUID;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientEventSubscriber {
@@ -149,9 +159,10 @@ public class ClientEventSubscriber {
         }
 
         ItemStack glasses = SmartGlassesItem.getEquipped(player);
-        if (glasses.isEmpty()) {
+        if (glasses.isEmpty() || !glasses.getOrDefault(ModRegistry.DataComponents.ON.get(), false)) {
             return;
         }
+
         int buttons = SmartGlassesItem.getModuleData(glasses, KeyboardModule.ID, APDataComponents.HANDLING_INTERACTION_BUTTONS.get(), (byte) 0);
 
         if (((1 << button) & buttons) == 0) {
@@ -159,6 +170,23 @@ public class ClientEventSubscriber {
         }
         event.setSwingHand(true);
         event.setCanceled(true);
-        PacketDistributor.sendToServer(new PlayerInteractionPacket(button + 1));
+
+        BlockState hitBlock = null;
+        UUID hitEntity = null;
+
+        float partialTicks = minecraft.getTimer().getGameTimeDeltaTicks();
+        Vec3 playerEyes = player.getEyePosition(partialTicks);
+        double reachRange = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
+
+        HitResult hitResultBlock = player.pick(reachRange, partialTicks, false);
+        if (hitResultBlock instanceof BlockHitResult result && result.getType() == HitResult.Type.BLOCK) {
+            hitBlock = player.level().getBlockState(result.getBlockPos());
+        }
+        EntityHitResult hitResultEntity = HitResultUtil.getEntityHitResult(playerEyes, playerEyes.add(player.getViewVector(partialTicks).scale(reachRange)), player.level(), player);
+        if (hitResultEntity.getType() == HitResult.Type.ENTITY) {
+            hitEntity = hitResultEntity.getEntity().getUUID();
+        }
+
+        PacketDistributor.sendToServer(new PlayerInteractionPacket(button + 1, hitBlock, hitEntity));
     }
 }
