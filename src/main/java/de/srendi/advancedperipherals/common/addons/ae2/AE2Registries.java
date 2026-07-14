@@ -4,14 +4,20 @@ import appeng.api.features.P2PTunnelAttunement;
 import appeng.api.parts.IPart;
 import appeng.api.parts.IPartItem;
 import appeng.api.parts.PartModels;
+import appeng.api.stacks.AEKeyType;
+import appeng.api.stacks.AEKeyTypes;
+import appeng.api.storage.StorageCells;
 import appeng.items.parts.PartItem;
 import appeng.items.parts.PartModelsHelper;
 import dan200.computercraft.shared.ModRegistry;
+import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskHandler;
+import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKeys;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.function.Function;
 
@@ -25,7 +31,14 @@ public final class AE2Registries {
         return APRegistration.ITEMS.register(id, () -> new PartItem<>(new Item.Properties(), clazz, factory));
     }
 
+    public static void onRegister(RegisterEvent event) {
+        if (event.getRegistryKey() == AEKeyType.REGISTRY_KEY) {
+            AEKeyTypes.register(AEDiskKeys.INSTANCE);
+        }
+    }
+
     public static void finishRegister() {
+        StorageCells.addCellHandler(AEDiskHandler.INSTANCE);
         P2PTunnelAttunement.registerAttunementTag(CABLE_P2P_TUNNEL.get());
     }
 

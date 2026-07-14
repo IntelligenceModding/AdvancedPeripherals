@@ -61,6 +61,10 @@ public class AdvancedPeripherals {
         modBus.addListener(ChunkManager::registerTicketController);
 
         APRegistration.register(modBus);
+
+        if (APAddon.AE2.isLoaded()) {
+            modBus.addListener(AE2Registries::onRegister);
+        }
     }
 
     @Nullable
@@ -98,11 +102,9 @@ public class AdvancedPeripherals {
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
-        event.enqueueWork(() -> {
-            if (APAddon.AE2.isLoaded()) {
-                AE2Registries.finishRegister();
-            }
-        });
+        if (APAddon.AE2.isLoaded()) {
+            event.enqueueWork(AE2Registries::finishRegister);
+        }
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event) {

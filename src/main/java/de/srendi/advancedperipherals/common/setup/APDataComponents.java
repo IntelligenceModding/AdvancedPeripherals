@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import com.mojang.serialization.Codec;
+import dan200.computercraft.shared.util.NonNegativeId;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral.DetectionType;
 import de.srendi.advancedperipherals.common.component.ItemStackStorage;
 import io.netty.buffer.ByteBuf;
@@ -14,7 +15,6 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
@@ -35,6 +35,7 @@ public class APDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BINDING_COMPUTER = registerInt("binding_computer");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> CHUNKY_ID = registerUUID("chunky_id");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> CONSUMED_ENTITY_COMPOUND = registerNBT("consumed_entity_compound");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<NonNegativeId>> DISK_ID = registerNonNegativeId("disk_id");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> ENTITY_TRANSFER = registerNBT("entity_transfer");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FUEL_CONSUMPTION_RATE = registerInt("fuel_consumption_rate");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemStackStorage>> ITEMS = registerItemStackStorage("items");
@@ -81,11 +82,6 @@ public class APDataComponents {
                 .networkSynchronized(ByteBufCodecs.BYTE));
     }
 
-    private static DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> registerNonNegativeInt(String name) {
-        return simple(name, builder -> builder.persistent(ExtraCodecs.POSITIVE_INT)
-                .networkSynchronized(ByteBufCodecs.VAR_INT));
-    }
-
     private static DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> registerInt(String name) {
         return simple(name, builder -> builder.persistent(Codec.INT)
                 .networkSynchronized(ByteBufCodecs.VAR_INT));
@@ -99,6 +95,11 @@ public class APDataComponents {
     private static DeferredHolder<DataComponentType<?>, DataComponentType<Float>> registerFloat(String name) {
         return simple(name, builder -> builder.persistent(Codec.FLOAT)
                 .networkSynchronized(ByteBufCodecs.FLOAT));
+    }
+
+    private static DeferredHolder<DataComponentType<?>, DataComponentType<NonNegativeId>> registerNonNegativeId(String name) {
+        return simple(name, builder -> builder.persistent(NonNegativeId.CODEC)
+                .networkSynchronized(NonNegativeId.STREAM_CODEC));
     }
 
     private static DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> registerUUID(String name) {

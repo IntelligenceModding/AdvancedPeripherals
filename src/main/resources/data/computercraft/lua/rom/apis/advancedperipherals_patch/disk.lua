@@ -12,19 +12,19 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-local function loadAllAPIs(folder)
-	for _, f in ipairs(fs.list(folder)) do
-		if f:match(".+%.lua") then
-			local path = fs.combine(folder, f)
-			if not fs.isDir(path) then
-				os.loadAPI(path)
-			end
-		end
-	end
+local native = disk
+
+for k, v in pairs(native) do
+	_ENV[k] = v
 end
 
-loadAllAPIs('/rom/apis/advancedperipherals_patch')
-
-if smartglasses then
-	loadAllAPIs('/rom/apis/smartglasses')
+function _ENV.getMountPath(name)
+	local paths = table.pack(native.getMountPath(name))
+	if paths[1] then
+		return table.unpack(paths, 1, paths.n)
+	end
+	if peripheral.hasType(name, "multi_drive") then
+		return table.unpack(peripheral.call(name, "getMountPaths"))
+	end
+	return nil
 end
