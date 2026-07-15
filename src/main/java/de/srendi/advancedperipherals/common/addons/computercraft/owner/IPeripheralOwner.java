@@ -63,13 +63,23 @@ public interface IPeripheralOwner {
 
     @NotNull
     default Vec3 getPhysicsPos() {
-        return SableHelper.projectOutOfSubLevel(getLevel(), this.getCenterPos());
+        Level level = this.getLevel();
+        Vec3 pos = this.getCenterPos();
+        if (level == null || pos == null) {
+            return pos;
+        }
+        return SableHelper.projectOutOfSubLevel(level, pos);
     }
 
     @NotNull
     default Vec3 getDirection() {
         Vec3 dir = Vec3.atLowerCornerOf(getFacing().getNormal());
-        return SableHelper.transformDirectionOutOfSubLevel(getLevel(), getPos(), dir);
+        Level level = this.getLevel();
+        Vec3 center = this.getCenterPos();
+        if (level == null || center == null) {
+            return dir;
+        }
+        return SableHelper.transformDirectionOutOfSubLevel(level, getPos(), dir);
     }
 
     @NotNull Direction getFacing();
