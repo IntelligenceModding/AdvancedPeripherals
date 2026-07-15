@@ -36,6 +36,7 @@ public class APDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> CHUNKY_ID = registerUUID("chunky_id");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> CONSUMED_ENTITY_COMPOUND = registerNBT("consumed_entity_compound");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<NonNegativeId>> DISK_ID = registerNonNegativeId("disk_id");
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> DISK_USED_BYTES = registerLong("disk_used_bytes");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>> ENTITY_TRANSFER = registerNBT("entity_transfer");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> FUEL_CONSUMPTION_RATE = registerInt("fuel_consumption_rate");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemStackStorage>> ITEMS = registerItemStackStorage("items");

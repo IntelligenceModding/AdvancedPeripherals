@@ -1,7 +1,14 @@
 package de.srendi.advancedperipherals.common.addons.ae2.disk;
 
+import appeng.core.localization.Tooltips;
 import dan200.computercraft.api.media.IMedia;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+
+import java.util.List;
 
 public class AEDiskCell extends BaseItem {
     private final Tier tier;
@@ -26,6 +33,12 @@ public class AEDiskCell extends BaseItem {
 
     public IMedia getMedia() {
         return this.tier.media;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, context, tooltip, flagIn);
+        tooltip.add(Tooltips.bytesUsed(stack.getOrDefault(APDataComponents.DISK_USED_BYTES, 0L), this.getMaxBytes()));
     }
 
     public enum Tier {

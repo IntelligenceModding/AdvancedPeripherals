@@ -19,13 +19,17 @@ import java.util.Objects;
 public class AEDiskCellStorage implements StorageCell {
     protected final ItemStack stack;
     protected final AEDiskCell cell;
+    @Nullable
+    protected final ISaveProvider host;
     protected final NonNegativeId diskId;
     protected final AEDiskKey aeKey;
     protected final Mount mount;
+    private int refreshCD = 0;
 
     public AEDiskCellStorage(ItemStack stack, AEDiskCell cell, @Nullable ISaveProvider host) {
         this.stack = stack;
         this.cell = cell;
+        this.host = host;
         boolean needInit = !stack.has(APDataComponents.DISK_ID);
         this.mount = cell.getMedia().createDataMount(stack, ServerLifecycleHooks.getCurrentServer().overworld());
         this.diskId = Objects.requireNonNull(stack.get(APDataComponents.DISK_ID), "AEDiskCell media must assign a diskId");
@@ -60,7 +64,18 @@ public class AEDiskCellStorage implements StorageCell {
         } catch (IOException e) {
             remaining = 0;
         }
-        out.add(this.aeKey, writableMount.getCapacity() - remaining);
+        long usedBytes = writableMount.getCapacity() - remaining;
+        out.add(this.aeKey, usedBytes);
+
+        this.refreshCD--;
+        if (this.refreshCD <= 0) {
+            this.refreshCD = 61;
+            // DISK_USED_BYTES only used for tooltip rendering. CC: T itself manage the disk capacity.
+            this.stack.set(APDataComponents.DISK_USED_BYTES, usedBytes);
+            if (this.host != null) {
+                this.host.saveChanges();
+            }
+        }
     }
 
     @Override
@@ -89,6 +104,6 @@ public class AEDiskCellStorage implements StorageCell {
 
     @Override
     public void persist() {
-        stack.set(APDataComponents.DISK_ID, this.diskId);
+        this.stack.set(APDataComponents.DISK_ID, this.diskId);
     }
 }
