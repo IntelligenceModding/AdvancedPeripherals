@@ -14,6 +14,7 @@ import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class AEDiskCellStorage implements StorageCell {
     protected final ItemStack stack;
@@ -27,7 +28,7 @@ public class AEDiskCellStorage implements StorageCell {
         this.cell = cell;
         boolean needInit = !stack.has(APDataComponents.DISK_ID);
         this.mount = cell.getMedia().createDataMount(stack, ServerLifecycleHooks.getCurrentServer().overworld());
-        this.diskId = stack.get(APDataComponents.DISK_ID);
+        this.diskId = Objects.requireNonNull(stack.get(APDataComponents.DISK_ID), "AEDiskCell media must assign a diskId");
         this.aeKey = AEDiskKey.of(this.diskId, this.mount);
         if (needInit && host != null) {
             host.saveChanges();

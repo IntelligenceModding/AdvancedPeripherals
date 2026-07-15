@@ -104,7 +104,7 @@ public final class AEDiskKey extends AEKey {
 
     @Override
     protected Component computeDisplayName() {
-        return Component.literal("Disk " + this.id);
+        return Component.literal("Disk " + this.id.id());
     }
 
     @Override

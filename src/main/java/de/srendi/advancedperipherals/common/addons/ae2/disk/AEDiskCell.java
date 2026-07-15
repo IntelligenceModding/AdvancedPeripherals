@@ -41,7 +41,7 @@ public class AEDiskCell extends BaseItem {
 
         Tier(int megaBytes) {
             this.megaBytes = megaBytes;
-            this.bytes = (long) this.megaBytes * 1024 * 1024;
+            this.bytes = (long) this.megaBytes * 1000 * 1000;
             this.media = new AEDiskMedia(this.bytes);
         }
     }
