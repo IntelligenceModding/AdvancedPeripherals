@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TurtleChatBoxUpgrade extends PeripheralTurtleUpgrade<ChatBoxPeripheral> {
     public TurtleChatBoxUpgrade(ItemStack item) {
-        super(CCRegistration.ID.CHATTY_TURTLE, item);
+        super(CCRegistration.ID.Turtle.CHATTY, item);
     }
 
     @Override

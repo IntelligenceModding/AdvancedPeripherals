@@ -51,12 +51,12 @@ public class VillagerTrades {
                     .setXp(4)
                     .build();
             TradeBuilder.createTrade(event, VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 3)
-                    .withTurtleUpgrade(false, CCRegistration.ID.ENVIRONMENT_TURTLE)
+                    .withTurtleUpgrade(false, CCRegistration.ID.Turtle.ENVIRONMENT)
                     .setMaxUses(4)
                     .setXp(5)
                     .build();
             TradeBuilder.createTrade(event, VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 3)
-                    .withPocketUpgrade(true, CCRegistration.ID.PLAYER_POCKET)
+                    .withPocketUpgrade(true, CCRegistration.ID.Pocket.PLAYER)
                     .setMaxUses(4)
                     .setXp(7)
                     .build();
@@ -85,7 +85,7 @@ public class VillagerTrades {
                     .setXp(4)
                     .build();
             TradeBuilder.createTrade(event, VillagerTrade.Type.ITEM_FOR_EMERALD, 8, 4)
-                    .withTurtleUpgrade(true, CCRegistration.ID.CHUNKY_TURTLE)
+                    .withTurtleUpgrade(true, CCRegistration.ID.Turtle.CHUNKY)
                     .setXp(7)
                     .build();
             TradeBuilder.createTrade(event, APItems.CHUNK_CONTROLLER.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 6, 4)

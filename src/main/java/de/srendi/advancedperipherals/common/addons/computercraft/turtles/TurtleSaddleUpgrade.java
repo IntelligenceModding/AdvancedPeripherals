@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class TurtleSaddleUpgrade extends PeripheralTurtleUpgrade<SaddlePeripheral> {
 
     public TurtleSaddleUpgrade(ItemStack stack) {
-        super(CCRegistration.ID.SADDLE_TURTLE, stack);
+        super(CCRegistration.ID.Turtle.SADDLE, stack);
     }
 
     @Override

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class PocketInventoryManagerUpgrade extends BasePocketUpgrade<InventoryManagerPeripheral> {
 
     public PocketInventoryManagerUpgrade(ItemStack stack) {
-        super(CCRegistration.ID.INVENTORY_MANAGER_POCKET, stack);
+        super(CCRegistration.ID.Pocket.INVENTORY_MANAGER, stack);
     }
 
     @Override

@@ -140,7 +140,7 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
     public void appendHoverText(ItemStack stack, @Nullable TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, context, tooltip, flagIn);
         if (stack.has(APDataComponents.BINDING_COMPUTER.get())) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.binding.bound_to", stack.get(APDataComponents.BINDING_COMPUTER.get()))));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.keyboard.binding.bound_to", stack.get(APDataComponents.BINDING_COMPUTER.get()))));
         }
     }
 

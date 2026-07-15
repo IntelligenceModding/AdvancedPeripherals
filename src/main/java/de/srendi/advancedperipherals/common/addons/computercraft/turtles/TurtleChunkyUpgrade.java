@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TurtleChunkyUpgrade extends PeripheralTurtleUpgrade<ChunkyPeripheral> {
     public TurtleChunkyUpgrade(ItemStack stack) {
-        super(CCRegistration.ID.CHUNKY_TURTLE, stack);
+        super(CCRegistration.ID.Turtle.CHUNKY, stack);
     }
 
     @Override

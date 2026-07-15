@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class WeakAutomata extends ClockwiseAnimatedTurtleUpgrade<WeakAutomataCorePeripheral> {
 
     public WeakAutomata(ItemStack stack) {
-        super(CCRegistration.ID.WEAK_AUTOMATA, stack);
+        super(CCRegistration.ID.Turtle.WEAK_AUTOMATA, stack);
     }
 
     @Override

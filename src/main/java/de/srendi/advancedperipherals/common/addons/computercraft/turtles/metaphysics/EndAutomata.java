@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class EndAutomata extends ClockwiseAnimatedTurtleUpgrade<EndAutomataCorePeripheral> {
 
     public EndAutomata(ItemStack stack) {
-        super(CCRegistration.ID.END_AUTOMATA, stack);
+        super(CCRegistration.ID.Turtle.END_AUTOMATA, stack);
     }
 
     @Override

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class PocketEnvironmentUpgrade extends BasePocketUpgrade<EnvironmentDetectorPeripheral> {
 
     public PocketEnvironmentUpgrade(ItemStack stack) {
-        super(CCRegistration.ID.ENVIRONMENT_POCKET, stack);
+        super(CCRegistration.ID.Pocket.ENVIRONMENT, stack);
     }
 
     @Override

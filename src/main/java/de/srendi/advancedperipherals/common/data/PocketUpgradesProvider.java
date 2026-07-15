@@ -18,13 +18,13 @@ import net.minecraft.world.item.ItemStack;
 public class PocketUpgradesProvider {
 
     public static void addUpgrades(BootstrapContext<IPocketUpgrade> upgrades) {
-        upgrades.register(id(CCRegistration.ID.CHATTY_POCKET), new PocketChatBoxUpgrade(new ItemStack(APBlocks.CHAT_BOX.get())));
-        upgrades.register(id(CCRegistration.ID.COLONY_POCKET), new PocketColonyIntegratorUpgrade(new ItemStack(APBlocks.COLONY_INTEGRATOR.get())));
-        upgrades.register(id(CCRegistration.ID.DISTANCE_POCKET), new PocketDistanceDetectorUpgrade(new ItemStack(APBlocks.DISTANCE_DETECTOR.get())));
-        upgrades.register(id(CCRegistration.ID.ENVIRONMENT_POCKET), new PocketEnvironmentUpgrade(new ItemStack(APBlocks.ENVIRONMENT_DETECTOR.get())));
-        upgrades.register(id(CCRegistration.ID.GEOSCANNER_POCKET), new PocketGeoScannerUpgrade(new ItemStack(APBlocks.GEO_SCANNER.get())));
-        upgrades.register(id(CCRegistration.ID.INVENTORY_MANAGER_POCKET), new PocketInventoryManagerUpgrade(new ItemStack(APBlocks.INVENTORY_MANAGER.get())));
-        upgrades.register(id(CCRegistration.ID.PLAYER_POCKET), new PocketPlayerDetectorUpgrade(new ItemStack(APBlocks.PLAYER_DETECTOR.get())));
+        upgrades.register(id(CCRegistration.ID.Pocket.CHATTY), new PocketChatBoxUpgrade(new ItemStack(APBlocks.CHAT_BOX.get())));
+        upgrades.register(id(CCRegistration.ID.Pocket.COLONY), new PocketColonyIntegratorUpgrade(new ItemStack(APBlocks.COLONY_INTEGRATOR.get())));
+        upgrades.register(id(CCRegistration.ID.Pocket.DISTANCE), new PocketDistanceDetectorUpgrade(new ItemStack(APBlocks.DISTANCE_DETECTOR.get())));
+        upgrades.register(id(CCRegistration.ID.Pocket.ENVIRONMENT), new PocketEnvironmentUpgrade(new ItemStack(APBlocks.ENVIRONMENT_DETECTOR.get())));
+        upgrades.register(id(CCRegistration.ID.Pocket.GEOSCANNER), new PocketGeoScannerUpgrade(new ItemStack(APBlocks.GEO_SCANNER.get())));
+        upgrades.register(id(CCRegistration.ID.Pocket.INVENTORY_MANAGER), new PocketInventoryManagerUpgrade(new ItemStack(APBlocks.INVENTORY_MANAGER.get())));
+        upgrades.register(id(CCRegistration.ID.Pocket.PLAYER), new PocketPlayerDetectorUpgrade(new ItemStack(APBlocks.PLAYER_DETECTOR.get())));
     }
 
     public static ResourceKey<IPocketUpgrade> id(ResourceLocation id) {

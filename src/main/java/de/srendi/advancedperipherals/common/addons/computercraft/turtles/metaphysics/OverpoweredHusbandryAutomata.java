@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class OverpoweredHusbandryAutomata extends ClockwiseAnimatedTurtleUpgrade<OverpoweredHusbandryAutomataCorePeripheral> {
 
     public OverpoweredHusbandryAutomata(ItemStack stack) {
-        super(CCRegistration.ID.HUSBANDRY_AUTOMATA, stack);
+        super(CCRegistration.ID.Turtle.HUSBANDRY_AUTOMATA, stack);
     }
 
     @Override

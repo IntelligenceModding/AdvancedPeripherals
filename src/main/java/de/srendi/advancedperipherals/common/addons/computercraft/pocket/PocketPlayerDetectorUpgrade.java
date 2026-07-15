@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class PocketPlayerDetectorUpgrade extends BasePocketUpgrade<PlayerDetectorPeripheral> {
 
     public PocketPlayerDetectorUpgrade(ItemStack stack) {
-        super(CCRegistration.ID.PLAYER_POCKET, stack);
+        super(CCRegistration.ID.Pocket.PLAYER, stack);
     }
 
     @Override

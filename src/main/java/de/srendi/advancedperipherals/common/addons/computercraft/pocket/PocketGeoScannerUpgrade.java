@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class PocketGeoScannerUpgrade extends BasePocketUpgrade<GeoScannerPeripheral> {
 
     public PocketGeoScannerUpgrade(ItemStack stack) {
-        super(CCRegistration.ID.GEOSCANNER_POCKET, stack);
+        super(CCRegistration.ID.Pocket.GEOSCANNER, stack);
     }
 
     @Override

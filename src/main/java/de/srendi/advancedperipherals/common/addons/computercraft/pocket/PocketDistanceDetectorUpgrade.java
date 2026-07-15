@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class PocketDistanceDetectorUpgrade extends BasePocketUpgrade<DistanceDetectorPeripheral> {
 
     public PocketDistanceDetectorUpgrade(ItemStack stack) {
-        super(CCRegistration.ID.DISTANCE_POCKET, stack);
+        super(CCRegistration.ID.Pocket.DISTANCE, stack);
     }
 
     @Override

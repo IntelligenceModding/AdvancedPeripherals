@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class TurtleCompassUpgrade extends PeripheralTurtleUpgrade<CompassPeripheral> {
 
     public TurtleCompassUpgrade(ItemStack stack) {
-        super(CCRegistration.ID.COMPASS_TURTLE, stack);
+        super(CCRegistration.ID.Turtle.COMPASS, stack);
     }
 
     @Override

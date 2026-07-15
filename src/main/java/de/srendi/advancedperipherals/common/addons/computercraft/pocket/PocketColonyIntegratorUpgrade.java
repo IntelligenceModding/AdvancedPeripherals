@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 public class PocketColonyIntegratorUpgrade extends BasePocketUpgrade<ColonyPeripheral> {
 
     public PocketColonyIntegratorUpgrade(ItemStack stack) {
-        super(CCRegistration.ID.COLONY_POCKET, stack);
+        super(CCRegistration.ID.Pocket.COLONY, stack);
     }
 
     @Override

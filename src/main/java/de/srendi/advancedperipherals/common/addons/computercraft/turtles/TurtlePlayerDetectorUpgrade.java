@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class TurtlePlayerDetectorUpgrade extends PeripheralTurtleUpgrade<PlayerDetectorPeripheral> {
 
     public TurtlePlayerDetectorUpgrade(ItemStack stack) {
-        super(CCRegistration.ID.PLAYER_TURTLE, stack);
+        super(CCRegistration.ID.Turtle.PLAYER, stack);
     }
 
     @Override
