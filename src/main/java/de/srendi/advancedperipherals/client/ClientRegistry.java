@@ -1,10 +1,8 @@
 package de.srendi.advancedperipherals.client;
 
-import appeng.api.client.AEKeyRendering;
 import dan200.computercraft.api.client.turtle.RegisterTurtleModellersEvent;
 import dan200.computercraft.api.client.turtle.TurtleUpgradeModeller;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.client.renderer.AEDiskKeyRenderer;
 import de.srendi.advancedperipherals.client.renderer.AERendererRegister;
 import de.srendi.advancedperipherals.client.renderer.DistanceDetectorRenderer;
 import de.srendi.advancedperipherals.client.screens.InventoryManagerScreen;
@@ -13,8 +11,6 @@ import de.srendi.advancedperipherals.client.screens.SaddleTurtleOverlay;
 import de.srendi.advancedperipherals.client.screens.SmartGlassesScreen;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayModuleOverlay;
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKey;
-import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKeys;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
