@@ -17,7 +17,8 @@ public enum APAddon {
     PATCHOULI("patchouli"),
     POWAH("powah"),
     REFINEDSTORAGE("refinedstorage"),
-    REFINEDSTORAGE_MEKANISM("refinedstorage_mekanism_integration");
+    REFINEDSTORAGE_MEKANISM("refinedstorage_mekanism_integration"),
+    SABLE("sable");
 
     private final String modId;
     private boolean loaded;

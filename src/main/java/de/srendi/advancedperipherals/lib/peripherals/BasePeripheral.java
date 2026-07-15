@@ -13,6 +13,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEnti
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
+import de.srendi.advancedperipherals.common.addons.sable.SableHelper;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
@@ -152,8 +153,7 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
     }
 
     public boolean isOnShip() {
-        return false;
-        // return APAddons.isBlockOnShip(owner.getLevel(), owner.getPos());
+        return SableHelper.isOnSubLevel(owner.getLevel(), owner.getPos());
     }
 
     public Vec3 getPhysicsPos() {

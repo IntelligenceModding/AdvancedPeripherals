@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.addons.sable.SableHelper;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
@@ -62,22 +63,13 @@ public interface IPeripheralOwner {
 
     @NotNull
     default Vec3 getPhysicsPos() {
-        Vec3 pos = this.getCenterPos();
-        return pos;
-        // if (!APAddons.vs2Loaded) {
-        //     return pos;
-        // }
-        // return ValkyrienSkies.transformToWorldPos(getLevel(), getPos(), pos);
+        return SableHelper.projectOutOfSubLevel(getLevel(), this.getCenterPos());
     }
 
     @NotNull
     default Vec3 getDirection() {
         Vec3 dir = Vec3.atLowerCornerOf(getFacing().getNormal());
-        return dir;
-        // if (!APAddons.vs2Loaded) {
-        //     return dir;
-        // }
-        // return ValkyrienSkies.transformToWorldDir(getLevel(), getPos(), dir);
+        return SableHelper.transformDirectionOutOfSubLevel(getLevel(), getPos(), dir);
     }
 
     @NotNull Direction getFacing();

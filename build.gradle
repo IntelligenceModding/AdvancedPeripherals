@@ -207,6 +207,10 @@ repositories {
             includeModule("thedarkcolour", "kotlinforforge")
         }
     }
+    maven {
+        name = "RyanHCode Maven"
+        url = "https://maven.ryanhcode.dev/releases"
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -248,6 +252,13 @@ dependencies {
     implementation "cc.tweaked:cc-tweaked-${minecraft_version}-forge:${cc_version}"
 
     // Minimal requirements end
+
+    // Sable Companion
+    jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:[${sable_companion_version},)")) {
+        version {
+            prefer project.sable_companion_version
+        }
+    }
 
     compileOnly "com.refinedmods.refinedstorage:refinedstorage-neoforge:${refinedstorage_version}"
     if (!minimumRuntime) {
