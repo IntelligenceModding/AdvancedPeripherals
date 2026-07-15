@@ -5,6 +5,7 @@ import dan200.computercraft.api.client.turtle.RegisterTurtleModellersEvent;
 import dan200.computercraft.api.client.turtle.TurtleUpgradeModeller;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.renderer.AEDiskKeyRenderer;
+import de.srendi.advancedperipherals.client.renderer.AERendererRegister;
 import de.srendi.advancedperipherals.client.renderer.DistanceDetectorRenderer;
 import de.srendi.advancedperipherals.client.screens.InventoryManagerScreen;
 import de.srendi.advancedperipherals.client.screens.KeyboardScreen;
@@ -37,7 +38,7 @@ public class ClientRegistry {
     public static void onClientSetup(FMLClientSetupEvent event) {
         ItemPropertiesRegistry.register();
         if (APAddon.AE2.isLoaded()) {
-            AEKeyRendering.register(AEDiskKeys.INSTANCE, AEDiskKey.class, new AEDiskKeyRenderer());
+            AERendererRegister.register();
         }
     }
 
