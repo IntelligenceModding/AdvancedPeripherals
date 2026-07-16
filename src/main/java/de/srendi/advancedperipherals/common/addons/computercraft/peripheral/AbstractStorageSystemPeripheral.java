@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * <p>
@@ -47,6 +48,11 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
 
     protected AbstractStorageSystemPeripheral(String type, @NotNull O owner) {
         super(type, owner);
+    }
+
+    @Override
+    public Set<String> getAdditionalTypes() {
+        return Set.of("storage_bridge");
     }
 
     @Nullable
@@ -443,70 +449,81 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getAverageEnergyInputImpl());
     }
 
-    public abstract double getTotalExternalItemStorageImpl();
+    public abstract double getMaxExternalItemStorageImpl();
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternalItemStorage() {
+    public final MethodResult getMaxExternalItemStorage() {
         if (!this.isAvailable()) {
             return NOT_CONNECTED_RESULT;
         }
 
-        return MethodResult.of(this.getTotalExternalItemStorageImpl());
+        return MethodResult.of(this.getMaxExternalItemStorageImpl());
     }
 
-    public abstract double getTotalExternalFluidStorageImpl();
+    public abstract double getMaxExternalItemCountImpl();
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternalFluidStorage() {
+    public final MethodResult getMaxExternalItemCount() {
         if (!this.isAvailable()) {
             return NOT_CONNECTED_RESULT;
         }
 
-        return MethodResult.of(this.getTotalExternalFluidStorageImpl());
+        return MethodResult.of(this.getMaxExternalItemCountImpl());
     }
 
-    public abstract double getTotalExternalChemicalStorageImpl();
+    public abstract double getMaxExternalFluidStorageImpl();
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalExternalChemicalStorage() {
+    public final MethodResult getMaxExternalFluidStorage() {
         if (!this.isAvailable()) {
             return NOT_CONNECTED_RESULT;
         }
 
-        return MethodResult.of(this.getTotalExternalChemicalStorageImpl());
+        return MethodResult.of(this.getMaxExternalFluidStorageImpl());
     }
 
-    public abstract double getTotalItemStorageImpl();
+    public abstract double getMaxExternalChemicalStorageImpl();
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalItemStorage() {
+    public final MethodResult getMaxExternalChemicalStorage() {
         if (!this.isAvailable()) {
             return NOT_CONNECTED_RESULT;
         }
 
-        return MethodResult.of(this.getTotalItemStorageImpl());
+        return MethodResult.of(this.getMaxExternalChemicalStorageImpl());
     }
 
-    public abstract double getTotalFluidStorageImpl();
+    public abstract double getMaxItemStorageImpl();
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalFluidStorage() {
+    public final MethodResult getMaxItemStorage() {
         if (!this.isAvailable()) {
             return NOT_CONNECTED_RESULT;
         }
 
-        return MethodResult.of(this.getTotalFluidStorageImpl());
+        return MethodResult.of(this.getMaxItemStorageImpl());
     }
 
-    public abstract double getTotalChemicalStorageImpl();
+    public abstract double getMaxFluidStorageImpl();
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getTotalChemicalStorage() {
+    public final MethodResult getMaxFluidStorage() {
         if (!this.isAvailable()) {
             return NOT_CONNECTED_RESULT;
         }
 
-        return MethodResult.of(this.getTotalChemicalStorageImpl());
+        return MethodResult.of(this.getMaxFluidStorageImpl());
+    }
+
+    public abstract double getMaxChemicalStorageImpl();
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getMaxChemicalStorage() {
+        if (!this.isAvailable()) {
+            return NOT_CONNECTED_RESULT;
+        }
+
+        return MethodResult.of(this.getMaxChemicalStorageImpl());
     }
 
     public abstract double getUsedExternalItemStorageImpl();
@@ -518,6 +535,17 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         }
 
         return MethodResult.of(this.getUsedExternalItemStorageImpl());
+    }
+
+    public abstract double getUsedExternalItemCountImpl();
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getUsedExternalItemCount() {
+        if (!this.isAvailable()) {
+            return NOT_CONNECTED_RESULT;
+        }
+
+        return MethodResult.of(this.getUsedExternalItemCountImpl());
     }
 
     public abstract double getUsedExternalFluidStorageImpl();
@@ -575,7 +603,9 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getUsedChemicalStorageImpl());
     }
 
-    public abstract double getAvailableExternalItemStorageImpl();
+    public double getAvailableExternalItemStorageImpl() {
+        return this.getMaxExternalItemStorageImpl() - this.getUsedExternalItemStorageImpl();
+    }
 
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableExternalItemStorage() {
@@ -586,7 +616,22 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getAvailableExternalItemStorageImpl());
     }
 
-    public abstract double getAvailableExternalFluidStorageImpl();
+    public double getAvailableExternalItemCountImpl() {
+        return this.getMaxExternalItemCountImpl() - this.getUsedExternalItemCountImpl();
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult getAvailableExternalItemCount() {
+        if (!this.isAvailable()) {
+            return NOT_CONNECTED_RESULT;
+        }
+
+        return MethodResult.of(this.getAvailableExternalItemCountImpl());
+    }
+
+    public double getAvailableExternalFluidStorageImpl() {
+        return this.getMaxExternalFluidStorageImpl() - this.getUsedExternalFluidStorageImpl();
+    }
 
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableExternalFluidStorage() {
@@ -597,7 +642,9 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getAvailableExternalFluidStorageImpl());
     }
 
-    public abstract double getAvailableExternalChemicalStorageImpl();
+    public double getAvailableExternalChemicalStorageImpl() {
+        return this.getMaxExternalChemicalStorageImpl() - this.getUsedExternalChemicalStorageImpl();
+    }
 
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableExternalChemicalStorage() {
@@ -608,7 +655,9 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getAvailableExternalChemicalStorageImpl());
     }
 
-    public abstract double getAvailableItemStorageImpl();
+    public double getAvailableItemStorageImpl() {
+        return this.getMaxItemStorageImpl() - this.getUsedItemStorageImpl();
+    }
 
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableItemStorage() {
@@ -619,7 +668,9 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getAvailableItemStorageImpl());
     }
 
-    public abstract double getAvailableFluidStorageImpl();
+    public double getAvailableFluidStorageImpl() {
+        return this.getMaxFluidStorageImpl() - this.getUsedFluidStorageImpl();
+    }
 
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableFluidStorage() {
@@ -630,7 +681,9 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getAvailableFluidStorageImpl());
     }
 
-    public abstract double getAvailableChemicalStorageImpl();
+    public double getAvailableChemicalStorageImpl() {
+        return this.getMaxChemicalStorageImpl() - this.getUsedChemicalStorageImpl();
+    }
 
     @LuaFunction(mainThread = true)
     public final MethodResult getAvailableChemicalStorage() {

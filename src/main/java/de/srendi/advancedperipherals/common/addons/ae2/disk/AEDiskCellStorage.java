@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class AEDiskCellStorage implements StorageCell {
     protected final ItemStack stack;
-    protected final AEDiskCell cell;
+    protected final AEDiskCellItem cell;
     @Nullable
     protected final ISaveProvider host;
     protected final NonNegativeId diskId;
@@ -26,7 +26,7 @@ public class AEDiskCellStorage implements StorageCell {
     protected final Mount mount;
     private int refreshCD = 0;
 
-    public AEDiskCellStorage(ItemStack stack, AEDiskCell cell, @Nullable ISaveProvider host) {
+    public AEDiskCellStorage(ItemStack stack, AEDiskCellItem cell, @Nullable ISaveProvider host) {
         this.stack = stack;
         this.cell = cell;
         this.host = host;
@@ -53,18 +53,27 @@ public class AEDiskCellStorage implements StorageCell {
         return this.stack.getHoverName();
     }
 
+    public long getFreeBytes() {
+        if (mount instanceof WritableMount writableMount) {
+            try {
+                return writableMount.getRemainingSpace();
+            } catch (IOException e) {
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    public long getUsedBytes() {
+        if (!(mount instanceof WritableMount writableMount)) {
+            return 0;
+        }
+        return writableMount.getCapacity() - this.getFreeBytes();
+    }
+
     @Override
     public void getAvailableStacks(KeyCounter out) {
-        if (!(mount instanceof WritableMount writableMount)) {
-            return;
-        }
-        long remaining;
-        try {
-            remaining = writableMount.getRemainingSpace();
-        } catch (IOException e) {
-            remaining = 0;
-        }
-        long usedBytes = writableMount.getCapacity() - remaining;
+        long usedBytes = this.getUsedBytes();
         out.add(this.aeKey, usedBytes);
 
         this.refreshCD--;
@@ -83,16 +92,9 @@ public class AEDiskCellStorage implements StorageCell {
         if (this.getDiskId() == null) {
             return CellState.EMPTY;
         }
-        if (mount instanceof WritableMount writableMount) {
-            long remaining;
-            try {
-                remaining = writableMount.getRemainingSpace();
-            } catch (IOException e) {
-                remaining = 0;
-            }
-            if (remaining > 0) {
-                return CellState.TYPES_FULL;
-            }
+        long remaining = this.getFreeBytes();
+        if (remaining > 0) {
+            return CellState.TYPES_FULL;
         }
         return CellState.FULL;
     }

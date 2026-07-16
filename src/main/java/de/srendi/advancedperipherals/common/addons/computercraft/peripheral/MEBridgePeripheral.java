@@ -82,7 +82,9 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
 
     @Override
     public Set<String> getAdditionalTypes() {
-        return Set.of("multi_drive");
+        Set<String> types = new HashSet<>(super.getAdditionalTypes());
+        types.add("multi_drive");
+        return types;
     }
 
     public synchronized void setNode(IManagedGridNode node) {
@@ -257,7 +259,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
 
     @Override
     public List<?> getCellsImpl() {
-        return AEApi.listCells(node);
+        return AEApi.listCells(node.getGrid());
     }
 
     @Override
@@ -286,93 +288,108 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     }
 
     @Override
-    public double getTotalExternalItemStorageImpl() {
-        return AEApi.getTotalExternalItemStorage(node);
+    public double getMaxExternalItemStorageImpl() {
+        return AEApi.getMaxExternalItemStorage(node.getGrid());
     }
 
     @Override
-    public double getTotalExternalFluidStorageImpl() {
-        return AEApi.getTotalExternalFluidStorage(node);
+    public double getMaxExternalItemCountImpl() {
+        return AEApi.getMaxExternalItemCount(node.getGrid());
     }
 
     @Override
-    public double getTotalExternalChemicalStorageImpl() {
-        return AEApi.getTotalExternalChemicalStorage(node);
+    public double getMaxExternalFluidStorageImpl() {
+        return AEApi.getMaxExternalFluidStorage(node.getGrid());
     }
 
     @Override
-    public double getTotalItemStorageImpl() {
-        return AEApi.getTotalItemStorage(node);
+    public double getMaxExternalChemicalStorageImpl() {
+        return AEApi.getMaxExternalChemicalStorage(node.getGrid());
     }
 
     @Override
-    public double getTotalFluidStorageImpl() {
-        return AEApi.getTotalFluidStorage(node);
+    public double getMaxItemStorageImpl() {
+        return AEApi.getMaxItemStorage(node.getGrid());
     }
 
     @Override
-    public double getTotalChemicalStorageImpl() {
-        return AEApi.getTotalChemicalStorage(node);
+    public double getMaxFluidStorageImpl() {
+        return AEApi.getMaxFluidStorage(node.getGrid());
+    }
+
+    @Override
+    public double getMaxChemicalStorageImpl() {
+        return AEApi.getMaxChemicalStorage(node.getGrid());
     }
 
     @Override
     public double getUsedExternalItemStorageImpl() {
-        return AEApi.getUsedExternalItemStorage(node);
+        return AEApi.getUsedExternalItemStorage(node.getGrid());
+    }
+
+    @Override
+    public double getUsedExternalItemCountImpl() {
+        return AEApi.getUsedExternalItemCount(node.getGrid());
     }
 
     @Override
     public double getUsedExternalFluidStorageImpl() {
-        return AEApi.getUsedExternalFluidStorage(node);
+        return AEApi.getUsedExternalFluidStorage(node.getGrid());
     }
 
     @Override
     public double getUsedExternalChemicalStorageImpl() {
-        return AEApi.getUsedExternalChemicalStorage(node);
+        return AEApi.getUsedExternalChemicalStorage(node.getGrid());
     }
 
     @Override
     public double getUsedItemStorageImpl() {
-        return AEApi.getUsedItemStorage(node);
+        return AEApi.getUsedItemStorage(node.getGrid());
     }
 
     @Override
     public double getUsedFluidStorageImpl() {
-        return AEApi.getUsedFluidStorage(node);
+        return AEApi.getUsedFluidStorage(node.getGrid());
     }
 
     @Override
     public double getUsedChemicalStorageImpl() {
-        return AEApi.getUsedChemicalStorage(node);
+        return AEApi.getUsedChemicalStorage(node.getGrid());
     }
 
     @Override
     public double getAvailableExternalItemStorageImpl() {
-        return AEApi.getAvailableExternalItemStorage(node);
+        return AEApi.getAvailableExternalItemStorage(node.getGrid());
+    }
+
+    @Override
+    public double getAvailableExternalItemCountImpl() {
+        return AEApi.getAvailableExternalItemCount(node.getGrid());
     }
 
     @Override
     public double getAvailableExternalFluidStorageImpl() {
-        return AEApi.getAvailableExternalFluidStorage(node);
+        return AEApi.getAvailableExternalFluidStorage(node.getGrid());
     }
 
     @Override
     public double getAvailableExternalChemicalStorageImpl() {
-        return AEApi.getAvailableExternalChemicalStorage(node);
+        return AEApi.getAvailableExternalChemicalStorage(node.getGrid());
     }
 
     @Override
     public double getAvailableItemStorageImpl() {
-        return AEApi.getAvailableItemStorage(node);
+        return AEApi.getAvailableItemStorage(node.getGrid());
     }
 
     @Override
     public double getAvailableFluidStorageImpl() {
-        return AEApi.getAvailableFluidStorage(node);
+        return AEApi.getAvailableFluidStorage(node.getGrid());
     }
 
     @Override
     public double getAvailableChemicalStorageImpl() {
-        return AEApi.getAvailableChemicalStorage(node);
+        return AEApi.getAvailableChemicalStorage(node.getGrid());
     }
 
     @Override

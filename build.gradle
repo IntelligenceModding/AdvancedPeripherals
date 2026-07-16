@@ -349,6 +349,10 @@ dependencies {
     runtimeOnly "maven.modrinth:spark:1.10.124-neoforge-1.21.1"
 
     if (!minimumRuntime) {
+        // Extended AE
+        runtimeOnly "curse.maven:ex-pattern-provider-892005:${extended_ae_version}"
+        runtimeOnly "curse.maven:glodium-957920:${glodium_version}"
+
         // Sophisticated Backpacks
         runtimeOnly "maven.modrinth:sophisticated-backpacks:${sophisticated_backpacks_version}"
         runtimeOnly "maven.modrinth:sophisticated-core:${sophisticated_core_version}"

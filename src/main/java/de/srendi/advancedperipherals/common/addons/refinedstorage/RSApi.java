@@ -341,7 +341,7 @@ public class RSApi {
         return Pair.of(null, "NO_PATTERN_FOUND");
     }
 
-    public static long getTotalStorage(Network network, RSStorageTypes type) {
+    public static long getMaxStorage(Network network, RSStorageTypes type) {
         long total = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
@@ -387,7 +387,7 @@ public class RSApi {
         return used;
     }
 
-    public static long getTotalExternalStorage(Network network, RSStorageTypes type) {
+    public static long getMaxExternalStorage(Network network, RSStorageTypes type) {
         long total = 0;
 
         GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);

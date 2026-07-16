@@ -10,10 +10,10 @@ import net.minecraft.world.item.TooltipFlag;
 
 import java.util.List;
 
-public class AEDiskCell extends BaseItem {
+public class AEDiskCellItem extends BaseItem {
     private final Tier tier;
 
-    public AEDiskCell(Properties properties, Tier tier) {
+    public AEDiskCellItem(Properties properties, Tier tier) {
         super(properties);
         this.tier = tier;
     }

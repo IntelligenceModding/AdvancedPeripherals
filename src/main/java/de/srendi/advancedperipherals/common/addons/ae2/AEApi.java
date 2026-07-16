@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.addons.ae2;
 
 import appeng.api.AECapabilities;
 import appeng.api.crafting.IPatternDetails;
+import appeng.api.implementations.blockentities.IChestOrDrive;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
@@ -17,38 +18,46 @@ import appeng.api.stacks.GenericStack;
 import appeng.api.stacks.KeyCounter;
 import appeng.api.storage.AEKeyFilter;
 import appeng.api.storage.IStorageProvider;
+import appeng.api.storage.ISubMenuHost;
 import appeng.api.storage.MEStorage;
 import appeng.api.storage.cells.IBasicCellItem;
+import appeng.api.storage.cells.ICellWorkbenchItem;
 import appeng.blockentity.storage.DriveBlockEntity;
+import appeng.blockentity.storage.MEChestBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.crafting.pattern.EncodedPatternItem;
+import appeng.helpers.IPriorityHost;
 import appeng.helpers.patternprovider.PatternContainer;
-import appeng.items.storage.BasicStorageCell;
 import appeng.me.cells.BasicCellHandler;
 import appeng.me.cells.BasicCellInventory;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellItem;
+import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellStorage;
+import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskHandler;
+import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKeys;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
+import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
-import io.github.projectet.ae2things.item.DISKDrive;
 import io.github.projectet.ae2things.storage.DISKCellHandler;
 import io.github.projectet.ae2things.storage.DISKCellInventory;
+import io.github.projectet.ae2things.storage.IDISKCellItem;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
-import me.ramidzkh.mekae2.item.ChemicalStorageCell;
-import mekanism.common.tile.TileEntityChemicalTank;
-import net.minecraft.core.BlockPos;
+import mekanism.api.chemical.IChemicalHandler;
+import net.minecraft.world.Nameable;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -65,8 +74,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class AEApi {
 
@@ -271,18 +285,63 @@ public class AEApi {
 
     public static List<Object> listDrives(IGrid grid) {
         List<Object> drives = new ArrayList<>();
-
-        for (IGridNode node : grid.getMachineNodes(DriveBlockEntity.class)) {
-            DriveBlockEntity drive = (DriveBlockEntity) node.getService(IStorageProvider.class);
-
-            // A normal drive has a cellCount of 10
-            if (drive == null || drive.getCellCount() != 10)
-                continue;
-
-            drives.add(parseDrive(drive));
-        }
-
+        streamCellDrive(grid).forEach((node) -> {
+            IStorageProvider storage = node.getService(IStorageProvider.class);
+            if (storage instanceof IChestOrDrive drive) {
+                drives.add(parseDrive(drive));
+            }
+        });
         return drives;
+    }
+
+    private static Stream<@NotNull IGridNode> streamCellDrive(IGrid grid) {
+        return StreamSupport.stream(grid.getMachineClasses().spliterator(), false)
+            .filter(IChestOrDrive.class::isAssignableFrom)
+            .flatMap((clazz) -> StreamSupport.stream(grid.getMachineNodes(clazz).spliterator(), false));
+    }
+
+    private static Stream<@NotNull Pair<Item, ItemStack>> streamCell(IGrid grid) {
+        return streamCellDrive(grid)
+            .map((node) -> node.getService(IStorageProvider.class) instanceof IChestOrDrive drive ? drive : null)
+            .filter(Objects::nonNull)
+            .flatMap((drive) -> {
+                IntFunction<ItemStack> cellInv = getDriveCellStorageOrEmpty(drive);
+                return IntStream.range(0, drive.getCellCount())
+                    .mapToObj((slot) -> {
+                        Item cell = drive.getCellItem(slot);
+                        return cell == null ? null : Pair.of(cell, cellInv.apply(slot));
+                    })
+                    .filter(Objects::nonNull);
+            });
+    }
+
+    private static Stream<@NotNull ICellWrapper> streamWrappedCell(IGrid grid) {
+        return streamCell(grid)
+            .map((pair) -> ICellWrapper.of(pair.left(), pair.right()))
+            .filter(Objects::nonNull);
+    }
+
+    private static Stream<@NotNull StorageBusPart> streamExternalStorage(IGrid grid) {
+        return StreamSupport.stream(grid.getMachineNodes(StorageBusPart.class).spliterator(), false)
+            .map((node) -> Objects.requireNonNull((StorageBusPart) node.getService(IStorageProvider.class)));
+    }
+
+    private static Stream<@NotNull IItemHandler> streamExternalItemStorage(IGrid grid) {
+        return streamExternalStorage(grid)
+            .map((bus) -> ItemUtil.extractHandler(null, bus.getLevel(), bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide()), bus.getSide().getOpposite()))
+            .filter(Objects::nonNull);
+    }
+
+    private static Stream<@NotNull IFluidHandler> streamExternalFluidStorage(IGrid grid) {
+        return streamExternalStorage(grid)
+            .map((bus) -> FluidUtil.extractHandler(null, bus.getLevel(), bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide()), bus.getSide().getOpposite()))
+            .filter(Objects::nonNull);
+    }
+
+    private static Stream<@NotNull IChemicalHandler> streamExternalChemicalStorage(IGrid grid) {
+        return streamExternalStorage(grid)
+            .map((bus) -> ChemicalUtil.extractHandler(null, bus.getLevel(), bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide()), bus.getSide().getOpposite()))
+            .filter(Objects::nonNull);
     }
 
     private static Class<? extends PatternContainer> tryCastMachineToContainer(Class<?> machineClass) {
@@ -327,19 +386,21 @@ public class AEApi {
         return parsedKeys;
     }
 
-    public static Map<Object, Object> parseDrive(DriveBlockEntity drive) {
+    public static Map<Object, Object> parseDrive(IChestOrDrive drive) {
         long totalBytes = 0;
         long usedBytes = 0;
 
-        List<Object> driveCells = new ArrayList<>();
-        for (ItemStack item : drive.getInternalInventory()) {
-            if (item.getItem() instanceof BasicStorageCell cell) {
-                BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(item, null);
-                totalBytes += cellInventory.getTotalBytes();
-                usedBytes += cellInventory.getUsedBytes();
+        Map<Integer, Object> driveCells = new HashMap<>();
 
-                driveCells.add(parseCell(cell, item));
+        int cellCount = drive.getCellCount();
+        IntFunction<ItemStack> cellInv = getDriveCellStorageOrEmpty(drive);
+        for (int slot = 0; slot < cellCount; slot++) {
+            Item cell = drive.getCellItem(slot);
+            if (cell == null) {
+                continue;
             }
+            ItemStack cellStack = cellInv.apply(slot);
+            driveCells.put(slot + 1, cellToLua(cell, cellStack));
         }
 
         Map<Object, Object> properties = new HashMap<>();
@@ -347,44 +408,55 @@ public class AEApi {
         properties.put("usedBytes", usedBytes);
         properties.put("totalBytes", totalBytes);
         properties.put("cells", driveCells);
-        properties.put("priority", drive.getPriority());
-        properties.put("menuIcon", LuaConverter.itemToLua(drive.getMainMenuIcon().getItem()));
-        properties.put("position", LuaConverter.posToLua(drive.getBlockPos()));
-        properties.put("name", drive.hasCustomName() ? drive.getCustomName().getString() : drive.getDisplayName().getString());
-
+        if (drive instanceof Nameable nameable) {
+            properties.put("name", nameable.hasCustomName() ? nameable.getCustomName().getString() : nameable.getDisplayName().getString());
+        }
+        if (drive instanceof BlockEntity be) {
+            properties.put("type", be.getType().builtInRegistryHolder().getRegisteredName());
+            properties.put("position", LuaConverter.posToLua(be.getBlockPos()));
+        }
+        if (drive instanceof IPriorityHost priHost) {
+            properties.put("priority", priHost.getPriority());
+        }
+        if (drive instanceof ISubMenuHost menuHost) {
+            properties.put("menuIcon", LuaConverter.itemToLua(menuHost.getMainMenuIcon().getItem()));
+        }
         return properties;
     }
 
-    public static Map<Object, Object> parseCell(IBasicCellItem cell, ItemStack cellItem) {
-        Map<Object, Object> properties = new HashMap<>();
-        BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(cellItem, null);
-
-        properties.put("item", LuaConverter.itemToLua(cellItem.getItem()));
-        properties.put("type", cell.getKeyType().toString());
-        properties.put("bytes", cell.getBytes(cellItem));
-        properties.put("bytesPerType", cell.getBytesPerType(cellItem));
-        properties.put("usedBytes", cellInventory.getUsedBytes());
-        properties.put("totalTypes", cell.getTotalTypes(cellItem));
-        properties.put("fuzzyMode", cell.getFuzzyMode(cellItem).toString());
-
-        return properties;
+    @Nullable
+    private static IntFunction<ItemStack> getDriveCellStorage(IChestOrDrive drive) {
+        if (drive instanceof DriveBlockEntity be) {
+            InternalInventory inv = be.getInternalInventory();
+            return inv::getStackInSlot;
+        }
+        if (drive instanceof MEChestBlockEntity be) {
+            return (slot) -> slot == 0 ? be.getCell() : ItemStack.EMPTY;
+        }
+        return null;
     }
 
-    private static Map<String, Object> parseDISKDrive(DISKDrive drive, ItemStack stack) {
+    @NotNull
+    private static IntFunction<ItemStack> getDriveCellStorageOrEmpty(IChestOrDrive drive) {
+        IntFunction<ItemStack> inv = getDriveCellStorage(drive);
+        return inv != null ? inv : (slot) -> ItemStack.EMPTY;
+    }
+
+    public static Map<String, Object> cellToLua(Item cell, ItemStack stack) {
         Map<String, Object> properties = new HashMap<>();
-        DISKCellInventory cellInventory = DISKCellHandler.INSTANCE.getCellInventory(stack, null);
 
-        if (cellInventory == null)
-            return null;
-
-        properties.put("item", LuaConverter.itemToLua(stack.getItem()));
-        properties.put("type", drive.getKeyType().toString());
-        properties.put("bytes", drive.getBytes(stack));
-        properties.put("bytesPerType", 0);
-        properties.put("usedBytes", cellInventory.getNbtItemCount());
-        properties.put("totalTypes", 0);
-        properties.put("fuzzyMode", drive.getFuzzyMode(stack).toString());
-
+        properties.put("item", LuaConverter.itemToLua(cell));
+        if (cell instanceof ICellWorkbenchItem workbenchCell) {
+            properties.put("fuzzyMode", workbenchCell.getFuzzyMode(stack).toString());
+        }
+        ICellWrapper wrapper = ICellWrapper.of(cell, stack);
+        if (wrapper != null) {
+            properties.put("type", wrapper.keyType().getId().toString());
+            properties.put("bytesPerType", wrapper.bytesPerType());
+            properties.put("maxBytes", wrapper.maxBytes());
+            properties.put("maxTypes", wrapper.maxTypes());
+            properties.put("usedBytes", wrapper.usedBytes());
+        }
         return properties;
     }
 
@@ -512,317 +584,113 @@ public class AEApi {
     /// External Storage
     /// Total
 
-    public static long getTotalExternalItemStorage(IGridNode node) {
-        long total = 0;
-
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
-            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
-            BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
-
-            IItemHandler itemHandler = ItemUtil.extractHandler(null, bus.getLevel(), connectedInventoryPos, bus.getSide());
-            if (itemHandler != null) {
-                for (int i = 0; i < itemHandler.getSlots(); i++) {
-                    ItemStack stack = itemHandler.getStackInSlot(i);
-
-                    total += stack.isEmpty() ? itemHandler.getSlotLimit(i) : stack.getMaxStackSize();
+    public static double getMaxExternalItemStorage(IGrid grid) {
+        return streamExternalItemStorage(grid)
+            .mapToDouble((handler) -> {
+                double total = 0;
+                for (int i = 0; i < handler.getSlots(); i++) {
+                    total += handler.getSlotLimit(i) / 64.0;
                 }
-            }
-        }
-
-        return total;
+                return total;
+            })
+            .sum();
     }
 
-    public static long getTotalExternalFluidStorage(IGridNode node) {
-        long total = 0;
-
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
-            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
-            BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
-
-            IFluidHandler fluidHandler = FluidUtil.extractHandler(null, bus.getLevel(), connectedInventoryPos, bus.getSide());
-            if (fluidHandler != null) {
-                for (int i = 0; i < fluidHandler.getTanks(); i++) {
-                    total += fluidHandler.getTankCapacity(i);
+    public static long getMaxExternalItemCount(IGrid grid) {
+        return streamExternalItemStorage(grid)
+            .mapToLong((handler) -> {
+                long total = 0;
+                for (int i = 0; i < handler.getSlots(); i++) {
+                    ItemStack stack = handler.getStackInSlot(i);
+                    total += stack.isEmpty() ? handler.getSlotLimit(i) : stack.getMaxStackSize();
                 }
-            }
-        }
-
-        return total;
+                return total;
+            })
+            .sum();
     }
 
-    public static long getTotalExternalChemicalStorage(IGridNode node) {
-        long total = 0;
+    public static long getMaxExternalFluidStorage(IGrid grid) {
+        return streamExternalFluidStorage(grid)
+            .mapToLong((handler) -> {
+                long total = 0;
+                for (int i = 0; i < handler.getTanks(); i++) {
+                    total += handler.getTankCapacity(i);
+                }
+                return total;
+            })
+            .sum();
+    }
 
-        if (!APAddon.APP_MEKANISTICS.isLoaded())
+    public static long getMaxExternalChemicalStorage(IGrid grid) {
+        if (!APAddon.APP_MEKANISTICS.isLoaded()) {
             return 0;
-
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
-            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
-            Level level = bus.getLevel();
-            BlockPos connectedInventoryPos = bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide());
-            BlockEntity connectedInventoryEntity = level.getBlockEntity(connectedInventoryPos);
-
-            if (connectedInventoryEntity == null)
-                continue;
-
-            if (connectedInventoryEntity instanceof TileEntityChemicalTank tank) {
-                total += tank.getChemicalTank().getCapacity();
-            }
         }
 
-        return total;
+        return streamExternalChemicalStorage(grid)
+            .mapToLong((handler) -> {
+                long total = 0;
+                for (int i = 0; i < handler.getChemicalTanks(); i++) {
+                    total += handler.getChemicalTankCapacity(i);
+                }
+                return total;
+            })
+            .sum();
     }
 
     /// Used
 
-    public static long getUsedExternalItemStorage(IGridNode node) {
-        long used = 0;
-
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
-            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
-            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
-
-            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof AEItemKey) used += aeKey.getLongValue();
-            }
-        }
-
-        return used;
+    public static double getUsedExternalItemStorage(IGrid grid) {
+        return streamExternalItemStorage(grid)
+            .mapToDouble((handler) -> {
+                double total = 0;
+                for (int i = 0; i < handler.getSlots(); i++) {
+                    int limit = handler.getSlotLimit(i);
+                    ItemStack stack = handler.getStackInSlot(i);
+                    total += ((double) stack.getCount()) / Math.min(limit, stack.getMaxStackSize());
+                }
+                return total;
+            })
+            .sum();
     }
 
-    public static long getUsedExternalFluidStorage(IGridNode node) {
-        long used = 0;
-
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
-            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
-            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
-
-            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof AEFluidKey) used += aeKey.getLongValue();
-            }
-        }
-
-        return used;
+    public static long getUsedExternalItemCount(IGrid grid) {
+        return streamExternalItemStorage(grid)
+            .mapToLong((handler) -> {
+                long total = 0;
+                for (int i = 0; i < handler.getSlots(); i++) {
+                    total += handler.getStackInSlot(i).getCount();
+                }
+                return total;
+            })
+            .sum();
     }
 
-    public static long getUsedExternalChemicalStorage(IGridNode node) {
-        long used = 0;
+    public static long getUsedExternalFluidStorage(IGrid grid) {
+        return streamExternalFluidStorage(grid)
+            .mapToLong((handler) -> {
+                long total = 0;
+                for (int i = 0; i < handler.getTanks(); i++) {
+                    total += handler.getFluidInTank(i).getAmount();
+                }
+                return total;
+            })
+            .sum();
+    }
 
-        if (!APAddon.APP_MEKANISTICS.isLoaded())
+    public static long getUsedExternalChemicalStorage(IGrid grid) {
+        if (!APAddon.APP_MEKANISTICS.isLoaded()) {
             return 0;
-
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(StorageBusPart.class)) {
-            StorageBusPart bus = (StorageBusPart) iGridNode.getService(IStorageProvider.class);
-            KeyCounter keyCounter = bus.getInternalHandler().getAvailableStacks();
-
-            for (Object2LongMap.Entry<AEKey> aeKey : keyCounter) {
-                if (aeKey.getKey() instanceof MekanismKey) used += aeKey.getLongValue();
-            }
         }
 
-        return used;
-    }
-
-    /// Internal Storage
-    /// Total
-
-    public static long getTotalItemStorage(IGridNode node) {
-        long total = 0;
-
-        // note: do not query DriveBlockEntity.class specifically here, because it will avoid subclasses, e.g. the ME Extended Drive from ExtendedAE
-        for (IGridNode iGridNode : node.getGrid().getNodes()) {
-            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
-                continue;
-
-            InternalInventory inventory = entity.getInternalInventory();
-
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-
-                if (stack.isEmpty())
-                    continue;
-
-                if (stack.getItem() instanceof IBasicCellItem cell) {
-                    if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
-                        total += cell.getBytes(null);
-                    }
-                } else if (APAddon.AE2THINGS.isLoaded() && stack.getItem() instanceof DISKDrive disk) {
-                    if (disk.getKeyType().toString().equals("ae2:i")) {
-                        total += disk.getBytes(null);
-                    }
+        return streamExternalChemicalStorage(grid)
+            .mapToLong((handler) -> {
+                long total = 0;
+                for (int i = 0; i < handler.getChemicalTanks(); i++) {
+                    total += handler.getChemicalInTank(i).getAmount();
                 }
-            }
-        }
-        return total;
-    }
-
-    public static long getTotalFluidStorage(IGridNode node) {
-        long total = 0;
-
-        for (IGridNode iGridNode : node.getGrid().getNodes()) {
-            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
-                continue;
-
-            InternalInventory inventory = entity.getInternalInventory();
-
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-
-                if (stack.isEmpty())
-                    continue;
-
-                if (stack.getItem() instanceof IBasicCellItem cell) {
-                    if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
-                        total += cell.getBytes(null);
-                    }
-                }
-            }
-        }
-
-        return total;
-    }
-
-    public static long getTotalChemicalStorage(IGridNode node) {
-        long total = 0;
-
-        if (!APAddon.APP_MEKANISTICS.isLoaded())
-            return 0;
-
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
-            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
-            if (entity == null)
-                continue;
-
-            InternalInventory inventory = entity.getInternalInventory();
-
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-
-                if (stack.isEmpty())
-                    continue;
-
-                if (stack.getItem() instanceof ChemicalStorageCell cell) {
-                    if (cell.getKeyType() instanceof MekanismKeyType) {
-                        total += cell.getBytes(null);
-                    }
-                }
-            }
-        }
-
-        return total;
-    }
-
-    /// Used
-    public static long getUsedItemStorage(IGridNode node) {
-        long used = 0;
-
-        for (IGridNode iGridNode : node.getGrid().getNodes()) {
-            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
-                continue;
-
-            InternalInventory inventory = entity.getInternalInventory();
-
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-
-                if (stack.isEmpty())
-                    continue;
-
-                if (stack.getItem() instanceof IBasicCellItem cell) {
-                    if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.items().getClass())) {
-                        BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
-
-                        used += cellInventory.getUsedBytes();
-                    }
-                } else if (APAddon.AE2THINGS.isLoaded() && stack.getItem() instanceof DISKDrive) {
-                    DISKCellInventory diskCellInventory = DISKCellHandler.INSTANCE.getCellInventory(stack, null);
-                    if (diskCellInventory != null) {
-                        used += diskCellInventory.getNbtItemCount();
-                    }
-                }
-            }
-        }
-
-        return used;
-    }
-
-    public static long getUsedFluidStorage(IGridNode node) {
-        long used = 0;
-
-        for (IGridNode iGridNode : node.getGrid().getNodes()) {
-            if (!(iGridNode.getService(IStorageProvider.class) instanceof DriveBlockEntity entity))
-                continue;
-
-            InternalInventory inventory = entity.getInternalInventory();
-
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-
-                if (stack.getItem() instanceof IBasicCellItem cell) {
-                    if (cell.getKeyType().getClass().isAssignableFrom(AEKeyType.fluids().getClass())) {
-                        BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
-
-                        used += cellInventory.getUsedBytes();
-                    }
-                }
-            }
-        }
-
-        return used;
-    }
-
-    public static long getUsedChemicalStorage(IGridNode node) {
-        long used = 0;
-
-        if (!APAddon.APP_MEKANISTICS.isLoaded())
-            return 0;
-
-        for (IGridNode iGridNode : node.getGrid().getMachineNodes(DriveBlockEntity.class)) {
-            DriveBlockEntity entity = (DriveBlockEntity) iGridNode.getService(IStorageProvider.class);
-            if (entity == null)
-                continue;
-
-            InternalInventory inventory = entity.getInternalInventory();
-
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-
-                if (stack.getItem() instanceof ChemicalStorageCell) {
-                    BasicCellInventory cellInventory = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
-
-                    used += cellInventory.getUsedBytes();
-                }
-            }
-        }
-
-        return used;
-    }
-
-    /// Available Storage
-
-    /**
-     * Calculates the available item storage on a given grid node.
-     * It subtracts the used item storage from the total item storage.
-     *
-     * @param node The grid node to calculate the available item storage for.
-     * @return The available item storage in bytes.
-     */
-    public static long getAvailableItemStorage(IGridNode node) {
-        return getTotalItemStorage(node) - getUsedItemStorage(node);
-    }
-
-    /**
-     * Calculates the available fluid storage in a given grid node.
-     *
-     * @param node The grid node to calculate the available fluid storage for.
-     * @return The available fluid storage in bytes.
-     */
-    public static long getAvailableFluidStorage(IGridNode node) {
-        return getTotalFluidStorage(node) - getUsedFluidStorage(node);
-    }
-
-    public static long getAvailableChemicalStorage(IGridNode node) {
-        return getTotalChemicalStorage(node) - getUsedChemicalStorage(node);
+                return total;
+            })
+            .sum();
     }
 
     /**
@@ -831,8 +699,12 @@ public class AEApi {
      * @param node The grid node for which to calculate the available external item storage.
      * @return The available external item storage.
      */
-    public static long getAvailableExternalItemStorage(IGridNode node) {
-        return getTotalExternalItemStorage(node) - getUsedExternalItemStorage(node);
+    public static double getAvailableExternalItemStorage(IGrid grid) {
+        return getMaxExternalItemStorage(grid) - getUsedExternalItemStorage(grid);
+    }
+
+    public static double getAvailableExternalItemCount(IGrid grid) {
+        return getMaxExternalItemCount(grid) - getUsedExternalItemCount(grid);
     }
 
     /**
@@ -842,12 +714,103 @@ public class AEApi {
      * @param node The grid node on which to calculate the available external fluid storage.
      * @return The available external fluid storage on the grid node.
      */
-    public static long getAvailableExternalFluidStorage(IGridNode node) {
-        return getTotalExternalFluidStorage(node) - getUsedExternalFluidStorage(node);
+    public static long getAvailableExternalFluidStorage(IGrid grid) {
+        return getMaxExternalFluidStorage(grid) - getUsedExternalFluidStorage(grid);
     }
 
-    public static long getAvailableExternalChemicalStorage(IGridNode node) {
-        return getTotalExternalChemicalStorage(node) - getUsedExternalChemicalStorage(node);
+    public static long getAvailableExternalChemicalStorage(IGrid grid) {
+        return getMaxExternalChemicalStorage(grid) - getUsedExternalChemicalStorage(grid);
+    }
+
+    /// Internal Storage
+    /// Total
+
+    public static long getMaxItemStorage(IGrid grid) {
+        return streamWrappedCell(grid)
+            .filter((cell) -> cell.keyType() == AEKeyType.items())
+            .mapToLong(ICellWrapper::maxBytes)
+            .sum();
+    }
+
+    public static long getMaxFluidStorage(IGrid grid) {
+        return streamWrappedCell(grid)
+            .filter((cell) -> cell.keyType() == AEKeyType.fluids())
+            .mapToLong(ICellWrapper::maxBytes)
+            .sum();
+    }
+
+    public static long getMaxChemicalStorage(IGrid grid) {
+        if (!APAddon.APP_MEKANISTICS.isLoaded()) {
+            return 0;
+        }
+        return streamWrappedCell(grid)
+            .filter((cell) -> cell.keyType() == MekanismKeyType.TYPE)
+            .mapToLong(ICellWrapper::maxBytes)
+            .sum();
+    }
+
+    /// Used
+    public static long getUsedItemStorage(IGrid grid) {
+        return streamWrappedCell(grid)
+            .filter((cell) -> cell.keyType() == AEKeyType.items())
+            .mapToLong(ICellWrapper::usedBytes)
+            .sum();
+    }
+
+    public static long getUsedFluidStorage(IGrid grid) {
+        return streamWrappedCell(grid)
+            .filter((cell) -> cell.keyType() == AEKeyType.fluids())
+            .mapToLong(ICellWrapper::usedBytes)
+            .sum();
+    }
+
+    public static long getUsedChemicalStorage(IGrid grid) {
+        if (!APAddon.APP_MEKANISTICS.isLoaded()) {
+            return 0;
+        }
+        return streamWrappedCell(grid)
+            .filter((cell) -> cell.keyType() == MekanismKeyType.TYPE)
+            .mapToLong(ICellWrapper::usedBytes)
+            .sum();
+    }
+
+    /// Available Storage
+
+    /**
+     * Calculates the available item storage on a given grid.
+     * It subtracts the used item storage from the total item storage.
+     *
+     * @param grid The grid to calculate the available item storage for.
+     * @return The available item storage in bytes.
+     */
+    public static long getAvailableItemStorage(IGrid grid) {
+        return streamWrappedCell(grid)
+            .filter((cell) -> cell.keyType() == AEKeyType.items())
+            .mapToLong(ICellWrapper::freeBytes)
+            .sum();
+    }
+
+    /**
+     * Calculates the available fluid storage in a given grid.
+     *
+     * @param grid The grid to calculate the available fluid storage for.
+     * @return The available fluid storage in bytes.
+     */
+    public static long getAvailableFluidStorage(IGrid grid) {
+        return streamWrappedCell(grid)
+            .filter((cell) -> cell.keyType() == AEKeyType.fluids())
+            .mapToLong(ICellWrapper::freeBytes)
+            .sum();
+    }
+
+    public static long getAvailableChemicalStorage(IGrid grid) {
+        if (!APAddon.APP_MEKANISTICS.isLoaded()) {
+            return 0;
+        }
+        return streamWrappedCell(grid)
+            .filter((cell) -> cell.keyType() == MekanismKeyType.TYPE)
+            .mapToLong(ICellWrapper::freeBytes)
+            .sum();
     }
 
     public static ICraftingCPU getCraftingCPU(IGridNode node, String cpuName) {
@@ -872,36 +835,159 @@ public class AEApi {
         return null;
     }
 
-    public static List<Object> listCells(IGridNode node) {
-        List<Object> items = new ArrayList<>();
-
-        Iterator<IGridNode> iterator = node.getGrid().getNodes().iterator();
-
-        if (!iterator.hasNext())
-            return items;
-
-        while (iterator.hasNext()) {
-            IStorageProvider entity = iterator.next().getService(IStorageProvider.class);
-            if (!(entity instanceof DriveBlockEntity drive))
-                continue;
-
-            InternalInventory inventory = drive.getInternalInventory();
-
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack stack = inventory.getStackInSlot(i);
-
-                if (stack.isEmpty())
-                    continue;
-
-                if (stack.getItem() instanceof IBasicCellItem cell) {
-                    items.add(parseCell(cell, stack));
-                } else if (APAddon.AE2THINGS.isLoaded() && stack.getItem() instanceof DISKDrive disk) {
-                    items.add(parseDISKDrive(disk, stack));
-                }
-            }
-        }
-
-        return items;
+    public static List<Map<String, Object>> listCells(IGrid grid) {
+        return streamCell(grid).map((pair) -> cellToLua(pair.left(), pair.right())).toList();
     }
 
+    private interface ICellWrapper {
+        Item item();
+        AEKeyType keyType();
+        long maxBytes();
+        long usedBytes();
+        long bytesPerType();
+        long maxTypes();
+
+        default long freeBytes() {
+            return this.maxBytes() - this.usedBytes();
+        }
+
+        static ICellWrapper of(Item item, ItemStack stack) {
+            if (item instanceof IBasicCellItem cell) {
+                return new BasicCellWrapper(cell, stack);
+            }
+            if (item instanceof IDISKCellItem cell) {
+                return new AE2ThingsDiskCellWrapper(cell, stack);
+            }
+            if (item instanceof AEDiskCellItem cell) {
+                return new APDiskCellWrapper(cell, stack);
+            }
+            return null;
+        }
+    }
+
+    private static final class BasicCellWrapper implements ICellWrapper {
+        final IBasicCellItem cell;
+        final ItemStack stack;
+        final BasicCellInventory inv;
+
+        BasicCellWrapper(IBasicCellItem cell, ItemStack stack) {
+            this.cell = cell;
+            this.stack = stack;
+            this.inv = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
+        }
+
+        @Override
+        public Item item() {
+            return (Item) this.cell;
+        }
+
+        @Override
+        public AEKeyType keyType() {
+            return this.cell.getKeyType();
+        }
+
+        @Override
+        public long maxBytes() {
+            return this.cell.getBytes(this.stack);
+        }
+
+        @Override
+        public long usedBytes() {
+            return this.inv == null ? 0 : this.inv.getUsedBytes();
+        }
+
+        @Override
+        public long bytesPerType() {
+            return this.cell.getBytesPerType(this.stack);
+        }
+
+        @Override
+        public long maxTypes() {
+            return this.cell.getTotalTypes(this.stack);
+        }
+    }
+
+    private static final class AE2ThingsDiskCellWrapper implements ICellWrapper {
+        final IDISKCellItem cell;
+        final ItemStack stack;
+        final DISKCellInventory inv;
+
+        AE2ThingsDiskCellWrapper(IDISKCellItem cell, ItemStack stack) {
+            this.cell = cell;
+            this.stack = stack;
+            this.inv = DISKCellHandler.INSTANCE.getCellInventory(stack, null);
+        }
+
+        @Override
+        public Item item() {
+            return (Item) this.cell;
+        }
+
+        @Override
+        public AEKeyType keyType() {
+            return this.cell.getKeyType();
+        }
+
+        @Override
+        public long maxBytes() {
+            return this.cell.getBytes(this.stack);
+        }
+
+        @Override
+        public long usedBytes() {
+            return this.inv == null ? 0 : this.inv.getStoredItemCount();
+        }
+
+        @Override
+        public long bytesPerType() {
+            return 0;
+        }
+
+        @Override
+        public long maxTypes() {
+            return Long.MAX_VALUE;
+        }
+    }
+
+    private static final class APDiskCellWrapper implements ICellWrapper {
+        final AEDiskCellItem cell;
+        final ItemStack stack;
+        final AEDiskCellStorage inv;
+
+        APDiskCellWrapper(AEDiskCellItem cell, ItemStack stack) {
+            this.cell = cell;
+            this.stack = stack;
+            this.inv = AEDiskHandler.INSTANCE.getCellInventory(stack, null);
+        }
+
+        @Override
+        public Item item() {
+            return this.cell;
+        }
+
+        @Override
+        public AEKeyType keyType() {
+            return AEDiskKeys.INSTANCE;
+        }
+
+        @Override
+        public long maxBytes() {
+            return this.cell.getMaxBytes();
+        }
+
+        @Override
+        public long usedBytes() {
+            return this.inv == null ? 0 : this.inv.getUsedBytes();
+        }
+
+        @Override
+        public long bytesPerType() {
+            return 0;
+        }
+
+        @Override
+        public long maxTypes() {
+            return 1;
+        }
+    }
 }

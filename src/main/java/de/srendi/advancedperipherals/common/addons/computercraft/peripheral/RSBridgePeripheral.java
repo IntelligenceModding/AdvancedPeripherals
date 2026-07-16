@@ -182,37 +182,49 @@ public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     }
 
     @Override
-    public double getTotalExternalItemStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.ITEM);
+    public double getMaxExternalItemStorageImpl() {
+        // TODO: implement same logic than ME bridge
+        return RSApi.getMaxExternalStorage(getNetwork(), RSStorageTypes.ITEM) / 64.0;
     }
 
     @Override
-    public double getTotalExternalFluidStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.FLUID);
+    public double getMaxExternalItemCountImpl() {
+        return RSApi.getMaxExternalStorage(getNetwork(), RSStorageTypes.ITEM);
     }
 
     @Override
-    public double getTotalExternalChemicalStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.CHEMICAL);
+    public double getMaxExternalFluidStorageImpl() {
+        return RSApi.getMaxExternalStorage(getNetwork(), RSStorageTypes.FLUID);
     }
 
     @Override
-    public double getTotalItemStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.ITEM);
+    public double getMaxExternalChemicalStorageImpl() {
+        return RSApi.getMaxExternalStorage(getNetwork(), RSStorageTypes.CHEMICAL);
     }
 
     @Override
-    public double getTotalFluidStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.FLUID);
+    public double getMaxItemStorageImpl() {
+        return RSApi.getMaxStorage(getNetwork(), RSStorageTypes.ITEM);
     }
 
     @Override
-    public double getTotalChemicalStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.CHEMICAL);
+    public double getMaxFluidStorageImpl() {
+        return RSApi.getMaxStorage(getNetwork(), RSStorageTypes.FLUID);
+    }
+
+    @Override
+    public double getMaxChemicalStorageImpl() {
+        return RSApi.getMaxStorage(getNetwork(), RSStorageTypes.CHEMICAL);
     }
 
     @Override
     public double getUsedExternalItemStorageImpl() {
+        // TODO: implement same logic than ME bridge
+        return RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.ITEM) / 64.0;
+    }
+
+    @Override
+    public double getUsedExternalItemCountImpl() {
         return RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.ITEM);
     }
 
@@ -239,36 +251,6 @@ public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     @Override
     public double getUsedChemicalStorageImpl() {
         return RSApi.getUsedStorage(getNetwork(), RSStorageTypes.CHEMICAL);
-    }
-
-    @Override
-    public double getAvailableExternalItemStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.ITEM) - RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.ITEM);
-    }
-
-    @Override
-    public double getAvailableExternalFluidStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.FLUID) - RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.FLUID);
-    }
-
-    @Override
-    public double getAvailableExternalChemicalStorageImpl() {
-        return RSApi.getTotalExternalStorage(getNetwork(), RSStorageTypes.CHEMICAL) - RSApi.getUsedExternalStorage(getNetwork(), RSStorageTypes.CHEMICAL);
-    }
-
-    @Override
-    public double getAvailableItemStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.ITEM) - RSApi.getUsedStorage(getNetwork(), RSStorageTypes.ITEM);
-    }
-
-    @Override
-    public double getAvailableFluidStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.FLUID) - RSApi.getUsedStorage(getNetwork(), RSStorageTypes.FLUID);
-    }
-
-    @Override
-    public double getAvailableChemicalStorageImpl() {
-        return RSApi.getTotalStorage(getNetwork(), RSStorageTypes.CHEMICAL) - RSApi.getUsedStorage(getNetwork(), RSStorageTypes.CHEMICAL);
     }
 
     @Override

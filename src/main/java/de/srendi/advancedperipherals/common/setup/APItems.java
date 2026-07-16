@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.setup;
 
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
-import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCell;
+import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellItem;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.APItem;
 import de.srendi.advancedperipherals.common.items.KeyboardItem;
@@ -77,19 +77,19 @@ public class APItems {
     public static final DeferredHolder<Item, APItem> CABLE_P2P_TUNNEL = APAddon.AE2.isLoaded() ? (DeferredHolder<Item, APItem>) (DeferredHolder<Item, ?>) AE2Registries.CABLE_P2P_TUNNEL : null;
     @DefaultTranslation("AE Disk Cell 1M")
     @DefaultTooltip("&7Provides a bit external file storage via ME Bridge.")
-    public static final DeferredHolder<Item, AEDiskCell> AE_DISK_CELL_1M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_1m", () -> new AEDiskCell(new Item.Properties(), AEDiskCell.Tier.DISK_1M)) : null;
+    public static final DeferredHolder<Item, AEDiskCellItem> AE_DISK_CELL_1M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_1m", () -> new AEDiskCellItem(new Item.Properties(), AEDiskCellItem.Tier.DISK_1M)) : null;
     @DefaultTranslation("AE Disk Cell 4M")
     @DefaultTooltip("&7Provides some external file storage via ME Bridge.")
-    public static final DeferredHolder<Item, AEDiskCell> AE_DISK_CELL_4M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_4m", () -> new AEDiskCell(new Item.Properties(), AEDiskCell.Tier.DISK_4M)) : null;
+    public static final DeferredHolder<Item, AEDiskCellItem> AE_DISK_CELL_4M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_4m", () -> new AEDiskCellItem(new Item.Properties(), AEDiskCellItem.Tier.DISK_4M)) : null;
     @DefaultTranslation("AE Disk Cell 16M")
     @DefaultTooltip("&7Provides some more external file storage via ME Bridge.")
-    public static final DeferredHolder<Item, AEDiskCell> AE_DISK_CELL_16M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_16m", () -> new AEDiskCell(new Item.Properties(), AEDiskCell.Tier.DISK_16M)) : null;
+    public static final DeferredHolder<Item, AEDiskCellItem> AE_DISK_CELL_16M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_16m", () -> new AEDiskCellItem(new Item.Properties(), AEDiskCellItem.Tier.DISK_16M)) : null;
     @DefaultTranslation("AE Disk Cell 64M")
     @DefaultTooltip("&7Provides even more external file storage via ME Bridge.")
-    public static final DeferredHolder<Item, AEDiskCell> AE_DISK_CELL_64M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_64m", () -> new AEDiskCell(new Item.Properties(), AEDiskCell.Tier.DISK_64M)) : null;
+    public static final DeferredHolder<Item, AEDiskCellItem> AE_DISK_CELL_64M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_64m", () -> new AEDiskCellItem(new Item.Properties(), AEDiskCellItem.Tier.DISK_64M)) : null;
     @DefaultTranslation("AE Disk Cell 256M")
     @DefaultTooltip("&7Provides a lot external file storage via ME Bridge.")
-    public static final DeferredHolder<Item, AEDiskCell> AE_DISK_CELL_256M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_256m", () -> new AEDiskCell(new Item.Properties(), AEDiskCell.Tier.DISK_256M)) : null;
+    public static final DeferredHolder<Item, AEDiskCellItem> AE_DISK_CELL_256M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_256m", () -> new AEDiskCellItem(new Item.Properties(), AEDiskCellItem.Tier.DISK_256M)) : null;
 
     protected static void register() {
     }
