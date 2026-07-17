@@ -53,8 +53,9 @@ public class CoordUtil {
 
     // To fix issue #439
     private static boolean isPlayerInBlockRange(@NotNull Vec3 pos, @NotNull Level world, @NotNull Player player, double range) {
-        if (range != -1 && player.level() != world)
+        if (range != -1 && player.level() != world) {
             return false;
+        }
 
         double x = player.getX(), y = player.getY(), ey = player.getEyeY(), z = player.getZ();
         if (ey > y) { // Ensure following code will work when eye position is lower than feet position

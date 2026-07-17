@@ -17,6 +17,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.events.Events;
+import de.srendi.advancedperipherals.common.network.toclient.NarrateToClientPacket;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
@@ -34,6 +35,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -312,7 +315,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
 
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = optionsLua.optInt(5).orElse(-1);
+            int range = optionsLua.optInt("range").orElse(-1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerId);
             if (player == null) {
@@ -394,7 +397,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return Errors.INCORRECT_TITLE_JSON_RESULT;
             }
 
-            Optional<String> brackets = optionsLua.optString(4);
+            Optional<String> brackets = optionsLua.optString("brackets");
             if (useUTF8) {
                 brackets = brackets.map(StringUtil::byteStringToUTF8);
             }
@@ -402,7 +405,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return Errors.INCORRECT_BRACKETS_RESULT;
             }
 
-            Optional<String> prefix = optionsLua.optString(3);
+            Optional<String> prefix = optionsLua.optString("prefix");
             if (useUTF8) {
                 prefix = prefix.map(StringUtil::byteStringToUTF8);
             }
@@ -455,7 +458,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
             String playerId = optionsLua.getString("player");
             int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
-            int range = optionsLua.optInt(6).orElse(-1);
+            int range = optionsLua.optInt("range").orElse(-1);
             ResourceKey<Level> dimension = getLevel().dimension();
             ServerPlayer player = getPlayer(playerId);
             if (player == null) {
@@ -497,6 +500,48 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
             return MethodResult.of(true);
         });
+    }
+
+    @LuaFunction(mainThread = true)
+    public final MethodResult narrateMessage(String message, Optional<Map<?, ?>> options) throws LuaException {
+        LuaTable<?, ?> optionsLua = EmptyLuaTable.orEmpty(options.orElse(null));
+
+        boolean interrupt = !optionsLua.optBoolean("delay").orElse(false);
+        if (message.length() > 2000) {
+            throw new LuaException("Message cannot longer than 2000 characters");
+        }
+
+        for (ServerPlayer player : getPlayers(optionsLua)) {
+            PacketDistributor.sendToPlayer(player, new NarrateToClientPacket(message, interrupt, getPos()));
+        }
+        return MethodResult.of(true);
+    }
+
+    private Iterable<ServerPlayer> getPlayers(LuaTable<?, ?> options) throws LuaException {
+        int maxRange = APConfig.PERIPHERALS_CONFIG.chatBoxMaxRange.get();
+        ResourceKey<Level> dimension = getLevel().dimension();
+
+        int range = options.optInt("range").orElse(-1);
+        String playerId = options.optString("player").orElse(null);
+
+        if (playerId != null) {
+            ServerPlayer player = getPlayer(playerId);
+            return (APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() || player.level().dimension() == dimension) &&
+                CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)
+                ? List.of(player)
+                : List.of();
+        }
+
+        List<ServerPlayer> players = new ArrayList<>();
+        for (ServerPlayer player : getLevel().getServer().getPlayerList().getPlayers()) {
+            if (!APConfig.PERIPHERALS_CONFIG.chatBoxMultiDimensional.get() && player.level().dimension() != dimension) {
+                continue;
+            }
+            if (CoordUtil.isInRange(getPhysicsPos(), getLevel(), player, range, maxRange)) {
+                players.add(player);
+            }
+        }
+        return players;
     }
 
     @Override

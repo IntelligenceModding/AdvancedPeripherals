@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.network;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.toclient.KeyboardMouseCapturePacket;
+import de.srendi.advancedperipherals.common.network.toclient.NarrateToClientPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectAddPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkAddPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
@@ -33,6 +34,7 @@ public class APNetworking {
 
     private static void init(PayloadRegistrar registrar) {
         registrar.playToClient(KeyboardMouseCapturePacket.TYPE, makeReader(KeyboardMouseCapturePacket::new), KeyboardMouseCapturePacket::handle);
+        registrar.playToClient(NarrateToClientPacket.TYPE, makeReader(NarrateToClientPacket::new), NarrateToClientPacket::handle);
         registrar.playToClient(RenderableObjectAddPacket.TYPE, makeReader(RenderableObjectAddPacket::new), RenderableObjectAddPacket::handle);
         registrar.playToClient(RenderableObjectBulkAddPacket.TYPE, makeReader(RenderableObjectBulkAddPacket::new), RenderableObjectBulkAddPacket::handle);
         registrar.playToClient(RenderableObjectBulkSyncPacket.TYPE, makeReader(RenderableObjectBulkSyncPacket::new), RenderableObjectBulkSyncPacket::handle);
