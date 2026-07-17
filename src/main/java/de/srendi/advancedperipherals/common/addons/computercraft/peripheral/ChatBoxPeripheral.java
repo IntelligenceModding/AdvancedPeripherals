@@ -339,17 +339,27 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @LuaFunction(mainThread = true)
     public final MethodResult narrateMessage(String message, Optional<Map<?, ?>> options) throws LuaException {
-        LuaTable<?, ?> optionsLua = EmptyLuaTable.orEmpty(options.orElse(null));
+        return withChatOperation(ignored -> {
+            LuaTable<?, ?> optionsLua = EmptyLuaTable.orEmpty(options.orElse(null));
 
-        boolean interrupt = !optionsLua.optBoolean("delay").orElse(false);
-        if (message.length() > 2000) {
-            throw new LuaException("Message cannot longer than 2000 characters");
-        }
+            boolean useUTF8 = optionsLua.optBoolean("utf8").orElse(false);
 
-        for (ServerPlayer player : getPlayers(optionsLua, false)) {
-            PacketDistributor.sendToPlayer(player, new NarrateToClientPacket(message, interrupt, getPos()));
-        }
-        return MethodResult.of(true);
+            String message1 = message;
+            // check size while it represents bytes (in utf8 mode) as that is longer
+            if (message1.length() > APConfig.PERIPHERALS_CONFIG.chatBoxMessageSize.get()) {
+                return Errors.MESSAGE_TOO_LONG_RESULT;
+            }
+            if (useUTF8) {
+                message1 = StringUtil.byteStringToUTF8(message1);
+            }
+
+            boolean interrupt = !optionsLua.optBoolean("delay").orElse(false);
+
+            for (ServerPlayer player : getPlayers(optionsLua, false)) {
+                PacketDistributor.sendToPlayer(player, new NarrateToClientPacket(message1, interrupt, getPos()));
+            }
+            return MethodResult.of(true);
+        });
     }
 
     private Iterable<ServerPlayer> getPlayers(LuaTable<?, ?> options, boolean mustHavePlayer) throws LuaException {
