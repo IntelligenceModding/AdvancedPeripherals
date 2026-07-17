@@ -1,11 +1,11 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +20,15 @@ public class APBlockEntityBlock<T extends BlockEntity> extends BaseBlockEntityBl
     }
 
     public APBlockEntityBlock(DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> tileEntity) {
-        this(tileEntity, Properties.of().sound(SoundType.METAL).mapColor(DyeColor.GRAY));
+        this(
+            tileEntity,
+            Properties.of()
+                .sound(SoundType.METAL)
+                .mapColor(MapColor.METAL)
+                .strength(1, 5)
+                .noOcclusion()
+                .requiresCorrectToolForDrops()
+        );
     }
 
     @Override

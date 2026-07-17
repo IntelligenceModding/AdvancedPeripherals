@@ -2,11 +2,13 @@ package de.srendi.advancedperipherals.common.data;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.blocks.base.IHarvestableBlock;
+import de.srendi.advancedperipherals.common.setup.APBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -42,11 +44,13 @@ public class BlockTagsProvider extends TagsProvider<Block> {
             tag(harvesterBlock.getHarvestTag()).add(holder.getKey());
             tag(harvesterBlock.getToolTag()).add(holder.getKey());
         }
+
+        tag(BlockTags.RAILS).add(APBlocks.SMART_RAIL.getKey());
     }
 
     @Override
     protected Path getPath(ResourceLocation block) {
-        return this.packOutput.getOutputFolder().resolve("data/" + block.getNamespace() + "/tags/blocks/" + block.getPath() + ".json");
+        return this.packOutput.getOutputFolder().resolve("data/" + block.getNamespace() + "/tags/block/" + block.getPath() + ".json");
     }
 
     @Override

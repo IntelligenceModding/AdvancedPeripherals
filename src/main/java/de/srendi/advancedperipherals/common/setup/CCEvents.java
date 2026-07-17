@@ -1,6 +1,22 @@
 package de.srendi.advancedperipherals.common.setup;
 
 public final class CCEvents {
+    // Fires when a minecart get on a smart rail
+    // by: smart_rail
+    //
+    // "cart_attached", peripheral_name: string, cart_data: table
+    // peripheral_name: The smart rail's name
+    // cart_data: The minecart's entity data
+    public static final String CART_ATTACHED = "cart_attached";
+
+    // Fires when a minecart left a smart rail
+    // by: smart_rail
+    //
+    // "cart_detached", peripheral_name: string, cart_id: table
+    // peripheral_name: The smart rail's name
+    // cart_id: The minecart's UUID
+    public static final String CART_DETACHED = "cart_detached";
+
     // Fires when a chat message appears within a chatbox's detection range.
     // by: chatbox
     //

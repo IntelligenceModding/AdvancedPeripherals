@@ -48,6 +48,18 @@ public class APRegistration {
     public static final DeferredRegister<OverlayObjectType<?>> OVERLAY_OBJECTS = DeferredRegister.create(APRegistries.OVERLAY_OBJECTS, AdvancedPeripherals.MOD_ID);
 
     public static void register(IEventBus modEventBus) {
+        APBlocks.register();
+        APItems.register();
+        APBlockEntityTypes.register();
+        APContainerTypes.register();
+        APTags.register();
+        APVillagers.register();
+        APEntities.register();
+        APCreativeTabs.register();
+        APDataComponents.register();
+        APOverlayObjects.register();
+        CCRegistration.register();
+
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
@@ -60,18 +72,6 @@ public class APRegistration {
         CREATIVE_MODE_TABS.register(modEventBus);
         DATA_COMPONENT_TYPES.register(modEventBus);
         OVERLAY_OBJECTS.register(modEventBus);
-
-        APBlocks.register();
-        APItems.register();
-        APBlockEntityTypes.register();
-        APContainerTypes.register();
-        APTags.register();
-        APVillagers.register();
-        APEntities.register();
-        APCreativeTabs.register();
-        APDataComponents.register();
-        APOverlayObjects.register();
-        CCRegistration.register();
 
         modEventBus.addListener(APRegistration::registerRegistries);
         modEventBus.addListener(APRegistration::registerCapabilities);

@@ -3,13 +3,11 @@ package de.srendi.advancedperipherals.common.blocks.base;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -21,20 +19,9 @@ public class BaseBlock extends Block implements IHarvestableBlock {
 
     public static final EnumProperty<FrontAndTop> ORIENTATION = BlockStateProperties.ORIENTATION;
 
-    private final TagKey<Block> harvestTag;
-
-    public BaseBlock() {
-        this(Tags.Blocks.NEEDS_WOOD_TOOL);
-    }
-
-    public BaseBlock(TagKey<Block> harvestTag) {
-        this(Properties.of().sound(SoundType.METAL).mapColor(DyeColor.GRAY).strength(1, 5).sound(SoundType.METAL).noOcclusion().requiresCorrectToolForDrops(), harvestTag);
-    }
-
-    public BaseBlock(Properties properties, TagKey<Block> harvestTag) {
+    public BaseBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(ORIENTATION, FrontAndTop.NORTH_UP));
-        this.harvestTag = harvestTag;
+        this.registerDefaultState(this.getStateDefinition().any().setValue(ORIENTATION, FrontAndTop.NORTH_UP));
     }
 
     @Override
@@ -45,7 +32,7 @@ public class BaseBlock extends Block implements IHarvestableBlock {
 
     @Override
     public TagKey<Block> getHarvestTag() {
-        return harvestTag;
+        return Tags.Blocks.NEEDS_WOOD_TOOL;
     }
 
     @Override

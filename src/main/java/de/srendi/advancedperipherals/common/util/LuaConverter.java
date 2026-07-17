@@ -169,6 +169,7 @@ public class LuaConverter {
                 data.put("team", teamToLua(entity.getTeam()));
                 data.put("airSupply", entity.getAirSupply());
                 data.put("maxAirSupply", entity.getMaxAirSupply());
+                data.put("passengers", entity.getPassengers().stream().map(Entity::getStringUUID).toList());
             }
         });
         registerEntityConverter(LivingEntity.class, (entity, data, ctx) -> {

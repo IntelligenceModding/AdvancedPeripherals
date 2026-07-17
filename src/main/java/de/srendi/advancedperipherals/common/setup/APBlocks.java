@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.setup;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.blocks.BlockReaderBlock;
 import de.srendi.advancedperipherals.common.blocks.PlayerDetectorBlock;
+import de.srendi.advancedperipherals.common.blocks.SmartRailBlock;
 import de.srendi.advancedperipherals.common.blocks.base.APBlockEntityBlock;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -12,6 +13,8 @@ import de.srendi.advancedperipherals.lib.annotation.DefaultTranslation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.function.Supplier;
@@ -19,7 +22,18 @@ import java.util.function.Supplier;
 public class APBlocks {
     @DefaultTranslation("Peripheral Casing")
     @DefaultTooltip("&7An empty hull without the love it deserves. Used as crafting ingredient")
-    public static final DeferredHolder<Block, BaseBlock> PERIPHERAL_CASING = register("peripheral_casing", BaseBlock::new, () -> new APBlockItem(APBlocks.PERIPHERAL_CASING.get(), new Item.Properties().stacksTo(16), () -> true));
+    public static final DeferredHolder<Block, BaseBlock> PERIPHERAL_CASING = register(
+        "peripheral_casing",
+        () -> new BaseBlock(
+            Block.Properties.of()
+            .sound(SoundType.METAL)
+            .mapColor(MapColor.METAL)
+            .strength(1, 5)
+            .noOcclusion()
+            .requiresCorrectToolForDrops()
+        ),
+        () -> new APBlockItem(APBlocks.PERIPHERAL_CASING.get(), new Item.Properties().stacksTo(16), () -> true)
+    );
 
     @DefaultTranslation("Chat Box")
     @DefaultTooltip("&7Interacts with the ingame chat, can read and write messages.")
@@ -67,6 +81,10 @@ public class APBlocks {
     @DefaultTranslation("RS Bridge")
     @DefaultTooltip("&7The RS Bridge interacts with Refined Storage to manage your items.")
     public static final DeferredHolder<Block, APBlockEntityBlock<?>> RS_BRIDGE = register("rs_bridge", () -> new APBlockEntityBlock<>(APAddon.REFINEDSTORAGE.isLoaded() ? APBlockEntityTypes.RS_BRIDGE : null), () -> new APBlockItem(APBlocks.RS_BRIDGE.get(), APConfig.PERIPHERALS_CONFIG.enableRSBridge));
+
+    @DefaultTranslation("Smart Rail")
+    @DefaultTooltip("&7An advanced rail that can be controlled by computer.")
+    public static final DeferredHolder<Block, SmartRailBlock> SMART_RAIL = register("smart_rail", SmartRailBlock::new, () -> new APBlockItem(APBlocks.SMART_RAIL.get(), () -> true));
 
     public static void register() {
     }
