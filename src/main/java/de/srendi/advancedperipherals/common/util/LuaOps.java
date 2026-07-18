@@ -98,7 +98,7 @@ public class LuaOps implements DynamicOps<Object> {
         if (map instanceof Map<?, ?> map1) {
             Map<Object, Object> result = new HashMap<>(map1);
             result.put(key, value);
-            return DataResult.success(map);
+            return DataResult.success(result);
         }
         if (map == null) {
             return DataResult.success(Map.of(key, value));
@@ -111,7 +111,7 @@ public class LuaOps implements DynamicOps<Object> {
         if (map instanceof Map<?, ?> map1) {
             Map<Object, Object> result = new HashMap<>(map1);
             result.putAll(values);
-            return DataResult.success(map);
+            return DataResult.success(result);
         }
         if (map == null) {
             return DataResult.success(Map.copyOf(values));
@@ -124,7 +124,7 @@ public class LuaOps implements DynamicOps<Object> {
         if (map instanceof Map<?, ?> map1) {
             Map<Object, Object> result = new HashMap<>(map1);
             values.entries().forEach((pair) -> result.put(pair.getFirst(), pair.getSecond()));
-            return DataResult.success(map);
+            return DataResult.success(result);
         }
         if (map == null) {
             return DataResult.success(this.createMap(values.entries()));
