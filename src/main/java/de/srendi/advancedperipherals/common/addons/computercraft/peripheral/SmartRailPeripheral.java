@@ -1,18 +1,23 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
+import dan200.computercraft.api.lua.IArguments;
+import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaValues;
+import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.blocks.SmartRailBlock;
 import de.srendi.advancedperipherals.common.blocks.blockentities.SmartRailBlockEntity;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -22,7 +27,7 @@ public class SmartRailPeripheral extends BasePeripheral<BlockEntityPeripheralOwn
     private final SmartRailBlockEntity be;
 
     private final List<AbstractMinecart> cartsBuf = new ArrayList<>();
-    private volatile Map<UUID, Map<String, ?>> carts = Map.of();
+    private Map<UUID, AbstractMinecart> carts = Map.of();
     private int rescanCD = 0;
 
     public SmartRailPeripheral(SmartRailBlockEntity be) {
@@ -35,9 +40,45 @@ public class SmartRailPeripheral extends BasePeripheral<BlockEntityPeripheralOwn
         return true;
     }
 
+    @LuaFunction(mainThread = true)
+    public final Collection<?> getCarts() {
+        LuaConverter.EntityConverter.Context context = LuaConverter.entityContextBuilder()
+            .detailed()
+            .position(this.be.getBottomCenter())
+            .build();
+        return this.carts.values().stream().map((e) -> LuaConverter.entityToLua(e, context)).toList();
+    }
+
     @LuaFunction
-    public final Collection<Map<String, ?>> getCarts() {
-        return this.carts.values();
+    public final MethodResult getState() {
+        SmartRailBlock.RailPoweredState state = this.be.getState();
+        return MethodResult.of(state.name(), state.ordinal());
+    }
+
+    @LuaFunction
+    public final void setState(IArguments args) throws LuaException {
+        Object arg = args.get(0);
+        if (arg == null) {
+            throw new LuaException("argument #1 must provide a state name or an index between [0, 4]");
+        }
+        SmartRailBlock.RailPoweredState state = null;
+        if (arg instanceof Number index) {
+            int i = Math.min(Math.max(index.intValue(), 0), 4);
+            state = SmartRailBlock.RailPoweredState.values()[i];
+        } else if (arg instanceof String name) {
+            name = name.toUpperCase(Locale.ROOT);
+            for (SmartRailBlock.RailPoweredState s : SmartRailBlock.RailPoweredState.values()) {
+                if (s.name().equals(name)) {
+                    state = s;
+                }
+            }
+            if (state == null) {
+                throw new LuaException("Unknown rail state '" + arg + "'");
+            }
+        } else {
+            throw LuaValues.badArgumentOf(args, 0, "string or number");
+        }
+        this.be.setState(state);
     }
 
     @Override
@@ -50,24 +91,20 @@ public class SmartRailPeripheral extends BasePeripheral<BlockEntityPeripheralOwn
 
         this.be.collectCarts(this.cartsBuf);
 
-        Map<UUID, Map<String, ?>> carts = this.carts;
-        List<Map.Entry<UUID, Map<String, ?>>> newCarts = new ArrayList<>();
+        Map<UUID, AbstractMinecart> carts = this.carts;
+        List<AbstractMinecart> newCarts = new ArrayList<>();
         Set<UUID> removedCarts = new HashSet<>(carts.keySet());
-        LuaConverter.EntityConverter.Context context = LuaConverter.entityContextBuilder()
-            .detailed()
-            .position(Vec3.atBottomCenterOf(this.be.getBlockPos()))
-            .build();
         for (AbstractMinecart cart : this.cartsBuf) {
             if (!removedCarts.remove(cart.getUUID())) {
-                newCarts.add(Map.entry(cart.getUUID(), LuaConverter.entityToLua(cart, context)));
+                newCarts.add(cart);
             }
         }
 
         if (!removedCarts.isEmpty() || !newCarts.isEmpty()) {
-            Map<UUID, Map<String, ?>> newCartsMap = Map.ofEntries(
+            Map<UUID, AbstractMinecart> newCartsMap = Map.ofEntries(
                 Stream.concat(
                     carts.entrySet().stream().filter((e) -> !removedCarts.contains(e.getKey())),
-                    newCarts.stream()
+                    newCarts.stream().map((e) -> Map.entry(e.getUUID(), e))
                 )
                     .toArray(Map.Entry[]::new)
             );
@@ -82,11 +119,15 @@ public class SmartRailPeripheral extends BasePeripheral<BlockEntityPeripheralOwn
                 );
             }
             if (!newCarts.isEmpty()) {
+                LuaConverter.EntityConverter.Context context = LuaConverter.entityContextBuilder()
+                    .detailed()
+                    .position(this.be.getBottomCenter())
+                    .build();
                 this.forEachConnectedComputers(
                     (computer) -> computer.queueEvent(
                         CCEvents.CART_ATTACHED,
                         computer.getAttachmentName(),
-                        newCarts.stream().map(Map.Entry::getValue).toList()
+                        newCarts.stream().map((e) -> LuaConverter.entityToLua(e, context)).toList()
                     )
                 );
             }

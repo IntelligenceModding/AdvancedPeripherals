@@ -45,6 +45,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     @Override
     public void setName(Component name) {
         this.name = name;
+        this.setChanged();
     }
 
     @Override

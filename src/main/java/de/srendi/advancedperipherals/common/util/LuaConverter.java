@@ -136,15 +136,15 @@ public class LuaConverter {
                 ((EntityConverter<Entity>) converter).entityToMap(entity, data, ctx);
             }
         }
-        Vec3 pos = ctx.position();
-        if (pos != null) {
-            CoordUtil.putRelativeCoords(data, entity.getX() - pos.x, entity.getY() - pos.y, entity.getZ() - pos.z, ctx.orientation());
-        }
         return data;
     }
 
     private static void registerDefaultEntityConverters() {
         registerEntityConverter(Entity.class, (entity, data, ctx) -> {
+            Vec3 pos = ctx.position();
+            if (pos != null) {
+                CoordUtil.putRelativeCoords(data, entity.getX() - pos.x, entity.getY() - pos.y, entity.getZ() - pos.z, ctx.orientation());
+            }
             data.put("id", entity.getId());
             data.put("uuid", entity.getStringUUID());
             EntityType<?> type = entity.getType();
@@ -157,7 +157,11 @@ public class LuaConverter {
             data.put("pitch", entity.getXRot());
             data.put("eyeHeight", entity.getEyeHeight());
             if (ctx.detailed()) {
-                data.put("type", type.getDescriptionId());
+                Vec3 delta = entity.getDeltaMovement();
+                data.put("dx", delta.x);
+                data.put("dy", delta.y);
+                data.put("dz", delta.z);
+                // TODO: df, du, dr?
                 data.put("tags", entity.getTags());
                 data.put("category", type.getCategory().getName());
                 data.put("canBurn", entity.fireImmune());
