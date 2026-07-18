@@ -179,6 +179,9 @@ repositories {
     maven {
         name = "TerraformersMC EMI"
         url = "https://maven.terraformersmc.com/"
+        content {
+            includeGroup("dev.emi")
+        }
     }
     maven {
         name = "SirEdvin's private repository"
@@ -194,10 +197,6 @@ repositories {
             includeGroup("dev.architectury")
             includeGroup("me.shedaniel.cloth")
         }
-    }
-    maven {
-        name = "EMI"
-        url = "https://maven.terraformersmc.com/"
     }
     maven {
         name = "Kotlin for Forge"
