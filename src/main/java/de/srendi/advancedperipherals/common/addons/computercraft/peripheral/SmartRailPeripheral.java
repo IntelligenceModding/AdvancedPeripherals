@@ -29,6 +29,7 @@ public class SmartRailPeripheral extends BasePeripheral<BlockEntityPeripheralOwn
     private final List<AbstractMinecart> cartsBuf = new ArrayList<>();
     private Map<UUID, AbstractMinecart> carts = Map.of();
     private int rescanCD = 0;
+    private volatile boolean haveAnyCart = false;
 
     public SmartRailPeripheral(SmartRailBlockEntity be) {
         super("smart_rail", new BlockEntityPeripheralOwner<>(be));
@@ -38,6 +39,11 @@ public class SmartRailPeripheral extends BasePeripheral<BlockEntityPeripheralOwn
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @LuaFunction
+    public final boolean hasCarts() {
+        return this.haveAnyCart;
     }
 
     @LuaFunction(mainThread = true)
@@ -119,6 +125,7 @@ public class SmartRailPeripheral extends BasePeripheral<BlockEntityPeripheralOwn
                     .toArray(Map.Entry[]::new)
             );
             this.carts = newCartsMap;
+            this.haveAnyCart = !newCartsMap.isEmpty();
             if (!removedCarts.isEmpty()) {
                 this.forEachConnectedComputers(
                     (computer) -> computer.queueEvent(
