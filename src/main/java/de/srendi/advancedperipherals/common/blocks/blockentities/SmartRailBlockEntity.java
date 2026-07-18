@@ -33,11 +33,13 @@ import java.util.List;
 
 public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBlockEntity, BlockCapabilityProviders.Peripheral, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
+    private static final String ACTIVATING_KEY = "activating";
     private static final String STATE_KEY = "state";
     protected CompoundTag peripheralSettings = new CompoundTag();
     private IPeripheral peripheral = null;
     private Component name = null;
 
+    private volatile boolean activating = false;
     private volatile SmartRailBlock.RailPoweredState state = SmartRailBlock.RailPoweredState.STOP;
 
     public SmartRailBlockEntity(BlockPos pos, BlockState state) {
@@ -58,6 +60,43 @@ public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBloc
     public void setName(Component name) {
         this.name = name;
         this.setChanged();
+    }
+
+    public boolean isActivating() {
+        return this.activating;
+    }
+
+    public void setActivating(boolean activating) {
+        if (this.activating == activating) {
+            return;
+        }
+        this.activating = activating;
+        this.setChanged();
+        this.queueRefreshPoweredState();
+    }
+
+    public SmartRailBlock.RailPoweredState getState() {
+        return this.state;
+    }
+
+    public void setState(SmartRailBlock.RailPoweredState state) {
+        if (this.state == state) {
+            return;
+        }
+        this.state = state;
+        this.setChanged();
+        this.queueRefreshPoweredState();
+    }
+
+    protected void queueRefreshPoweredState() {
+        this.getLevel().getServer().execute(
+            () -> this.getLevel().setBlock(
+                this.getBlockPos(),
+                this.getBlockState()
+                    .setValue(BlockStateProperties.POWERED, this.activating || this.state != SmartRailBlock.RailPoweredState.STOP),
+                Block.UPDATE_ALL
+            )
+        );
     }
 
     @Override
@@ -102,6 +141,7 @@ public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBloc
     protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
         this.peripheralSettings = tag.getCompound(PERIPHERAL_SETTINGS_KEY);
+        this.activating = tag.getBoolean(ACTIVATING_KEY);
         this.state = SmartRailBlock.RailPoweredState.values()[tag.getByte(STATE_KEY)];
         if (tag.contains("CustomName", Tag.TAG_STRING)) {
             this.name = BlockEntity.parseCustomNameSafe(tag.getString("CustomName"), provider);
@@ -114,6 +154,7 @@ public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBloc
         if (!this.peripheralSettings.isEmpty()) {
             tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
         }
+        tag.putBoolean(ACTIVATING_KEY, this.activating);
         tag.putByte(STATE_KEY, (byte) this.state.ordinal());
         if (this.name != null) {
             tag.putString("CustomName", Component.Serializer.toJson(this.name, provider));
@@ -151,21 +192,6 @@ public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBloc
     @Override
     public void markSettingsChanged() {
         this.setChanged();
-    }
-
-    public SmartRailBlock.RailPoweredState getState() {
-        return this.state;
-    }
-
-    public void setState(SmartRailBlock.RailPoweredState state) {
-        if (this.state == state) {
-            return;
-        }
-        this.state = state;
-        this.setChanged();
-        this.getLevel().getServer().execute(
-            () -> this.getLevel().setBlock(this.getBlockPos(), this.getBlockState().setValue(BlockStateProperties.POWERED, this.state != SmartRailBlock.RailPoweredState.STOP), Block.UPDATE_ALL)
-        );
     }
 
     @Override

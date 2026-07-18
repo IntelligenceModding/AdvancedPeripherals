@@ -81,6 +81,16 @@ public class SmartRailPeripheral extends BasePeripheral<BlockEntityPeripheralOwn
         this.be.setState(state);
     }
 
+    @LuaFunction
+    public final boolean isActivating() {
+        return this.be.isActivating();
+    }
+
+    @LuaFunction
+    public final void setActivating(boolean value) {
+        this.be.setActivating(value);
+    }
+
     @Override
     public void update() {
         this.rescanCD--;

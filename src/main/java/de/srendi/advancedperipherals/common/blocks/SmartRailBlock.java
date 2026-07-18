@@ -94,7 +94,6 @@ public class SmartRailBlock extends BaseRailBlock implements EntityBlock, IHarve
         Vec3 pos = Vec3.atBottomCenterOf(blockPos);
         switch (state) {
             case PASS -> {
-                return;
             }
             case STOP -> {
                 Vec3 movement = cart.getDeltaMovement();
@@ -103,27 +102,26 @@ public class SmartRailBlock extends BaseRailBlock implements EntityBlock, IHarve
                     if (speedSqr > 0) {
                         cart.setDeltaMovement(0, movement.y, 0);
                     }
-                    return;
+                } else {
+                    double dist = cart.position().subtract(pos).horizontalDistanceSqr();
+                    double acceleration = -speedSqr / 2 / dist;
+                    double speed = Math.sqrt(speedSqr);
+                    if (-acceleration > speed) {
+                        acceleration = -speed;
+                    }
+                    movement = movement.add(movement.x / speed * acceleration, 0, movement.z / speed * acceleration);
+                    cart.setDeltaMovement(movement);
                 }
-                double dist = cart.position().subtract(pos).horizontalDistanceSqr();
-                double acceleration = -speedSqr / 2 / dist;
-                double speed = Math.sqrt(speedSqr);
-                if (-acceleration > speed) {
-                    acceleration = -speed;
-                }
-                movement = movement.add(movement.x / speed * acceleration, 0, movement.z / speed * acceleration);
-                cart.setDeltaMovement(movement);
             }
             case ACC_BOTH -> {
                 Vec3 movement = cart.getDeltaMovement();
                 double speedSqr = movement.horizontalDistanceSqr();
-                if (speedSqr < 0.002) {
-                    return;
+                if (speedSqr > 0.002) {
+                    double acceleration = 0.06;
+                    double speed = Math.sqrt(speedSqr);
+                    movement = movement.add(movement.x / speed * acceleration, 0, movement.z / speed * acceleration);
+                    cart.setDeltaMovement(movement);
                 }
-                double acceleration = 0.06;
-                double speed = Math.sqrt(speedSqr);
-                movement = movement.add(movement.x / speed * acceleration, 0, movement.z / speed * acceleration);
-                cart.setDeltaMovement(movement);
             }
             case ACC_NEG, ACC_POS -> {
                 Vec3 movement = cart.getDeltaMovement();
@@ -139,6 +137,8 @@ public class SmartRailBlock extends BaseRailBlock implements EntityBlock, IHarve
                 cart.setDeltaMovement(movement);
             }
         }
+
+        cart.activateMinecart(blockPos.getX(), blockPos.getY(), blockPos.getZ(), be.isActivating());
     }
 
     public enum RailPoweredState {
@@ -146,6 +146,6 @@ public class SmartRailBlock extends BaseRailBlock implements EntityBlock, IHarve
         PASS,
         ACC_NEG,
         ACC_BOTH,
-        ACC_POS;
+        ACC_POS
     }
 }
