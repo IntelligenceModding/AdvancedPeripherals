@@ -33,7 +33,7 @@ public class LuaOps implements DynamicOps<Object> {
             return this.convertMap(outOps, map);
         }
         if (input instanceof Number number) {
-            return outOps.createDouble(number.doubleValue());
+            return outOps.createNumeric(number);
         }
         if (input instanceof String string) {
             return outOps.createString(string);
@@ -43,14 +43,34 @@ public class LuaOps implements DynamicOps<Object> {
 
     @Override
     public DataResult<Number> getNumberValue(Object input) {
-        return input instanceof Number number
-            ? DataResult.success(number)
-            : DataResult.error(() -> "Not a number");
+        if (input instanceof Number number) {
+            return DataResult.success(number);
+        }
+        if (input instanceof String strNum) {
+            try {
+                return DataResult.success(Long.valueOf(strNum));
+            } catch (NumberFormatException e) {
+                return DataResult.error(() -> "Not a number");
+            }
+        }
+        return DataResult.error(() -> "Not a number");
     }
 
     @Override
     public Object createNumeric(Number number) {
+        if (number instanceof Long longNum) {
+            return this.createLong(longNum.longValue());
+        }
         return number;
+    }
+
+    @Override
+    public Object createLong(long value) {
+        double dValue = value;
+        if ((long) dValue != value) {
+            return Long.toString(value);
+        }
+        return Double.valueOf(dValue);
     }
 
     @Override

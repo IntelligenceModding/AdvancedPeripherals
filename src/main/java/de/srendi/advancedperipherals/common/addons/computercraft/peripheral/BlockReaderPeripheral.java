@@ -3,16 +3,17 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
-import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.BlockReaderEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import de.srendi.advancedperipherals.common.util.LuaOps;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -62,7 +63,9 @@ public class BlockReaderPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (target == null) {
             return null;
         }
-        return (Map<String, Object>) NBTUtil.toLua(target.saveWithId(getLevel().registryAccess()));
+        return (Map<String, Object>) CompoundTag.CODEC
+            .encodeStart(LuaOps.INSTANCE, target.saveWithId(getLevel().registryAccess()))
+            .getOrThrow();
     }
 
     @LuaFunction(mainThread = true)
