@@ -118,6 +118,7 @@
   "text.advancedperipherals.saddle_turtle.dismount_hint": "Controlling %1$s. Press %2$s and %3$s to dismount.",
   "text.advancedperipherals.smart_glasses.modules": "Modules",
   "text.advancedperipherals.smart_glasses.peripherals": "Peripherals",
+  "turtle.advancedperipherals.block_reader_turtle": "Block Reader",
   "turtle.advancedperipherals.chatty_turtle": "Chatty",
   "turtle.advancedperipherals.chunky_turtle": "Chunky",
   "turtle.advancedperipherals.compass_turtle": "Compass",

@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.data;
 
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleBlockReaderUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBoxUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunkyUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleCompassUpgrade;
@@ -26,6 +27,7 @@ import net.minecraft.world.item.Items;
 public class TurtleUpgradesProvider {
 
     public static void addUpgrades(BootstrapContext<ITurtleUpgrade> upgrades) {
+        upgrades.register(id(CCRegistration.ID.Turtle.BLOCK_READER), new TurtleBlockReaderUpgrade(new ItemStack(APBlocks.BLOCK_READER.get())));
         upgrades.register(id(CCRegistration.ID.Turtle.CHATTY), new TurtleChatBoxUpgrade(new ItemStack(APBlocks.CHAT_BOX.get())));
         upgrades.register(id(CCRegistration.ID.Turtle.CHUNKY), new TurtleChunkyUpgrade(new ItemStack(APItems.CHUNK_CONTROLLER)));
         upgrades.register(id(CCRegistration.ID.Turtle.COMPASS), new TurtleCompassUpgrade(new ItemStack(Items.COMPASS)));

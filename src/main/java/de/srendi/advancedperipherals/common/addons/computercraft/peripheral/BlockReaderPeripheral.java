@@ -1,8 +1,12 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.turtle.ITurtleAccess;
+import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.BlockReaderEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -14,12 +18,20 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Map;
 
-public class BlockReaderPeripheral extends BasePeripheral<BlockEntityPeripheralOwner<BlockReaderEntity>> {
+public class BlockReaderPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     public static final String PERIPHERAL_TYPE = "block_reader";
 
+    protected BlockReaderPeripheral(IPeripheralOwner owner) {
+        super(PERIPHERAL_TYPE, owner);
+    }
+
     public BlockReaderPeripheral(BlockReaderEntity tileEntity) {
-        super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
+        this(new BlockEntityPeripheralOwner<>(tileEntity));
+    }
+
+    public BlockReaderPeripheral(ITurtleAccess turtle, TurtleSide side) {
+        this(new TurtlePeripheralOwner(turtle, side));
     }
 
     @Override

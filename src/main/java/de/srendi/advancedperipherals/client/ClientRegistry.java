@@ -47,6 +47,7 @@ public class ClientRegistry {
 
     @SubscribeEvent
     public static void onUpgradeModeller(RegisterTurtleModellersEvent event) {
+        event.register(CCRegistration.BLOCK_READER_TURTLE.get(), TurtleUpgradeModeller.sided(AdvancedPeripherals.getRL("block/turtle_block_reader_left"), AdvancedPeripherals.getRL("block/turtle_block_reader_right")));
         event.register(CCRegistration.CHAT_BOX_TURTLE.get(), TurtleUpgradeModeller.sided(AdvancedPeripherals.getRL("block/turtle_chatty_left"), AdvancedPeripherals.getRL("block/turtle_chatty_right")));
         event.register(CCRegistration.CHUNKY_TURTLE.get(), TurtleUpgradeModeller.flatItem());
         event.register(CCRegistration.COMPASS_TURTLE.get(), TurtleUpgradeModeller.flatItem());

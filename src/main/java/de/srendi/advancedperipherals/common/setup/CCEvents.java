@@ -4,17 +4,17 @@ public final class CCEvents {
     // Fires when a minecart get on a smart rail
     // by: smart_rail
     //
-    // "cart_attached", peripheral_name: string, cart_data: table
+    // "cart_attached", peripheral_name: string, carts_data: table
     // peripheral_name: The smart rail's name
-    // cart_data: The minecart's entity data
+    // carts_data: The minecarts' entity data
     public static final String CART_ATTACHED = "cart_attached";
 
     // Fires when a minecart left a smart rail
     // by: smart_rail
     //
-    // "cart_detached", peripheral_name: string, cart_id: table
+    // "cart_detached", peripheral_name: string, carts_id: table
     // peripheral_name: The smart rail's name
-    // cart_id: The minecart's UUID
+    // carts_id: The minecarts' UUID
     public static final String CART_DETACHED = "cart_detached";
 
     // Fires when a chat message appears within a chatbox's detection range.

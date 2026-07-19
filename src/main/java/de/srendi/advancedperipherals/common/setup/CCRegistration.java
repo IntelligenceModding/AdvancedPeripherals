@@ -14,6 +14,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketEn
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketGeoScannerUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketInventoryManagerUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.pocket.PocketPlayerDetectorUpgrade;
+import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleBlockReaderUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBoxUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunkyUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleCompassUpgrade;
@@ -33,6 +34,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class CCRegistration {
+    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleBlockReaderUpgrade>> BLOCK_READER_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.BLOCK_READER.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleBlockReaderUpgrade::new));
     public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleChatBoxUpgrade>> CHAT_BOX_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.CHATTY.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleChatBoxUpgrade::new));
     public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleEnvironmentDetectorUpgrade>> ENVIRONMENT_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.ENVIRONMENT.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleEnvironmentDetectorUpgrade::new));
     public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleGeoScannerUpgrade>> GEO_SCANNER_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.GEOSCANNER.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleGeoScannerUpgrade::new));
@@ -72,6 +74,8 @@ public class CCRegistration {
 
     public static class ID {
         public static class Turtle {
+            @DefaultTranslation("Block Reader")
+            public static final ResourceLocation BLOCK_READER = AdvancedPeripherals.getRL("block_reader_turtle");
             @DefaultTranslation("Chatty")
             public static final ResourceLocation CHATTY = AdvancedPeripherals.getRL("chatty_turtle");
             @DefaultTranslation("Chunky")
