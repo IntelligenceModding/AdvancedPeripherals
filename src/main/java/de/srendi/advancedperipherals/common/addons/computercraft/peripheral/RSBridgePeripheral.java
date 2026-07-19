@@ -13,6 +13,7 @@ import com.refinedmods.refinedstorage.mekanism.ChemicalResource;
 import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.APAddon;
@@ -158,6 +159,15 @@ public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     @Override
     public List<?> getDrivesImpl() {
         return RSApi.listDrives(getNetwork());
+    }
+
+    // RS-only, not on IStorageSystemPeripheral: the ME Bridge has no equivalent.
+    @LuaFunction(mainThread = true)
+    public final MethodResult getCrafters() {
+        if (!isAvailable()) {
+            return NOT_CONNECTED_RESULT;
+        }
+        return MethodResult.of(RSApi.getCrafters(getNetwork(), getLevel()));
     }
 
     @Override
