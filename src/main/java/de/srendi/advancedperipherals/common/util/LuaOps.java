@@ -36,7 +36,7 @@ public class LuaOps implements DynamicOps<Object> {
             return outOps.createNumeric(number);
         }
         if (input instanceof String string) {
-            return outOps.createString(string);
+            return outOps.createString(StringUtil.byteStringToUTF8(string));
         }
         throw new IllegalStateException("Unknown Lua type: " + input.getClass());
     }
@@ -76,13 +76,13 @@ public class LuaOps implements DynamicOps<Object> {
     @Override
     public DataResult<String> getStringValue(Object input) {
         return input instanceof String string
-            ? DataResult.success(string)
+            ? DataResult.success(StringUtil.byteStringToUTF8(string))
             : DataResult.error(() -> "Not a string");
     }
 
     @Override
     public Object createString(String value) {
-        return value;
+        return StringUtil.utf8ToByteString(value);
     }
 
     @Override

@@ -14,6 +14,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripher
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.OperationAbility;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
+import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
@@ -120,12 +121,12 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
 
     @LuaFunction
     public final String getName() {
-        return owner.getCustomName();
+        return StringUtil.utf8ToByteString(owner.getCustomName());
     }
 
     @LuaFunction(mainThread = true)
     public final void setName(String name) {
-        owner.setCustomName(name);
+        owner.setCustomName(StringUtil.byteStringToUTF8(name));
     }
 
     protected Map<String, Object> getPeripheralConfiguration() {

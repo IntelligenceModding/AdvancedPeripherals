@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class TextObject extends RenderableObject {
-    @StringProperty
+    @StringProperty(utf8 = true)
     public String content = "";
 
     @FloatingNumberProperty(min = 0, max = 128)

@@ -11,4 +11,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @ObjectProperty(StringType.class)
 public @interface StringProperty {
+	boolean utf8() default false;
 }
