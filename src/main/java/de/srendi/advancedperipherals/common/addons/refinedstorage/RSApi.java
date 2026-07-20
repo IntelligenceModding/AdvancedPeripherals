@@ -17,6 +17,8 @@ import com.refinedmods.refinedstorage.api.resource.ResourceKey;
 import com.refinedmods.refinedstorage.api.storage.StateTrackedStorage;
 import com.refinedmods.refinedstorage.api.storage.Storage;
 import com.refinedmods.refinedstorage.api.storage.composite.CompositeStorage;
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.common.api.autocrafting.Autocrafter;
 import com.refinedmods.refinedstorage.common.api.storage.SerializableStorage;
 import com.refinedmods.refinedstorage.common.api.support.network.InWorldNetworkNodeContainer;
 import com.refinedmods.refinedstorage.common.api.support.resource.PlatformResourceKey;
@@ -39,6 +41,7 @@ import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -286,6 +289,34 @@ public class RSApi {
             }
         }
         return drives;
+    }
+
+    public static List<Object> getCrafters(Network network, net.minecraft.world.level.Level level) {
+        List<Object> crafters = new ArrayList<>();
+
+        GraphNetworkComponent graphNetworkComponent = network.getComponent(GraphNetworkComponent.class);
+        AutocraftingNetworkComponent autocrafting = network.getComponent(AutocraftingNetworkComponent.class);
+
+        for (Autocrafter autocrafter : graphNetworkComponent.getContainers(Autocrafter.class)) {
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("name", autocrafter.getAutocrafterName().getString());
+            properties.put("position", LuaConverter.posToLua(autocrafter.getLocalPosition()));
+            properties.put("visible", autocrafter.isVisibleToTheAutocrafterManager());
+
+            List<Object> patterns = new ArrayList<>();
+            Container container = autocrafter.getPatternContainer();
+            for (int i = 0; i < container.getContainerSize(); i++) {
+                ItemStack stack = container.getItem(i);
+                if (stack.isEmpty())
+                    continue;
+                Pattern pattern = RefinedStorageApi.INSTANCE.getPattern(stack, level).orElse(null);
+                if (pattern != null)
+                    patterns.add(parsePattern(pattern, autocrafting));
+            }
+            properties.put("patterns", patterns);
+            crafters.add(properties);
+        }
+        return crafters;
     }
 
     /**
