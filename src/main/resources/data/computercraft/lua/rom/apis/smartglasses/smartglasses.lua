@@ -59,7 +59,9 @@ end
 
 local aliasCache = {}
 
-_ENV.modules = setmetatable({}, {
+_ENV.modules = setmetatable({
+	_doc = 'this table can be dynamically indexed to get references of current attached modules',
+}, {
 	__pairs = iterModulesAndAlias,
 	__index = function(t, name)
 		if type(name) ~= 'string' then
@@ -88,6 +90,24 @@ _ENV.modules = setmetatable({}, {
 	end,
 	__newindex = function(t, name)
 		error('should not modify smartglasses.modules object', 2)
+	end,
+	__tostring = function()
+		local str = '{'
+		local first = true
+		for name, module in iterModules() do
+			if first then
+				first = false
+				str = str .. '\n'
+			end
+			str = str .. ' ["' .. name .. '"'
+			local alias = module.getAlias()
+			if alias then
+				str = str .. ' aka "' .. alias .. '"'
+			end
+			str = str .. '] = <module>,\n'
+		end
+		str = str .. '}'
+		return str
 	end,
 })
 
