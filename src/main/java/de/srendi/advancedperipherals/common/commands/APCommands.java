@@ -13,7 +13,7 @@ import dan200.computercraft.shared.computer.core.ServerContext;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.ChunkyPeripheral;
 import de.srendi.advancedperipherals.common.events.Events;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
-import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -77,13 +77,13 @@ public class APCommands {
             source.sendFailure(Component.literal("You need an item in your main hand."));
             return 0;
         }
-        String fingerprint = ItemUtil.getFingerprint(playerEntity.getMainHandItem());
+        String hash = FingerprintUtil.hash(playerEntity.getMainHandItem().getComponentsPatch());
 
-        source.sendSuccess(() -> Component.literal("Fingerprint of the item: "), true);
+        source.sendSuccess(() -> Component.literal("NBT hash of the item: "), true);
         source.sendSuccess(() -> ComponentUtils.wrapInSquareBrackets(
-                Component.literal(fingerprint)
+                Component.literal(hash == null ? "null" : hash)
                         .withStyle(style -> style.applyFormat(ChatFormatting.GREEN)
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, fingerprint))
+                                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, hash == null ? "" : hash))
                                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Copy"))))), true);
         return 1;
     }

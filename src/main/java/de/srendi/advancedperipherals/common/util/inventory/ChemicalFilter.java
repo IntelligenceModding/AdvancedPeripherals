@@ -23,7 +23,6 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
     private Holder<Chemical> chemical = MekanismAPI.EMPTY_CHEMICAL_HOLDER;
     private TagKey<Chemical> tag = null;
     private long amount = Long.MAX_VALUE;
-    private String fingerprint = "";
     public int fromSlot = -1;
     public int toSlot = -1;
 
@@ -44,9 +43,6 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
             } else if ((chemicalFilter.chemical = MekanismAPI.CHEMICAL_REGISTRY.getHolder(ResourceLocation.parse(name)).orElse(null)) == null) {
                 return Pair.of(null, "CHEMICAL_NOT_FOUND");
             }
-        }
-        if (item.containsKey("fingerprint")) {
-            chemicalFilter.fingerprint = item.getString("fingerprint");
         }
         if (item.containsKey("fromSlot")) {
             chemicalFilter.fromSlot = item.getInt("fromSlot") - 1;
@@ -79,7 +75,7 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
     @Override
     public boolean isEmpty() {
-        return this == EMPTY || (fingerprint.isEmpty() && chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) && tag == null);
+        return this == EMPTY || (chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) && tag == null);
     }
 
     @Override
@@ -103,7 +99,6 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
         newFilter.chemical = this.chemical;
         newFilter.tag = this.tag;
         newFilter.amount = this.amount;
-        newFilter.fingerprint = this.fingerprint;
         newFilter.fromSlot = this.fromSlot;
         newFilter.toSlot = this.toSlot;
         return newFilter;
@@ -121,14 +116,9 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
 
     @Override
     public boolean test(ChemicalStack stack) {
-        if (isEmpty())
+        if (isEmpty()) {
             return true;
-
-        if (!fingerprint.isEmpty()) {
-            String testFingerprint = ChemicalUtil.getFingerprint(stack);
-            return fingerprint.equals(testFingerprint);
         }
-
         if (!chemical.is(MekanismAPI.EMPTY_CHEMICAL_KEY) && !stack.is(chemical)) {
             return false;
         }
@@ -161,7 +151,6 @@ public class ChemicalFilter extends GenericFilter<ChemicalStack> {
                 "item=" + chemical.getRegisteredName() +
                 ", tag=" + tag +
                 ", amount=" + amount +
-                ", fingerprint='" + fingerprint + '\'' +
                 ", fromSlot=" + fromSlot +
                 ", toSlot=" + toSlot +
                 '}';

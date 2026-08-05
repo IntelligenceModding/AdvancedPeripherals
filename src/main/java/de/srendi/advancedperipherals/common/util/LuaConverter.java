@@ -309,7 +309,7 @@ public class LuaConverter {
         properties.put("maxStackSize", stack.getMaxStackSize());
         properties.put("prototype", DataComponentUtil.mapToLua(stack.getPrototype()));
         properties.put("components", DataComponentUtil.patchToLua(stack.getComponentsPatch()));
-        properties.put("fingerprint", ItemUtil.getFingerprint(stack));
+        properties.put("nbt", FingerprintUtil.hash(stack.getComponentsPatch()));
         return properties;
     }
 
@@ -331,7 +331,7 @@ public class LuaConverter {
         properties.put("displayName", stack.getHoverName().getString());
         properties.put("type", fluidTypeToLua(stack.getFluidType()));
         properties.put("components", DataComponentUtil.patchToLua(stack.getComponentsPatch()));
-        properties.put("fingerprint", FluidUtil.getFingerprint(stack));
+        properties.put("nbt", FingerprintUtil.hash(stack.getComponentsPatch()));
         return properties;
     }
 
@@ -343,7 +343,6 @@ public class LuaConverter {
         Map<String, Object> properties = chemicalToLua(stack.getChemical());
         properties.put("count", stack.getAmount());
         properties.put("displayName", stack.getTextComponent().getString());
-        properties.put("fingerprint", ChemicalUtil.getFingerprint(stack));
         return properties;
     }
 

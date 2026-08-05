@@ -10,6 +10,7 @@ import dan200.computercraft.api.lua.LuaValues;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
+import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RegistryUtil;
@@ -33,7 +34,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     private TagKey<Item> tag = null;
     private DataComponentPatch components = null;
     private int count = Integer.MAX_VALUE;
-    private String fingerprint = "";
+    private String nbtHash = null;
     public int fromSlot = -1;
     public int toSlot = -1;
 
@@ -68,8 +69,8 @@ public class ItemFilter extends GenericFilter<ItemStack> {
             }
             itemFilter.components = DataComponentUtil.nbtToPatch(componentsAsNbt);
         }
-        if (item.containsKey("fingerprint")) {
-            itemFilter.fingerprint = item.getString("fingerprint");
+        if (item.containsKey("nbtHash")) {
+            itemFilter.nbtHash = item.getString("nbtHash");
         }
         if (item.containsKey("fromSlot")) {
             itemFilter.fromSlot = item.getInt("fromSlot") - 1;
@@ -103,7 +104,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
 
     @Override
     public boolean isEmpty() {
-        return this == EMPTY || (fingerprint.isEmpty() && item == Items.AIR && tag == null && components == null);
+        return this == EMPTY || (nbtHash == null && item == Items.AIR && tag == null && components == null);
     }
 
     @Override
@@ -135,7 +136,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         newFilter.tag = this.tag;
         newFilter.components = this.components;
         newFilter.count = this.count;
-        newFilter.fingerprint = this.fingerprint;
+        newFilter.nbtHash = this.nbtHash;
         newFilter.fromSlot = this.fromSlot;
         newFilter.toSlot = this.toSlot;
         return newFilter;
@@ -157,14 +158,9 @@ public class ItemFilter extends GenericFilter<ItemStack> {
 
     @Override
     public boolean test(ItemStack stack) {
-        if (isEmpty())
+        if (isEmpty()) {
             return true;
-
-        if (!fingerprint.isEmpty()) {
-            String testFingerprint = ItemUtil.getFingerprint(stack);
-            return fingerprint.equals(testFingerprint);
         }
-
         if (item != Items.AIR && !stack.is(item)) {
             return false;
         }
@@ -172,6 +168,9 @@ public class ItemFilter extends GenericFilter<ItemStack> {
             return false;
         }
         if (components != null && !stack.getComponentsPatch().equals(components)) {
+            return false;
+        }
+        if (nbtHash != null && !nbtHash.equals(FingerprintUtil.hashOrEmpty(stack.getComponentsPatch()))) {
             return false;
         }
         return true;
@@ -204,7 +203,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
                 ", tag=" + tag +
                 ", components=" + components +
                 ", count=" + count +
-                ", fingerprint='" + fingerprint + '\'' +
+                ", nbtHash='" + nbtHash + '\'' +
                 ", fromSlot=" + fromSlot +
                 ", toSlot=" + toSlot +
                 '}';

@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.shared.peripheral.generic.GenericPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -102,13 +101,6 @@ public class FluidUtil {
             return null;
         }
         return extractHandler(target, level, target.getBlockPos(), direction.getOpposite());
-    }
-
-    @NotNull
-    public static String getFingerprint(@NotNull FluidStack stack) {
-        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode());
-
-        return FingerprintUtil.hash(fingerprintKey);
     }
 
     public static ResourceLocation getRegistryKey(Fluid fluid) {

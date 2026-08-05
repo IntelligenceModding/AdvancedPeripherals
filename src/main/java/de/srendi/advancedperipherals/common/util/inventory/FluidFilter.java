@@ -11,6 +11,7 @@ import dan200.computercraft.api.lua.LuaValues;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.DataComponentUtil;
+import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RegistryUtil;
@@ -34,7 +35,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     private TagKey<Fluid> tag = null;
     private DataComponentPatch components = null;
     private int amount = Integer.MAX_VALUE;
-    private String fingerprint = "";
+    private String nbtHash = null;
 
     private FluidFilter() {
     }
@@ -70,8 +71,8 @@ public class FluidFilter extends GenericFilter<FluidStack> {
             }
             fluidFilter.components = DataComponentUtil.nbtToPatch(componentsAsNbt);
         }
-        if (item.containsKey("fingerprint")) {
-            fluidFilter.fingerprint = item.getString("fingerprint");
+        if (item.containsKey("nbtHash")) {
+            fluidFilter.nbtHash = item.getString("nbtHash");
         }
         if (item.containsKey("amount")) {
             fluidFilter.amount = item.getInt("amount");
@@ -99,7 +100,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
 
     @Override
     public boolean isEmpty() {
-        return this == EMPTY || (fingerprint.isEmpty() && fluid == Fluids.EMPTY && tag == null && components == null);
+        return this == EMPTY || (nbtHash == null && fluid == Fluids.EMPTY && tag == null && components == null);
     }
 
     @Override
@@ -133,7 +134,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         newFilter.tag = this.tag;
         newFilter.components = this.components;
         newFilter.amount = this.amount;
-        newFilter.fingerprint = this.fingerprint;
+        newFilter.nbtHash = this.nbtHash;
         return newFilter;
     }
 
@@ -153,11 +154,6 @@ public class FluidFilter extends GenericFilter<FluidStack> {
 
     @Override
     public boolean test(FluidStack stack) {
-        if (!fingerprint.isEmpty()) {
-            String testFingerprint = FluidUtil.getFingerprint(stack);
-            return fingerprint.equals(testFingerprint);
-        }
-
         if (fluid != Fluids.EMPTY && !stack.getFluid().isSame(fluid)) {
             return false;
         }
@@ -165,6 +161,9 @@ public class FluidFilter extends GenericFilter<FluidStack> {
             return false;
         }
         if (components != null && !stack.getComponentsPatch().equals(components)) {
+            return false;
+        }
+        if (nbtHash != null && !nbtHash.equals(FingerprintUtil.hashOrEmpty(stack.getComponentsPatch()))) {
             return false;
         }
         return true;
@@ -189,7 +188,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
                 ", tag=" + tag +
                 ", components=" + components +
                 ", amount=" + amount +
-                ", fingerprint='" + fingerprint + '\'' +
+                ", nbtHash='" + nbtHash + '\'' +
                 '}';
     }
 }

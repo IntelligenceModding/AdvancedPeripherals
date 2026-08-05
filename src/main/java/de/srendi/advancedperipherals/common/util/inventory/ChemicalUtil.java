@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.shared.peripheral.generic.GenericPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import mekanism.api.Action;
 import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.Chemical;
@@ -130,13 +129,6 @@ public class ChemicalUtil {
 
     public static ChemicalStack toChemicalStack(Chemical chemical, long amount) {
         return new ChemicalStack(MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical), amount);
-    }
-
-    public static String getFingerprint(@NotNull ChemicalStack stack) {
-        // A pretty lame fingerprint, a chemical stack does not have any components or other stuff
-        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), 0);
-
-        return FingerprintUtil.hash(fingerprintKey);
     }
 
     public static ResourceLocation getRegistryKey(Chemical chemical) {
