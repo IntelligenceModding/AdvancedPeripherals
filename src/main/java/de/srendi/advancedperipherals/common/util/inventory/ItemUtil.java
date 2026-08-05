@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.shared.peripheral.generic.GenericPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
-import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -88,14 +87,14 @@ public class ItemUtil {
         }
 
         ItemInserter inserter = inventoryTo instanceof IStorageSystemItemHandler storageTo
-            ? (stack) -> storageTo.insertItem(stack, false)
+            ? storageTo::insertItem
             : toSlot < 0
-                ? (stack) -> ItemHandlerHelper.insertItem(inventoryTo, stack, false)
-                : (stack) -> inventoryTo.insertItem(toSlot, stack, false);
+                ? (stack, simulate) -> ItemHandlerHelper.insertItem(inventoryTo, stack, simulate)
+                : (stack, simulate) -> inventoryTo.insertItem(toSlot, stack, simulate);
 
         // The logic changes with storage systems since these systems do not have slots
         if (inventoryFrom instanceof IStorageSystemItemHandler storageFrom) {
-            return storageFrom.extractItems(filter, (extracted) -> extracted.getCount() - inserter.insertItem(extracted).getCount(), false);
+            return storageFrom.extractItems(filter, (extracted) -> extracted.getCount() - inserter.insertItem(extracted, false).getCount(), false);
         }
 
         int[] fromSlots = (
@@ -110,17 +109,26 @@ public class ItemUtil {
         }
 
         for (int i : fromSlots) {
-            ItemStack extracted = inventoryFrom.extractItem(i, needs, true);
+            ItemStack extracted, remaining;
+            int inserted;
+
+            extracted = inventoryFrom.extractItem(i, needs, true);
             if (extracted.isEmpty()) {
                 continue;
             }
-            ItemStack remaining = inserter.insertItem(extracted);
-            int inserted = extracted.getCount() - remaining.getCount();
+            remaining = inserter.insertItem(extracted, true);
+            inserted = extracted.getCount() - remaining.getCount();
             if (inserted == 0) {
                 continue;
             }
+
+            extracted = inventoryFrom.extractItem(i, inserted, false);
+            if (extracted.isEmpty()) {
+                continue;
+            }
+            remaining = inserter.insertItem(extracted, false);
+            inserted = extracted.getCount() - remaining.getCount();
             needs -= inserted;
-            inventoryFrom.extractItem(i, inserted, false);
             if (needs <= 0) {
                 break;
             }
@@ -140,19 +148,7 @@ public class ItemUtil {
 
     @FunctionalInterface
     private interface ItemInserter {
-        ItemStack insertItem(ItemStack stack);
-    }
-
-    /**
-     * Fingerprints are XXHash64 hashes generated out of the nbt tag, the registry name and the display name from item stacks
-     * Used to filter inventory specific operations. See {@link ItemFilter}
-     *
-     * @return A generated XXHash64 hash from the item stack
-     */
-    public static String getFingerprint(ItemStack stack) {
-        FingerprintUtil.FingerprintKey fingerprintKey = new FingerprintUtil.FingerprintKey(getRegistryKey(stack), stack.getComponentsPatch().hashCode());
-
-        return FingerprintUtil.hash(fingerprintKey);
+        ItemStack insertItem(ItemStack stack, boolean simulate);
     }
 
     //Gathers all items in handler and returns them
