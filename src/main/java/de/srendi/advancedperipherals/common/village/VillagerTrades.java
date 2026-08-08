@@ -6,8 +6,12 @@ import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.APVillagers;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.neoforged.neoforge.event.village.WandererTradesEvent;
 
@@ -15,7 +19,6 @@ import static de.srendi.advancedperipherals.common.village.VillagerTrade.TradeBu
 
 @EventBusSubscriber
 public class VillagerTrades {
-
     @SubscribeEvent
     public static void registerWanderingTrade(WandererTradesEvent event) {
         if (APConfig.WORLD_CONFIG.enableWanderingTraderTrades.get()) {
@@ -24,6 +27,9 @@ public class VillagerTrades {
                     .build();
             TradeBuilder.createTrade(event, ModRegistry.Blocks.TURTLE_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 2, 1)
                     .setMaxUses(8)
+                    .build();
+            TradeBuilder.createTrade(event, APItems.SMART_GLASSES.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 32, 1)
+                    .setMaxUses(1)
                     .build();
         }
     }
@@ -77,9 +83,15 @@ public class VillagerTrades {
             TradeBuilder.createTrade(event, APBlocks.ENERGY_DETECTOR.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 4)
                     .setXp(6)
                     .build();
+            TradeBuilder.createTrade(event, APBlocks.FLUID_DETECTOR.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 4)
+                    .setXp(6)
+                    .build();
+            TradeBuilder.createTrade(event, APBlocks.GAS_DETECTOR.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 4)
+                    .setXp(6)
+                    .build();
             TradeBuilder.createTrade(event, ModRegistry.Blocks.COMPUTER_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 4)
-                    .setXp(5)
                     .setMaxUses(3)
+                    .setXp(5)
                     .build();
             TradeBuilder.createTrade(event, APItems.MEMORY_CARD.get(), VillagerTrade.Type.EMERALD_FOR_ITEM, 2, 4)
                     .setXp(4)
@@ -103,8 +115,23 @@ public class VillagerTrades {
             TradeBuilder.createTrade(event, ModRegistry.Blocks.WIRELESS_MODEM_ADVANCED.get(), VillagerTrade.Type.ITEM_FOR_EMERALD, 4, 5)
                     .setXp(8)
                     .build();
+            TradeBuilder.createTrade(event, APItems.SMART_GLASSES_NETHERITE.get(), VillagerTrade.Type.EMERALD_FOR_ITEM, 64, 5)
+                    .setMaxUses(1)
+                    .setXp(16)
+                    .build();
 
         }
     }
 
+    @SubscribeEvent
+    public static void onVillagerDrop(LivingDropsEvent event) {
+        if (!(event.getEntity() instanceof Villager villager)) {
+            return;
+        }
+        if (villager.getVillagerData().getProfession() == APVillagers.COMPUTER_SCIENTIST.get()) {
+            if (villager.level().random.nextDouble() < 0.01) {
+                event.getDrops().add(new ItemEntity(villager.level(), villager.getX(), villager.getEyeY(), villager.getZ(), new ItemStack(APItems.SMART_GLASSES.get())));
+            }
+        }
+    }
 }
