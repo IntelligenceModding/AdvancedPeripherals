@@ -9,7 +9,7 @@
   "category": "redstone",
   "key": {
     "D": {
-      "item": "advancedperipherals:ae_disk_cell_16m"
+      "item": "advancedperipherals:ae_disk_cell_64m"
     },
     "G": {
       "item": "ae2:quartz_glass"
@@ -18,7 +18,7 @@
       "item": "ae2:calculation_processor"
     },
     "R": {
-      "tag": "c:dusts/glowstone"
+      "item": "ae2:sky_dust"
     }
   },
   "pattern": [
@@ -28,6 +28,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "advancedperipherals:ae_disk_cell_64m"
+    "id": "advancedperipherals:ae_disk_cell_256m"
   }
 }

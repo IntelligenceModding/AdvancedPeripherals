@@ -196,7 +196,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .pattern("RPR")
             .pattern("DGD")
             .pattern("RDR")
-            .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_4M.get()))
+            .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_1M.get()))
             .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_16M.get())
@@ -207,11 +207,11 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .pattern("RPR")
             .pattern("DGD")
             .pattern("RDR")
-            .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_16M.get()))
+            .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_4M.get()))
             .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_64M.get())
-            .define('P', AEItems.ENGINEERING_PROCESSOR.get())
+            .define('P', AEItems.CALCULATION_PROCESSOR.get())
             .define('G', AEBlocks.QUARTZ_GLASS)
             .define('D', APItems.AE_DISK_CELL_16M.get())
             .define('R', Tags.Items.DUSTS_GLOWSTONE)
@@ -219,6 +219,17 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .pattern("DGD")
             .pattern("RDR")
             .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_16M.get()))
+            .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_256M.get())
+            .define('P', AEItems.CALCULATION_PROCESSOR.get())
+            .define('G', AEBlocks.QUARTZ_GLASS)
+            .define('D', APItems.AE_DISK_CELL_64M.get())
+            .define('R', AEItems.SKY_DUST.get())
+            .pattern("RPR")
+            .pattern("DGD")
+            .pattern("RDR")
+            .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_64M.get()))
             .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
 
         //// BLOCKS ////

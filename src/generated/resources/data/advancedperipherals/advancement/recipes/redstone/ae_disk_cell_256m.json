@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "items": "advancedperipherals:ae_disk_cell_4m"
+            "items": "advancedperipherals:ae_disk_cell_64m"
           }
         ]
       },
@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "advancedperipherals:ae_disk_cell_16m"
+        "recipe": "advancedperipherals:ae_disk_cell_256m"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -32,7 +32,7 @@
   ],
   "rewards": {
     "recipes": [
-      "advancedperipherals:ae_disk_cell_16m"
+      "advancedperipherals:ae_disk_cell_256m"
     ]
   }
 }
