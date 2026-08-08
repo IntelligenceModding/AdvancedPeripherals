@@ -2,20 +2,20 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
+    "B": {
+      "item": "minecraft:iron_bars"
+    },
     "I": {
       "tag": "c:ingots/iron"
     },
     "R": {
       "tag": "c:storage_blocks/redstone"
-    },
-    "i": {
-      "item": "minecraft:iron_bars"
     }
   },
   "pattern": [
-    "IiI",
-    "iRi",
-    "IiI"
+    "IBI",
+    "BRB",
+    "IBI"
   ],
   "result": {
     "count": 1,
