@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.items;
 
 import java.util.Optional;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 import com.google.common.base.Objects;
@@ -160,15 +161,17 @@ public class SmartGlassesItem extends ArmorItem {
     }
 
     public void onEquippedTick(ItemStack stack, Level level, LivingEntity entity) {
-        SmartGlassesComputer computer = null;
-        if (level instanceof ServerLevel serverLevel) {
-            computer = getOrCreateComputer(serverLevel, entity, stack);
-        }
+        SmartGlassesComputer computer = level instanceof ServerLevel serverLevel
+            ? getOrCreateComputer(serverLevel, entity, stack)
+            : null;
 
         ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
+        IntFunction<Item> moduleInv = computer == null
+                ? (slot) -> items.getItem(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET)
+                : (slot) -> computer.getModuleStack(slot).getItem();
 
         for (int slot = 0; slot < SmartGlassesSlot.MODULE_SLOTS; slot++) {
-            Item item = items.getItem(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET);
+            Item item = moduleInv.apply(slot);
             if (!(item instanceof IModuleItem moduleItem)) {
                 continue;
             }
