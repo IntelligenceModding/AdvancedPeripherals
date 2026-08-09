@@ -12,23 +12,18 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-local function loadAllAPIs(folder)
-	for _, f in ipairs(fs.list(folder)) do
-		if f:match(".+%.lua") then
-			local path = fs.combine(folder, f)
-			if not fs.isDir(path) then
-				os.loadAPI(path)
-			end
-		end
-	end
+if not smartglasses then
+	error('Not on smartglasses', 0)
 end
 
-loadAllAPIs('/rom/apis/advancedperipherals_patch')
-
-if smartglasses then
-	local path = shell.path()
-	path = path .. ':/rom/programs/smartglasses'
-	shell.setPath(path)
-
-	loadAllAPIs('/rom/apis/smartglasses')
+print('Attached Modules:')
+for name, module in pairs(smartglasses.modules) do
+	if name == module.getId() then
+		local line = '- ' .. name
+		local alias = module.getAlias()
+		if alias then
+			line = line .. ' (' .. alias .. ')'
+		end
+		print(line)
+	end
 end
