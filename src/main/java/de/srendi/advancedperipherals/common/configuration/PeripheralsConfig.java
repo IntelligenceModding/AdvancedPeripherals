@@ -174,7 +174,7 @@ public class PeripheralsConfig implements IAPConfig {
             .comment("If true, the chat box will wrap and execute 'run_command' or 'suggest_command' action with zero permission, in order to prevent operators accidently run dangerous commands.")
             .define("chatBoxWrapCommand", true);
         chatBoxBannedCommands = builder
-            .comment("These commands are not be able to send via 'run_command' or 'suggest_command' action. It will match as a regex pattern if starts with '^', otherwise will match as prefix. '/' prefix should not present.")
+            .comment("These commands won't send via 'run_command' or 'suggest_command' action. It will match as a regex pattern if starts with '^', otherwise will match as prefix. '/' prefix should not present.")
             .defineList("chatBoxBannedCommands", chatBoxDefaultBannedCommands, (o) -> o instanceof String value && value.length() > 0);
 
         pop("Distance_Detector", builder);
