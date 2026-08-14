@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dan200.computercraft.api.lua.LuaException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import net.minecraft.core.BlockPos;
@@ -62,7 +63,7 @@ public class NBTUtil {
         return nbt;
     }
 
-    public static CompoundTag fromSNBT(String snbt) {
+    public static CompoundTag fromSNBT(String snbt) throws LuaException {
         try {
             return snbt == null ? null : TagParser.parseTag(snbt);
         } catch (CommandSyntaxException ex) {
@@ -70,7 +71,7 @@ public class NBTUtil {
                 AdvancedPeripherals.debug(org.apache.logging.log4j.Level.ERROR, "Could not parse SNBT to NBT");
                 ex.printStackTrace();
             }
-            return null;
+            throw new LuaException(ex.getMessage());
         }
     }
 

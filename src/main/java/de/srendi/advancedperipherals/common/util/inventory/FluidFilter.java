@@ -18,7 +18,6 @@ import de.srendi.advancedperipherals.common.util.RegistryUtil;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
@@ -61,15 +60,13 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         }
         if (item.containsKey("components")) {
             Object components = item.get("components");
-            CompoundTag componentsAsNbt;
             if (components instanceof String snbt) {
-                componentsAsNbt = NBTUtil.fromSNBT(snbt);
+                fluidFilter.components = DataComponentUtil.nbtToPatch(NBTUtil.fromSNBT(snbt));
             } else if (components instanceof Map<?, ?> map) {
-                componentsAsNbt = NBTUtil.mapToNBT(map);
+                fluidFilter.components = DataComponentUtil.luaToPatch(map);
             } else {
                 throw LuaValues.badField("components", "string or table", LuaValues.getType(components));
             }
-            fluidFilter.components = DataComponentUtil.nbtToPatch(componentsAsNbt);
         }
         if (item.containsKey("nbtHash")) {
             fluidFilter.nbtHash = item.getString("nbtHash");

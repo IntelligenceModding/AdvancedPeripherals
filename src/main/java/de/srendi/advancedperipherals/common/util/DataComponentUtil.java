@@ -1,5 +1,6 @@
 package de.srendi.advancedperipherals.common.util;
 
+import dan200.computercraft.api.lua.LuaException;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 
 import net.minecraft.core.RegistryAccess;
@@ -28,11 +29,17 @@ public class DataComponentUtil {
             .getOrThrow();
     }
 
-    public static DataComponentPatch nbtToPatch(CompoundTag tag) {
+    public static DataComponentPatch nbtToPatch(CompoundTag tag) throws LuaException {
         return nbtToPatch(tag, ServerLifecycleHooks.getCurrentServer().registryAccess());
     }
 
-    public static DataComponentPatch nbtToPatch(CompoundTag tag, RegistryAccess registryAccess) {
+    public static DataComponentPatch nbtToPatch(CompoundTag tag, RegistryAccess registryAccess) throws LuaException {
+        return DataComponentPatch.CODEC
+            .parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag)
+            .getOrThrow(LuaException::new);
+    }
+
+    public static DataComponentPatch nbtToPatchSafe(CompoundTag tag, RegistryAccess registryAccess) {
         return DataComponentPatch.CODEC
             .parse(RegistryOps.create(NbtOps.INSTANCE, registryAccess), tag)
             .resultOrPartial()
@@ -59,15 +66,14 @@ public class DataComponentUtil {
             .getOrThrow();
     }
 
-    public static DataComponentPatch luaToPatch(Map<?, ?> map) {
+    public static DataComponentPatch luaToPatch(Map<?, ?> map) throws LuaException {
         return luaToPatch(map, ServerLifecycleHooks.getCurrentServer().registryAccess());
     }
 
-    public static DataComponentPatch luaToPatch(Map<?, ?> map, RegistryAccess registryAccess) {
+    public static DataComponentPatch luaToPatch(Map<?, ?> map, RegistryAccess registryAccess) throws LuaException {
         return DataComponentPatch.CODEC
             .parse(RegistryOps.create(LuaOps.INSTANCE, registryAccess), map)
-            .resultOrPartial()
-            .orElse(DataComponentPatch.EMPTY);
+            .getOrThrow(LuaException::new);
     }
 
     public static DataComponentPatch getStoredDataFromItem(ItemStack stack) {

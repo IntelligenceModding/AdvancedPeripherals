@@ -81,9 +81,9 @@ public class APCommands {
 
         source.sendSuccess(() -> Component.literal("NBT hash of the item: "), true);
         source.sendSuccess(() -> ComponentUtils.wrapInSquareBrackets(
-                Component.literal(hash == null ? "null" : hash)
+                Component.literal(hash == null ? "nil" : hash)
                         .withStyle(style -> style.applyFormat(ChatFormatting.GREEN)
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, hash == null ? "" : hash))
+                                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, hash == null ? "nil" : hash))
                                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("Copy"))))), true);
         return 1;
     }

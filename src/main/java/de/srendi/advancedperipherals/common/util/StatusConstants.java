@@ -25,7 +25,6 @@ public enum StatusConstants {
     NO_VALID_TOSLOT,
     NO_VALID_NBT_HASH,
     NO_VALID_NBT,
-    NO_VALID_FINGERPRINT,
     NO_VALID_COUNT,
     NO_VALID_FILTER_TYPE,
     // Inventory,

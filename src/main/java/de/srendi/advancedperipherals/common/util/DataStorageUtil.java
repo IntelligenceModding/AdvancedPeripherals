@@ -21,7 +21,7 @@ public class DataStorageUtil {
         if (tag.isEmpty()) {
             return DataComponentPatch.EMPTY;
         }
-        return DataComponentUtil.nbtToPatch(tag, ((BlockEntity) tileEntity).getLevel().registryAccess());
+        return DataComponentUtil.nbtToPatchSafe(tag, ((BlockEntity) tileEntity).getLevel().registryAccess());
     }
 
     public static void putDataStorage(@NotNull IPeripheralBlockEntity tileEntity, DataComponentPatch patch) {
