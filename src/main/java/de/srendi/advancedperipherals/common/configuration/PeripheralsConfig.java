@@ -123,23 +123,23 @@ public class PeripheralsConfig implements IAPConfig {
         // TODO: these commands all requires permissions, which are banned by chatBoxWrapCommand already,
         //       so we in fact do not need them.
         // Instead, we should find some common used non-permission commands provided by other mods to replace the list.
-        "/execute",
-        "/op",
-        "/deop",
-        "/gamemode",
-        "/gamerule",
-        "/stop",
+        "execute",
+        "op",
+        "deop",
+        "gamemode",
+        "gamerule",
+        "stop",
 
-        "/give",
-        "/fill",
-        "/setblock",
-        "/summon",
+        "give",
+        "fill",
+        "setblock",
+        "summon",
 
-        "/whitelist",
-        "^/ban(?:-ip)?\\s*",
-        "^/pardon(?:-ip)?\\s*",
+        "whitelist",
+        "^ban(?:-ip)?\\s*",
+        "^pardon(?:-ip)?\\s*",
 
-        "/save-"
+        "save-"
     );
 
     public PeripheralsConfig() {
@@ -174,7 +174,7 @@ public class PeripheralsConfig implements IAPConfig {
             .comment("If true, the chat box will wrap and execute 'run_command' or 'suggest_command' action with zero permission, in order to prevent operators accidently run dangerous commands.")
             .define("chatBoxWrapCommand", true);
         chatBoxBannedCommands = builder
-            .comment("These commands are not be able to send via 'run_command' or 'suggest_command' action. It will match as prefix if starts with '/', otherwise will use as a regex pattern")
+            .comment("These commands are not be able to send via 'run_command' or 'suggest_command' action. It will match as a regex pattern if starts with '^', otherwise will match as prefix. '/' prefix should not present.")
             .defineList("chatBoxBannedCommands", chatBoxDefaultBannedCommands, (o) -> o instanceof String value && value.length() > 0);
 
         pop("Distance_Detector", builder);
@@ -396,7 +396,7 @@ public class PeripheralsConfig implements IAPConfig {
         List<Predicate<String>> filters = new ArrayList<>();
         for (final String s : chatBoxBannedCommands.get()) {
             String p = s;
-            if (p.charAt(0) == '/') {
+            if (p.charAt(0) != '^') {
                 p = p.replaceAll("\\s+", "\\\\s+");
                 if (p.equals(s)) {
                     final String prefix = s;
