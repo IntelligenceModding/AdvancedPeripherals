@@ -1,4 +1,3 @@
-import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.ltgt.gradle.errorprone.CheckSeverity
 
 import java.text.SimpleDateFormat
@@ -11,7 +10,7 @@ plugins {
 
     id 'com.github.breadmoirai.github-release' version '2.5.2'
     id 'com.modrinth.minotaur' version '2.+'
-    id 'net.darkhax.curseforgegradle' version '1.1.16'
+    id 'io.github.themrmilchmann.curseforge-publish' version '0.11.0'
     id 'net.ltgt.errorprone' version '5.1.0'
     id 'net.neoforged.moddev' version '2.+'
     id 'org.jetbrains.changelog' version '1.3.0'
@@ -482,10 +481,7 @@ githubRelease {
     prerelease = release_type.equalsIgnoreCase("alpha")
 }
 
-tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
-    setGroup("publishing")
-    setDescription("Upload Advanced Peripherals to CurseForge")
-
+curseforge {
     // This token is used to authenticate with CurseForge. It should be handled
     // with the same level of care and security as your actual password. You
     // should never share your token with an untrusted source or publish it
@@ -493,40 +489,44 @@ tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
     // store this token in an environment variable or a build secret.
     apiToken = curseforgeKey
 
-    // Tells CurseForgeGradle to publish the output of the jar task. This will
-    // return a UploadArtifact object that can be used to further configure the
-    // file.
-    task.upload(curseforgeProjectId, jar) { file ->
-        releaseType = "${release_type}"
+    publications {
+        register('curseForge') {
+            projectId = curseforgeProjectId
 
-        addGameVersion(minecraft_version)
-        addModLoader('neoforge')
-        addRequirement('cc-tweaked')
-        addOptional(
-            'applied-energistics-2',
-            'create',
-            'curios',
-            'dimstorage',
-            'mekanism',
-            'minecolonies',
-            'powah',
-            'refined-storage'
-        )
+            artifacts.register('main') {
+                from jar
+                releaseType = release_type
 
-        try {
-            file.changelog = "${project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()}"
-            file.changelogType = "markdown"
-        } catch (err) {
-            System.out.println(err)
-            file.changelog = ""
+                relations {
+                    requiredDependency 'cc-tweaked'
+                    optionalDependency 'applied-energistics-2'
+                    optionalDependency 'create'
+                    optionalDependency 'curios'
+                    optionalDependency 'dimstorage'
+                    optionalDependency 'mekanism'
+                    optionalDependency 'minecolonies'
+                    optionalDependency 'powah'
+                    optionalDependency 'refined-storage'
+                }
+
+                changelog {
+                    format = io.github.themrmilchmann.gradle.publish.curseforge.ChangelogFormat.MARKDOWN
+                    try {
+                        content = "${project.changelog.get("${fullVersionTag}").withHeader(false).toText()}"
+                    } catch (err) {
+                        System.out.println(err)
+                        content = ""
+                    }
+                }
+            }
         }
     }
-})
+}
 
 modrinth {
     token = modrinthKey
     projectId = modrinthProjectId
-    versionNumber = "${minecraft_version}-${project.version}"
+    versionNumber = "${fullVersionTag}"
     versionName = "Advanced Peripherals ${minecraft_version} ${version}"
     versionType = release_type
     uploadFile = jar
@@ -537,7 +537,7 @@ modrinth {
     }
 
     try {
-        changelog = project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()
+        changelog = project.changelog.get("${fullVersionTag}").withHeader(false).toText()
     } catch (err) {
         System.out.println(err)
         changelog = ""

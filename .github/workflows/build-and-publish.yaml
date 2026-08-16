@@ -89,7 +89,7 @@ jobs:
       - name: Publish CurseForge
         env:
           CURSEFORGE_KEY: ${{ secrets.CURSEFORGE_KEY }}
-        run: ./gradlew publishCurseForge
+        run: ./gradlew publishCurseForgePublicationToCurseForge
       - name: Publish Maven
         env:
           PUBLIC_REP_NAME: ${{ secrets.PUBLIC_REP_NAME }}
