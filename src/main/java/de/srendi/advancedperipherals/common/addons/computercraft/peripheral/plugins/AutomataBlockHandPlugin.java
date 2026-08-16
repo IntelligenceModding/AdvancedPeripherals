@@ -281,18 +281,12 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         @Override
         public Direction[] getNearestLookingDirections() {
             return switch (this.anchor) {
-                case DOWN ->
-                        new Direction[]{Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP};
-                case UP ->
-                        new Direction[]{Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.DOWN};
-                case NORTH ->
-                        new Direction[]{Direction.NORTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH};
-                case SOUTH ->
-                        new Direction[]{Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.NORTH};
-                case WEST ->
-                        new Direction[]{Direction.WEST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.EAST};
-                case EAST ->
-                        new Direction[]{Direction.EAST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.WEST};
+                case DOWN -> new Direction[]{Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.UP};
+                case UP -> new Direction[]{Direction.UP, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.DOWN};
+                case NORTH -> new Direction[]{Direction.NORTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH};
+                case SOUTH -> new Direction[]{Direction.SOUTH, Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.NORTH};
+                case WEST -> new Direction[]{Direction.WEST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.EAST};
+                case EAST -> new Direction[]{Direction.EAST, Direction.SOUTH, Direction.UP, Direction.NORTH, Direction.DOWN, Direction.WEST};
             };
         }
     }

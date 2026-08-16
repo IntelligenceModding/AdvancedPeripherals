@@ -94,6 +94,7 @@ public class SmartRailBlock extends BaseRailBlock implements EntityBlock, IHarve
         Vec3 pos = Vec3.atBottomCenterOf(blockPos);
         switch (state) {
             case PASS -> {
+                break;
             }
             case STOP -> {
                 Vec3 movement = cart.getDeltaMovement();
