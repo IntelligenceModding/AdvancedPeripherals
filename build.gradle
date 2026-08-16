@@ -496,8 +496,14 @@ curseforge {
         register('curseForge') {
             projectId = curseforgeProjectId
 
+            def dashVersion = minecraft_version.replace(".", "-")
+            def secondDash = dashVersion.indexOf('-', dashVersion.indexOf('-') + 1)
+            gameVersion("modloader", "neoforge")
+            gameVersion("minecraft-" + (secondDash == -1 ? dashVersion : dashVersion.substring(0, secondDash)), dashVersion)
+
             artifacts.register('main') {
                 from jar
+                displayName = jar.archiveFileName.get()
                 releaseType = release_type
 
                 relations {
