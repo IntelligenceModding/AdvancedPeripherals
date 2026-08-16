@@ -11,7 +11,7 @@ plugins {
 
     id 'com.github.breadmoirai.github-release' version '2.5.2'
     id 'com.modrinth.minotaur' version '2.+'
-    id 'net.darkhax.curseforgegradle' version '1.1.16'
+    id 'net.darkhax.curseforgegradle' version '1.3.+'
     id 'net.ltgt.errorprone' version '5.1.0'
     id 'net.neoforged.moddev' version '2.+'
     id 'org.jetbrains.changelog' version '1.3.0'
@@ -32,9 +32,13 @@ wrapper {
 def isSnapshotVersion = project.hasProperty('teamcityBuild')
 def githubUser = 'IntelligenceModding'
 def githubRepo = 'AdvancedPeripherals'
+def curseforgeProjectId = 431725
+def modrinthProjectId = 'SOw6jD6x'
 
 version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "") + "${mod_artifact_suffix}"
 group = 'de.srendi.advancedperipherals'
+
+def fullVersionTag = "${minecraft_version}-${project.version}"
 
 def static getenv(path = ".env") {
     def env = [:]
@@ -361,7 +365,7 @@ dependencies {
 changelog {
     version = "${project.version}"
     path = "${project.projectDir}/CHANGELOG.md"
-    header = "[${minecraft_version}-${-> version.get()}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
+    header = "[${fullVersionTag}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
     // Valid patterns would be:
     //   1.16.5-1.1.1.1b
     //   1.18-1.0r
@@ -440,39 +444,6 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
-tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
-    setGroup("publishing")
-    setDescription("Upload Advanced Peripherals to CurseForge")
-
-    // This token is used to authenticate with CurseForge. It should be handled
-    // with the same level of care and security as your actual password. You
-    // should never share your token with an untrusted source or publish it
-    // publicly to GitHub or embed it within a project. The best practice is to
-    // store this token in an environment variable or a build secret.
-    apiToken = curseforgeKey
-
-    // Tells CurseForgeGradle to publish the output of the jar task. This will
-    // return a UploadArtifact object that can be used to further configure the
-    // file.
-    task.upload(431725, jar) { file ->
-        try {
-            file.changelog = "${project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()}"
-            file.changelogType = "markdown"
-        } catch (err) {
-            System.out.println(err)
-            file.changelog = ""
-        }
-
-        addOptional('applied-energistics-2', 'curios', 'mekanism', 'refined-storage')
-
-        addRequirement('cc-tweaked')
-
-        addModLoader("neoforge")
-
-        releaseType = "${release_type}"
-    }
-})
-
 tasks.register("copyBlockTextures", Copy) {
     from 'src/generated/block-textures'
     into "src/generated/resources/assets/${project.mod_id}/textures/block"
@@ -497,12 +468,12 @@ githubRelease {
         token = githubKey
     owner = githubUser
     repo = githubRepo
-    tagName = "${minecraft_version}-${version}"
-    releaseName = "${minecraft_version}-${version}"
-    targetCommitish = "release/${minecraft_version}"
+    tagName = fullVersionTag
+    releaseName = fullVersionTag
+    targetCommitish = System.getenv("GITHUB_REF_NAME")
     generateReleaseNotes = false
     try {
-        body = project.changelog.get("${minecraft_version}-${version}").withHeader(false).toText()
+        body = project.changelog.get("${fullVersionTag}").withHeader(false).toText()
     } catch (err) {
         System.out.println(err)
         body = ""
@@ -511,9 +482,50 @@ githubRelease {
     prerelease = release_type.equalsIgnoreCase("alpha")
 }
 
+tasks.register('publishCurseForge', TaskPublishCurseForge, { task ->
+    setGroup("publishing")
+    setDescription("Upload Advanced Peripherals to CurseForge")
+
+    // This token is used to authenticate with CurseForge. It should be handled
+    // with the same level of care and security as your actual password. You
+    // should never share your token with an untrusted source or publish it
+    // publicly to GitHub or embed it within a project. The best practice is to
+    // store this token in an environment variable or a build secret.
+    apiToken = curseforgeKey
+
+    // Tells CurseForgeGradle to publish the output of the jar task. This will
+    // return a UploadArtifact object that can be used to further configure the
+    // file.
+    task.upload(curseforgeProjectId, jar) { file ->
+        releaseType = "${release_type}"
+
+        addGameVersion(minecraft_version)
+        addModLoader('neoforge')
+        addRequirement('cc-tweaked')
+        addOptional(
+            'applied-energistics-2',
+            'create',
+            'curios',
+            'dimstorage',
+            'mekanism',
+            'minecolonies',
+            'powah',
+            'refined-storage'
+        )
+
+        try {
+            file.changelog = "${project.changelog.get("${minecraft_version}-${project.version}").withHeader(false).toText()}"
+            file.changelogType = "markdown"
+        } catch (err) {
+            System.out.println(err)
+            file.changelog = ""
+        }
+    }
+})
+
 modrinth {
     token = modrinthKey
-    projectId = 'SOw6jD6x'
+    projectId = modrinthProjectId
     versionNumber = "${minecraft_version}-${project.version}"
     versionName = "Advanced Peripherals ${minecraft_version} ${version}"
     versionType = release_type
