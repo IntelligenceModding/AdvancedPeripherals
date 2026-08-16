@@ -75,7 +75,7 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions[bot]@users.noreply.github.com
           git add CHANGELOG.md
-          git commit -m 'action: patchChangelog'
+          git commit -m 'action: patchChangelog' || exit 0
           git push
           git push "$remote" "${ref}:${dev_ref}"
       - name: Github Release
