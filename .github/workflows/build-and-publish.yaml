@@ -42,13 +42,15 @@ jobs:
       java-version: ''
 
   publish:
-    if: ${{ github.event_name == 'push' && contains(github.ref, 'release/') }}
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && contains(github.ref, 'release/')) }}
     runs-on: ubuntu-latest
     needs:
       - build-and-test
     steps:
       - name: Checkout Sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -66,11 +68,16 @@ jobs:
         run: ./gradlew patchChangelog
       - name: Push Changelog Patch
         run: |
-          git config user.name github-actions && \
-          git config user.email github-actions[bot]@users.noreply.github.com && \
-          git add CHANGELOG.md && \
-          git commit -m 'action: patchChangelog' && \
+          ref="${{ github.ref }}"
+          ref="${ref#refs/heads/}"
+          dev_ref="dev/${ref#release/}"
+          remote=$(git config branch.$(git name-rev --name-only HEAD).remote)
+          git config user.name github-actions
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git add CHANGELOG.md
+          git commit -m 'action: patchChangelog'
           git push
+          git push "$remote" "${ref}:${dev_ref}"
       - name: Publish Maven
         env:
           PUBLIC_REP_NAME: ${{ secrets.PUBLIC_REP_NAME }}
