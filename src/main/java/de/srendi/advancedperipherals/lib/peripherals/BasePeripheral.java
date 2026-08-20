@@ -15,15 +15,14 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.Operation
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.PeripheralOwnerAbility;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.StringUtil;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -266,17 +265,5 @@ public abstract class BasePeripheral<O extends IPeripheralOwner> implements IBas
             throw new LuaException("Target '" + name + "' is not a tank");
         }
         return tank;
-    }
-
-    @Nullable
-    protected Object /*IChemicalHandler*/ getChemicalHandlerOrNull(IComputerAccess computer, String name) {
-        if (name.length() >= 1 && name.charAt(0) == '@' && this.owner instanceof BlockEntityPeripheralOwner<?> beOwner) {
-            Direction dir = this.mapDirection(name.substring(1));
-            if (dir == null) {
-                return null;
-            }
-            return ChemicalUtil.getHandlerFromDirection(beOwner, dir);
-        }
-        return ChemicalUtil.extractHandler(computer.getAvailablePeripheral(name));
     }
 }

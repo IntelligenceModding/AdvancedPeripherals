@@ -7,22 +7,18 @@ import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IStorageSystemPeripheralOwner;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import mekanism.api.chemical.IChemicalHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,20 +51,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return Set.of("storage_bridge");
     }
 
-    @Nullable
-    public abstract APAddon getChemicalOpAddon();
-
-    public MethodResult checkChemicalOperation() {
-        APAddon chemAddon = this.getChemicalOpAddon();
-        if (chemAddon == null) {
-            return MethodResult.of(null, "UNSUPPORTED_OPERATION");
-        }
-        if (!chemAddon.isLoaded()) {
-            return MethodResult.of(null, StatusConstants.ADDON_NOT_LOADED.toString(), chemAddon.getModId());
-        }
-        return null;
-    }
-
     @NotNull
     public IItemHandler getStorageSystemItemHandler() {
         return this.owner;
@@ -78,9 +60,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
     public IFluidHandler getStorageSystemFluidHandler() {
         return this.owner;
     }
-
-    @NotNull
-    public abstract Object /*IChemicalHandler*/ getStorageSystemChemicalHandler();
 
     public abstract boolean isAvailable();
 
@@ -135,28 +114,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return this.getFluidImpl(parsedFilter.left());
     }
 
-    public abstract MethodResult getChemicalImpl(Object /*ChemicalFilter*/ filter) throws LuaException;
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getChemical(Map<?, ?> filter) throws LuaException {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-        MethodResult chemCheck = this.checkChemicalOperation();
-        if (chemCheck != null) {
-            return chemCheck;
-        }
-        Pair<ChemicalFilter, String> parsedFilter = ChemicalFilter.parse(new ObjectLuaTable(filter));
-        if (parsedFilter.rightPresent()) {
-            return MethodResult.of(null, parsedFilter.right());
-        }
-        if (parsedFilter.left().isEmpty()) {
-            return MethodResult.of(null, StatusConstants.EMPTY_FILTER.toString());
-        }
-
-        return this.getChemicalImpl(parsedFilter.left());
-    }
-
     public abstract MethodResult getItemsImpl(ItemFilter filter) throws LuaException;
 
     @LuaFunction(mainThread = true)
@@ -187,25 +144,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return this.getFluidsImpl(parsedFilter.left());
     }
 
-    public abstract MethodResult getChemicalsImpl(Object /*ChemicalFilter*/ filter) throws LuaException;
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getChemicals(Optional<Map<?, ?>> filter) throws LuaException {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-        MethodResult chemCheck = this.checkChemicalOperation();
-        if (chemCheck != null) {
-            return chemCheck;
-        }
-        Pair<ChemicalFilter, String> parsedFilter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(filter.orElse(null)));
-        if (parsedFilter.rightPresent()) {
-            return MethodResult.of(null, parsedFilter.right());
-        }
-
-        return this.getChemicalsImpl(parsedFilter.left());
-    }
-
     public abstract MethodResult getCraftableItemsImpl(ItemFilter filter) throws LuaException;
 
     @LuaFunction(mainThread = true)
@@ -234,25 +172,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         }
 
         return this.getCraftableFluidsImpl(parsedFilter.left());
-    }
-
-    public abstract MethodResult getCraftableChemicalsImpl(Object /*ChemicalFilter*/ filter) throws LuaException;
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getCraftableChemicals(Optional<Map<?, ?>> filter) throws LuaException {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-        MethodResult chemCheck = this.checkChemicalOperation();
-        if (chemCheck != null) {
-            return chemCheck;
-        }
-        Pair<ChemicalFilter, String> parsedFilter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(filter.orElse(null)));
-        if (parsedFilter.rightPresent()) {
-            return MethodResult.of(null, parsedFilter.right());
-        }
-
-        return this.getCraftableChemicalsImpl(parsedFilter.left());
     }
 
     public abstract List<?> getCellsImpl();
@@ -357,54 +276,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(FluidUtil.moveFluid(fromInventory, toInventory, parsedFilter.left()));
     }
 
-    @LuaFunction(mainThread = true)
-    public final MethodResult importChemical(IComputerAccess computer, String fromName, Optional<Map<?, ?>> filter) throws LuaException {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-        MethodResult chemCheck = this.checkChemicalOperation();
-        if (chemCheck != null) {
-            return chemCheck;
-        }
-
-        IChemicalHandler toInventory = (IChemicalHandler) this.getStorageSystemChemicalHandler();
-        IChemicalHandler fromInventory = (IChemicalHandler) this.getChemicalHandlerOrNull(computer, fromName);
-        if (fromInventory == null) {
-            return MethodResult.of(null, StatusConstants.INVENTORY_NOT_FOUND.name());
-        }
-
-        Pair<ChemicalFilter, String> parsedFilter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(filter.orElse(null)));
-        if (parsedFilter.rightPresent()) {
-            return MethodResult.of(null, parsedFilter.right());
-        }
-
-        return MethodResult.of(ChemicalUtil.moveChemical(fromInventory, toInventory, parsedFilter.left()));
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult exportChemical(IComputerAccess computer, String toName, Optional<Map<?, ?>> filter) throws LuaException {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-        MethodResult chemCheck = this.checkChemicalOperation();
-        if (chemCheck != null) {
-            return chemCheck;
-        }
-
-        IChemicalHandler fromInventory = (IChemicalHandler) this.getStorageSystemChemicalHandler();
-        IChemicalHandler toInventory = (IChemicalHandler) this.getChemicalHandlerOrNull(computer, toName);
-        if (toInventory == null) {
-            return MethodResult.of(null, StatusConstants.INVENTORY_NOT_FOUND.name());
-        }
-
-        Pair<ChemicalFilter, String> parsedFilter = ChemicalFilter.parse(EmptyLuaTable.orEmpty(filter.orElse(null)));
-        if (parsedFilter.rightPresent()) {
-            return MethodResult.of(null, parsedFilter.right());
-        }
-
-        return MethodResult.of(ChemicalUtil.moveChemical(fromInventory, toInventory, parsedFilter.left()));
-    }
-
     public abstract double getStoredEnergyImpl();
 
     @LuaFunction(mainThread = true)
@@ -482,17 +353,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getMaxExternalFluidStorageImpl());
     }
 
-    public abstract double getMaxExternalChemicalStorageImpl();
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getMaxExternalChemicalStorage() {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-
-        return MethodResult.of(this.getMaxExternalChemicalStorageImpl());
-    }
-
     public abstract double getMaxItemStorageImpl();
 
     @LuaFunction(mainThread = true)
@@ -513,17 +373,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         }
 
         return MethodResult.of(this.getMaxFluidStorageImpl());
-    }
-
-    public abstract double getMaxChemicalStorageImpl();
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getMaxChemicalStorage() {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-
-        return MethodResult.of(this.getMaxChemicalStorageImpl());
     }
 
     public abstract double getUsedExternalItemStorageImpl();
@@ -559,17 +408,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getUsedExternalFluidStorageImpl());
     }
 
-    public abstract double getUsedExternalChemicalStorageImpl();
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getUsedExternalChemicalStorage() {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-
-        return MethodResult.of(this.getUsedExternalChemicalStorageImpl());
-    }
-
     public abstract double getUsedItemStorageImpl();
 
     @LuaFunction(mainThread = true)
@@ -590,17 +428,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         }
 
         return MethodResult.of(this.getUsedFluidStorageImpl());
-    }
-
-    public abstract double getUsedChemicalStorageImpl();
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getUsedChemicalStorage() {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-
-        return MethodResult.of(this.getUsedChemicalStorageImpl());
     }
 
     public double getAvailableExternalItemStorageImpl() {
@@ -642,19 +469,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getAvailableExternalFluidStorageImpl());
     }
 
-    public double getAvailableExternalChemicalStorageImpl() {
-        return this.getMaxExternalChemicalStorageImpl() - this.getUsedExternalChemicalStorageImpl();
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableExternalChemicalStorage() {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-
-        return MethodResult.of(this.getAvailableExternalChemicalStorageImpl());
-    }
-
     public double getAvailableItemStorageImpl() {
         return this.getMaxItemStorageImpl() - this.getUsedItemStorageImpl();
     }
@@ -679,19 +493,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         }
 
         return MethodResult.of(this.getAvailableFluidStorageImpl());
-    }
-
-    public double getAvailableChemicalStorageImpl() {
-        return this.getMaxChemicalStorageImpl() - this.getUsedChemicalStorageImpl();
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getAvailableChemicalStorage() {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-
-        return MethodResult.of(this.getAvailableChemicalStorageImpl());
     }
 
     public abstract List<?> getCraftingTasksImpl();
@@ -760,26 +561,6 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         }
 
         return this.craftFluidImpl(computer, arguments, parsedFilter.left());
-    }
-
-    public abstract MethodResult craftChemicalImpl(IComputerAccess computer, IArguments arguments, Object /*ChemicalFilter*/ filter) throws LuaException;
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult craftChemical(IComputerAccess computer, IArguments arguments) throws LuaException {
-        if (!this.isAvailable()) {
-            return NOT_CONNECTED_RESULT;
-        }
-        MethodResult chemCheck = this.checkChemicalOperation();
-        if (chemCheck != null) {
-            return chemCheck;
-        }
-
-        Pair<ChemicalFilter, String> parsedFilter = ChemicalFilter.parse(new ObjectLuaTable(arguments.getTable(0)));
-        if (parsedFilter.right() != null) {
-            return MethodResult.of(null, parsedFilter.right());
-        }
-
-        return this.craftChemicalImpl(computer, arguments, parsedFilter.left());
     }
 
     public abstract boolean isCraftableImpl(GenericFilter<?> filter) throws LuaException;

@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -36,9 +37,9 @@ public class AEDiskCellItem extends BaseItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, context, tooltip, flagIn);
-        tooltip.add(Tooltips.bytesUsed(stack.getOrDefault(APDataComponents.DISK_USED_BYTES, 0L), this.getMaxBytes()));
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, level, tooltip, flagIn);
+        tooltip.add(Tooltips.bytesUsed(stack.hasTag() ? stack.getTag().getLong(APDataComponents.DISK_USED_BYTES) : 0, this.getMaxBytes()));
     }
 
     public enum Tier {

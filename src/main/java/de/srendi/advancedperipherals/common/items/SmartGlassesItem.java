@@ -1,10 +1,14 @@
 package de.srendi.advancedperipherals.common.items;
 
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 import com.google.common.base.Objects;
+import dan200.computercraft.api.ComputerCraftAPI;
+import dan200.computercraft.api.filesystem.Mount;
+import dan200.computercraft.api.media.IMedia;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.upgrades.UpgradeData;
 import dan200.computercraft.core.computer.ComputerSide;
@@ -13,12 +17,10 @@ import dan200.computercraft.shared.computer.core.ComputerFamily;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.core.ServerComputerRegistry;
 import dan200.computercraft.shared.computer.core.ServerContext;
-import dan200.computercraft.shared.computer.items.ServerComputerReference;
+import dan200.computercraft.shared.computer.items.IComputerItem;
+import dan200.computercraft.shared.media.MountMedia;
 import dan200.computercraft.shared.network.container.ComputerContainerData;
-import dan200.computercraft.shared.util.DataComponentUtil;
 import dan200.computercraft.shared.util.IDAssigner;
-import dan200.computercraft.shared.util.NonNegativeId;
-import dan200.computercraft.shared.util.StorageCapacity;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.curios.SmartGlassesCurio;
 import de.srendi.advancedperipherals.common.component.ItemStackStorage;
@@ -31,9 +33,11 @@ import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSlot;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -49,17 +53,30 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.CuriosCapability;
 import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
-public class SmartGlassesItem extends ArmorItem {
+public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia {
 
-    public SmartGlassesItem(Holder<ArmorMaterial> material) {
+    private static final String NBT_UPGRADE = "Upgrade";
+    private static final String NBT_UPGRADE_INFO = "UpgradeInfo";
+    public static final String NBT_LIGHT = "Light";
+    public static final String NBT_ON = "On";
+
+    private static final String NBT_INSTANCE = "InstanceId";
+    private static final String NBT_SESSION = "SessionId";
+
+    public SmartGlassesItem(ArmorMaterial material) {
         super(material, ArmorItem.Type.HELMET, new Properties().stacksTo(1));
     }
 
@@ -79,7 +96,25 @@ public class SmartGlassesItem extends ArmorItem {
         return new SmartGlassesCurio(this, stack);
     }
 
+    @Nullable
     @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+        return new ICapabilityProvider() {
+            @NotNull
+            @Override
+            public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+                if (cap == ForgeCapabilities.ITEM_HANDLER) {
+                    return LazyOptional.of(() -> createItemHandlerCap(stack)).cast();
+                }
+                if (APAddon.CURIOS.isLoaded() && cap == CuriosCapability.ITEM) {
+                    return LazyOptional.of(() -> createCurioCap(stack)).cast();
+                }
+                return LazyOptional.empty();
+            }
+        };
+    }
+
+    // @Override // TODO: what's the replacement in 1.20.1?
     public boolean canEquip(ItemStack stack, EquipmentSlot armorType, LivingEntity entity) {
         if (!super.canEquip(stack, armorType, entity)) {
             return false;
@@ -108,7 +143,7 @@ public class SmartGlassesItem extends ArmorItem {
         int id = computer.getID();
         if (id != getComputerID(stack)) {
             changed = true;
-            stack.set(ModRegistry.DataComponents.COMPUTER_ID.get(), NonNegativeId.of(id));
+            setComputerID(stack, id);
         }
 
         // Sync label
@@ -121,7 +156,7 @@ public class SmartGlassesItem extends ArmorItem {
         boolean on = computer.isOn();
         if (on != isMarkedOn(stack)) {
             changed = true;
-            stack.set(ModRegistry.DataComponents.ON.get(), on);
+            stack.getOrCreateTag().putBoolean(NBT_ON, on);
         }
 
         Entity computerEntity = computer.getEntity();
@@ -238,34 +273,49 @@ public class SmartGlassesItem extends ArmorItem {
 
         SmartGlassesItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer);
         player.openMenu(
-            new SmartGlassesMenuProvider(computer, glasses, itemHandler),
-            new ComputerContainerData(computer, glasses)::toBytes
+            new SmartGlassesMenuProvider(computer, glasses, itemHandler)
         );
         return InteractionResultHolder.consume(glasses);
     }
 
+    @Override
+    public ItemStack changeItem(ItemStack oldStack, Item newItem) {
+        if (!(newItem instanceof SmartGlassesItem glassesItem)) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack newStack = new ItemStack(glassesItem);
+        setComputerID(newStack, getComputerID(oldStack));
+        setLabel(newStack, getLabel(oldStack));
+        SmartGlassesItemHandler.saveItems(newStack, SmartGlassesItemHandler.loadItems(oldStack));
+        newStack.getOrCreateTag().put(APDataComponents.MODULE_DATAS, oldStack.getTagElement(APDataComponents.MODULE_DATAS));
+        return newStack;
+    }
+
     public SmartGlassesComputer getOrCreateComputer(ServerLevel level, Entity entity, ItemStack stack) {
-        ServerComputerRegistry registry = ServerContext.get(level.getServer()).registry();
-        SmartGlassesComputer computer = (SmartGlassesComputer) ServerComputerReference.get(stack, registry);
+        MinecraftServer server = level.getServer();
+        ServerComputerRegistry registry = ServerContext.get(server).registry();
+
+        SmartGlassesComputer computer = (SmartGlassesComputer) registry.get(getSessionID(stack), getInstanceID(stack));
         if (computer != null) {
             return computer;
         }
 
         int computerID = getComputerID(stack);
         if (computerID < 0) {
-            computerID = NonNegativeId.getOrCreate(level.getServer(), stack, ModRegistry.DataComponents.COMPUTER_ID.get(), IDAssigner.COMPUTER);
+            computerID = ComputerCraftAPI.createUniqueNumberedSaveDir(server, IDAssigner.COMPUTER);
+            setComputerID(stack, computerID);
         }
 
         SmartGlassesComputer newComputer = SmartGlassesComputer.create(
             level,
             BlockPos.containing(entity.getEyePosition()),
             ServerComputer.properties(getComputerID(stack), ComputerFamily.ADVANCED)
-                .label(getLabel(stack))
-                .storageCapacity(StorageCapacity.getOrDefault(stack.get(ModRegistry.DataComponents.STORAGE_CAPACITY.get()), -1)),
+                .label(getLabel(stack)),
             stack
         );
 
-        stack.set(ModRegistry.DataComponents.COMPUTER.get(), new ServerComputerReference(registry.getSessionID(), newComputer.register()));
+        setInstanceID(stack, newComputer.register());
+        setSessionID(stack, registry.getSessionID());
 
         if (entity instanceof Player player) {
             // Only turn on when initially creating the computer, rather than each tick.
@@ -279,23 +329,54 @@ public class SmartGlassesItem extends ArmorItem {
 
     @Nullable
     public static SmartGlassesComputer getServerComputer(MinecraftServer server, ItemStack stack) {
-        return (SmartGlassesComputer) ServerComputerReference.get(stack, ServerContext.get(server).registry());
+        if (server == null) {
+            return null;
+        }
+        return (SmartGlassesComputer) ServerContext.get(server).registry().get(getSessionID(stack), getInstanceID(stack));
     }
 
-    public static int getComputerID(ItemStack stack) {
-        return NonNegativeId.getId(stack.get(ModRegistry.DataComponents.COMPUTER_ID.get()));
+    // IComputerItem implementation
+    private static void setComputerID(ItemStack stack, int computerID) {
+        stack.getOrCreateTag().putInt(NBT_ID, computerID);
     }
 
-    private @Nullable String getLabel(ItemStack stack) {
-        return DataComponentUtil.getCustomName(stack);
+    @Override
+    public String getLabel(ItemStack stack) {
+        return MountMedia.COMPUTER.getLabel(stack);
     }
 
-    private void setLabel(ItemStack stack, @Nullable String label) {
-        DataComponentUtil.setCustomName(stack, label);
+    @Override
+    public boolean setLabel(ItemStack stack, @Nullable String label) {
+        return MountMedia.COMPUTER.setLabel(stack, label);
     }
 
-    private static boolean isMarkedOn(ItemStack stack) {
-        return stack.getOrDefault(ModRegistry.DataComponents.ON.get(), false);
+    @Nullable
+    @Override
+    public Mount createDataMount(ItemStack stack, ServerLevel level) {
+        return MountMedia.COMPUTER.createDataMount(stack, level);
+    }
+
+    public static UUID getInstanceID(ItemStack stack) {
+        CompoundTag nbt = stack.getTag();
+        return nbt != null && nbt.contains(NBT_INSTANCE) ? nbt.getUUID(NBT_INSTANCE) : null;
+    }
+
+    private static void setInstanceID(ItemStack stack, UUID instanceID) {
+        stack.getOrCreateTag().putUUID(NBT_INSTANCE, instanceID);
+    }
+
+    private static int getSessionID(ItemStack stack) {
+        CompoundTag nbt = stack.getTag();
+        return nbt != null && nbt.contains(NBT_SESSION) ? nbt.getInt(NBT_SESSION) : -1;
+    }
+
+    private static void setSessionID(ItemStack stack, int sessionID) {
+        stack.getOrCreateTag().putInt(NBT_SESSION, sessionID);
+    }
+
+    public static boolean isMarkedOn(ItemStack stack) {
+        CompoundTag nbt = stack.getTag();
+        return nbt != null && nbt.getBoolean(NBT_ON);
     }
 
     public static ItemStack getEquipped(final LivingEntity entity) {
@@ -325,8 +406,12 @@ public class SmartGlassesItem extends ArmorItem {
     }
 
     public static boolean containsGlassesStack(final Player player, final Predicate<ItemStack> tester) {
-        if (player.getInventory().contains(tester)) {
-            return true;
+        for (NonNullList<ItemStack> list : player.getInventory().compartments) {
+            for (ItemStack stack : list) {
+                if (tester.test(stack)) {
+                    return true;
+                }
+            }
         }
         return APAddon.CURIOS.isLoaded() && containsGlassesStackCurios(player, tester);
     }
@@ -339,19 +424,18 @@ public class SmartGlassesItem extends ArmorItem {
         return curiosInv.findFirstCurio(tester).isPresent();
     }
 
-    public static <T> T getModuleData(final ItemStack stack, final ResourceLocation moduleID, final DataComponentType<? extends T> component, final T defaultValue) {
-        DataComponentPatch moduleDatas = stack.getOrDefault(APDataComponents.MODULE_DATAS.get(), DataComponentPatch.EMPTY);
-        Optional<T> value = (Optional<T>) moduleDatas.get(component);
-        if (value == null) {
-            return defaultValue;
+    public static CompoundTag getModuleDatas(final ItemStack stack, final ResourceLocation moduleID) {
+        CompoundTag moduleDatas = stack.getTagElement(APDataComponents.MODULE_DATAS);
+        if (moduleDatas == null || moduleDatas.isEmpty()) {
+            return null;
         }
         ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
         for (int slot = 0; slot < SmartGlassesSlot.MODULE_SLOTS; slot++) {
             ItemStack moduleStack = items.get(slot + SmartGlassesSlot.MODULE_SLOT_OFFSET);
             if (moduleStack.getItem() instanceof IModuleItem moduleItem && moduleItem.moduleId().equals(moduleID)) {
-                return value.orElse(defaultValue);
+                return moduleDatas;
             }
         }
-        return defaultValue;
+        return null;
     }
 }

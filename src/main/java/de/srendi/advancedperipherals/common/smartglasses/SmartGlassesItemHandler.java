@@ -7,9 +7,12 @@ import de.srendi.advancedperipherals.common.component.ItemStackStorage;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
 public class SmartGlassesItemHandler implements IItemHandlerModifiable {
@@ -49,7 +52,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
         }
         ItemStackStorage items = loadItems(this.glasses);
         if (slot < SmartGlassesSlot.PERIPHERAL_SLOTS) {
-            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(this.computer.getLevel().registryAccess(), stack);
+            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(stack);
             if (upgradeData == null) {
                 return false;
             }
@@ -137,10 +140,10 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     public void setStackInSlot(int slot, ItemStack stack) {
         ItemStackStorage items = loadItems(this.glasses);
         if (slot < SmartGlassesSlot.PERIPHERAL_SLOTS) {
-            if (items.isSameItemSameComponents(slot, stack)) {
+            if (items.isSameItemSameTags(slot, stack)) {
                 return;
             }
-            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(this.computer.getLevel().registryAccess(), stack);
+            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(stack);
             this.computer.setUpgrade(SmartGlassesSlot.indexToSide(slot), upgradeData);
         } else {
             this.computer.setModuleStack(slot - SmartGlassesSlot.MODULE_SLOT_OFFSET, stack);
@@ -148,10 +151,17 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     }
 
     public static final void saveItems(ItemStack glasses, ItemStackStorage items) {
-        glasses.set(APDataComponents.ITEMS, items);
+        Tag tag = ItemStackStorage.CODEC.encodeStart(NbtOps.INSTANCE, items).result().orElse(null);
+        if (tag != null) {
+            glasses.getOrCreateTag().put(APDataComponents.ITEMS, tag);
+        }
     }
 
     public static final ItemStackStorage loadItems(ItemStack glasses) {
-        return glasses.getOrDefault(APDataComponents.ITEMS, EMPTY_ITEMS);
+        CompoundTag tag = glasses.getTag();
+        if (tag == null || !tag.contains(APDataComponents.ITEMS)) {
+            return EMPTY_ITEMS;
+        }
+        return ItemStackStorage.CODEC.parse(NbtOps.INSTANCE, tag.get(APDataComponents.ITEMS)).result().orElse(EMPTY_ITEMS);
     }
 }

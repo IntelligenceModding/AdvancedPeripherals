@@ -11,11 +11,11 @@ import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.PlayerInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,8 +83,11 @@ public class PlayerStorageItemWrapper {
         if (stack.isEmpty()) {
             return null;
         }
-        IItemHandler itemHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
-        IFluidHandler fluidHandler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+        IItemHandler itemHandler = stack.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+        IFluidHandler fluidHandler = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).orElse(null);
+        if (fluidHandler == null) {
+            fluidHandler = stack.getCapability(ForgeCapabilities.FLUID_HANDLER).orElse(null);
+        }
         if (itemHandler == null && fluidHandler == null) {
             return null;
         }

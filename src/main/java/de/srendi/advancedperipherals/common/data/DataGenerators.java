@@ -28,8 +28,8 @@ public class DataGenerators {
 
         CompletableFuture<HolderLookup.Provider> completablefuture = CompletableFuture.supplyAsync(VanillaRegistries::createLookup, Util.backgroundExecutor());
         generator.addProvider(event.includeServer(), new BlockTagsProvider(packOutput, completablefuture, existingFileHelper, APRegistration.BLOCKS));
-        generator.addProvider(event.includeServer(), new RecipesProvider(packOutput, lookupProvider));
-        generator.addProvider(event.includeServer(), new BlockLootTablesProvider(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new RecipesProvider(packOutput));
+        generator.addProvider(event.includeServer(), new BlockLootTablesProvider(packOutput));
 
         generator.addProvider(event.includeServer(), new TurtleUpgradesProvider(packOutput));
         generator.addProvider(event.includeServer(), new PocketUpgradesProvider(packOutput));

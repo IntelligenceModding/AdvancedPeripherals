@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.items;
 
-import dan200.computercraft.shared.network.container.ComputerContainerData;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
@@ -12,7 +11,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class SmartGlassesInterfaceItem extends BaseItem {
@@ -44,8 +43,7 @@ public class SmartGlassesInterfaceItem extends BaseItem {
         IItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer);
         if (itemHandler != null) {
             player.openMenu(
-                new SmartGlassesMenuProvider(computer, glasses, itemHandler),
-                new ComputerContainerData(computer, glasses)::toBytes
+                new SmartGlassesMenuProvider(computer, glasses, itemHandler)
             );
         }
 

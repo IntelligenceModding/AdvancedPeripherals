@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.util.proxy;
 
 import de.srendi.advancedperipherals.common.blocks.blockentities.EnergyDetectorEntity;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
 
 public class EnergyStorageProxy extends AbstractStorageProxy implements IEnergyStorage {
 
@@ -28,7 +28,7 @@ public class EnergyStorageProxy extends AbstractStorageProxy implements IEnergyS
         }
         this.receiving = true;
         try {
-            IEnergyStorage storage = energyDetectorTE.getOutputStorage();
+            IEnergyStorage storage = energyDetectorTE.getOutputStorage().orElse(null);
             if (storage == null) {
                 return 0;
             }
@@ -65,13 +65,13 @@ public class EnergyStorageProxy extends AbstractStorageProxy implements IEnergyS
 
     @Override
     public int getEnergyStored() {
-        IEnergyStorage storage = energyDetectorTE.getOutputStorage();
+        IEnergyStorage storage = energyDetectorTE.getOutputStorage().orElse(null);
         return storage != null ? storage.getEnergyStored() : 0;
     }
 
     @Override
     public int getMaxEnergyStored() {
-        IEnergyStorage storage = energyDetectorTE.getOutputStorage();
+        IEnergyStorage storage = energyDetectorTE.getOutputStorage().orElse(null);
         return storage != null ? storage.getMaxEnergyStored() : 0;
     }
 

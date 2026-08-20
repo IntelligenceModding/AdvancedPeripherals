@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
-import dan200.computercraft.shared.ModRegistry;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
@@ -16,7 +15,6 @@ import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -69,7 +67,7 @@ public class ClientEventSubscriber {
         if (smartGlasses.isEmpty()) {
             return;
         }
-        int glassesId = SmartGlassesItem.getComputerID(smartGlasses);
+        int glassesId = ((SmartGlassesItem) smartGlasses.getItem()).getComputerID(smartGlasses);
         Window window = minecraft.getWindow();
 
         int sizeX = window.getWidth(), sizeY = window.getHeight();
@@ -162,11 +160,11 @@ public class ClientEventSubscriber {
         }
 
         ItemStack glasses = SmartGlassesItem.getEquipped(player);
-        if (glasses.isEmpty() || !glasses.getOrDefault(ModRegistry.DataComponents.ON.get(), false)) {
+        if (glasses.isEmpty() || !SmartGlassesItem.isMarkedOn(glasses)) {
             return;
         }
 
-        int buttons = SmartGlassesItem.getModuleData(glasses, KeyboardModule.ID, APDataComponents.HANDLING_INTERACTION_BUTTONS.get(), (byte) 0);
+        int buttons = SmartGlassesItem.getModuleDatas(glasses, KeyboardModule.ID).getByte(APDataComponents.HANDLING_INTERACTION_BUTTONS);
 
         if (((1 << button) & buttons) == 0) {
             return;

@@ -3,16 +3,11 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.SmartRailPeripheral;
 import de.srendi.advancedperipherals.common.blocks.SmartRailBlock;
-import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProviders;
 import de.srendi.advancedperipherals.common.blocks.base.VarNameable;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -26,17 +21,18 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBlockEntity, BlockCapabilityProviders.Peripheral, VarNameable {
+public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBlockEntity, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     private static final String ACTIVATING_KEY = "activating";
     private static final String STATE_KEY = "state";
     protected CompoundTag peripheralSettings = new CompoundTag();
-    private IPeripheral peripheral = null;
+    private LazyOptional<IPeripheral> peripheralCap = LazyOptional.empty();
     private Component name = null;
 
     private volatile boolean activating = false;
@@ -99,13 +95,12 @@ public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBloc
         );
     }
 
-    @Override
-    @Nullable
-    public IPeripheral createPeripheralCap(@Nullable Direction side) {
-        if (this.peripheral == null) {
-            this.peripheral = this.createPeripheralOrDisabled();
+    @NotNull
+    public LazyOptional<IPeripheral> getLazyPeripheral() {
+        if (!this.peripheralCap.isPresent()) {
+            this.peripheralCap = LazyOptional.of(this::createPeripheralOrDisabled);
         }
-        return this.peripheral;
+        return this.peripheralCap;
     }
 
     @NotNull
@@ -130,7 +125,7 @@ public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBloc
 
     @Nullable
     public SmartRailPeripheral getPeripheral() {
-        IPeripheral peripheral = this.createPeripheralCap(null);
+        IPeripheral peripheral = this.getLazyPeripheral().orElse(null);
         if (peripheral == null || peripheral instanceof DisabledPeripheral) {
             return null;
         }
@@ -138,44 +133,27 @@ public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBloc
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
+    public void load(@NotNull CompoundTag tag) {
+        super.load(tag);
         this.peripheralSettings = tag.getCompound(PERIPHERAL_SETTINGS_KEY);
         this.activating = tag.getBoolean(ACTIVATING_KEY);
         this.state = SmartRailBlock.RailPoweredState.values()[tag.getByte(STATE_KEY)];
         if (tag.contains("CustomName", Tag.TAG_STRING)) {
-            this.name = BlockEntity.parseCustomNameSafe(tag.getString("CustomName"), provider);
+            this.name = Component.Serializer.fromJson(tag.getString("CustomName"));
         }
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
+    protected void saveAdditional(@NotNull CompoundTag tag) {
+        super.saveAdditional(tag);
         if (!this.peripheralSettings.isEmpty()) {
             tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
         }
         tag.putBoolean(ACTIVATING_KEY, this.activating);
         tag.putByte(STATE_KEY, (byte) this.state.ordinal());
         if (this.name != null) {
-            tag.putString("CustomName", Component.Serializer.toJson(this.name, provider));
+            tag.putString("CustomName", Component.Serializer.toJson(this.name));
         }
-    }
-
-    @Override
-    protected void applyImplicitComponents(BlockEntity.DataComponentInput components) {
-        super.applyImplicitComponents(components);
-        this.name = components.get(DataComponents.CUSTOM_NAME);
-    }
-
-    @Override
-    protected void collectImplicitComponents(DataComponentMap.Builder components) {
-        super.collectImplicitComponents(components);
-        components.set(DataComponents.CUSTOM_NAME, this.name);
-    }
-
-    @Override
-    public void removeComponentsFromTag(CompoundTag tag) {
-        tag.remove("CustomName");
     }
 
     @Override

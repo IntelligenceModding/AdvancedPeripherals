@@ -9,7 +9,6 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.lib.turtle.ClockwiseAnimatedTurtleUpgrade;
-import net.minecraft.core.component.DataComponentPatch;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +16,7 @@ public class MetaTurtleUpgradeModeller<T extends ClockwiseAnimatedTurtleUpgrade<
 
     @Override
     @NotNull
-    public TransformedModel getModel(@NotNull T upgrade, @Nullable ITurtleAccess turtle, TurtleSide side, DataComponentPatch dataComponentPatch) {
+    public TransformedModel getModel(@NotNull T upgrade, @Nullable ITurtleAccess turtle, TurtleSide side) {
         if (upgrade.getLeftModel() != null) {
             return TransformedModel.of(side == TurtleSide.LEFT ? upgrade.getLeftModel() : upgrade.getRightModel());
         }

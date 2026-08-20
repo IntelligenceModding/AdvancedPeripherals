@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.shared.Capabilities;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
@@ -21,17 +22,20 @@ import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, IPeripheralBlockEntity, BlockCapabilityProviders.ItemHandler, BlockCapabilityProviders.Peripheral, VarNameable {
+public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, IPeripheralBlockEntity, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
-    private IItemHandler itemHandler = null;
-    private IPeripheral peripheral = null;
+    private LazyOptional<? extends IItemHandler> itemHandler = LazyOptional.empty();
+    private LazyOptional<IPeripheral> peripheralCap = LazyOptional.empty();
 
     protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
@@ -48,28 +52,41 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         this.setChanged();
     }
 
-    @Override
     @NotNull
-    public IItemHandler createItemHandlerCap(@Nullable Direction side) {
-        if (this.itemHandler == null) {
-            this.itemHandler = new SidedInvWrapper(this, null);
+    @Override
+    public <U> LazyOptional<U> getCapability(@NotNull Capability<U> cap, @Nullable Direction direction) {
+        if (cap == Capabilities.CAPABILITY_PERIPHERAL) {
+            return this.getLazyPeripheral().cast();
+        } else if (cap == ForgeCapabilities.ITEM_HANDLER) {
+            if (!remove && direction != null && this instanceof IInventoryBlock) {
+                if (!this.itemHandler.isPresent()) {
+                    this.itemHandler = LazyOptional.of(() -> new SidedInvWrapper(this, Direction.NORTH));
+                }
+                return this.itemHandler.cast();
+            }
         }
-        return this.itemHandler;
+        return super.getCapability(cap, direction);
     }
 
     @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        this.itemHandler.invalidate();
+        this.peripheralCap.invalidate();
+    }
+
     @NotNull
-    public IPeripheral createPeripheralCap(@Nullable Direction side) {
+    public LazyOptional<IPeripheral> getLazyPeripheral() {
         // Perform later peripheral creation, because creating peripheral
         // on init of tile entity cause some infinity loop, if peripheral
         // are depend on tile entity data
-        if (this.peripheral == null) {
+        if (!this.peripheralCap.isPresent()) {
             // Recreate peripheral to allow CC: Tweaked correctly handle
             // peripheral update logic, so new peripheral and old one will be
             // different
-            this.peripheral = this.createPeripheralOrDisabled();
+            this.peripheralCap = LazyOptional.of(this::createPeripheralOrDisabled);
         }
-        return this.peripheral;
+        return this.peripheralCap;
     }
 
     @NotNull
@@ -92,7 +109,7 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
 
     @Nullable
     public T getPeripheral() {
-        IPeripheral peripheral = this.createPeripheralCap(null);
+        IPeripheral peripheral = this.getLazyPeripheral().orElse(null);
         if (peripheral == null || peripheral instanceof DisabledPeripheral) {
             return null;
         }
@@ -100,30 +117,30 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
-        ContainerHelper.loadAllItems(tag, items, provider);
+    public void load(@NotNull CompoundTag tag) {
+        ContainerHelper.loadAllItems(tag, items);
         peripheralSettings = tag.getCompound(PERIPHERAL_SETTINGS_KEY);
-        super.loadAdditional(tag, provider);
+        super.load(tag);
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
-        this.saveShared(tag, provider);
-        ContainerHelper.saveAllItems(tag, items, provider);
+    protected void saveAdditional(@NotNull CompoundTag tag) {
+        super.saveAdditional(tag);
+        this.saveShared(tag);
+        ContainerHelper.saveAllItems(tag, items);
         if (!peripheralSettings.isEmpty()) {
             tag.put(PERIPHERAL_SETTINGS_KEY, peripheralSettings);
         }
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
-        CompoundTag data = super.getUpdateTag(provider);
-        this.saveShared(data, provider);
+    public CompoundTag getUpdateTag() {
+        CompoundTag data = super.getUpdateTag();
+        this.saveShared(data);
         return data;
     }
 
-    protected void saveShared(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {}
+    protected void saveShared(@NotNull CompoundTag tag) {}
 
     @Override
     protected Component getDefaultName() {
@@ -193,17 +210,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         if (stack.getCount() > getMaxStackSize()) {
             stack.setCount(getMaxStackSize());
         }
-    }
-
-    @Override
-    @NotNull
-    public NonNullList<ItemStack> getItems() {
-        return items;
-    }
-
-    @Override
-    public void setItems(@NotNull NonNullList<ItemStack> items) {
-        this.items = items;
     }
 
     @Override

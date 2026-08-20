@@ -5,7 +5,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +19,10 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
     private final int defaultMaxFreeRadius;
     private final int defaultMaxCostRadius;
     private final double defaultExtraBlockCost;
-    private ModConfigSpec.IntValue cooldown;
-    private ModConfigSpec.IntValue maxFreeRadius;
-    private ModConfigSpec.IntValue maxCostRadius;
-    private ModConfigSpec.DoubleValue extraBlockCost;
+    private ForgeConfigSpec.IntValue cooldown;
+    private ForgeConfigSpec.IntValue maxFreeRadius;
+    private ForgeConfigSpec.IntValue maxCostRadius;
+    private ForgeConfigSpec.DoubleValue extraBlockCost;
 
     SphereOperation(int defaultCooldown, int defaultMaxFreeRadius, int defaultMaxCostRadius, double defaultExtraBlockCost) {
         this.defaultCooldown = defaultCooldown;
@@ -32,7 +32,7 @@ public enum SphereOperation implements IPeripheralOperation<SphereOperationConte
     }
 
     @Override
-    public void addToConfig(ModConfigSpec.Builder builder) {
+    public void addToConfig(ForgeConfigSpec.Builder builder) {
         cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 0, Integer.MAX_VALUE);
         maxFreeRadius = builder.defineInRange(settingsName() + "MaxFreeRadius", defaultMaxFreeRadius, 1, Integer.MAX_VALUE);
         maxCostRadius = builder.defineInRange(settingsName() + "MaxCostRadius", defaultMaxCostRadius, 1, Integer.MAX_VALUE);

@@ -12,10 +12,10 @@ public class Integration implements Runnable {
         ComputerCraftAPI.registerGenericSource(new BlazeBurnerIntegration());
         ComputerCraftAPI.registerGenericSource(new FluidTankIntegration());
 
-        Peripherals.addGenericLookup(new CreateBehaviourLookup<>(FilteringBehaviour.TYPE, FilteringBehaviourIntegration.Wrapper::new));
+        Peripherals.registerGenericLookup(new CreateBehaviourLookup<>(FilteringBehaviour.TYPE, FilteringBehaviourIntegration.Wrapper::new));
         ComputerCraftAPI.registerGenericSource(new FilteringBehaviourIntegration());
 
-        Peripherals.addGenericLookup(new CreateBehaviourLookup<>(ScrollValueBehaviour.TYPE, null));
+        Peripherals.registerGenericLookup(new CreateBehaviourLookup<>(ScrollValueBehaviour.TYPE, null));
         ComputerCraftAPI.registerGenericSource(new ScrollValueBehaviourIntegration());
     }
 }

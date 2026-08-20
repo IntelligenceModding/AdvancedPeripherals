@@ -9,14 +9,13 @@ import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.LuaValues;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RegistryUtil;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -31,7 +30,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
-    private DataComponentPatch components = null;
+    private CompoundTag components = null;
     private int count = Integer.MAX_VALUE;
     private String nbtHash = null;
     public int fromSlot = -1;
@@ -51,7 +50,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         if (item.containsKey("name")) {
             String name = item.getString("name");
             if (name.startsWith("#")) {
-                itemFilter.tag = TagKey.create(Registries.ITEM, ResourceLocation.parse(name.substring(1)));
+                itemFilter.tag = TagKey.create(Registries.ITEM, new ResourceLocation(name.substring(1)));
             } else if ((itemFilter.item = RegistryUtil.getRegistryEntry(name, BuiltInRegistries.ITEM)) == null) {
                 return Pair.of(null, "ITEM_NOT_FOUND");
             }
@@ -59,9 +58,9 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         if (item.containsKey("components")) {
             Object components = item.get("components");
             if (components instanceof String snbt) {
-                itemFilter.components = DataComponentUtil.nbtToPatch(NBTUtil.fromSNBT(snbt));
+                itemFilter.components = NBTUtil.fromSNBT(snbt);
             } else if (components instanceof Map<?, ?> map) {
-                itemFilter.components = DataComponentUtil.luaToPatch(map);
+                itemFilter.components = NBTUtil.mapToNBT(map);
             } else {
                 throw LuaValues.badField("components", "string or table", LuaValues.getType(components));
             }
@@ -91,7 +90,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         ItemFilter filter = createEmpty();
         filter.item = stack.getItem();
         filter.count = count;
-        filter.components = stack.getComponentsPatch();
+        filter.components = stack.hasTag() ? stack.getTag().copy() : new CompoundTag();
         return filter;
     }
 
@@ -148,7 +147,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
     public ItemStack toItemStack() {
         var result = new ItemStack(item, count);
         if (components != null && !components.isEmpty()) {
-            result.applyComponents(components);
+            result.setTag(components.copy());
         }
         return result;
     }
@@ -164,10 +163,10 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         if (tag != null && !stack.is(tag)) {
             return false;
         }
-        if (components != null && !stack.getComponentsPatch().equals(components)) {
+        if (components != null && !components.equals(stack.hasTag() ? stack.getTag() : new CompoundTag())) {
             return false;
         }
-        if (nbtHash != null && !nbtHash.equals(FingerprintUtil.hashOrEmpty(stack.getComponentsPatch()))) {
+        if (nbtHash != null && !nbtHash.equals(FingerprintUtil.hashOrEmpty(stack.getTag()))) {
             return false;
         }
         return true;
@@ -189,7 +188,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         return toSlot;
     }
 
-    public DataComponentPatch getComponents() {
+    public CompoundTag getComponents() {
         return components;
     }
 

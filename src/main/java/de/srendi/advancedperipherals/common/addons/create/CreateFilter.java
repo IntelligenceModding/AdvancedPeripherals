@@ -1,11 +1,9 @@
 package de.srendi.advancedperipherals.common.addons.create;
 
 import com.mojang.serialization.DataResult;
-import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.filter.AttributeFilterItem;
-import com.simibubi.create.content.logistics.filter.AttributeFilterWhitelistMode;
 import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.filter.ListFilterItem;
@@ -15,7 +13,6 @@ import com.simibubi.create.foundation.item.ItemHelper;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.ObjectLuaTable;
-import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.LuaOps;
@@ -26,7 +23,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -53,7 +50,7 @@ public final class CreateFilter {
         if (stack instanceof FilterItemStack.AttributeFilterItemStack attributeFilter) {
             return Map.of(
                 "type", "attribute",
-                "mode", attributeFilter.whitelistMode.getSerializedName(),
+                "mode", attributeFilter.whitelistMode.name(),
                 "attributes",
                 attributeFilter.attributeTests.stream()
                     .map((pair) -> {

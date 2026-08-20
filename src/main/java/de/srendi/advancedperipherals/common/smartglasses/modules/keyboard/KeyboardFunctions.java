@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.keyboard;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 
@@ -37,7 +38,7 @@ public class KeyboardFunctions implements IModuleFunctions {
             throw new LuaException("argument #1 must in range of [1, 3]");
         }
         int mask = 1 << (button - 1);
-        int buttons = this.access.getComputer().getModuleData(APDataComponents.HANDLING_INTERACTION_BUTTONS.get(), (byte) 0);
+        int buttons = this.access.getComputer().getModulesData().getByte(APDataComponents.HANDLING_INTERACTION_BUTTONS);
         return (mask & buttons) != 0;
     }
 
@@ -46,13 +47,15 @@ public class KeyboardFunctions implements IModuleFunctions {
         if (button < 1 || 3 < button) {
             throw new LuaException("argument #1 must in range of [1, 3]");
         }
+        SmartGlassesComputer computer = this.access.getComputer();
         int mask = 1 << (button - 1);
-        int buttons = this.access.getComputer().getModuleData(APDataComponents.HANDLING_INTERACTION_BUTTONS.get(), (byte) 0);
+        int buttons = computer.getModulesData().getByte(APDataComponents.HANDLING_INTERACTION_BUTTONS);
         if (value) {
             buttons |= mask;
         } else {
             buttons &= ~mask;
         }
-        this.access.getComputer().setModuleData(APDataComponents.HANDLING_INTERACTION_BUTTONS.get(), (byte) buttons);
+        computer.getModulesData().putByte(APDataComponents.HANDLING_INTERACTION_BUTTONS, (byte) buttons);
+        computer.updateModulesData();
     }
 }

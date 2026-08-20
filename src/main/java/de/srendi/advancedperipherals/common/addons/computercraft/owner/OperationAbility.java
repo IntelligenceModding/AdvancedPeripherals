@@ -10,7 +10,7 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralCheck;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
-import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,25 +26,25 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     }
 
     protected void setCooldown(@NotNull IPeripheralOperation<?> operation, int cooldown) {
-        PatchedDataComponentMap patch = owner.getPatchedDataStorage();
-        Map<String, Long> cooldowns = new HashMap<>(patch.getOrDefault(APDataComponents.ABILITY_COOLDOWNS.get(), Map.of()));
+        CompoundTag settings = owner.getDataStorage();
+        CompoundTag cooldowns = settings.getCompound(APDataComponents.ABILITY_COOLDOWNS);
 
         long newTS = System.currentTimeMillis() + cooldown;
-        cooldowns.put(operation.settingsName(), newTS);
-        patch.set(APDataComponents.ABILITY_COOLDOWNS.get(), cooldowns);
-        owner.putDataStorage(patch.asPatch());
+        cooldowns.putLong(operation.settingsName(), newTS);
+        settings.put(APDataComponents.ABILITY_COOLDOWNS, cooldowns);
+        owner.putDataStorage(settings);
     }
 
     protected int getCooldown(@NotNull IPeripheralOperation<?> operation) {
-        PatchedDataComponentMap patch = owner.getPatchedDataStorage();
-        Map<String, Long> cooldowns = patch.getOrDefault(APDataComponents.ABILITY_COOLDOWNS.get(), Map.of());
+        CompoundTag settings = owner.getDataStorage();
+        CompoundTag cooldowns = settings.getCompound(APDataComponents.ABILITY_COOLDOWNS);
         String operationName = operation.settingsName();
-        if (!cooldowns.containsKey(operationName)) {
+        if (!cooldowns.contains(operationName)) {
             return 0;
         }
 
         long currentTime = System.currentTimeMillis();
-        return (int) Math.max(0, cooldowns.get(operationName) - currentTime);
+        return (int) Math.max(0, cooldowns.getLong(operationName) - currentTime);
     }
 
     public void registerOperation(@NotNull IPeripheralOperation<?> operation) {
@@ -52,9 +52,9 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
         if (!LibConfig.initialCooldownEnabled) {
             return;
         }
-        PatchedDataComponentMap patch = owner.getPatchedDataStorage();
-        Map<String, Long> cooldowns = patch.getOrDefault(APDataComponents.ABILITY_COOLDOWNS.get(), Map.of());
-        if (cooldowns.containsKey(operation.settingsName())) {
+        CompoundTag settings = owner.getDataStorage();
+        CompoundTag cooldowns = settings.getCompound(APDataComponents.ABILITY_COOLDOWNS);
+        if (cooldowns.contains(operation.settingsName())) {
             return;
         }
         int initialCooldown = operation.getInitialCooldown();
@@ -62,10 +62,9 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
             return;
         }
         long newTS = System.currentTimeMillis() + initialCooldown;
-        cooldowns = new HashMap<>(cooldowns);
-        cooldowns.put(operation.settingsName(), newTS);
-        patch.set(APDataComponents.ABILITY_COOLDOWNS.get(), cooldowns);
-        owner.putDataStorage(patch.asPatch());
+        cooldowns.putLong(operation.settingsName(), newTS);
+        settings.put(APDataComponents.ABILITY_COOLDOWNS, cooldowns);
+        owner.putDataStorage(settings);
     }
 
     public <T> @NotNull MethodResult performOperation(

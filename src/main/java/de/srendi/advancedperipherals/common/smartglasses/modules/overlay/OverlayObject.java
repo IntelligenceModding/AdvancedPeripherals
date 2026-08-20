@@ -16,8 +16,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propert
 import de.srendi.advancedperipherals.lib.codec.StreamCodec;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.Level;
@@ -174,7 +172,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
 
     @LuaFunction("getType")
     public final String getTypeLua() {
-        return ((Registry<OverlayObjectType<?>>) BuiltInRegistries.REGISTRY.getOrThrow(APRegistries.OVERLAY_OBJECTS)).getKey(this.getType()).toString();
+        return APRegistries.getOverlayObjectsRegistry().getKey(this.getType()).toString();
     }
 
     @LuaFunction("getId")

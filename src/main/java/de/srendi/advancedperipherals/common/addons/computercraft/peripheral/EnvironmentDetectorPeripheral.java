@@ -32,8 +32,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.player.CanContinueSleepingEvent;
+import net.minecraftforge.event.ForgeEventFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -208,13 +207,6 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
             return MethodResult.of(false, "not_allowed_in_dimension");
         }
 
-        CanContinueSleepingEvent evt = new CanContinueSleepingEvent(player, null);
-        NeoForge.EVENT_BUS.post(evt);
-
-        if (evt.mayContinueSleeping()) {
-            return MethodResult.of(!player.level().isDay());
-        } else {
-            return MethodResult.of(true);
-        }
+        return MethodResult.of(ForgeEventFactory.fireSleepingTimeCheck(player, Optional.of(getPhysicsBlockPos())));
     }
 }

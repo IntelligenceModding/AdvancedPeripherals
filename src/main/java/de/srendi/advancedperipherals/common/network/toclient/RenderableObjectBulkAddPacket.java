@@ -27,7 +27,7 @@ public class RenderableObjectBulkAddPacket implements IAPPacket {
     }
 
     public RenderableObjectBulkAddPacket(FriendlyByteBuf buffer) {
-        Registry<OverlayObjectType<?>> registry = (Registry<OverlayObjectType<?>>) BuiltInRegistries.REGISTRY.getOrThrow(APRegistries.OVERLAY_OBJECTS);;
+        Registry<OverlayObjectType<?>> registry = APRegistries.getOverlayObjectsRegistry();
         this.player = buffer.readUUID();
         int size = buffer.readVarInt();
         List<OverlayObject> objects = new ArrayList<>();
@@ -47,7 +47,7 @@ public class RenderableObjectBulkAddPacket implements IAPPacket {
 
     @Override
     public void write(FriendlyByteBuf buffer) {
-        Registry<OverlayObjectType<?>> registry = (Registry<OverlayObjectType<?>>) BuiltInRegistries.REGISTRY.getOrThrow(APRegistries.OVERLAY_OBJECTS);
+        Registry<OverlayObjectType<?>> registry = APRegistries.getOverlayObjectsRegistry();
         buffer.writeUUID(this.player);
         buffer.writeVarInt(this.objects.size());
         for (OverlayObject object : this.objects) {

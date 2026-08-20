@@ -4,40 +4,35 @@
 
 package de.srendi.advancedperipherals.common.addons.ae2.disk;
 
-import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.media.IMedia;
-import dan200.computercraft.shared.util.DataComponentUtil;
-import dan200.computercraft.shared.util.NonNegativeId;
-import de.srendi.advancedperipherals.common.setup.APDataComponents;
-import net.minecraft.core.HolderLookup;
+import dan200.computercraft.shared.media.MountMedia;
+import dan200.computercraft.shared.media.items.DiskItem;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public class AEDiskMedia implements IMedia {
-    private final long capacity;
+    private final MountMedia wrapped;
 
     public AEDiskMedia(long capacity) {
-        this.capacity = capacity;
+        this.wrapped = new MountMedia("disk", DiskItem::getDiskID, DiskItem::setDiskID, () -> (int) capacity);
     }
 
     @Override
     @Nullable
-    public String getLabel(HolderLookup.Provider registries, ItemStack stack) {
-        return DataComponentUtil.getCustomName(stack);
+    public String getLabel(ItemStack stack) {
+        return this.wrapped.getLabel(stack);
     }
 
     @Override
     public boolean setLabel(ItemStack stack, @Nullable String label) {
-        DataComponentUtil.setCustomName(stack, label);
-        return true;
+        return this.wrapped.setLabel(stack, label);
     }
 
     @Override
     @Nullable
     public Mount createDataMount(ItemStack stack, ServerLevel level) {
-        int id = NonNegativeId.getOrCreate(level.getServer(), stack, APDataComponents.DISK_ID.get(), "disk");
-        return ComputerCraftAPI.createSaveDirMount(level.getServer(), "disk/" + id, this.capacity);
+        return this.wrapped.createDataMount(stack, level);
     }
 }

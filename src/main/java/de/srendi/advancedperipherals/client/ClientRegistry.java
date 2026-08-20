@@ -14,15 +14,15 @@ import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APContainerTypes;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientRegistry {
@@ -32,17 +32,18 @@ public class ClientRegistry {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        menuRegister();
+
         ItemPropertiesRegistry.register();
         if (APAddon.AE2.isLoaded()) {
             AERendererRegister.register();
         }
     }
 
-    @SubscribeEvent
-    public static void menuRegister(RegisterMenuScreensEvent event) {
-        event.register(APContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
-        event.register(APContainerTypes.KEYBOARD_CONTAINER.get(), KeyboardScreen::new);
-        event.register(APContainerTypes.SMART_GLASSES_CONTAINER.get(), SmartGlassesScreen::new);
+    public static void menuRegister() {
+        MenuScreens.register(APContainerTypes.INVENTORY_MANAGER_CONTAINER.get(), InventoryManagerScreen::new);
+        MenuScreens.register(APContainerTypes.KEYBOARD_CONTAINER.get(), KeyboardScreen::new);
+        MenuScreens.register(APContainerTypes.SMART_GLASSES_CONTAINER.get(), SmartGlassesScreen::new);
     }
 
     @SubscribeEvent
@@ -74,8 +75,8 @@ public class ClientRegistry {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void registeringOverlays(RegisterGuiLayersEvent event) {
-        event.registerAboveAll(SaddleTurtleOverlay.ID, SADDLE_TURTLE_OVERLAY);
-        event.registerAboveAll(OverlayModuleOverlay.ID, OVERLAY_MODULE_OVERLAY);
+    public static void registeringOverlays(RegisterGuiOverlaysEvent event) {
+        event.registerAboveAll(SaddleTurtleOverlay.ID.toString(), SADDLE_TURTLE_OVERLAY);
+        event.registerAboveAll(OverlayModuleOverlay.ID.toString(), OVERLAY_MODULE_OVERLAY);
     }
 }

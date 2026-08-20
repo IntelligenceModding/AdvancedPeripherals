@@ -35,7 +35,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     public ItemStack getUpgradeItem(CompoundTag upgradeData) {
         ItemStack stack = this.getCraftingItem().copy();
         CompoundTag data = upgradeData.getCompound(APDataComponents.STORED_DATA);
-        stack.getOrCreateTag().put(APDataComponents.STORED_DATA, data);
+        stack.getOrCreateTag().put("BlockEntityTag", data);
         String name = data.getString("CustomName");
         if (!name.isEmpty()) {
             stack.setHoverName(Component.literal(name));
@@ -45,7 +45,10 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
 
     @Override
     public CompoundTag getUpgradeData(ItemStack stack) {
-        CompoundTag data = stack.getOrCreateTagElement(APDataComponents.STORED_DATA);
+        CompoundTag data = stack.getTagElement("BlockEntityTag");
+        if (data == null) {
+            data = new CompoundTag();
+        }
         if (stack.hasCustomHoverName()) {
             data.putString("CustomName", stack.getHoverName().getString());
         }
@@ -57,10 +60,10 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     @Override
     public boolean isItemSuitable(ItemStack stack) {
         CompoundTag tag = stack.getTag();
-        if (tag != null && (tag.contains("display") || tag.contains(APDataComponents.STORED_DATA))) {
+        if (tag != null && (tag.contains("display") || tag.contains("BlockEntityTag"))) {
             stack = stack.copy();
             stack.removeTagKey("display");
-            stack.removeTagKey(APDataComponents.STORED_DATA);
+            stack.removeTagKey("BlockEntityTag");
         }
         return super.isItemSuitable(stack);
     }

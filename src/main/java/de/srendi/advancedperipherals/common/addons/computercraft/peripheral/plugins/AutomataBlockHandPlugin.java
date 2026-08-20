@@ -35,8 +35,8 @@ import net.minecraft.world.level.block.entity.SignText;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -225,7 +225,7 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
         TurtlePlayer turtlePlayer = TurtlePlayer.getWithPosition(turtle, position, front.getOpposite());
         BlockHitResult hit = BlockHitResult.miss(Vec3.atCenterOf(position), top, position);
         AdvanceDirectionalPlaceContext context = new AdvanceDirectionalPlaceContext(world, position, anchor, front, stack, top);
-        PlayerInteractEvent.RightClickBlock event = CommonHooks.onRightClickBlock(turtlePlayer.player(), InteractionHand.MAIN_HAND, position, hit);
+        PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(turtlePlayer.player(), InteractionHand.MAIN_HAND, position, hit);
         if (event.isCanceled()) {
             return "EVENT_CANCELED";
         }

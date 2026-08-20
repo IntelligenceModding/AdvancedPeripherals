@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.util.proxy;
 import de.srendi.advancedperipherals.common.blocks.blockentities.FluidDetectorEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHandler {
@@ -27,19 +27,19 @@ public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHan
 
     @Override
     public @NotNull FluidStack getFluidInTank(int tank) {
-        IFluidHandler storage = fluidDetectorEntity.getOutputStorage();
+        IFluidHandler storage = fluidDetectorEntity.getOutputStorage().orElse(null);
         return storage != null ? storage.getFluidInTank(tank) : FluidStack.EMPTY;
     }
 
     @Override
     public int getTankCapacity(int tank) {
-        IFluidHandler storage = fluidDetectorEntity.getOutputStorage();
+        IFluidHandler storage = fluidDetectorEntity.getOutputStorage().orElse(null);
         return storage != null ? storage.getTankCapacity(tank) : 0;
     }
 
     @Override
     public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
-        IFluidHandler storage = fluidDetectorEntity.getOutputStorage();
+        IFluidHandler storage = fluidDetectorEntity.getOutputStorage().orElse(null);
         return storage != null ? storage.isFluidValid(tank, stack) : false;
     }
 
@@ -50,11 +50,12 @@ public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHan
         }
         this.receiving = true;
         try {
-            IFluidHandler storage = fluidDetectorEntity.getOutputStorage();
+            IFluidHandler storage = fluidDetectorEntity.getOutputStorage().orElse(null);
             if (storage == null) {
                 return 0;
             }
-            FluidStack transferring = resource.copyWithAmount((int) Math.min(resource.getAmount(), this.getTransferRate()));
+            FluidStack transferring = resource.copy();
+            transferring.setAmount((int) Math.min(resource.getAmount(), this.getTransferRate()));
             int transferred = storage.fill(transferring, action);
             ResourceLocation id = BuiltInRegistries.FLUID.getKey(resource.getFluid());
             // TODO: what if filler may transfer multiple types of fluids?

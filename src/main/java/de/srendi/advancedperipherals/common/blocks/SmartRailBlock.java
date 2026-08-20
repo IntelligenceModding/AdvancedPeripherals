@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.blocks;
 
-import com.mojang.serialization.MapCodec;
 import de.srendi.advancedperipherals.common.blocks.base.IHarvestableBlock;
 import de.srendi.advancedperipherals.common.blocks.blockentities.SmartRailBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -24,8 +23,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class SmartRailBlock extends BaseRailBlock implements EntityBlock, IHarvestableBlock {
-    public static final MapCodec<SmartRailBlock> CODEC = simpleCodec(SmartRailBlock::new);
-
     public SmartRailBlock() {
         this(
             Properties.of()
@@ -44,11 +41,6 @@ public class SmartRailBlock extends BaseRailBlock implements EntityBlock, IHarve
                 .setValue(BlockStateProperties.POWERED, false)
                 .setValue(BlockStateProperties.RAIL_SHAPE_STRAIGHT, RailShape.NORTH_SOUTH)
         );
-    }
-
-    @Override
-    protected MapCodec<? extends SmartRailBlock> codec() {
-        return CODEC;
     }
 
     @Override

@@ -5,7 +5,6 @@ import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
@@ -64,17 +63,17 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag compound, @NotNull HolderLookup.Provider provider) {
+    public void load(@NotNull CompoundTag compound) {
         this.setMaxRange(compound.getFloat("maxRange"));
         this.currentDistance = compound.getFloat("currentDistance");
         this.lerpSteps = 2;
         this.showLaser = compound.getBoolean("showLaser");
-        super.loadAdditional(compound, provider);
+        super.load(compound);
     }
 
     @Override
-    public CompoundTag getUpdateTag(@NotNull HolderLookup.Provider provider) {
-        CompoundTag compound = super.getUpdateTag(provider);
+    public CompoundTag getUpdateTag() {
+        CompoundTag compound = super.getUpdateTag();
         compound.putFloat("maxRange", this.maxRange);
         compound.putFloat("currentDistance", this.currentDistance);
         compound.putBoolean("showLaser", this.showLaser);

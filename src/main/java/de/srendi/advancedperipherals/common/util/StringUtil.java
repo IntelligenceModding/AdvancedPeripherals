@@ -63,7 +63,7 @@ public class StringUtil {
         if (name == null) {
             return null;
         }
-        name = net.minecraft.util.StringUtil.filterText(name);
+        name = net.minecraft.util.StringUtil.stripColor(name);
         return name.length() <= 50 ? name : null;
     }
 }

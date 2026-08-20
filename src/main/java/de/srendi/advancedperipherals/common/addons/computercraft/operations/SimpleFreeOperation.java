@@ -4,7 +4,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,14 +14,14 @@ public enum SimpleFreeOperation implements IPeripheralOperation<Void> {
     SADDLE_CAPTURE(5000);
 
     private final int defaultCooldown;
-    private ModConfigSpec.IntValue cooldown;
+    private ForgeConfigSpec.IntValue cooldown;
 
     SimpleFreeOperation(int defaultCooldown) {
         this.defaultCooldown = defaultCooldown;
     }
 
     @Override
-    public void addToConfig(ModConfigSpec.Builder builder) {
+    public void addToConfig(ForgeConfigSpec.Builder builder) {
         cooldown = builder.defineInRange(settingsName() + "Cooldown", defaultCooldown, 0, Integer.MAX_VALUE);
     }
 

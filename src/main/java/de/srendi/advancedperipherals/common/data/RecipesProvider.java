@@ -17,6 +17,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -27,11 +28,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 
@@ -178,59 +181,84 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .unlockedBy(HAS_ITEM, has(APItems.SMART_GLASSES.get()))
             .save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_1M.get())
-            .define('P', AEItems.LOGIC_PROCESSOR.get())
-            .define('D', ModRegistry.Items.DISK.get())
-            .define('R', Tags.Items.DUSTS_REDSTONE)
-            .pattern("RDR")
-            .pattern("DPD")
-            .pattern("RDR")
-            .unlockedBy(HAS_ITEM, has(ModRegistry.Items.DISK.get()))
-            .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
+        ConditionalRecipe.builder()
+            .addCondition(modLoaded(APAddon.AE2.getModId()))
+            .addRecipe(
+                ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_1M.get())
+                    .define('P', AEItems.LOGIC_PROCESSOR.asItem())
+                    .define('D', ModRegistry.Items.DISK.get())
+                    .define('R', Tags.Items.DUSTS_REDSTONE)
+                    .pattern("RDR")
+                    .pattern("DPD")
+                    .pattern("RDR")
+                    .unlockedBy(HAS_ITEM, has(ModRegistry.Items.DISK.get()))
+                    ::save
+            )
+            .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APItems.AE_DISK_CELL_1M.get()));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_4M.get())
-            .define('P', AEItems.CALCULATION_PROCESSOR.get())
-            .define('G', AEBlocks.QUARTZ_GLASS)
-            .define('D', APItems.AE_DISK_CELL_1M.get())
-            .define('R', Tags.Items.DUSTS_REDSTONE)
-            .pattern("RPR")
-            .pattern("DGD")
-            .pattern("RDR")
-            .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_1M.get()))
-            .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
+        ConditionalRecipe.builder()
+            .addCondition(modLoaded(APAddon.AE2.getModId()))
+            .addRecipe(
+                ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_4M.get())
+                    .define('P', AEItems.CALCULATION_PROCESSOR.asItem())
+                    .define('G', AEBlocks.QUARTZ_GLASS)
+                    .define('D', APItems.AE_DISK_CELL_1M.get())
+                    .define('R', Tags.Items.DUSTS_REDSTONE)
+                    .pattern("RPR")
+                    .pattern("DGD")
+                    .pattern("RDR")
+                    .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_1M.get()))
+                    ::save
+            )
+            .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APItems.AE_DISK_CELL_4M.get()));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_16M.get())
-            .define('P', AEItems.CALCULATION_PROCESSOR.get())
-            .define('G', AEBlocks.QUARTZ_GLASS)
-            .define('D', APItems.AE_DISK_CELL_4M.get())
-            .define('R', Tags.Items.DUSTS_GLOWSTONE)
-            .pattern("RPR")
-            .pattern("DGD")
-            .pattern("RDR")
-            .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_4M.get()))
-            .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
+        ConditionalRecipe.builder()
+            .addCondition(modLoaded(APAddon.AE2.getModId()))
+            .addRecipe(
+                ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_16M.get())
+                    .define('P', AEItems.CALCULATION_PROCESSOR.asItem())
+                    .define('G', AEBlocks.QUARTZ_GLASS)
+                    .define('D', APItems.AE_DISK_CELL_4M.get())
+                    .define('R', Tags.Items.DUSTS_GLOWSTONE)
+                    .pattern("RPR")
+                    .pattern("DGD")
+                    .pattern("RDR")
+                    .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_4M.get()))
+                    ::save
+            )
+            .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APItems.AE_DISK_CELL_16M.get()));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_64M.get())
-            .define('P', AEItems.CALCULATION_PROCESSOR.asItem())
-            .define('G', AEBlocks.QUARTZ_GLASS)
-            .define('D', APItems.AE_DISK_CELL_16M.get())
-            .define('R', Tags.Items.DUSTS_GLOWSTONE)
-            .pattern("RPR")
-            .pattern("DGD")
-            .pattern("RDR")
-            .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_16M.get()))
-            .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
+        ConditionalRecipe.builder()
+            .addCondition(modLoaded(APAddon.AE2.getModId()))
+            .addRecipe(
+                ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_64M.get())
+                    .define('P', AEItems.CALCULATION_PROCESSOR.asItem())
+                    .define('G', AEBlocks.QUARTZ_GLASS)
+                    .define('D', APItems.AE_DISK_CELL_16M.get())
+                    .define('R', Tags.Items.DUSTS_GLOWSTONE)
+                    .pattern("RPR")
+                    .pattern("DGD")
+                    .pattern("RDR")
+                    .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_16M.get()))
+                    ::save
+            )
+            .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APItems.AE_DISK_CELL_64M.get()));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_256M.get())
-            .define('P', AEItems.CALCULATION_PROCESSOR.asItem())
-            .define('G', AEBlocks.QUARTZ_GLASS)
-            .define('D', APItems.AE_DISK_CELL_64M.get())
-            .define('R', AEItems.SKY_DUST.asItem())
-            .pattern("RPR")
-            .pattern("DGD")
-            .pattern("RDR")
-            .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_64M.get()))
-            .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
+        ConditionalRecipe.builder()
+            .addCondition(modLoaded(APAddon.AE2.getModId()))
+            .addRecipe(
+                ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_256M.get())
+                    .define('P', AEItems.CALCULATION_PROCESSOR.asItem())
+                    .define('G', AEBlocks.QUARTZ_GLASS)
+                    .define('D', APItems.AE_DISK_CELL_64M.get())
+                    .define('R', AEItems.SKY_DUST.asItem())
+                    .pattern("RPR")
+                    .pattern("DGD")
+                    .pattern("RDR")
+                    .unlockedBy(HAS_ITEM, has(APItems.AE_DISK_CELL_64M.get()))
+                    ::save
+            )
+            .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APItems.AE_DISK_CELL_256M.get()));
 
         //// BLOCKS ////
 
@@ -314,7 +342,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.FLUID_DETECTOR.get())
             .define('A', CASING)
-            .define('B', Tags.Items.BUCKETS_EMPTY)
+            .define('B', Items.BUCKET)
             .define('P', Items.PISTON)
             .define('C', Items.COMPARATOR)
             .define('G', Tags.Items.INGOTS_GOLD)
@@ -324,17 +352,22 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .unlockedBy(HAS_ITEM, has(CASING))
             .save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.GAS_DETECTOR.get())
-            .define('A', CASING)
-            .define('B', MekanismBlocks.BASIC_PRESSURIZED_TUBE)
-            .define('P', Items.PISTON)
-            .define('C', Items.COMPARATOR)
-            .define('G', Tags.Items.INGOTS_GOLD)
-            .pattern("BPB")
-            .pattern("CAC")
-            .pattern("BGB")
-            .unlockedBy(HAS_ITEM, has(CASING))
-            .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.MEKANISM.getModId())));
+        ConditionalRecipe.builder()
+            .addCondition(modLoaded(APAddon.MEKANISM.getModId()))
+            .addRecipe(
+                ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.GAS_DETECTOR.get())
+                    .define('A', CASING)
+                    .define('B', MekanismBlocks.BASIC_PRESSURIZED_TUBE)
+                    .define('P', Items.PISTON)
+                    .define('C', Items.COMPARATOR)
+                    .define('G', Tags.Items.INGOTS_GOLD)
+                    .pattern("BPB")
+                    .pattern("CAC")
+                    .pattern("BGB")
+                    .unlockedBy(HAS_ITEM, has(CASING))
+                    ::save
+            )
+            .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APBlocks.GAS_DETECTOR.get()));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.BLOCK_READER.get())
             .define('A', CASING)
@@ -369,40 +402,55 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .unlockedBy(HAS_ITEM, has(CASING))
             .save(recipeOutput);
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.COLONY_INTEGRATOR.get())
-            .define('A', CASING)
-            .define('O', ItemTags.LOGS)
-            .define('B', ModItems.buildGoggles)
-            .define('S', com.ldtteam.structurize.items.ModItems.buildTool.get())
-            .define('R', ModBlocks.blockRack)
-            .pattern("ORO")
-            .pattern("BAS")
-            .pattern("ORO")
-            .unlockedBy(HAS_ITEM, has(CASING))
-            .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.MINECOLONIES.getModId())));
+        ConditionalRecipe.builder()
+            .addCondition(modLoaded(APAddon.MINECOLONIES.getModId()))
+            .addRecipe(
+                ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.COLONY_INTEGRATOR.get())
+                    .define('A', CASING)
+                    .define('O', ItemTags.LOGS)
+                    .define('B', ModItems.buildGoggles)
+                    .define('S', com.ldtteam.structurize.items.ModItems.buildTool.get())
+                    .define('R', ModBlocks.blockRack)
+                    .pattern("ORO")
+                    .pattern("BAS")
+                    .pattern("ORO")
+                    .unlockedBy(HAS_ITEM, has(CASING))
+                    ::save
+            )
+            .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APBlocks.COLONY_INTEGRATOR.get()));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.ME_BRIDGE.get())
-            .define('A', CASING)
-            .define('F', AEBlocks.FLUIX_BLOCK.asItem())
-            .define('I', AEBlocks.INTERFACE.asItem())
-            .pattern("FIF")
-            .pattern("IAI")
-            .pattern("FIF")
-            .unlockedBy(HAS_ITEM, has(CASING))
-            .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
+        ConditionalRecipe.builder()
+            .addCondition(modLoaded(APAddon.AE2.getModId()))
+            .addRecipe(
+                ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.ME_BRIDGE.get())
+                    .define('A', CASING)
+                    .define('F', AEBlocks.FLUIX_BLOCK.asItem())
+                    .define('I', AEBlocks.INTERFACE.asItem())
+                    .pattern("FIF")
+                    .pattern("IAI")
+                    .pattern("FIF")
+                    .unlockedBy(HAS_ITEM, has(CASING))
+                    ::save
+            )
+            .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APBlocks.ME_BRIDGE.get()));
 
-        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.RS_BRIDGE.get())
-            .define('C', CASING)
-            .define('P', RS_ITEMS.getProcessor(ProcessorItem.Type.ADVANCED))
-            .define('I', RS_BLOCKS.getInterface())
-            .define('X', com.refinedmods.refinedstorage.common.content.Tags.EXTERNAL_STORAGES)
-            .define('E', com.refinedmods.refinedstorage.common.content.Tags.EXPORTERS)
-            .define('R', com.refinedmods.refinedstorage.common.content.Tags.IMPORTERS)
-            .pattern("PXP")
-            .pattern("ECR")
-            .pattern("PIP")
-            .unlockedBy(HAS_ITEM, has(CASING))
-            .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.REFINEDSTORAGE.getModId())));
+        ConditionalRecipe.builder()
+            .addCondition(modLoaded(APAddon.REFINEDSTORAGE.getModId()))
+            .addRecipe(
+                ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.RS_BRIDGE.get())
+                    .define('C', CASING)
+                    .define('P', RS_ITEMS.getProcessor(ProcessorItem.Type.ADVANCED))
+                    .define('I', RS_BLOCKS.getInterface())
+                    .define('X', com.refinedmods.refinedstorage.common.content.Tags.EXTERNAL_STORAGES)
+                    .define('E', com.refinedmods.refinedstorage.common.content.Tags.EXPORTERS)
+                    .define('R', com.refinedmods.refinedstorage.common.content.Tags.IMPORTERS)
+                    .pattern("PXP")
+                    .pattern("ECR")
+                    .pattern("PIP")
+                    .unlockedBy(HAS_ITEM, has(CASING))
+                    ::save
+            )
+            .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APBlocks.RS_BRIDGE.get()));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.SMART_RAIL.get())
             .define('M', ModRegistry.Blocks.WIRED_MODEM_FULL.get())
@@ -416,9 +464,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .save(recipeOutput);
     }
 
-    private static Item makePotion(Holder<Potion> potionType) {
-        ItemStack potion = Items.POTION.getDefaultInstance();
-        potion.set(DataComponents.POTION_CONTENTS, new PotionContents(potionType));
-        return potion.getItem();
+    private static Ingredient makePotion(Potion potionType) {
+        return StrictNBTIngredient.of(PotionUtils.setPotion(Items.POTION.getDefaultInstance(), potionType));
     }
 }

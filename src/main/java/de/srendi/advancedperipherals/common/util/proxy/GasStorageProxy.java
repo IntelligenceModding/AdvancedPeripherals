@@ -2,12 +2,12 @@ package de.srendi.advancedperipherals.common.util.proxy;
 
 import de.srendi.advancedperipherals.common.blocks.blockentities.GasDetectorEntity;
 import mekanism.api.Action;
-import mekanism.api.chemical.ChemicalStack;
-import mekanism.api.chemical.IChemicalHandler;
+import mekanism.api.chemical.gas.GasStack;
+import mekanism.api.chemical.gas.IGasHandler;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-public class GasStorageProxy extends AbstractStorageProxy implements IChemicalHandler {
+public class GasStorageProxy extends AbstractStorageProxy implements IGasHandler {
 
     private final GasDetectorEntity gasDetectorEntity;
     private ResourceLocation lastTransfered = null;
@@ -21,54 +21,54 @@ public class GasStorageProxy extends AbstractStorageProxy implements IChemicalHa
     }
 
     @Override
-    public int getChemicalTanks() {
+    public int getTanks() {
         return 1;
     }
 
     @Override
     @NotNull
-    public ChemicalStack getChemicalInTank(int tank) {
-        IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
-        return storage != null ? storage.getChemicalInTank(tank) : ChemicalStack.EMPTY;
+    public GasStack getChemicalInTank(int tank) {
+        IGasHandler storage = gasDetectorEntity.getOutputStorage().orElse(null);
+        return storage != null ? storage.getChemicalInTank(tank) : GasStack.EMPTY;
     }
 
     @Override
-    public void setChemicalInTank(int tank, @NotNull ChemicalStack stack) {
-        IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
+    public void setChemicalInTank(int tank, @NotNull GasStack stack) {
+        IGasHandler storage = gasDetectorEntity.getOutputStorage().orElse(null);
         if (storage != null) {
             storage.setChemicalInTank(tank, stack);
         }
     }
 
     @Override
-    public long getChemicalTankCapacity(int tank) {
-        IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
-        return storage != null ? storage.getChemicalTankCapacity(tank) : 0L;
+    public long getTankCapacity(int tank) {
+        IGasHandler storage = gasDetectorEntity.getOutputStorage().orElse(null);
+        return storage != null ? storage.getTankCapacity(tank) : 0L;
     }
 
     @Override
-    public boolean isValid(int tank, @NotNull ChemicalStack stack) {
-        IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
+    public boolean isValid(int tank, @NotNull GasStack stack) {
+        IGasHandler storage = gasDetectorEntity.getOutputStorage().orElse(null);
         return storage != null ? storage.isValid(tank, stack) : false;
     }
 
     @Override
     @NotNull
-    @SuppressWarnings("removal")
-    public ChemicalStack insertChemical(@NotNull ChemicalStack stack, @NotNull Action action) {
+    public GasStack insertChemical(@NotNull GasStack stack, @NotNull Action action) {
         if (this.receiving) {
-            return ChemicalStack.EMPTY;
+            return GasStack.EMPTY;
         }
         this.receiving = true;
         try {
-            IChemicalHandler storage = gasDetectorEntity.getOutputStorage();
+            IGasHandler storage = gasDetectorEntity.getOutputStorage().orElse(null);
             if (storage == null) {
-                return ChemicalStack.EMPTY;
+                return GasStack.EMPTY;
             }
-            ChemicalStack transferring = stack.copyWithAmount(Math.min(stack.getAmount(), this.getTransferRate()));
-            ChemicalStack left = storage.insertChemical(transferring, action);
+            GasStack transferring = stack.copy();
+            transferring.setAmount(Math.min(stack.getAmount(), this.getTransferRate()));
+            GasStack left = storage.insertChemical(transferring, action);
             if (!action.simulate()) {
-                this.wasReady = stack.getTypeRegistryName(); // TODO: replace deprecated api
+                this.wasReady = stack.getTypeRegistryName();
                 long transferred = transferring.getAmount() - left.getAmount();
                 if (transferred > 0) {
                     this.onTransfered(transferred);
@@ -100,13 +100,13 @@ public class GasStorageProxy extends AbstractStorageProxy implements IChemicalHa
 
     @Override
     @NotNull
-    public ChemicalStack insertChemical(int tank, @NotNull ChemicalStack stack, @NotNull Action action) {
+    public GasStack insertChemical(int tank, @NotNull GasStack stack, @NotNull Action action) {
         return insertChemical(stack, action);
     }
 
     @Override
     @NotNull
-    public ChemicalStack extractChemical(int tank, long amount, @NotNull Action action) {
-        return ChemicalStack.EMPTY;
+    public GasStack extractChemical(int tank, long amount, @NotNull Action action) {
+        return GasStack.EMPTY;
     }
 }

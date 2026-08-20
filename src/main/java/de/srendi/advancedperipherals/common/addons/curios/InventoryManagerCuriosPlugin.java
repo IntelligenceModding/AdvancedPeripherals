@@ -14,7 +14,7 @@ import de.srendi.advancedperipherals.common.util.inventory.PlayerStorageItemWrap
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
@@ -55,10 +55,10 @@ public class InventoryManagerCuriosPlugin implements IPeripheralPlugin {
         for (Map.Entry<String, ICurioStacksHandler> entry : curiosInv.getCurios().entrySet()) {
             ICurioStacksHandler handler = entry.getValue();
             Map<Integer, Map<String, Object>> list = InventoryUtil.list(handler.getStacks());
-            NonNullList<Boolean> activeStates = handler.getActiveStates();
-            for (Map.Entry<Integer, Map<String, Object>> itemEntry : list.entrySet()) {
-                itemEntry.getValue().put("isActive", activeStates.get(itemEntry.getKey() - 1));
-            }
+            // NonNullList<Boolean> activeStates = handler.getActiveStates();
+            // for (Map.Entry<Integer, Map<String, Object>> itemEntry : list.entrySet()) {
+            //     itemEntry.getValue().put("isActive", activeStates.get(itemEntry.getKey() - 1));
+            // }
             idMap.put(entry.getKey(), list);
         }
         return idMap;
@@ -120,7 +120,7 @@ public class InventoryManagerCuriosPlugin implements IPeripheralPlugin {
             }
             return handler.getStacks().getStackInSlot(islot);
         }, (player, stack) -> {
-            final ICurioStacksHandler handler = CuriosApi.getCuriosInventory(player).get().getStacksHandler(curiosId).get();
+            final ICurioStacksHandler handler = CuriosApi.getCuriosInventory(player).orElseThrow(AssertionError::new).getStacksHandler(curiosId).get();
             handler.getStacks().setStackInSlot(islot, stack);
         });
     }

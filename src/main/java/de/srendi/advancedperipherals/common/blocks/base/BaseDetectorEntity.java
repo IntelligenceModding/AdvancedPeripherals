@@ -4,13 +4,13 @@ import de.srendi.advancedperipherals.common.util.proxy.IStorageProxy;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,15 +23,15 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
 
     private static final String RATE_LIMIT_TAG = "RateLimit";
 
-    private final BlockCapability<T, Direction> capability;
+    private final Capability<T> capability;
     // proxy that will forward X to the output but limit it to maxTransferRate
     @NotNull
     private final S proxy = this.createProxy();
     private volatile long transferRate = 0;
-    @Nullable
-    private T zeroStorageCap = null;
+    private LazyOptional<S> inputStorageCap = LazyOptional.empty();
+    private LazyOptional<T> zeroStorageCap = LazyOptional.empty();
 
-    protected BaseDetectorEntity(BlockEntityType<?> tileEntityType, BlockPos pos, BlockState state, BlockCapability<T, Direction> capability) {
+    protected BaseDetectorEntity(BlockEntityType<?> tileEntityType, BlockPos pos, BlockState state, Capability<T> capability) {
         super(tileEntityType, pos, state);
         this.capability = capability;
     }
@@ -102,32 +102,37 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
         return this.getBlockState().getValue(BaseBlock.ORIENTATION).front().getOpposite();
     }
 
-    @Nullable
-    public T getCapability(Direction context) {
+    @NotNull
+    @Override
+    public <U> LazyOptional<U> getCapability(@NotNull Capability<U> cap, @Nullable Direction direction) {
         Direction inputDirection = this.getInputDirection();
         Direction outputDirection = this.getOutputDirection();
-        if (context == inputDirection) {
-            return (T) this.getStorageProxy();
-        }
-        if (context == outputDirection) {
-            if (this.zeroStorageCap == null) {
-                this.zeroStorageCap = this.getZeroStorage();
+        if (cap == this.capability) {
+            if (direction == inputDirection) {
+                if (!this.inputStorageCap.isPresent()) {
+                    this.inputStorageCap = LazyOptional.of(this::getStorageProxy);
+                }
+                return this.inputStorageCap.cast();
+            } else if (direction == outputDirection) {
+                if (!this.zeroStorageCap.isPresent()) {
+                    this.zeroStorageCap = LazyOptional.of(this::getZeroStorage);
+                }
+                return this.zeroStorageCap.cast();
             }
-            return this.zeroStorageCap;
         }
-        return null;
+        return super.getCapability(cap, direction);
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
-        super.saveAdditional(tag, provider);
+    public void saveAdditional(@NotNull CompoundTag tag) {
+        super.saveAdditional(tag);
         tag.putLong(RATE_LIMIT_TAG, this.getTransferRateLimit());
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider provider) {
+    public void load(@NotNull CompoundTag tag) {
         this.proxy.setTransferRate(tag.getLong(RATE_LIMIT_TAG));
-        super.loadAdditional(tag, provider);
+        super.load(tag);
     }
 
     @Override
@@ -138,9 +143,10 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
         }
     }
 
-    @Nullable
-    public T getOutputStorage() {
+    @NotNull
+    public LazyOptional<? extends T> getOutputStorage() {
         Direction outputDirection = this.getOutputDirection();
-        return level.getCapability(this.capability, worldPosition.relative(outputDirection), outputDirection.getOpposite());
+        BlockEntity be = level.getBlockEntity(worldPosition.relative(outputDirection));
+        return be == null ? LazyOptional.empty() : be.getCapability(this.capability, outputDirection.getOpposite());
     }
 }

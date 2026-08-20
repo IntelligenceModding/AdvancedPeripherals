@@ -38,13 +38,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class MineColonies {
 
@@ -190,8 +189,8 @@ public class MineColonies {
             Map.of(
                 "cornerA", LuaConverter.posToLua(building.getCorners().getA()),
                 "cornerB", LuaConverter.posToLua(building.getCorners().getB()),
-                "rotation", building.getRotationMirror().rotation().getSerializedName(),
-                "isMirrored", building.getRotationMirror().isMirrored()
+                "rotation", building.getRotation(),
+                "isMirrored", building.isMirrored()
             )
         );
         map.put(
@@ -278,8 +277,8 @@ public class MineColonies {
 
             List<Map<String, Object>> cost = research.getCostList().stream()
                 .map(ingredient -> Map.of(
-                    "validItems", Stream.of(ingredient.getItems()).map(LuaConverter::itemStackToLua).toList(),
-                    "count", ingredient.count()
+                    "validItems", ingredient.getItems().stream().map(LuaConverter::itemToLua).toList(),
+                    "count", ingredient.getCount()
                 ))
                 .toList();
 

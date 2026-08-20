@@ -7,10 +7,11 @@ import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
+import de.srendi.advancedperipherals.lib.codec.StreamCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +49,7 @@ public class ItemObject extends RenderableObject {
             this.item = null;
         } else {
             ResourceLocation name = ResourceLocation.tryParse(item0);
-            this.item = BuiltInRegistries.ITEM.getHolder(name).orElse(null);
+            this.item = BuiltInRegistries.ITEM.getHolder(ResourceKey.create(Registries.ITEM, name)).orElse(null);
         }
         this.markAndTryUpdate("item");
     }
@@ -57,9 +58,12 @@ public class ItemObject extends RenderableObject {
     protected void registerFieldEncoders(BiConsumer<String, FieldEncoder<?>> registrar) {
         super.registerFieldEncoders(registrar);
         registrar.accept("item", new FieldEncoder<>(
-            ByteBufCodecs.optional(ByteBufCodecs.holderRegistry(Registries.ITEM)),
-            () -> Optional.ofNullable(this.item),
-            (item) -> this.item = item.orElse(null)
+            StreamCodec.of(
+                (buf, item) -> buf.writeId(BuiltInRegistries.ITEM.asHolderIdMap(), item),
+                (buf) -> buf.readById(BuiltInRegistries.ITEM.asHolderIdMap())
+            ),
+            () -> this.item,
+            (item) -> this.item = item
         ));
     }
 

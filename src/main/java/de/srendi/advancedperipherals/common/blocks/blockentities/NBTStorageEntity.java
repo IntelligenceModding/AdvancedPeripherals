@@ -4,7 +4,6 @@ import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.NBTS
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -33,15 +32,15 @@ public class NBTStorageEntity extends PeripheralBlockEntity<NBTStoragePeripheral
     }
 
     @Override
-    public void saveAdditional(@NotNull CompoundTag compound, HolderLookup.@NotNull Provider provider) {
-        super.saveAdditional(compound, provider);
+    public void saveAdditional(@NotNull CompoundTag compound) {
+        super.saveAdditional(compound);
         compound.put("storedData", stored);
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag compound, HolderLookup.@NotNull Provider provider) {
+    public void load(@NotNull CompoundTag compound) {
         stored = compound.getCompound("storedData");
-        super.loadAdditional(compound, provider);
+        super.load(compound);
     }
 
 }

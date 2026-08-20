@@ -6,11 +6,10 @@ import appeng.api.storage.cells.ISaveProvider;
 import appeng.api.storage.cells.StorageCell;
 import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.filesystem.WritableMount;
-import dan200.computercraft.shared.util.NonNegativeId;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -21,7 +20,7 @@ public class AEDiskCellStorage implements StorageCell {
     protected final AEDiskCellItem cell;
     @Nullable
     protected final ISaveProvider host;
-    protected final NonNegativeId diskId;
+    protected final int diskId;
     protected final AEDiskKey aeKey;
     protected final Mount mount;
     private int refreshCD = 0;
@@ -30,17 +29,16 @@ public class AEDiskCellStorage implements StorageCell {
         this.stack = stack;
         this.cell = cell;
         this.host = host;
-        boolean needInit = !stack.has(APDataComponents.DISK_ID);
+        boolean needInit = !stack.hasTag() || !stack.getTag().contains(APDataComponents.DISK_ID);
         this.mount = cell.getMedia().createDataMount(stack, ServerLifecycleHooks.getCurrentServer().overworld());
-        this.diskId = Objects.requireNonNull(stack.get(APDataComponents.DISK_ID), "AEDiskCell media must assign a diskId");
+        this.diskId = Objects.requireNonNull(stack.getTag(), "AEDiskCell media must assign a diskId").getInt(APDataComponents.DISK_ID);
         this.aeKey = AEDiskKey.of(this.diskId, this.mount);
         if (needInit && host != null) {
             host.saveChanges();
         }
     }
 
-    @Nullable
-    public NonNegativeId getDiskId() {
+    public int getDiskId() {
         return this.diskId;
     }
 
@@ -80,7 +78,7 @@ public class AEDiskCellStorage implements StorageCell {
         if (this.refreshCD <= 0) {
             this.refreshCD = 61;
             // DISK_USED_BYTES only used for tooltip rendering. CC: T itself manage the disk capacity.
-            this.stack.set(APDataComponents.DISK_USED_BYTES, usedBytes);
+            this.stack.getOrCreateTag().putLong(APDataComponents.DISK_USED_BYTES, usedBytes);
             if (this.host != null) {
                 this.host.saveChanges();
             }
@@ -89,7 +87,7 @@ public class AEDiskCellStorage implements StorageCell {
 
     @Override
     public CellState getStatus() {
-        if (this.getDiskId() == null) {
+        if (this.getDiskId() < 0) {
             return CellState.EMPTY;
         }
         long remaining = this.getFreeBytes();
@@ -106,6 +104,6 @@ public class AEDiskCellStorage implements StorageCell {
 
     @Override
     public void persist() {
-        this.stack.set(APDataComponents.DISK_ID, this.diskId);
+        this.stack.getOrCreateTag().putInt(APDataComponents.DISK_ID, this.diskId);
     }
 }

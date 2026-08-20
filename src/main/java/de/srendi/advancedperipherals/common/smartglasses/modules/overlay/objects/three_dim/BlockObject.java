@@ -11,7 +11,9 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propert
 import de.srendi.advancedperipherals.lib.codec.StreamCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -72,7 +74,7 @@ public class BlockObject extends BoxObject {
             this.block = null;
         } else {
             ResourceLocation name = ResourceLocation.tryParse(block0);
-            Holder<Block> holder = BuiltInRegistries.BLOCK.getHolder(name).orElse(null);
+            Holder<Block> holder = BuiltInRegistries.BLOCK.getHolder(ResourceKey.create(Registries.BLOCK, name)).orElse(null);
             if (holder == null) {
                 this.block = null;
             } else {

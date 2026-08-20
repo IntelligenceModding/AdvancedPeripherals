@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
 
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.ItemObject;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class ItemRenderer implements ITwoDObjectRenderer<ItemObject> {
     @Override
-    public void renderBatch(List<ItemObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
+    public void renderBatch(List<ItemObject> objects, GuiGraphics gui, float partialTick) {
         for (ItemObject obj : objects) {
             if (obj.item == null) {
                 continue;

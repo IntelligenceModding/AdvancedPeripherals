@@ -9,7 +9,7 @@ public class ItemPropertiesRegistry {
 
     public static void register() {
         ItemProperties.register(APItems.MEMORY_CARD.get(), AdvancedPeripherals.getRL("bounded"), (stack, level, entity, seed) -> {
-            return stack.get(APDataComponents.OWNER) == null ? 0 : 1;
+            return stack.hasTag() && stack.getTag().contains(APDataComponents.OWNER) ? 1 : 0;
         });
     }
 

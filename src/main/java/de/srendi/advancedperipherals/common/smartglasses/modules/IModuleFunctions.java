@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.common.smartglasses.modules;
 
 import dan200.computercraft.shared.computer.core.ServerContext;
 import de.srendi.advancedperipherals.lib.peripherals.BoundMethod;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.List;
 

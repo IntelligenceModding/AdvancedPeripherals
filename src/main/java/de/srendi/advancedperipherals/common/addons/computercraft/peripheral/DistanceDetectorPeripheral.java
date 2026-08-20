@@ -16,7 +16,7 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
-import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -39,13 +39,13 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
     protected DistanceDetectorPeripheral(IPeripheralOwner owner) {
         super(PERIPHERAL_TYPE, owner);
         this.tileEntity = owner instanceof BlockEntityPeripheralOwner<?> beOwner ? (DistanceDetectorEntity) beOwner.getBlockEntity() : null;
-        PatchedDataComponentMap data = this.owner.getPatchedDataStorage();
-        this.maxRange = data.getOrDefault(APDataComponents.MAX_RANGE.get(), this.getConfiguredMaxRange());
-        this.currentDistance = data.getOrDefault(APDataComponents.CURRENT_DISTANCE.get(), -1f);
-        this.showLaser = data.getOrDefault(APDataComponents.SHOW_LASER.get(), true);
-        this.calculatePeriodically = data.getOrDefault(APDataComponents.CALCULATE_PERIODICALLY.get(), false);
-        this.ignoreTransparent = data.getOrDefault(APDataComponents.IGNORE_TRANSPARENT.get(), true);
-        this.detectionType = data.getOrDefault(APDataComponents.DETECTION_TYPE.get(), DetectionType.BOTH);
+        CompoundTag data = this.owner.getDataStorage();
+        this.maxRange = data.contains(APDataComponents.MAX_RANGE) ? data.getFloat(APDataComponents.MAX_RANGE) : this.getConfiguredMaxRange();
+        this.currentDistance = data.contains(APDataComponents.CURRENT_DISTANCE) ? data.getFloat(APDataComponents.CURRENT_DISTANCE) : -1f;
+        this.showLaser = data.contains(APDataComponents.SHOW_LASER) ? data.getBoolean(APDataComponents.SHOW_LASER) : true;
+        this.calculatePeriodically = data.contains(APDataComponents.CALCULATE_PERIODICALLY) ? data.getBoolean(APDataComponents.CALCULATE_PERIODICALLY) : false;
+        this.ignoreTransparent = data.contains(APDataComponents.IGNORE_TRANSPARENT) ? data.getBoolean(APDataComponents.IGNORE_TRANSPARENT) : true;
+        this.detectionType = data.contains(APDataComponents.DETECTION_TYPE) ? DetectionType.values()[data.getByte(APDataComponents.DETECTION_TYPE)] : DetectionType.BOTH;
     }
 
     public DistanceDetectorPeripheral(DistanceDetectorEntity tileEntity) {
@@ -254,14 +254,14 @@ public class DistanceDetectorPeripheral extends BasePeripheral<IPeripheralOwner>
 
         if (this.isDirty) {
             this.isDirty = false;
-            PatchedDataComponentMap data = this.owner.getPatchedDataStorage();
-            data.set(APDataComponents.MAX_RANGE.get(), this.getMaxRange());
-            data.set(APDataComponents.CURRENT_DISTANCE.get(), this.getCurrentDistance());
-            data.set(APDataComponents.SHOW_LASER.get(), this.getShowLaser());
-            data.set(APDataComponents.CALCULATE_PERIODICALLY.get(), this.getCalculatePeriodically());
-            data.set(APDataComponents.IGNORE_TRANSPARENT.get(), this.getIgnoreTransparent());
-            data.set(APDataComponents.DETECTION_TYPE.get(), this.getDetectionType());
-            this.owner.putDataStorage(data.asPatch());
+            CompoundTag data = this.owner.getDataStorage();
+            data.putFloat(APDataComponents.MAX_RANGE, this.getMaxRange());
+            data.putFloat(APDataComponents.CURRENT_DISTANCE, this.getCurrentDistance());
+            data.putBoolean(APDataComponents.SHOW_LASER, this.getShowLaser());
+            data.putBoolean(APDataComponents.CALCULATE_PERIODICALLY, this.getCalculatePeriodically());
+            data.putBoolean(APDataComponents.IGNORE_TRANSPARENT, this.getIgnoreTransparent());
+            data.putByte(APDataComponents.DETECTION_TYPE, (byte) this.getDetectionType().ordinal());
+            this.owner.putDataStorage(data);
             if (this.tileEntity != null) {
                 this.tileEntity.setMaxRange(this.getMaxRange());
                 this.tileEntity.setCurrentDistance(this.getCurrentDistance());

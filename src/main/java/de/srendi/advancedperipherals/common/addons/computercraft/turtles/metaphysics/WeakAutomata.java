@@ -3,7 +3,6 @@ package de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaph
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import dan200.computercraft.api.turtle.TurtleSide;
-import dan200.computercraft.api.upgrades.UpgradeType;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.WeakAutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.lib.turtle.ClockwiseAnimatedTurtleUpgrade;
@@ -30,10 +29,5 @@ public class WeakAutomata extends ClockwiseAnimatedTurtleUpgrade<WeakAutomataCor
     @Override
     protected WeakAutomataCorePeripheral buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side) {
         return new WeakAutomataCorePeripheral(turtle, side);
-    }
-
-    @Override
-    public UpgradeType<? extends ITurtleUpgrade> getType() {
-        return CCRegistration.WEAK_TURTLE.get();
     }
 }

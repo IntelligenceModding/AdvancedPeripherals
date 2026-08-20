@@ -4,11 +4,12 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.smartglasses.objects.twodim.ITwoDObjectRenderer;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
-import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,13 +18,13 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-public class OverlayModuleOverlay implements LayeredDraw.Layer {
+public class OverlayModuleOverlay implements IGuiOverlay {
     public static final ResourceLocation ID = AdvancedPeripherals.getRL("overlay_module_overlay");
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void render(GuiGraphics gui, DeltaTracker deltaTracker) {
-        LocalPlayer player = gui.minecraft.player;
+    public void render(ForgeGui fgui, GuiGraphics gui, float partialTick, int screenWidth, int screenHeight) {
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             return;
         }
@@ -55,7 +56,7 @@ public class OverlayModuleOverlay implements LayeredDraw.Layer {
                 if (entry.getValue().isEmpty()) {
                     continue;
                 }
-                entry.getKey().renderBatch(entry.getValue(), gui, deltaTracker);
+                entry.getKey().renderBatch(entry.getValue(), gui, partialTick);
             }
         }
     }

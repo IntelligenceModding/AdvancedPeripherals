@@ -23,7 +23,8 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -57,14 +58,29 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @Unmodifiable
     protected Map<String, GlobalPos> getPointDatas() {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        return owner.getPatchedDataStorage().getOrDefault(APDataComponents.POINT_DATA_MARK.get(), Map.of());
+        CompoundTag points = owner.getDataStorage().getCompound(APDataComponents.POINT_DATA_MARK);
+        if (points.isEmpty()) {
+            return Map.of();
+        }
+        Map<String, GlobalPos> data = new HashMap<>();
+        for (String name : points.getAllKeys()) {
+            GlobalPos pos = GlobalPos.CODEC.parse(NbtOps.INSTANCE, points.get(name)).result().orElse(null);
+            if (pos != null) {
+                data.put(name, pos);
+            }
+        }
+        return data;
     }
 
     protected void setPointData(@NotNull Map<String, GlobalPos> data) {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        PatchedDataComponentMap settings = owner.getPatchedDataStorage();
-        settings.set(APDataComponents.POINT_DATA_MARK.get(), Map.copyOf(data));
-        owner.putDataStorage(settings.asPatch());
+        CompoundTag settings = owner.getDataStorage();
+        CompoundTag points = new CompoundTag();
+        for (Map.Entry<String, GlobalPos> point : data.entrySet()) {
+            points.put(point.getKey(), GlobalPos.CODEC.encodeStart(NbtOps.INSTANCE, point.getValue()).result().orElseThrow());
+        }
+        settings.put(APDataComponents.POINT_DATA_MARK, points);
+        owner.putDataStorage(settings);
     }
 
     protected Pair<MethodResult, GlobalPos> getPoint(String name) {

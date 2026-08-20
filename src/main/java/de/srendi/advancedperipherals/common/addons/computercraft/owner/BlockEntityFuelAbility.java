@@ -3,8 +3,8 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 
 public class BlockEntityFuelAbility<T extends BlockEntity & IPeripheralBlockEntity> extends FuelAbility<BlockEntityPeripheralOwner<T>> {
@@ -15,7 +15,7 @@ public class BlockEntityFuelAbility<T extends BlockEntity & IPeripheralBlockEnti
 
     @Override
     protected boolean consumeFuel(int count) {
-        IEnergyStorage energyStorage = owner.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, owner.getPos(), null);
+        IEnergyStorage energyStorage = owner.getBlockEntity().getCapability(ForgeCapabilities.ENERGY).orElse(null);
         if (energyStorage != null) {
             int energyCount = count * APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get();
             int extractedCount = energyStorage.extractEnergy(energyCount, true);
@@ -41,7 +41,7 @@ public class BlockEntityFuelAbility<T extends BlockEntity & IPeripheralBlockEnti
 
     @Override
     public int getFuelCount() {
-        IEnergyStorage energyStorage = owner.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, owner.getPos(), null);
+        IEnergyStorage energyStorage = owner.getBlockEntity().getCapability(ForgeCapabilities.ENERGY).orElse(null);
         if (energyStorage != null)
             return energyStorage.getEnergyStored() / APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get();
         return 0;
@@ -49,7 +49,7 @@ public class BlockEntityFuelAbility<T extends BlockEntity & IPeripheralBlockEnti
 
     @Override
     public int getFuelMaxCount() {
-        IEnergyStorage energyStorage = owner.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, owner.getPos(), null);
+        IEnergyStorage energyStorage = owner.getBlockEntity().getCapability(ForgeCapabilities.ENERGY).orElse(null);
         if (energyStorage != null)
             return energyStorage.getEnergyStored() / APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get();
         return 0;
@@ -57,7 +57,7 @@ public class BlockEntityFuelAbility<T extends BlockEntity & IPeripheralBlockEnti
 
     @Override
     public void addFuel(int count) {
-        IEnergyStorage energyStorage = owner.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, owner.getPos(), null);
+        IEnergyStorage energyStorage = owner.getBlockEntity().getCapability(ForgeCapabilities.ENERGY).orElse(null);
         if (energyStorage != null)
             energyStorage.receiveEnergy(count * APConfig.METAPHYSICS_CONFIG.energyToFuelRate.get(), false);
     }

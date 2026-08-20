@@ -12,13 +12,11 @@ import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
@@ -44,40 +42,39 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     }
 
     protected boolean isEntityInside() {
-        return automataCore.getPeripheralOwner().getPatchedDataStorage().has(ENTITY_TRANSFER.get());
+        return automataCore.getPeripheralOwner().getDataStorage().contains(ENTITY_TRANSFER);
     }
 
     protected void saveEntity(CompoundTag data) {
-        PatchedDataComponentMap patch = automataCore.getPeripheralOwner().getPatchedDataStorage();
-        patch.set(ENTITY_TRANSFER.get(), CustomData.of(data));
-        automataCore.getPeripheralOwner().putDataStorage(patch.asPatch());
+        CompoundTag storage = automataCore.getPeripheralOwner().getDataStorage();
+        storage.put(ENTITY_TRANSFER, data.copy());
+        automataCore.getPeripheralOwner().putDataStorage(storage);
     }
 
-    protected CustomData getEntity() {
-        return automataCore.getPeripheralOwner().getPatchedDataStorage().getOrDefault(ENTITY_TRANSFER.get(), CustomData.EMPTY);
+    protected CompoundTag getEntity() {
+        return automataCore.getPeripheralOwner().getDataStorage().getCompound(ENTITY_TRANSFER);
     }
 
     protected void removeEntity() {
-        PatchedDataComponentMap patch = automataCore.getPeripheralOwner().getPatchedDataStorage();
-        patch.remove(ENTITY_TRANSFER.get());
-        automataCore.getPeripheralOwner().putDataStorage(patch.asPatch());
+        CompoundTag storage = automataCore.getPeripheralOwner().getDataStorage();
+        storage.remove(ENTITY_TRANSFER);
+        automataCore.getPeripheralOwner().putDataStorage(storage);
     }
 
     @Nullable
     protected Entity extractEntity() {
-        CustomData data = getEntity();
-        EntityType<?> type = EntityType.byString(data.getUnsafe().getString("entity")).orElse(null);
+        CompoundTag data = getEntity();
+        EntityType<?> type = EntityType.byString(data.getString("entity")).orElse(null);
         if (type != null) {
             Entity entity = type.create(automataCore.getPeripheralOwner().getLevel());
             if (entity == null) {
                 return null;
             }
-            data.loadInto(entity);
+            entity.load(data);
             return entity;
         }
         return null;
     }
-
 
     @LuaFunction(mainThread = true)
     public final MethodResult captureAnimal(@NotNull IArguments arguments) throws LuaException {

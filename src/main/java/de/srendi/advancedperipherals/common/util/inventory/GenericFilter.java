@@ -60,12 +60,6 @@ public abstract class GenericFilter<T> {
             return switch (type) {
                 case "item" -> ItemFilter.parse(rawFilter);
                 case "fluid" -> FluidFilter.parse(rawFilter);
-                case "chemical" -> {
-                    if (!APAddon.MEKANISM.isLoaded()) {
-                        throw new LuaException("cannot use chemical filter: Mekanism is required");
-                    }
-                    yield ChemicalFilter.parse(rawFilter);
-                }
                 default -> throw new LuaException("unexpected filter type " + type);
             };
         }
@@ -79,8 +73,6 @@ public abstract class GenericFilter<T> {
             return ItemFilter.parse(rawFilter);
         } else if (RegistryUtil.getRegistryEntry(name, BuiltInRegistries.FLUID) != null) {
             return FluidFilter.parse(rawFilter);
-        } else if (APAddon.MEKANISM.isLoaded() && RegistryUtil.getRegistryEntry(name, Mekanism.getChemicalRegistry()) != null) {
-            return ChemicalFilter.parse(rawFilter);
         }
         // If the name is in neither of the registries, we will just return an empty filter
         return Pair.of(empty(), "NO_VALID_FILTER_TYPE");

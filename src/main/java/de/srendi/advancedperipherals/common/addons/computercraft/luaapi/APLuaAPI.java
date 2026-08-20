@@ -11,8 +11,8 @@ import de.srendi.advancedperipherals.common.addons.APAddon;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.StatType;
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 
 import java.util.HashMap;
 import java.util.Iterator;

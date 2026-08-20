@@ -64,8 +64,9 @@ public class BlockReaderPeripheral extends BasePeripheral<IPeripheralOwner> {
             return null;
         }
         return (Map<String, Object>) CompoundTag.CODEC
-            .encodeStart(LuaOps.INSTANCE, target.saveWithId(getLevel().registryAccess()))
-            .getOrThrow();
+            .encodeStart(LuaOps.INSTANCE, target.saveWithId())
+            .result()
+            .get();
     }
 
     @LuaFunction(mainThread = true)

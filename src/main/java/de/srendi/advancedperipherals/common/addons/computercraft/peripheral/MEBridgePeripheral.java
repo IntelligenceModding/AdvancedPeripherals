@@ -16,12 +16,8 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.peripheral.IComputerAccess;
-import dan200.computercraft.shared.util.NonNegativeId;
-import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.AEApi;
 import de.srendi.advancedperipherals.common.addons.ae2.AECraftJob;
-import de.srendi.advancedperipherals.common.addons.ae2.AEMekanismApi;
-import de.srendi.advancedperipherals.common.addons.ae2.MEChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MEFluidHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MEItemHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKey;
@@ -31,14 +27,12 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.CCMountUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHandler;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemItemHandler;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import me.ramidzkh.mekae2.ae2.MekanismKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +54,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
 
     private int diskRescanCD = 1;
     private Set<AEDiskKey> lastDisks = Set.of();
-    private final Map<IComputerAccess, Map<NonNegativeId, String>> computers = new HashMap<>();
+    private final Map<IComputerAccess, Map<Integer, String>> computers = new HashMap<>();
 
     public MEBridgePeripheral(MEBridgeEntity be) {
         super(PERIPHERAL_TYPE, new StorageSystemBlockEntityPeripheralOwner<>(be) {
@@ -103,7 +97,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
 
     @Override
     public synchronized void attach(@NotNull IComputerAccess computer) {
-        Map<NonNegativeId, String> mounts = new HashMap<>();
+        Map<Integer, String> mounts = new HashMap<>();
         computers.put(computer, mounts);
 
         for (AEDiskKey diskKey : this.lastDisks) {
@@ -116,7 +110,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
 
     @Override
     public synchronized void detach(@NotNull IComputerAccess computer) {
-        Map<NonNegativeId, String> mounts = computers.remove(computer);
+        Map<Integer, String> mounts = computers.remove(computer);
         mounts.values().forEach(computer::unmount);
         computer.queueEvent("disk_eject", computer.getAttachmentName());
     }
@@ -186,18 +180,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     }
 
     @Override
-    @NotNull
-    public APAddon getChemicalOpAddon() {
-        return APAddon.APP_MEKANISTICS;
-    }
-
-    @Override
-    @NotNull
-    public Object /*IChemicalHandler*/ getStorageSystemChemicalHandler() {
-        return new MEChemicalHandler(AEApi.getMonitor(node), bridge);
-    }
-
-    @Override
     public boolean isAvailable() {
         return node.hasGridBooted();
     }
@@ -223,11 +205,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     }
 
     @Override
-    public MethodResult getChemicalImpl(Object /*ChemicalFilter*/ filter) throws LuaException {
-        return MethodResult.of(AEApi.parseAeStack(AEMekanismApi.findAEChemicalFromFilter(AEApi.getMonitor(node), getCraftingService(), (ChemicalFilter) filter), getCraftingService()));
-    }
-
-    @Override
     public MethodResult getItemsImpl(ItemFilter filter) throws LuaException {
         return MethodResult.of(AEApi.listItems(AEApi.getMonitor(node), getCraftingService(), filter));
     }
@@ -238,11 +215,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     }
 
     @Override
-    public MethodResult getChemicalsImpl(Object /*ChemicalFilter*/ filter) throws LuaException {
-        return MethodResult.of(AEMekanismApi.listChemicals(AEApi.getMonitor(node), getCraftingService(), (ChemicalFilter) filter));
-    }
-
-    @Override
     public MethodResult getCraftableItemsImpl(ItemFilter filter) throws LuaException {
         return MethodResult.of(AEApi.listCraftableItems(AEApi.getMonitor(node), getCraftingService(), filter));
     }
@@ -250,11 +222,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     @Override
     public MethodResult getCraftableFluidsImpl(FluidFilter filter) throws LuaException {
         return MethodResult.of(AEApi.listCraftableFluids(AEApi.getMonitor(node), getCraftingService(), filter));
-    }
-
-    @Override
-    public MethodResult getCraftableChemicalsImpl(Object /*ChemicalFilter*/ filter) throws LuaException {
-        return MethodResult.of(AEMekanismApi.listCraftableChemicals(AEApi.getMonitor(node), getCraftingService(), (ChemicalFilter) filter));
     }
 
     @Override
@@ -303,11 +270,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     }
 
     @Override
-    public double getMaxExternalChemicalStorageImpl() {
-        return AEApi.getMaxExternalChemicalStorage(node.getGrid());
-    }
-
-    @Override
     public double getMaxItemStorageImpl() {
         return AEApi.getMaxItemStorage(node.getGrid());
     }
@@ -315,11 +277,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     @Override
     public double getMaxFluidStorageImpl() {
         return AEApi.getMaxFluidStorage(node.getGrid());
-    }
-
-    @Override
-    public double getMaxChemicalStorageImpl() {
-        return AEApi.getMaxChemicalStorage(node.getGrid());
     }
 
     @Override
@@ -338,11 +295,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     }
 
     @Override
-    public double getUsedExternalChemicalStorageImpl() {
-        return AEApi.getUsedExternalChemicalStorage(node.getGrid());
-    }
-
-    @Override
     public double getUsedItemStorageImpl() {
         return AEApi.getUsedItemStorage(node.getGrid());
     }
@@ -350,11 +302,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     @Override
     public double getUsedFluidStorageImpl() {
         return AEApi.getUsedFluidStorage(node.getGrid());
-    }
-
-    @Override
-    public double getUsedChemicalStorageImpl() {
-        return AEApi.getUsedChemicalStorage(node.getGrid());
     }
 
     @Override
@@ -373,11 +320,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     }
 
     @Override
-    public double getAvailableExternalChemicalStorageImpl() {
-        return AEApi.getAvailableExternalChemicalStorage(node.getGrid());
-    }
-
-    @Override
     public double getAvailableItemStorageImpl() {
         return AEApi.getAvailableItemStorage(node.getGrid());
     }
@@ -385,11 +327,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     @Override
     public double getAvailableFluidStorageImpl() {
         return AEApi.getAvailableFluidStorage(node.getGrid());
-    }
-
-    @Override
-    public double getAvailableChemicalStorageImpl() {
-        return AEApi.getAvailableChemicalStorage(node.getGrid());
     }
 
     @Override
@@ -423,27 +360,6 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
 
         ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
         Pair<Long, AEFluidKey> stack = AEApi.findAEFluidFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, filter);
-        if (stack.right() == null && stack.left() == 0) {
-            return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
-        }
-
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.right(), filter.getAmount(), bridge, target);
-        bridge.addJob(job);
-        return MethodResult.of(job.withCPU(target));
-    }
-
-    @Override
-    public MethodResult craftChemicalImpl(IComputerAccess computer, IArguments arguments, Object /*ChemicalFilter*/ filter0) throws LuaException {
-        ChemicalFilter filter = (ChemicalFilter) filter0;
-        String cpuName = arguments.optString(1, "");
-
-        ICraftingCPU target = AEApi.getCraftingCPU(node, cpuName);
-        if (!cpuName.isEmpty() && target == null) {
-            return MethodResult.of(null, StatusConstants.CPU_NOT_FOUND, cpuName);
-        }
-
-        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
-        Pair<Long, MekanismKey> stack = AEMekanismApi.findAEChemicalFromFilter(AEApi.getMonitor(bridge.getGridNode()), craftingGrid, filter);
         if (stack.right() == null && stack.left() == 0) {
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
         }
@@ -511,7 +427,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
         if (inputFilter == null && outputFilter == null) {
             return MethodResult.of(AEApi.listPatterns(node.getGrid(), getLevel()));
         }
-        Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> pattern = AEApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
+        Pair<Pair<EncodedPatternItem, IPatternDetails>, String> pattern = AEApi.findPatternFromFilters(node.getGrid(), getLevel(), inputFilter, outputFilter);
         if (pattern.right() != null) {
             return MethodResult.of(null, pattern.right());
         }

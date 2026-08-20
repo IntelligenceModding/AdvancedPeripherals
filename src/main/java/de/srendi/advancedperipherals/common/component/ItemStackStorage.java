@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.component;
 
 import com.mojang.serialization.Codec;
+import de.srendi.advancedperipherals.lib.codec.StreamCodec;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.CheckReturnValue;
@@ -14,11 +14,13 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public final class ItemStackStorage {
-    public static final Codec<ItemStackStorage> CODEC = ItemStack.OPTIONAL_CODEC.listOf()
+    public static final Codec<ItemStackStorage> CODEC = ItemStack.CODEC.listOf()
         .xmap(ItemStackStorage::of, ItemStackStorage::getAllAsList);
 
-    public static final StreamCodec<FriendlyByteBuf, ItemStackStorage> STREAM_CODEC = ItemStack.OPTIONAL_LIST_STREAM_CODEC
-        .map(ItemStackStorage::of, ItemStackStorage::getAllAsList);
+    public static final StreamCodec<FriendlyByteBuf, ItemStackStorage> STREAM_CODEC = StreamCodec.of(
+        (buf, storage) -> storage.writeToPacket(buf),
+        ItemStackStorage::readFromPacket
+    );
 
     private final ItemStack[] items;
 
@@ -91,8 +93,8 @@ public final class ItemStackStorage {
         return new ItemStackStorage(items);
     }
 
-    public boolean isSameItemSameComponents(int slot, ItemStack stack) {
-        return ItemStack.isSameItemSameComponents(this.items[slot], stack);
+    public boolean isSameItemSameTags(int slot, ItemStack stack) {
+        return ItemStack.isSameItemSameTags(this.items[slot], stack);
     }
 
     public ItemStack[] getAllUnsafe() {
@@ -112,7 +114,7 @@ public final class ItemStackStorage {
             return false;
         }
         for (int i = 0; i < length; i++) {
-            if (!ItemStack.isSameItemSameComponents(this.items[i], storage.items[i])) {
+            if (!ItemStack.isSameItemSameTags(this.items[i], storage.items[i])) {
                 return false;
             }
         }
@@ -137,6 +139,22 @@ public final class ItemStackStorage {
         return builder
             .append("]")
             .toString();
+    }
+
+    private void writeToPacket(FriendlyByteBuf buf) {
+        buf.writeVarInt(this.items.length);
+        for (ItemStack stack : this.items) {
+            buf.writeItem(stack);
+        }
+    }
+
+    private static ItemStackStorage readFromPacket(FriendlyByteBuf buf) {
+        int count = buf.readVarInt();
+        ItemStack[] items = new ItemStack[count];
+        for (int i = 0; i < count; i++) {
+            items[i] = buf.readItem();
+        }
+        return new ItemStackStorage(items);
     }
 
     private static ItemStack[] copyItems(ItemStack[] items) {

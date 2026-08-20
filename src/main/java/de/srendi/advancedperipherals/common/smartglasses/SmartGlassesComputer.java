@@ -154,10 +154,11 @@ public class SmartGlassesComputer extends ServerComputer {
     }
 
     public void setModulesData(CompoundTag data) {
-        if (this.moduleDatas.equals(data)) {
-            return;
-        }
         this.moduleDatas = data;
+        this.moduleDatasUpdated = true;
+    }
+
+    public void updateModulesData() {
         this.moduleDatasUpdated = true;
     }
 
@@ -195,18 +196,7 @@ public class SmartGlassesComputer extends ServerComputer {
         return upgradeData == null ? new CompoundTag() : upgradeData.data();
     }
 
-    public void setUpgradeData(@NotNull ComputerSide side, CompoundTag data) {
-        int slot = SmartGlassesSlot.sideToIndex(side);
-        synchronized (this.upgrades) {
-            UpgradeData<IPocketUpgrade> upgradeData = this.upgrades[slot];
-            if (upgradeData == null) {
-                return;
-            }
-            if (upgradeData.data().equals(data)) {
-                return;
-            }
-            this.upgrades[slot] = UpgradeData.of(upgradeData.upgrade(), data);
-        }
+    public void updateUpgradeData(@NotNull ComputerSide side) {
         this.upgradesUpdated = true;
     }
 

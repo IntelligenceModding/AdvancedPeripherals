@@ -219,13 +219,11 @@ public class HitResultUtil {
 
         private final ShapeGetter blockShapeGetter;
         private final BlockPos source;
-        private final CollisionContext collisionContext;
 
         protected AdvancedClipContext(Vec3 from, Vec3 to, ShapeGetter blockShapeGetter, Fluid fluidShapeGetter, @Nullable Entity entity, BlockPos source) {
             super(from, to, Block.COLLIDER, fluidShapeGetter, entity);
             this.blockShapeGetter = blockShapeGetter;
             this.source = source;
-            this.collisionContext = entity == null ? CollisionContext.empty() : CollisionContext.of(entity);
         }
 
         @Override

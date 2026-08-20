@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.common.setup.APRegistries;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -23,7 +22,7 @@ public class RenderableObjectAddPacket implements IAPPacket {
     }
 
     public RenderableObjectAddPacket(FriendlyByteBuf buffer) {
-        Registry<OverlayObjectType<?>> registry = (Registry<OverlayObjectType<?>>) BuiltInRegistries.REGISTRY.getOrThrow(APRegistries.OVERLAY_OBJECTS);
+        Registry<OverlayObjectType<?>> registry = APRegistries.getOverlayObjectsRegistry();
         this.player = buffer.readUUID();
         int typeId = buffer.readVarInt();
         this.object = registry.byIdOrThrow(typeId).createClient(this.player);
@@ -37,7 +36,7 @@ public class RenderableObjectAddPacket implements IAPPacket {
 
     @Override
     public void write(FriendlyByteBuf buffer) {
-        Registry<OverlayObjectType<?>> registry = (Registry<OverlayObjectType<?>>) BuiltInRegistries.REGISTRY.getOrThrow(APRegistries.OVERLAY_OBJECTS);
+        Registry<OverlayObjectType<?>> registry = APRegistries.getOverlayObjectsRegistry();
         buffer.writeUUID(this.player);
         buffer.writeVarInt(registry.getId(this.object.getType()));
         object.encode(buffer);

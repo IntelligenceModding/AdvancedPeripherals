@@ -81,14 +81,14 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag data, @NotNull HolderLookup.Provider provider) {
+    public void load(@NotNull CompoundTag data) {
         this.owner = data.contains("ownerId") ? data.getUUID("ownerId") : null;
-        super.loadAdditional(data, provider);
+        super.load(data);
     }
 
     @Override
-    protected void saveShared(@NotNull CompoundTag data, @NotNull HolderLookup.Provider provider) {
-        super.saveShared(data, provider);
+    protected void saveShared(@NotNull CompoundTag data) {
+        super.saveShared(data);
         if (this.owner != null) {
             data.putUUID("ownerId", this.owner);
         } else {

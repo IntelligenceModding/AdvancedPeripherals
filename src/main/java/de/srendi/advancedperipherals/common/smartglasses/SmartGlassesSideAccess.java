@@ -1,14 +1,18 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
+import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.upgrades.UpgradeData;
 import dan200.computercraft.core.computer.ComputerSide;
-import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public class SmartGlassesSideAccess implements IPocketAccess {
 
@@ -74,17 +78,26 @@ public class SmartGlassesSideAccess implements IPocketAccess {
     }
 
     @Override
-    public DataComponentPatch getUpgradeData() {
+    public CompoundTag getUpgradeNBTData() {
         return this.computer.getUpgradeData(this.side);
     }
 
     @Override
-    public void setUpgradeData(DataComponentPatch data) {
-        this.computer.setUpgradeData(this.side, data);
+    public void updateUpgradeNBTData() {
+        this.computer.updateUpgradeData(this.side);
     }
 
     @Override
     public void invalidatePeripheral() {
         this.computer.invalidatePeripheral(this.side);
+    }
+
+    @Override
+    public Map<ResourceLocation, IPeripheral> getUpgrades() {
+        UpgradeData<IPocketUpgrade> upgrade = this.getUpgrade();
+        if (upgrade == null) {
+            return Map.of();
+        }
+        return Map.of(upgrade.upgrade().getUpgradeID(), this.computer.getPeripheral(this.side));
     }
 }
