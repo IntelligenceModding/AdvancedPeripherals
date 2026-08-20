@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.screens.SmartGlassesScreen;
 import de.srendi.advancedperipherals.common.smartglasses.SlotType;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSlot;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -57,7 +58,7 @@ public class SmartGlassesSettingsSwitch extends AbstractWidget {
 
     public void renderTooltip(GuiGraphics gui, int x, int y) {
         if (screen != null && isMouseOver(x, y)) {
-            gui.renderTooltip(gui.minecraft.font, type.getName(), x, y);
+            gui.renderTooltip(Minecraft.getInstance().font, type.getName(), x, y);
         }
     }
 

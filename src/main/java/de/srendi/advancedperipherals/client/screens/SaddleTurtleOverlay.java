@@ -3,23 +3,23 @@ package de.srendi.advancedperipherals.client.screens;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import org.jetbrains.annotations.NotNull;
 
-public class SaddleTurtleOverlay implements LayeredDraw.Layer {
+public class SaddleTurtleOverlay implements IGuiOverlay {
     public static final ResourceLocation ID = AdvancedPeripherals.getRL("saddle_turtle_overlay");
 
     private static final long ACTIVE_TIMEOUT = 5000;
 
-    private static final ResourceLocation JUMP_BAR_COOLDOWN_SPRITE = ResourceLocation.withDefaultNamespace("hud/jump_bar_cooldown");
-    private static final ResourceLocation JUMP_BAR_PROGRESS_SPRITE = ResourceLocation.withDefaultNamespace("hud/jump_bar_progress");
+    private static final ResourceLocation JUMP_BAR_COOLDOWN_SPRITE = new ResourceLocation("hud/jump_bar_cooldown");
+    private static final ResourceLocation JUMP_BAR_PROGRESS_SPRITE = new ResourceLocation("hud/jump_bar_progress");
 
     private int fuelLevel = 0;
     private int fuelLimit = 0;
@@ -85,7 +85,7 @@ public class SaddleTurtleOverlay implements LayeredDraw.Layer {
     }
 
     private void renderFuelBar(GuiGraphics gui) {
-        Font font = gui.minecraft.font;
+        Font font = Minecraft.getInstance().font;
         // TODO: use a better looking bar here, and/or find someway to change the bar's color
         int fontColor = 0x80ff20;
 
@@ -111,7 +111,7 @@ public class SaddleTurtleOverlay implements LayeredDraw.Layer {
     }
 
     private void renderDismountHint(GuiGraphics gui) {
-        Minecraft minecraft = gui.minecraft;
+        Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         Component name = Component.translatable("block.computercraft.turtle_normal.upgraded", Component.translatable("turtle.advancedperipherals.saddle_turtle"));
         // TODO: get and render turtle's label if exists
@@ -123,7 +123,7 @@ public class SaddleTurtleOverlay implements LayeredDraw.Layer {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics gui, @NotNull DeltaTracker deltaTracker) {
+    public void render(ForgeGui fgui, GuiGraphics gui, float partialTick, int screenWidth, int screenHeight) {
         if (!this.isPlayerMountedOnTurtle()) {
             return;
         }

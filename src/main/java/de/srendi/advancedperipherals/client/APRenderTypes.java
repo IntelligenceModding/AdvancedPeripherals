@@ -10,7 +10,12 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 
-public class APRenderTypes {
+public final class APRenderTypes
+    extends RenderStateShard { // extending to use protected static variables
+    private APRenderTypes() {
+        super(null, null, null);
+    }
+
     public static final RenderStateShard.ShaderStateShard POSITION_TEX_COLOR_SHADER = new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader);
 
     public static final RenderType TRIANGLE_FAN_2D = RenderType.create(

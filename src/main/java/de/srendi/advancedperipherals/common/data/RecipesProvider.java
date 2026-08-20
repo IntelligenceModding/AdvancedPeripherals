@@ -15,10 +15,9 @@ import de.srendi.advancedperipherals.common.setup.APItems;
 import mekanism.common.registries.MekanismBlocks;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
@@ -32,11 +31,12 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.conditions.IConditionBuilder;
-import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
@@ -46,12 +46,12 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
     private static final com.refinedmods.refinedstorage.common.content.Items RS_ITEMS = com.refinedmods.refinedstorage.common.content.Items.INSTANCE;
     private static final com.refinedmods.refinedstorage.common.content.Blocks RS_BLOCKS = com.refinedmods.refinedstorage.common.content.Blocks.INSTANCE;
 
-    public RecipesProvider(PackOutput pGenerator, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(pGenerator, lookupProvider);
+    public RecipesProvider(PackOutput output) {
+        super(output);
     }
 
     @Override
-    protected void buildRecipes(RecipeOutput recipeOutput) {
+    protected void buildRecipes(Consumer<FinishedRecipe> recipeOutput) {
         //// ITEMS ////
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.COMPUTER_TOOL.get())
@@ -75,7 +75,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.MEMORY_CARD.get())
             .define('I', Tags.Items.INGOTS_IRON)
-            .define('W', Tags.Items.GLASS_BLOCKS_CHEAP)
+            .define('W', Tags.Items.GLASS)
             .define('O', Items.OBSERVER)
             .define('G', Tags.Items.INGOTS_GOLD)
             .pattern("IWI")
@@ -211,7 +211,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_64M.get())
-            .define('P', AEItems.CALCULATION_PROCESSOR.get())
+            .define('P', AEItems.CALCULATION_PROCESSOR.asItem())
             .define('G', AEBlocks.QUARTZ_GLASS)
             .define('D', APItems.AE_DISK_CELL_16M.get())
             .define('R', Tags.Items.DUSTS_GLOWSTONE)
@@ -222,10 +222,10 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .save(recipeOutput.withConditions(new ModLoadedCondition(APAddon.AE2.getModId())));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APItems.AE_DISK_CELL_256M.get())
-            .define('P', AEItems.CALCULATION_PROCESSOR.get())
+            .define('P', AEItems.CALCULATION_PROCESSOR.asItem())
             .define('G', AEBlocks.QUARTZ_GLASS)
             .define('D', APItems.AE_DISK_CELL_64M.get())
-            .define('R', AEItems.SKY_DUST.get())
+            .define('R', AEItems.SKY_DUST.asItem())
             .pattern("RPR")
             .pattern("DGD")
             .pattern("RDR")
@@ -259,7 +259,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .define('O', Items.OBSERVER)
             .define('D', Tags.Items.GEMS_DIAMOND)
             .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
-            .define('G', Tags.Items.GLASS_BLOCKS)
+            .define('G', Tags.Items.GLASS)
             .pattern("GDG")
             .pattern("GCG")
             .pattern("ROR")
@@ -373,7 +373,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .define('A', CASING)
             .define('O', ItemTags.LOGS)
             .define('B', ModItems.buildGoggles)
-            .define('S', com.ldtteam.structurize.items.ModItems.buildTool)
+            .define('S', com.ldtteam.structurize.items.ModItems.buildTool.get())
             .define('R', ModBlocks.blockRack)
             .pattern("ORO")
             .pattern("BAS")

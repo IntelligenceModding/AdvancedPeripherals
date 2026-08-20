@@ -1,12 +1,11 @@
 package de.srendi.advancedperipherals.client;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.RetrieveUsernamePacket;
 import de.srendi.advancedperipherals.common.util.LRUCache;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Used for client side messages where we don't have a username, only a UUID
- * See {@link de.srendi.advancedperipherals.common.items.MemoryCardItem#appendHoverText(ItemStack, Level, List, TooltipFlag)} as example
+ * See {@link de.srendi.advancedperipherals.common.items.MemoryCardItem#appendHoverText(ItemStack, Level, List)} as example
  * <p>
  * Probably the most useless feature, but I love it - endi
  */
@@ -47,7 +46,7 @@ public class ClientUUIDCache {
             if (timeout != null && timeout >= now) {
                 return timeout;
             }
-            PacketDistributor.sendToServer(new RetrieveUsernamePacket(uuid2));
+            APNetworking.sendToServer(new RetrieveUsernamePacket(uuid2));
             return now + 10 * 1000;
         });
         return null;

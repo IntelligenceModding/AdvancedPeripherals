@@ -11,7 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -35,7 +35,7 @@ public class BlockReaderBlock extends APBlockEntityBlock<BlockReaderEntity> {
 
     @Override
     @NotNull
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!APConfig.PERIPHERALS_CONFIG.enableBlockReader.get()) {
             return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
@@ -49,7 +49,7 @@ public class BlockReaderBlock extends APBlockEntityBlock<BlockReaderEntity> {
 
         level.playSound(player, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS);
         if (level.isClientSide()) {
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         BlockReaderPeripheral peripheral = entity.getPeripheral();
         if (peripheral != null) {
@@ -61,7 +61,7 @@ public class BlockReaderBlock extends APBlockEntityBlock<BlockReaderEntity> {
                 )
             );
         }
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
 }

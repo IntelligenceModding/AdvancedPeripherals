@@ -10,10 +10,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.joml.Quaternionf;
 
 import java.util.ArrayList;
@@ -40,13 +40,13 @@ public class OverlayModuleLevelRenderer {
             return;
         }
 
-        float partialTicks = camera.getPartialTickTime();
+        float partialTicks = event.getPartialTick();
         Quaternionf eyeRotation = new Quaternionf()
             .rotationY(Mth.DEG_TO_RAD * (180 - livingEntity.getViewYRot(partialTicks)))
             .rotateX(Mth.DEG_TO_RAD * -livingEntity.getViewXRot(partialTicks));
 
         Vec3 view = camera.getPosition();
-        Vec3 eyePos = entity.getEyePosition(camera.getPartialTickTime());
+        Vec3 eyePos = entity.getEyePosition(partialTicks);
         poseStack.pushPose();
         poseStack.translate(-view.x, -view.y, -view.z);
 

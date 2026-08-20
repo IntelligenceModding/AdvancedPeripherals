@@ -7,13 +7,14 @@ import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.pocket.core.PocketBrain;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
-import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -71,7 +72,8 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     @Override
     @NotNull
     public Direction getFacing() {
-        return Direction.getNearest(this.getDirection());
+        Vec3 dir = this.getDirection();
+        return Direction.getNearest(dir.x, dir.y, dir.z);
     }
 
     @Override
@@ -81,7 +83,8 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
         if (owner == null) {
             return FrontAndTop.NORTH_UP;
         }
-        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(owner.getUpVector(1.0f)));
+        Vec3 up = owner.getUpVector(1.0f);
+        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(up.x, up.y, up.z));
     }
 
     @Override
@@ -109,13 +112,14 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public DataComponentPatch getDataStorage() {
-        return pocket.getUpgradeData();
+    public CompoundTag getDataStorage() {
+        return pocket.getUpgradeNBTData().getCompound(APDataComponents.STORED_DATA);
     }
 
     @Override
-    public void putDataStorage(DataComponentPatch dataStorage) {
-        pocket.setUpgradeData(dataStorage);
+    public void putDataStorage(CompoundTag dataStorage) {
+        pocket.getUpgradeNBTData().put(APDataComponents.STORED_DATA, dataStorage);
+        pocket.updateUpgradeNBTData();
     }
 
     @Override

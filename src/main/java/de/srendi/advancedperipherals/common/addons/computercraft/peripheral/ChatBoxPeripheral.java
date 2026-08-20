@@ -17,6 +17,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.events.Events;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toclient.NarrateToClientPacket;
 import de.srendi.advancedperipherals.common.network.toclient.ToastToClientPacket;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
@@ -35,11 +36,9 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -180,7 +179,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             HoverEvent.ItemStackInfo itemInfo = hover.getValue(HoverEvent.Action.SHOW_ITEM);
             if (itemInfo != null) {
                 try {
-                    itemInfo.getItemStack().getTooltipLines(Item.TooltipContext.of(this.owner.getLevel()), null, TooltipFlag.Default.ADVANCED);
+                    itemInfo.getItemStack().getTooltipLines(null, TooltipFlag.Default.ADVANCED);
                 } catch (RuntimeException e) {
                     style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, createFormattedError("Invalid item")));
                 }
@@ -218,7 +217,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
     @Nullable
     protected MutableComponent parseFormattedMessage(@NotNull String message) {
-        return this.filterMessage(Component.Serializer.fromJson(message, this.owner.getLevel().registryAccess()));
+        return this.filterMessage(Component.Serializer.fromJson(message));
     }
 
     /**
@@ -396,7 +395,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
             for (ServerPlayer player : getPlayers(optionsLua, true)) {
                 ToastToClientPacket packet = new ToastToClientPacket(Component.literal(title), preparedMessage);
-                PacketDistributor.sendToPlayer(player, packet);
+                APNetworking.sendToPlayer(player, packet);
             }
             return MethodResult.of(true);
         });
@@ -460,7 +459,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
 
             for (ServerPlayer player : getPlayers(optionsLua, true)) {
                 ToastToClientPacket packet = new ToastToClientPacket(titleComponent, preparedMessage);
-                PacketDistributor.sendToPlayer(player, packet);
+                APNetworking.sendToPlayer(player, packet);
             }
 
             return MethodResult.of(true);
@@ -486,7 +485,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             boolean interrupt = !optionsLua.optBoolean("delay").orElse(false);
 
             for (ServerPlayer player : getPlayers(optionsLua, false)) {
-                PacketDistributor.sendToPlayer(player, new NarrateToClientPacket(message1, interrupt, getPos()));
+                APNetworking.sendToPlayer(player, new NarrateToClientPacket(message1, interrupt, getPos()));
             }
             return MethodResult.of(true);
         });

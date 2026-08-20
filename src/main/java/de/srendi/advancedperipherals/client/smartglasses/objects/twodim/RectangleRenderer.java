@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.APRenderTypes;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class RectangleRenderer implements ITwoDObjectRenderer<RectangleObject> {
     @Override
-    public void renderBatch(List<RectangleObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
+    public void renderBatch(List<RectangleObject> objects, GuiGraphics gui, float partialTick) {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.QUADS_2D);
 
@@ -36,10 +35,10 @@ public class RectangleRenderer implements ITwoDObjectRenderer<RectangleObject> {
             float green = RenderUtil.getGreen(obj.color);
             float blue = RenderUtil.getBlue(obj.color);
 
-            bufferBuilder.addVertex(matrix, 0, obj.sizeY, 0).setColor(red, green, blue, alpha);
-            bufferBuilder.addVertex(matrix, obj.sizeX, obj.sizeY, 0).setColor(red, green, blue, alpha);
-            bufferBuilder.addVertex(matrix, obj.sizeX, 0, 0).setColor(red, green, blue, alpha);
-            bufferBuilder.addVertex(matrix, 0, 0, 0).setColor(red, green, blue, alpha);
+            bufferBuilder.vertex(matrix, 0, obj.sizeY, 0).color(red, green, blue, alpha).endVertex();;
+            bufferBuilder.vertex(matrix, obj.sizeX, obj.sizeY, 0).color(red, green, blue, alpha).endVertex();;
+            bufferBuilder.vertex(matrix, obj.sizeX, 0, 0).color(red, green, blue, alpha).endVertex();;
+            bufferBuilder.vertex(matrix, 0, 0, 0).color(red, green, blue, alpha).endVertex();;
 
         }
     }

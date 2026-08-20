@@ -1,24 +1,21 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
 import com.mojang.blaze3d.platform.Window;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class OverlayModuleClientInfoPacket implements IAPPacket {
-
-    public static final Type<OverlayModuleClientInfoPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("overlay_module_client_info"));
 
     private final UUID player;
     private final int screenWidth;
@@ -32,7 +29,7 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
         this.guiScale = guiScale;
     }
 
-    public OverlayModuleClientInfoPacket(RegistryFriendlyByteBuf buffer) {
+    public OverlayModuleClientInfoPacket(FriendlyByteBuf buffer) {
         this.player = buffer.readUUID();
         this.screenWidth = buffer.readInt();
         this.screenHeight = buffer.readInt();
@@ -40,10 +37,8 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+    public void handle(Supplier<NetworkEvent.Context> context) {
+        ServerPlayer player = context.get().getSender();
 
         ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
         if (smartGlasses.isEmpty()) {
@@ -61,16 +56,11 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeUUID(player);
         buffer.writeInt(screenWidth);
         buffer.writeInt(screenHeight);
         buffer.writeDouble(guiScale);
-    }
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
     }
 
     public static void sendCurrentInformation() {
@@ -83,6 +73,6 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
         int sizeX = window.getWidth(), sizeY = window.getHeight();
         double guiScale = window.getGuiScale();
 
-        PacketDistributor.sendToServer(new OverlayModuleClientInfoPacket(minecraft.player.getUUID(), sizeX, sizeY, guiScale));
+        APNetworking.sendToServer(new OverlayModuleClientInfoPacket(minecraft.player.getUUID(), sizeX, sizeY, guiScale));
     }
 }

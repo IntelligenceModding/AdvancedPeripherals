@@ -1,17 +1,14 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 import static de.srendi.advancedperipherals.client.ClientRegistry.SADDLE_TURTLE_OVERLAY;
 
 public class SaddleTurtleInfoPacket implements IAPPacket {
-
-    public static final Type<SaddleTurtleInfoPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("saddle_turtle_info"));
 
     private final int fuelLevel;
     private final int fuelLimit;
@@ -23,31 +20,23 @@ public class SaddleTurtleInfoPacket implements IAPPacket {
         this.barColor = barColor;
     }
 
-    public SaddleTurtleInfoPacket(RegistryFriendlyByteBuf buffer) {
+    public SaddleTurtleInfoPacket(FriendlyByteBuf buffer) {
         this.fuelLevel = buffer.readInt();
         this.fuelLimit = buffer.readInt();
         this.barColor = buffer.readInt();
     }
 
     @Override
-    public void handle(IPayloadContext context) {
-        if (!FMLEnvironment.dist.isClient()) {
-            return;
-        }
+    public void handle(Supplier<NetworkEvent.Context> context) {
         SADDLE_TURTLE_OVERLAY.setFuelLevel(this.fuelLevel);
         SADDLE_TURTLE_OVERLAY.setFuelLimit(this.fuelLimit);
         SADDLE_TURTLE_OVERLAY.setBarColor(this.barColor);
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeInt(this.fuelLevel);
         buffer.writeInt(this.fuelLimit);
         buffer.writeInt(this.barColor);
-    }
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
     }
 }

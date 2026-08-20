@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.ae2;
 
-import appeng.api.AECapabilities;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.implementations.blockentities.IChestOrDrive;
 import appeng.api.inventories.InternalInventory;
@@ -22,8 +21,8 @@ import appeng.api.storage.ISubMenuHost;
 import appeng.api.storage.MEStorage;
 import appeng.api.storage.cells.IBasicCellItem;
 import appeng.api.storage.cells.ICellWorkbenchItem;
+import appeng.blockentity.storage.ChestBlockEntity;
 import appeng.blockentity.storage.DriveBlockEntity;
-import appeng.blockentity.storage.MEChestBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.crafting.pattern.EncodedPatternItem;
@@ -34,16 +33,13 @@ import appeng.me.cells.BasicCellInventory;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellItem;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellStorage;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKeys;
-import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
@@ -53,18 +49,15 @@ import io.github.projectet.ae2things.storage.DISKCellHandler;
 import io.github.projectet.ae2things.storage.DISKCellInventory;
 import io.github.projectet.ae2things.storage.IDISKCellItem;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import me.ramidzkh.mekae2.ae2.MekanismKey;
-import me.ramidzkh.mekae2.ae2.MekanismKeyType;
-import mekanism.api.chemical.IChemicalHandler;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,11 +76,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class AEApi {
-
-    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, APBlockEntityTypes.ME_BRIDGE.get(), (blockEntity, side) -> blockEntity);
-    }
-
     @NotNull
     public static Pair<Long, AEItemKey> findAEStackFromStack(MEStorage monitor, @Nullable ICraftingService crafting, ItemStack item) {
         return findAEStackFromFilter(monitor, crafting, ItemFilter.fromStack(item));
@@ -168,12 +156,12 @@ public class AEApi {
      * The error message is "NOT_FOUND" if no pattern is found. See {@link StatusConstants#NOT_FOUND}
      */
     @NotNull
-    public static Pair<Pair<EncodedPatternItem<?>, IPatternDetails>, String> findPatternFromFilters(IGrid grid, Level level, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
-        for (Pair<EncodedPatternItem<?>, IPatternDetails> pattern : getPatterns(grid, level)) {
+    public static Pair<Pair<EncodedPatternItem, IPatternDetails>, String> findPatternFromFilters(IGrid grid, Level level, @Nullable GenericFilter<?> inputFilter, @Nullable GenericFilter<?> outputFilter) {
+        for (Pair<EncodedPatternItem, IPatternDetails> pattern : getPatterns(grid, level)) {
             IPatternDetails patternDetails = pattern.right();
             if (patternDetails.getInputs().length == 0)
                 continue;
-            if (patternDetails.getOutputs().isEmpty())
+            if (patternDetails.getOutputs().length == 0)
                 continue;
 
             boolean inputMatch = false;
@@ -256,8 +244,8 @@ public class AEApi {
         return items;
     }
 
-    public static List<Pair<EncodedPatternItem<?>, IPatternDetails>> getPatterns(IGrid grid, Level level) {
-        List<Pair<EncodedPatternItem<?>, IPatternDetails>> patterns = new ArrayList<>();
+    public static List<Pair<EncodedPatternItem, IPatternDetails>> getPatterns(IGrid grid, Level level) {
+        List<Pair<EncodedPatternItem, IPatternDetails>> patterns = new ArrayList<>();
 
         for (var machineClass : grid.getMachineClasses()) {
             var containerClass = tryCastMachineToContainer(machineClass);
@@ -266,8 +254,8 @@ public class AEApi {
 
             for (var container : grid.getActiveMachines(containerClass)) {
                 for (ItemStack patternItem : container.getTerminalPatternInventory()) {
-                    if (patternItem.getItem() instanceof EncodedPatternItem<?> item) {
-                        IPatternDetails patternDetails = item.decode(patternItem, level);
+                    if (patternItem.getItem() instanceof EncodedPatternItem item) {
+                        IPatternDetails patternDetails = item.decode(patternItem, level, true);
                         if (patternDetails == null)
                             continue;
 
@@ -338,12 +326,6 @@ public class AEApi {
             .filter(Objects::nonNull);
     }
 
-    private static Stream<@NotNull IChemicalHandler> streamExternalChemicalStorage(IGrid grid) {
-        return streamExternalStorage(grid)
-            .map((bus) -> ChemicalUtil.extractHandler(null, bus.getLevel(), bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide()), bus.getSide().getOpposite()))
-            .filter(Objects::nonNull);
-    }
-
     private static Class<? extends PatternContainer> tryCastMachineToContainer(Class<?> machineClass) {
         if (PatternContainer.class.isAssignableFrom(machineClass))
             return machineClass.asSubclass(PatternContainer.class);
@@ -358,8 +340,6 @@ public class AEApi {
             return parseItemStack(Pair.of(stack.left(), itemKey), service);
         if (stack.right() instanceof AEFluidKey fluidKey)
             return parseFluidStack(Pair.of(stack.left(), fluidKey), service);
-        if (APAddon.APP_MEKANISTICS.isLoaded() && (stack.right() instanceof MekanismKey gasKey))
-            return AEMekanismApi.parseChemStack(Pair.of(stack.left(), gasKey), service);
 
         AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Could not create table from unknown stack {} - Report this to the maintainer of ap", stack.right().getClass());
         return null;
@@ -412,7 +392,7 @@ public class AEApi {
             properties.put("name", nameable.hasCustomName() ? nameable.getCustomName().getString() : nameable.getDisplayName().getString());
         }
         if (drive instanceof BlockEntity be) {
-            properties.put("type", be.getType().builtInRegistryHolder().getRegisteredName());
+            properties.put("type", BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(be.getType()));
             properties.put("position", LuaConverter.posToLua(be.getBlockPos()));
         }
         if (drive instanceof IPriorityHost priHost) {
@@ -430,7 +410,7 @@ public class AEApi {
             InternalInventory inv = be.getInternalInventory();
             return inv::getStackInSlot;
         }
-        if (drive instanceof MEChestBlockEntity be) {
+        if (drive instanceof ChestBlockEntity be) {
             return (slot) -> slot == 0 ? be.getCell() : ItemStack.EMPTY;
         }
         return null;
@@ -472,23 +452,23 @@ public class AEApi {
         return properties;
     }
 
-    public static Map<String, Object> parsePattern(Pair<EncodedPatternItem<?>, IPatternDetails> pattern) {
+    public static Map<String, Object> parsePattern(Pair<EncodedPatternItem, IPatternDetails> pattern) {
         Map<String, Object> properties = new HashMap<>();
         IPatternDetails patternDetails = pattern.right();
         String patternType = getPatternType(pattern.left());
 
         properties.put("inputs", Arrays.stream(patternDetails.getInputs()).map(AEApi::parsePatternInput).collect(Collectors.toList()));
-        properties.put("outputs", patternDetails.getOutputs().stream().map(AEApi::parseGenericStack).collect(Collectors.toList()));
+        properties.put("outputs", Arrays.stream(patternDetails.getOutputs()).map(AEApi::parseGenericStack).collect(Collectors.toList()));
         properties.put("primaryOutput", parseGenericStack(patternDetails.getPrimaryOutput()));
         properties.put("patternType", patternType);
         return properties;
     }
 
-    private static String getPatternType(EncodedPatternItem<?> patternItem) {
-        if (patternItem.equals(AEItems.CRAFTING_PATTERN.get())) return "crafting";
-        if (patternItem.equals(AEItems.PROCESSING_PATTERN.get())) return "processing";
-        if (patternItem.equals(AEItems.SMITHING_TABLE_PATTERN.get())) return "smithing";
-        if (patternItem.equals(AEItems.STONECUTTING_PATTERN.get())) return "stonecutting";
+    private static String getPatternType(EncodedPatternItem patternItem) {
+        if (patternItem.equals(AEItems.CRAFTING_PATTERN.asItem())) return "crafting";
+        if (patternItem.equals(AEItems.PROCESSING_PATTERN.asItem())) return "processing";
+        if (patternItem.equals(AEItems.SMITHING_TABLE_PATTERN.asItem())) return "smithing";
+        if (patternItem.equals(AEItems.STONECUTTING_PATTERN.asItem())) return "stonecutting";
         return "unknown";
     }
 
@@ -621,22 +601,6 @@ public class AEApi {
             .sum();
     }
 
-    public static long getMaxExternalChemicalStorage(IGrid grid) {
-        if (!APAddon.APP_MEKANISTICS.isLoaded()) {
-            return 0;
-        }
-
-        return streamExternalChemicalStorage(grid)
-            .mapToLong((handler) -> {
-                long total = 0;
-                for (int i = 0; i < handler.getChemicalTanks(); i++) {
-                    total += handler.getChemicalTankCapacity(i);
-                }
-                return total;
-            })
-            .sum();
-    }
-
     /// Used
 
     public static double getUsedExternalItemStorage(IGrid grid) {
@@ -677,22 +641,6 @@ public class AEApi {
             .sum();
     }
 
-    public static long getUsedExternalChemicalStorage(IGrid grid) {
-        if (!APAddon.APP_MEKANISTICS.isLoaded()) {
-            return 0;
-        }
-
-        return streamExternalChemicalStorage(grid)
-            .mapToLong((handler) -> {
-                long total = 0;
-                for (int i = 0; i < handler.getChemicalTanks(); i++) {
-                    total += handler.getChemicalInTank(i).getAmount();
-                }
-                return total;
-            })
-            .sum();
-    }
-
     /**
      * Calculates the available external item storage of a given grid node.
      *
@@ -718,10 +666,6 @@ public class AEApi {
         return getMaxExternalFluidStorage(grid) - getUsedExternalFluidStorage(grid);
     }
 
-    public static long getAvailableExternalChemicalStorage(IGrid grid) {
-        return getMaxExternalChemicalStorage(grid) - getUsedExternalChemicalStorage(grid);
-    }
-
     /// Internal Storage
     /// Total
 
@@ -739,16 +683,6 @@ public class AEApi {
             .sum();
     }
 
-    public static long getMaxChemicalStorage(IGrid grid) {
-        if (!APAddon.APP_MEKANISTICS.isLoaded()) {
-            return 0;
-        }
-        return streamWrappedCell(grid)
-            .filter((cell) -> cell.keyType() == MekanismKeyType.TYPE)
-            .mapToLong(ICellWrapper::maxBytes)
-            .sum();
-    }
-
     /// Used
     public static long getUsedItemStorage(IGrid grid) {
         return streamWrappedCell(grid)
@@ -760,16 +694,6 @@ public class AEApi {
     public static long getUsedFluidStorage(IGrid grid) {
         return streamWrappedCell(grid)
             .filter((cell) -> cell.keyType() == AEKeyType.fluids())
-            .mapToLong(ICellWrapper::usedBytes)
-            .sum();
-    }
-
-    public static long getUsedChemicalStorage(IGrid grid) {
-        if (!APAddon.APP_MEKANISTICS.isLoaded()) {
-            return 0;
-        }
-        return streamWrappedCell(grid)
-            .filter((cell) -> cell.keyType() == MekanismKeyType.TYPE)
             .mapToLong(ICellWrapper::usedBytes)
             .sum();
     }
@@ -799,16 +723,6 @@ public class AEApi {
     public static long getAvailableFluidStorage(IGrid grid) {
         return streamWrappedCell(grid)
             .filter((cell) -> cell.keyType() == AEKeyType.fluids())
-            .mapToLong(ICellWrapper::freeBytes)
-            .sum();
-    }
-
-    public static long getAvailableChemicalStorage(IGrid grid) {
-        if (!APAddon.APP_MEKANISTICS.isLoaded()) {
-            return 0;
-        }
-        return streamWrappedCell(grid)
-            .filter((cell) -> cell.keyType() == MekanismKeyType.TYPE)
             .mapToLong(ICellWrapper::freeBytes)
             .sum();
     }

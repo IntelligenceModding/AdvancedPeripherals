@@ -8,10 +8,10 @@ import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
+import de.srendi.advancedperipherals.lib.codec.StreamCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,7 +26,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class BlockObject extends BoxObject {
-    private static final StreamCodec<RegistryFriendlyByteBuf, Optional<BlockState>> BLOCKSTATE_STREAM_CODEC = StreamCodec.of(
+    private static final StreamCodec<FriendlyByteBuf, Optional<BlockState>> BLOCKSTATE_STREAM_CODEC = StreamCodec.of(
         (buf, state) -> buf.writeOptional(state, (b, s) -> b.writeJsonWithCodec(BlockState.CODEC, s)),
         buf -> buf.readOptional((b) -> b.readJsonWithCodec(BlockState.CODEC))
     );

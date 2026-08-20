@@ -1,6 +1,8 @@
 package de.srendi.advancedperipherals.common.data;
 
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
+import dan200.computercraft.api.turtle.TurtleUpgradeDataProvider;
+import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleBlockReaderUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChatBoxUpgrade;
 import de.srendi.advancedperipherals.common.addons.computercraft.turtles.TurtleChunkyUpgrade;
@@ -18,33 +20,34 @@ import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphy
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
-import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-public class TurtleUpgradesProvider {
+import java.util.function.Consumer;
 
-    public static void addUpgrades(BootstrapContext<ITurtleUpgrade> upgrades) {
-        upgrades.register(id(CCRegistration.ID.Turtle.BLOCK_READER), new TurtleBlockReaderUpgrade(new ItemStack(APBlocks.BLOCK_READER.get())));
-        upgrades.register(id(CCRegistration.ID.Turtle.CHATTY), new TurtleChatBoxUpgrade(new ItemStack(APBlocks.CHAT_BOX.get())));
-        upgrades.register(id(CCRegistration.ID.Turtle.CHUNKY), new TurtleChunkyUpgrade(new ItemStack(APItems.CHUNK_CONTROLLER)));
-        upgrades.register(id(CCRegistration.ID.Turtle.COMPASS), new TurtleCompassUpgrade(new ItemStack(Items.COMPASS)));
-        upgrades.register(id(CCRegistration.ID.Turtle.END_AUTOMATA), new EndAutomata(new ItemStack(APItems.END_AUTOMATA_CORE.get())));
-        upgrades.register(id(CCRegistration.ID.Turtle.ENVIRONMENT), new TurtleEnvironmentDetectorUpgrade(new ItemStack(APBlocks.ENVIRONMENT_DETECTOR.get())));
-        upgrades.register(id(CCRegistration.ID.Turtle.GEOSCANNER), new TurtleGeoScannerUpgrade(new ItemStack(APBlocks.GEO_SCANNER.get())));
-        upgrades.register(id(CCRegistration.ID.Turtle.HUSBANDRY_AUTOMATA), new HusbandryAutomata(new ItemStack(APItems.HUSBANDRY_AUTOMATA_CORE.get())));
-        upgrades.register(id(CCRegistration.ID.Turtle.OP_END_AUTOMATA), new OverpoweredEndAutomata(new ItemStack(APItems.OVERPOWERED_END_AUTOMATA_CORE.get())));
-        upgrades.register(id(CCRegistration.ID.Turtle.OP_HUSBANDRY_AUTOMATA), new OverpoweredHusbandryAutomata(new ItemStack(APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get())));
-        upgrades.register(id(CCRegistration.ID.Turtle.OP_WEAK_AUTOMATA), new OverpoweredWeakAutomata(new ItemStack(APItems.OVERPOWERED_WEAK_AUTOMATA_CORE.get())));
-        upgrades.register(id(CCRegistration.ID.Turtle.PLAYER), new TurtlePlayerDetectorUpgrade(new ItemStack(APBlocks.PLAYER_DETECTOR.get())));
-        upgrades.register(id(CCRegistration.ID.Turtle.SADDLE), new TurtleSaddleUpgrade(new ItemStack(Items.SADDLE)));
-        upgrades.register(id(CCRegistration.ID.Turtle.WEAK_AUTOMATA), new WeakAutomata(new ItemStack(APItems.WEAK_AUTOMATA_CORE.get())));
+public class TurtleUpgradesProvider extends TurtleUpgradeDataProvider {
+    public TurtleUpgradesProvider(PackOutput output) {
+        super(output);
     }
 
-    public static ResourceKey<ITurtleUpgrade> id(ResourceLocation id) {
-        return ITurtleUpgrade.createKey(id);
+    @Override
+    protected void addUpgrades(Consumer<Upgrade<TurtleUpgradeSerialiser<?>>> addUpgrade) {
+        simpleWithCustomItem(CCRegistration.ID.Turtle.BLOCK_READER, CCRegistration.BLOCK_READER_TURTLE.get(), APBlocks.BLOCK_READER.get().asItem()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.CHATTY, CCRegistration.CHAT_BOX_TURTLE.get(), APBlocks.CHAT_BOX.get().asItem()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.CHUNKY, CCRegistration.CHUNKY_TURTLE.get(), APItems.CHUNK_CONTROLLER.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.COMPASS, CCRegistration.COMPASS_TURTLE.get(), Items.COMPASS).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.END_AUTOMATA, CCRegistration.END_TURTLE.get(), APItems.END_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.ENVIRONMENT, CCRegistration.ENVIRONMENT_TURTLE.get(), APBlocks.ENVIRONMENT_DETECTOR.get().asItem()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.GEOSCANNER, CCRegistration.GEO_SCANNER_TURTLE.get(), APBlocks.GEO_SCANNER.get().asItem()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.HUSBANDRY_AUTOMATA, CCRegistration.HUSBANDRY_TURTLE.get(), APItems.HUSBANDRY_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.OP_END_AUTOMATA, CCRegistration.OP_END_TURTLE.get(), APItems.OVERPOWERED_END_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.OP_HUSBANDRY_AUTOMATA, CCRegistration.OP_HUSBANDRY_TURTLE.get(), APItems.OVERPOWERED_HUSBANDRY_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.OP_WEAK_AUTOMATA, CCRegistration.OP_WEAK_TURTLE.get(), APItems.OVERPOWERED_WEAK_AUTOMATA_CORE.get()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.PLAYER, CCRegistration.PLAYER_DETECTOR_TURTLE.get(), APBlocks.PLAYER_DETECTOR.get().asItem()).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.SADDLE, CCRegistration.SADDLE_TURTLE.get(), Items.SADDLE).add(addUpgrade);
+        simpleWithCustomItem(CCRegistration.ID.Turtle.WEAK_AUTOMATA, CCRegistration.WEAK_TURTLE.get(), APItems.WEAK_AUTOMATA_CORE.get()).add(addUpgrade);
     }
-
 }

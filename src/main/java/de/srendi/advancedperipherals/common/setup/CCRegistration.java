@@ -2,8 +2,9 @@ package de.srendi.advancedperipherals.common.setup;
 
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
+import dan200.computercraft.api.pocket.PocketUpgradeSerialiser;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
-import dan200.computercraft.api.upgrades.UpgradeType;
+import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.computercraft.luaapi.APLuaAPI;
@@ -31,34 +32,37 @@ import de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphy
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesAPI;
 import de.srendi.advancedperipherals.lib.annotation.DefaultTranslation;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.RegistryObject;
+
+import java.util.function.Function;
 
 public class CCRegistration {
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleBlockReaderUpgrade>> BLOCK_READER_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.BLOCK_READER.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleBlockReaderUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleChatBoxUpgrade>> CHAT_BOX_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.CHATTY.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleChatBoxUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleEnvironmentDetectorUpgrade>> ENVIRONMENT_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.ENVIRONMENT.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleEnvironmentDetectorUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleGeoScannerUpgrade>> GEO_SCANNER_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.GEOSCANNER.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleGeoScannerUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtlePlayerDetectorUpgrade>> PLAYER_DETECTOR_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.PLAYER.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtlePlayerDetectorUpgrade::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<TurtleBlockReaderUpgrade>> BLOCK_READER_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.BLOCK_READER.getPath(), () -> simpleTurtleUpgradeWithCustomItem(TurtleBlockReaderUpgrade::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<TurtleChatBoxUpgrade>> CHAT_BOX_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.CHATTY.getPath(), () -> simpleTurtleUpgradeWithCustomItem(TurtleChatBoxUpgrade::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<TurtleEnvironmentDetectorUpgrade>> ENVIRONMENT_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.ENVIRONMENT.getPath(), () -> simpleTurtleUpgradeWithCustomItem(TurtleEnvironmentDetectorUpgrade::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<TurtleGeoScannerUpgrade>> GEO_SCANNER_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.GEOSCANNER.getPath(), () -> simpleTurtleUpgradeWithCustomItem(TurtleGeoScannerUpgrade::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<TurtlePlayerDetectorUpgrade>> PLAYER_DETECTOR_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.PLAYER.getPath(), () -> simpleTurtleUpgradeWithCustomItem(TurtlePlayerDetectorUpgrade::new));
 
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleCompassUpgrade>> COMPASS_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.COMPASS.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleCompassUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleSaddleUpgrade>> SADDLE_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.SADDLE.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleSaddleUpgrade::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<TurtleCompassUpgrade>> COMPASS_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.COMPASS.getPath(), () -> simpleTurtleUpgradeWithCustomItem(TurtleCompassUpgrade::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<TurtleSaddleUpgrade>> SADDLE_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.SADDLE.getPath(), () -> simpleTurtleUpgradeWithCustomItem(TurtleSaddleUpgrade::new));
 
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<TurtleChunkyUpgrade>> CHUNKY_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.CHUNKY.getPath(), () -> UpgradeType.simpleWithCustomItem(TurtleChunkyUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<WeakAutomata>> WEAK_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.WEAK_AUTOMATA.getPath(), () -> UpgradeType.simpleWithCustomItem(WeakAutomata::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<OverpoweredWeakAutomata>> OP_WEAK_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.OP_WEAK_AUTOMATA.getPath(), () -> UpgradeType.simpleWithCustomItem(OverpoweredWeakAutomata::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<HusbandryAutomata>> HUSBANDRY_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.HUSBANDRY_AUTOMATA.getPath(), () -> UpgradeType.simpleWithCustomItem(HusbandryAutomata::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<OverpoweredHusbandryAutomata>> OP_HUSBANDRY_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.OP_HUSBANDRY_AUTOMATA.getPath(), () -> UpgradeType.simpleWithCustomItem(OverpoweredHusbandryAutomata::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<EndAutomata>> END_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.END_AUTOMATA.getPath(), () -> UpgradeType.simpleWithCustomItem(EndAutomata::new));
-    public static final DeferredHolder<UpgradeType<? extends ITurtleUpgrade>, UpgradeType<OverpoweredEndAutomata>> OP_END_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.OP_END_AUTOMATA.getPath(), () -> UpgradeType.simpleWithCustomItem(OverpoweredEndAutomata::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<TurtleChunkyUpgrade>> CHUNKY_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.CHUNKY.getPath(), () -> simpleTurtleUpgradeWithCustomItem(TurtleChunkyUpgrade::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<WeakAutomata>> WEAK_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.WEAK_AUTOMATA.getPath(), () -> simpleTurtleUpgradeWithCustomItem(WeakAutomata::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<OverpoweredWeakAutomata>> OP_WEAK_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.OP_WEAK_AUTOMATA.getPath(), () -> simpleTurtleUpgradeWithCustomItem(OverpoweredWeakAutomata::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<HusbandryAutomata>> HUSBANDRY_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.HUSBANDRY_AUTOMATA.getPath(), () -> simpleTurtleUpgradeWithCustomItem(HusbandryAutomata::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<OverpoweredHusbandryAutomata>> OP_HUSBANDRY_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.OP_HUSBANDRY_AUTOMATA.getPath(), () -> simpleTurtleUpgradeWithCustomItem(OverpoweredHusbandryAutomata::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<EndAutomata>> END_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.END_AUTOMATA.getPath(), () -> simpleTurtleUpgradeWithCustomItem(EndAutomata::new));
+    public static final RegistryObject<TurtleUpgradeSerialiser<OverpoweredEndAutomata>> OP_END_TURTLE = APRegistration.TURTLE_SERIALIZER.register(ID.Turtle.OP_END_AUTOMATA.getPath(), () -> simpleTurtleUpgradeWithCustomItem(OverpoweredEndAutomata::new));
 
-    public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketChatBoxUpgrade>> CHAT_BOX_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.CHATTY.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketChatBoxUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketDistanceDetectorUpgrade>> DISTANCE_DETECTOR_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.DISTANCE.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketDistanceDetectorUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketEnvironmentUpgrade>> ENVIRONMENT_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.ENVIRONMENT.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketEnvironmentUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketGeoScannerUpgrade>> GEO_SCANNER_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.GEOSCANNER.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketGeoScannerUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketInventoryManagerUpgrade>> INVENTORY_MANAGER_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.INVENTORY_MANAGER.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketInventoryManagerUpgrade::new));
-    public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketPlayerDetectorUpgrade>> PLAYER_DETECTOR_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.PLAYER.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketPlayerDetectorUpgrade::new));
+    public static final RegistryObject<PocketUpgradeSerialiser<PocketChatBoxUpgrade>> CHAT_BOX_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.CHATTY.getPath(), () -> simplePocketUpgradeWithCustomItem(PocketChatBoxUpgrade::new));
+    public static final RegistryObject<PocketUpgradeSerialiser<PocketDistanceDetectorUpgrade>> DISTANCE_DETECTOR_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.DISTANCE.getPath(), () -> simplePocketUpgradeWithCustomItem(PocketDistanceDetectorUpgrade::new));
+    public static final RegistryObject<PocketUpgradeSerialiser<PocketEnvironmentUpgrade>> ENVIRONMENT_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.ENVIRONMENT.getPath(), () -> simplePocketUpgradeWithCustomItem(PocketEnvironmentUpgrade::new));
+    public static final RegistryObject<PocketUpgradeSerialiser<PocketGeoScannerUpgrade>> GEO_SCANNER_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.GEOSCANNER.getPath(), () -> simplePocketUpgradeWithCustomItem(PocketGeoScannerUpgrade::new));
+    public static final RegistryObject<PocketUpgradeSerialiser<PocketInventoryManagerUpgrade>> INVENTORY_MANAGER_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.INVENTORY_MANAGER.getPath(), () -> simplePocketUpgradeWithCustomItem(PocketInventoryManagerUpgrade::new));
+    public static final RegistryObject<PocketUpgradeSerialiser<PocketPlayerDetectorUpgrade>> PLAYER_DETECTOR_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.PLAYER.getPath(), () -> simplePocketUpgradeWithCustomItem(PocketPlayerDetectorUpgrade::new));
 
-    public static final DeferredHolder<UpgradeType<? extends IPocketUpgrade>, UpgradeType<PocketColonyIntegratorUpgrade>> COLONY_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.COLONY.getPath(), () -> UpgradeType.simpleWithCustomItem(PocketColonyIntegratorUpgrade::new));
+    public static final RegistryObject<PocketUpgradeSerialiser<PocketColonyIntegratorUpgrade>> COLONY_POCKET = APRegistration.POCKET_SERIALIZER.register(ID.Pocket.COLONY.getPath(), () -> simplePocketUpgradeWithCustomItem(PocketColonyIntegratorUpgrade::new));
 
     public static void register() {
     }
@@ -70,6 +74,14 @@ public class CCRegistration {
         IntegrationPeripheralProvider.load();
         ComputerCraftAPI.registerAPIFactory(system -> APLuaAPI.INSTANCE);
         ComputerCraftAPI.registerAPIFactory(SmartGlassesAPI::create);
+    }
+
+    private static <T extends ITurtleUpgrade> TurtleUpgradeSerialiser<T> simpleTurtleUpgradeWithCustomItem(Function<ItemStack, T> factory) {
+        return TurtleUpgradeSerialiser.simpleWithCustomItem((id, stack) -> factory.apply(stack));
+    }
+
+    private static <T extends IPocketUpgrade> PocketUpgradeSerialiser<T> simplePocketUpgradeWithCustomItem(Function<ItemStack, T> factory) {
+        return PocketUpgradeSerialiser.simpleWithCustomItem((id, stack) -> factory.apply(stack));
     }
 
     public static class ID {

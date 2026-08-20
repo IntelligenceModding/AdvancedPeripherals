@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkAddPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectBulkSyncPacket;
 import de.srendi.advancedperipherals.common.network.toclient.RenderableObjectClearPacket;
@@ -12,7 +13,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleFunctions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,7 +97,7 @@ public class OverlayModule implements IModule {
             return;
         }
         this.equipped = false;
-        PacketDistributor.sendToPlayer(player, new RenderableObjectClearPacket());
+        APNetworking.sendToPlayer(player, new RenderableObjectClearPacket());
     }
 
     public void setScreenSizes(int screenWidth, int screenHeight, double guiScale) {
@@ -151,7 +151,7 @@ public class OverlayModule implements IModule {
         //     if (owner == null) {
         //         return;
         //     }
-        //     PacketDistributor.sendToPlayer(owner, new RenderableObjectAddPacket(owner.getUUID(), object));
+        //     APNetworking.sendToPlayer(owner, new RenderableObjectAddPacket(owner.getUUID(), object));
         //     this.objects.put(id, object);
         //     return;
         // }
@@ -173,7 +173,7 @@ public class OverlayModule implements IModule {
         }
         ServerPlayer owner = this.getOwner();
         if (owner != null) {
-            PacketDistributor.sendToPlayer(owner, new RenderableObjectDeletePacket(id));
+            APNetworking.sendToPlayer(owner, new RenderableObjectDeletePacket(id));
         }
         return true;
     }
@@ -191,7 +191,7 @@ public class OverlayModule implements IModule {
         this.objectsToUpdate.clear();
         ServerPlayer owner = this.getOwner();
         if (owner != null) {
-            PacketDistributor.sendToPlayer(owner, new RenderableObjectClearPacket());
+            APNetworking.sendToPlayer(owner, new RenderableObjectClearPacket());
         }
         return size;
     }
@@ -205,7 +205,7 @@ public class OverlayModule implements IModule {
         // if (this.autoUpdate) {
         //     ServerPlayer owner = this.getOwner();
         //     if (owner != null) {
-        //         PacketDistributor.sendToPlayer(owner, new RenderableObjectSyncPacket(object));
+        //         APNetworking.sendToPlayer(owner, new RenderableObjectSyncPacket(object));
         //     }
         //     return;
         // }
@@ -227,7 +227,7 @@ public class OverlayModule implements IModule {
             do {
                 packedObjects.add(iter.next());
             } while (iter.hasNext() && packedObjects.size() < maxPackets);
-            PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkAddPacket(owner.getUUID(), List.copyOf(packedObjects)));
+            APNetworking.sendToPlayer(owner, new RenderableObjectBulkAddPacket(owner.getUUID(), List.copyOf(packedObjects)));
         }
     }
 
@@ -289,7 +289,7 @@ public class OverlayModule implements IModule {
                     remaining--;
                     count++;
                 }
-                PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkAddPacket(owner.getUUID(), List.copyOf(packedObjects)));
+                APNetworking.sendToPlayer(owner, new RenderableObjectBulkAddPacket(owner.getUUID(), List.copyOf(packedObjects)));
             }
         }
         {
@@ -308,7 +308,7 @@ public class OverlayModule implements IModule {
                     remaining--;
                     count++;
                 }
-                PacketDistributor.sendToPlayer(owner, new RenderableObjectBulkSyncPacket(List.copyOf(packedObjects)));
+                APNetworking.sendToPlayer(owner, new RenderableObjectBulkSyncPacket(List.copyOf(packedObjects)));
             }
         }
 

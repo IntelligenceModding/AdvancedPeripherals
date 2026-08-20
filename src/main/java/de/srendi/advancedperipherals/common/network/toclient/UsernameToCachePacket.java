@@ -1,18 +1,14 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.ClientUUIDCache;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class UsernameToCachePacket implements IAPPacket {
-
-    public static final Type<UsernameToCachePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("username_to_cache"));
 
     public UUID uuid;
     public String username;
@@ -22,25 +18,19 @@ public class UsernameToCachePacket implements IAPPacket {
         this.username = username;
     }
 
-    public UsernameToCachePacket(RegistryFriendlyByteBuf buffer) {
+    public UsernameToCachePacket(FriendlyByteBuf buffer) {
         this.uuid = buffer.readUUID();
         this.username = buffer.readUtf();
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeUUID(uuid);
         buffer.writeUtf(username);
     }
 
     @Override
-    public void handle(IPayloadContext context) {
+    public void handle(Supplier<NetworkEvent.Context> context) {
         ClientUUIDCache.putUsername(uuid, username);
-    }
-
-    @Override
-    @NotNull
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
     }
 }

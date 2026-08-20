@@ -8,11 +8,7 @@ import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,29 +22,28 @@ import org.joml.Matrix3dc;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 public interface IPeripheralOwner {
 
     @Nullable
     default String getCustomName() {
-        Optional<? extends Component> component = this.getDataStorage().get(DataComponents.CUSTOM_NAME);
-        if (component == null || !component.isPresent()) {
+        String name = this.getDataStorage().getString("CustomName");
+        if (name == null || name.isEmpty()) {
             return null;
         }
-        return component.get().getString();
+        return name;
     }
 
     default void setCustomName(String name) {
         name = StringUtil.validateName(name);
-        PatchedDataComponentMap data = this.getPatchedDataStorage();
+        CompoundTag data = this.getDataStorage();
         if (name == null || name.isEmpty()) {
-            data.remove(DataComponents.CUSTOM_NAME);
+            data.remove("CustomName");
         } else {
-            data.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+            data.putString("CustomName", name);
         }
-        this.putDataStorage(data.asPatch());
+        this.putDataStorage(data);
     }
 
     @NotNull Level getLevel();
@@ -161,17 +156,9 @@ public interface IPeripheralOwner {
         return null;
     }
 
-    DataComponentPatch getDataStorage();
+    CompoundTag getDataStorage();
 
-    default PatchedDataComponentMap getPatchedDataStorage() {
-        return this.getPatchedDataStorage(DataComponentMap.EMPTY);
-    }
-
-    default PatchedDataComponentMap getPatchedDataStorage(DataComponentMap defaults) {
-        return PatchedDataComponentMap.fromPatch(defaults, this.getDataStorage());
-    }
-
-    void putDataStorage(DataComponentPatch dataStorage);
+    void putDataStorage(CompoundTag dataStorage);
 
     <T> T withPlayer(APFakePlayer.Action<T> function) throws LuaException;
 

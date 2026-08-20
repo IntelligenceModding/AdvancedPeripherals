@@ -9,14 +9,16 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import de.srendi.advancedperipherals.common.setup.APRegistration;
+import de.srendi.advancedperipherals.common.setup.APRegistries;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.PropertyType;
+import de.srendi.advancedperipherals.lib.codec.StreamCodec;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.FriendlyByteBuf;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -111,7 +113,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             registrar.accept(
                 field.field().getName(),
                 new FieldEncoder<>(
-                    (StreamCodec<? super RegistryFriendlyByteBuf, Object>) field.type().codec(field.field().getType()),
+                    (StreamCodec<? super FriendlyByteBuf, Object>) field.type().codec(field.field().getType()),
                     () -> {
                         try {
                             return field.field().get(this);
@@ -172,7 +174,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
 
     @LuaFunction("getType")
     public final String getTypeLua() {
-        return APRegistration.OVERLAY_OBJECTS.getRegistry().get().getKey(this.getType()).toString();
+        return ((Registry<OverlayObjectType<?>>) BuiltInRegistries.REGISTRY.getOrThrow(APRegistries.OVERLAY_OBJECTS)).getKey(this.getType()).toString();
     }
 
     @LuaFunction("getId")
@@ -269,7 +271,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     }
 
     @MustBeInvokedByOverriders
-    public void encode(RegistryFriendlyByteBuf buffer) {
+    public void encode(FriendlyByteBuf buffer) {
         buffer.writeInt(this.id);
         for (FieldEncoder<?> field : this.fieldEncoders) {
             field.encode(buffer);
@@ -278,14 +280,14 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     }
 
     @MustBeInvokedByOverriders
-    public void decode(RegistryFriendlyByteBuf buffer) {
+    public void decode(FriendlyByteBuf buffer) {
         this.id = buffer.readInt();
         for (FieldEncoder<?> field : this.fieldEncoders) {
             field.decode(buffer);
         }
     }
 
-    public void encodeUpdated(RegistryFriendlyByteBuf buffer) {
+    public void encodeUpdated(FriendlyByteBuf buffer) {
         buffer.writeBitSet(this.updated);
         for (int i = 0; i < this.fieldEncoders.length; i++) {
             if (!this.updated.get(i)) {
@@ -297,7 +299,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         this.updated.clear();
     }
 
-    public void decodeUpdated(RegistryFriendlyByteBuf buffer) {
+    public void decodeUpdated(FriendlyByteBuf buffer) {
         BitSet updated = buffer.readBitSet();
         for (int i = 0; i < this.fieldEncoders.length; i++) {
             if (!updated.get(i)) {
@@ -365,15 +367,15 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     }
 
     public record FieldEncoder<T>(
-        StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+        StreamCodec<? super FriendlyByteBuf, T> codec,
         Supplier<T> getter,
         Consumer<T> setter
     ) {
-        public void encode(RegistryFriendlyByteBuf buffer) {
+        public void encode(FriendlyByteBuf buffer) {
             this.codec.encode(buffer, this.getter.get());
         }
 
-        public void decode(RegistryFriendlyByteBuf buffer) {
+        public void decode(FriendlyByteBuf buffer) {
             this.setter.accept(this.codec.decode(buffer));
         }
     }

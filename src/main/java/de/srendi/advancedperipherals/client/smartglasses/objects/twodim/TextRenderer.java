@@ -1,7 +1,8 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
 
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
-import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.List;
@@ -9,14 +10,15 @@ import java.util.List;
 public class TextRenderer implements ITwoDObjectRenderer<TextObject> {
 
     @Override
-    public void renderBatch(List<TextObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
+    public void renderBatch(List<TextObject> objects, GuiGraphics gui, float partialTick) {
+        Font font = Minecraft.getInstance().font;
         for (TextObject text : objects) {
             if (text.fontSize == 0) {
                 continue;
             }
 
             float x = text.x;
-            float width = gui.minecraft.font.width(text.content);
+            float width = font.width(text.content);
             if (text.center) {
                 x -= width / 2;
             }
@@ -29,7 +31,7 @@ public class TextRenderer implements ITwoDObjectRenderer<TextObject> {
 
             int color = (text.color & 0xffffff) | ((int) (Math.min(Math.max(text.opacity, 0), 1) * 0xff) << 24);
 
-            gui.drawString(gui.minecraft.font, text.content, 0, 0, color, text.shadow);
+            gui.drawString(font, text.content, 0, 0, color, text.shadow);
 
             gui.pose().popPose();
         }

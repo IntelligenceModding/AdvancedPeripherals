@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.APRenderTypes;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,7 +14,7 @@ import java.util.List;
 
 public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
     @Override
-    public void renderBatch(List<CircleObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
+    public void renderBatch(List<CircleObject> objects, GuiGraphics gui, float partialTick) {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         for (CircleObject circle : objects) {
             float alpha = circle.opacity;
@@ -50,14 +49,14 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
             if (isFilled) {
                 VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.TRIANGLE_FAN_2D);
 
-                bufferBuilder.addVertex(matrix, 0, 0, 0f).setColor(red, green, blue, alpha);
+                bufferBuilder.vertex(matrix, 0, 0, 0f).color(red, green, blue, alpha).endVertex();
 
                 double angleStep = Math.PI * 2 / segments;
                 for (int i = 0; i <= segments; i++) {
                     double angle = i * angleStep;
                     double x = r * Math.sin(angle);
                     double y = r * Math.cos(angle);
-                    bufferBuilder.addVertex(matrix, (float) x, (float) y, 0).setColor(red, green, blue, alpha);
+                    bufferBuilder.vertex(matrix, (float) x, (float) y, 0).color(red, green, blue, alpha).endVertex();
                 }
             } else {
                 VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.TRIANGLE_STRIP_2D);
@@ -72,12 +71,12 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
                     // Outer circle vertex
                     double outerX = innerRadius * Math.sin(angle);
                     double outerY = innerRadius * Math.cos(angle);
-                    bufferBuilder.addVertex(matrix, (float) outerX, (float) outerY, 0f).setColor(red, green, blue, alpha);
+                    bufferBuilder.vertex(matrix, (float) outerX, (float) outerY, 0f).color(red, green, blue, alpha).endVertex();
 
                     // Inner circle vertex
                     double innerX = outerRadius * Math.sin(angle);
                     double innerY = outerRadius * Math.cos(angle);
-                    bufferBuilder.addVertex(matrix, (float) innerX, (float) innerY, 0f).setColor(red, green, blue, alpha);
+                    bufferBuilder.vertex(matrix, (float) innerX, (float) innerY, 0f).color(red, green, blue, alpha).endVertex();
                 }
             }
         } else {
@@ -137,10 +136,10 @@ public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
 
                         // Vertices for the QUAD
                         // Ensure proper winding order (counter-clockwise for front face)
-                        bufferBuilder.addVertex(matrix, pX1, pY2, pZ).setColor(red, green, blue, alpha); // Bottom-left
-                        bufferBuilder.addVertex(matrix, pX2, pY2, pZ).setColor(red, green, blue, alpha); // Bottom-right
-                        bufferBuilder.addVertex(matrix, pX2, pY1, pZ).setColor(red, green, blue, alpha); // Top-right
-                        bufferBuilder.addVertex(matrix, pX1, pY1, pZ).setColor(red, green, blue, alpha); // Top-left
+                        bufferBuilder.vertex(matrix, pX1, pY2, pZ).color(red, green, blue, alpha).endVertex(); // Bottom-left
+                        bufferBuilder.vertex(matrix, pX2, pY2, pZ).color(red, green, blue, alpha).endVertex(); // Bottom-right
+                        bufferBuilder.vertex(matrix, pX2, pY1, pZ).color(red, green, blue, alpha).endVertex(); // Top-right
+                        bufferBuilder.vertex(matrix, pX1, pY1, pZ).color(red, green, blue, alpha).endVertex(); // Top-left
                     }
                 }
             }

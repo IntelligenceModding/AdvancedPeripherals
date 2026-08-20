@@ -2,17 +2,17 @@ package de.srendi.advancedperipherals.common.configuration;
 
 import de.srendi.advancedperipherals.lib.LibConfig;
 import net.minecraft.FieldsAreNonnullByDefault;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.config.ModConfig;
 
 @FieldsAreNonnullByDefault
 public class GeneralConfig implements IAPConfig {
 
-    public final ModConfigSpec.BooleanValue enableDebugMode;
-    private final ModConfigSpec configSpec;
+    public final ForgeConfigSpec.BooleanValue enableDebugMode;
+    private final ForgeConfigSpec configSpec;
 
     GeneralConfig() {
-        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
 
         builder.comment("Config to adjust general mod settings").push("General");
 
@@ -34,7 +34,7 @@ public class GeneralConfig implements IAPConfig {
     }
 
     @Override
-    public ModConfigSpec getConfigSpec() {
+    public ForgeConfigSpec getConfigSpec() {
         return configSpec;
     }
 

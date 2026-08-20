@@ -12,10 +12,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +43,7 @@ public class ItemUtil {
         }
         if (target instanceof BlockEntity be) {
             Direction side = peripheral instanceof GenericPeripheral sided ? sided.side() : null;
-            return be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), side);
+            return be.getCapability(ForgeCapabilities.ITEM_HANDLER, side).orElse(null);
         }
         return null;
     }
@@ -61,7 +61,10 @@ public class ItemUtil {
             level = blockEntity.getLevel();
         }
         if (level != null && pos != null) {
-            return level.getCapability(Capabilities.ItemHandler.BLOCK, pos, direction);
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be != null) {
+                return be.getCapability(ForgeCapabilities.ITEM_HANDLER, direction).orElse(null);
+            }
         }
         return null;
     }

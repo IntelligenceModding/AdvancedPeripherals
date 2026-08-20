@@ -15,14 +15,14 @@ import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RegistryUtil;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
 
     private Fluid fluid = Fluids.EMPTY;
     private TagKey<Fluid> tag = null;
-    private DataComponentPatch components = null;
+    private CompoundTag components = null;
     private int amount = Integer.MAX_VALUE;
     private String nbtHash = null;
 
@@ -50,7 +50,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         if (item.containsKey("name")) {
             String name = item.getString("name");
             if (name.startsWith("#")) {
-                fluidFilter.tag = TagKey.create(Registries.FLUID, ResourceLocation.parse(name.substring(1)));
+                fluidFilter.tag = TagKey.create(Registries.FLUID, new ResourceLocation(name.substring(1)));
             } else {
                 fluidFilter.fluid = RegistryUtil.getRegistryEntry(name, BuiltInRegistries.FLUID);
                 if (fluidFilter.fluid == null) {
@@ -61,9 +61,9 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         if (item.containsKey("components")) {
             Object components = item.get("components");
             if (components instanceof String snbt) {
-                fluidFilter.components = DataComponentUtil.nbtToPatch(NBTUtil.fromSNBT(snbt));
+                fluidFilter.components = NBTUtil.fromSNBT(snbt);
             } else if (components instanceof Map<?, ?> map) {
-                fluidFilter.components = DataComponentUtil.luaToPatch(map);
+                fluidFilter.components = NBTUtil.mapToNBT(map);
             } else {
                 throw LuaValues.badField("components", "string or table", LuaValues.getType(components));
             }
@@ -87,7 +87,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         FluidFilter filter = createEmpty();
         filter.fluid = stack.getFluid();
         filter.amount = amount;
-        filter.components = stack.getComponentsPatch();
+        filter.components = stack.hasTag() ? stack.getTag().copy() : new CompoundTag();
         return filter;
     }
 
@@ -144,7 +144,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
     public FluidStack toFluidStack() {
         FluidStack result = new FluidStack(fluid, amount);
         if (components != null && !components.isEmpty()) {
-            result.applyComponents(components);
+            result.setTag(components.copy());
         }
         return result;
     }
@@ -157,10 +157,10 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         if (tag != null && !stack.getFluid().is(tag)) {
             return false;
         }
-        if (components != null && !stack.getComponentsPatch().equals(components)) {
+        if (components != null && !components.equals(stack.hasTag() ? stack.getTag() : new CompoundTag())) {
             return false;
         }
-        if (nbtHash != null && !nbtHash.equals(FingerprintUtil.hashOrEmpty(stack.getComponentsPatch()))) {
+        if (nbtHash != null && !nbtHash.equals(FingerprintUtil.hashOrEmpty(stack.getTag()))) {
             return false;
         }
         return true;
@@ -174,7 +174,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         return fluid;
     }
 
-    public DataComponentPatch getComponents() {
+    public CompoundTag getComponents() {
         return components;
     }
 

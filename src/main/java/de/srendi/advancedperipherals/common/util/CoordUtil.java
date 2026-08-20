@@ -104,7 +104,7 @@ public class CoordUtil {
         // Use manhattan distance, not euclidean distance to keep same behavior than other `isInRange` functions
         if (maxRange != -1 && x + y + z > maxRange)
             return false;
-        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, AABB.encapsulatingFullBlocks(firstPos, secondPos)).contains(player);
+        return world.getNearbyPlayers(TargetingConditions.forNonCombat(), null, new AABB(firstPos, secondPos)).contains(player);
     }
 
     @Nullable

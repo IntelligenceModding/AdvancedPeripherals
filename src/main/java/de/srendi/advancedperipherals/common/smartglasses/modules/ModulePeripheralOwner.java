@@ -10,7 +10,7 @@ import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
-import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -69,14 +69,15 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
     @Override
     @NotNull
     public Direction getFacing() {
-        return Direction.getNearest(this.getDirection());
+        Vec3 dir = this.getDirection();
+        return Direction.getNearest(dir.x, dir.y, dir.z);
     }
 
     @Override
     @NotNull
     public FrontAndTop getFrontAndTop() {
         Vec3 up = computer.getEntity().getUpVector(1.0f);
-        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(up));
+        return FrontAndTop.fromFrontAndTop(getFacing(), Direction.getNearest(up.x, up.y, up.z));
     }
 
     @Override
@@ -108,13 +109,13 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     @NotNull
-    public DataComponentPatch getDataStorage() {
+    public CompoundTag getDataStorage() {
         return computer.getModulesData();
     }
 
     @Override
-    public void putDataStorage(DataComponentPatch patch) {
-        computer.setModulesData(patch);
+    public void putDataStorage(CompoundTag data) {
+        computer.setModulesData(data);
     }
 
     @Override

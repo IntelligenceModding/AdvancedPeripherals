@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -12,13 +11,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent;
-import net.neoforged.neoforge.common.world.chunk.TicketController;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.minecraftforge.common.world.ForgeChunkManager;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -31,8 +29,6 @@ public class ChunkManager extends SavedData {
 
     private static final String DATA_NAME = AdvancedPeripherals.MOD_ID + "_ForcedChunks";
     private static final String FORCED_CHUNKS_TAG = "forcedChunks";
-    private static final SavedData.Factory<ChunkManager> FACTORY = new SavedData.Factory<>(ChunkManager::new, ChunkManager::load, null);
-    private static final TicketController CONTROLLER = new TicketController(AdvancedPeripherals.getRL("chunkcontroller"), null);
 
     private static long tickCounter = 0;
 
@@ -45,10 +41,10 @@ public class ChunkManager extends SavedData {
     }
 
     public static @NotNull ChunkManager get(@NotNull MinecraftServer server) {
-        return server.overworld().getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
+        return server.overworld().getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, DATA_NAME);
     }
 
-    public static ChunkManager load(@NotNull CompoundTag data, HolderLookup.Provider provider) {
+    public static ChunkManager load(@NotNull CompoundTag data) {
         ChunkManager manager = new ChunkManager();
         CompoundTag forcedData = data.getCompound(FORCED_CHUNKS_TAG);
         AdvancedPeripherals.debug("Loading chunk manager from NBT {}", data);
@@ -62,19 +58,14 @@ public class ChunkManager extends SavedData {
         return APConfig.PERIPHERALS_CONFIG.chunkyTurtleRadius.get();
     }
 
-    // Registered using the mod bus in the main class
-    public static void registerTicketController(RegisterTicketControllersEvent event) {
-        event.register(CONTROLLER);
-    }
-
     @SubscribeEvent
     public static void afterServerStarted(ServerStartedEvent event) {
         get(event.getServer()).init();
     }
 
     @SubscribeEvent
-    public static void serverTick(ServerTickEvent.Post event) {
-        if (!event.hasTime()) {
+    public static void serverTick(ServerTickEvent event) {
+        if (event.phase != ServerTickEvent.Phase.END) {
             return;
         }
         tickCounter++;
@@ -85,12 +76,12 @@ public class ChunkManager extends SavedData {
 
     private static boolean forceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
         AdvancedPeripherals.debug("Forcing chunk {}", pos);
-        return CONTROLLER.forceChunk(level, owner, pos.x, pos.z, true, true);
+        return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, true, true);
     }
 
     private static boolean unforceChunk(UUID owner, ServerLevel level, ChunkPos pos) {
         AdvancedPeripherals.debug("Unforcing chunk {}", pos);
-        return CONTROLLER.forceChunk(level, owner, pos.x, pos.z, false, true);
+        return ForgeChunkManager.forceChunk(level, AdvancedPeripherals.MOD_ID, owner, pos.x, pos.z, false, true);
     }
 
     public int getForcedChunksCount() {
@@ -225,7 +216,7 @@ public class ChunkManager extends SavedData {
 
     @Override
     @NotNull
-    public CompoundTag save(@NotNull CompoundTag data, @NotNull HolderLookup.Provider registries) {
+    public CompoundTag save(@NotNull CompoundTag data) {
         AdvancedPeripherals.debug(org.apache.logging.log4j.Level.WARN, "Schedule chunk manager save, forcedChunks = {}", this.forcedChunks.size());
         CompoundTag forcedChunksTag = new CompoundTag();
         this.forcedChunks.forEach((key, value) -> forcedChunksTag.put(key.toString(), value.serialize()));
@@ -257,7 +248,7 @@ public class ChunkManager extends SavedData {
 
         public static LoadChunkRecord deserialize(@NotNull CompoundTag tag) {
             return new LoadChunkRecord(
-                ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(tag.getString(DIMENSION_NAME_TAG))),
+                ResourceKey.create(Registries.DIMENSION, new ResourceLocation(tag.getString(DIMENSION_NAME_TAG))),
                 NBTUtil.chunkPosFromNBT(tag.getCompound(POS_TAG)),
                 tag.getInt(RADIUS_TAG)
             );

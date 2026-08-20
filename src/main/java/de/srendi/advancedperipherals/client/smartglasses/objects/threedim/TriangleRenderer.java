@@ -8,7 +8,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -43,9 +43,9 @@ public class TriangleRenderer implements IThreeDObjectRenderer<TriangleObject> {
             float x1 = tri.x1 - tri.x, y1 = tri.y1 - tri.y, z1 = tri.z1 - tri.z;
             float x2 = tri.x2 - tri.x, y2 = tri.y2 - tri.y, z2 = tri.z2 - tri.z;
             float x3 = tri.x3 - tri.x, y3 = tri.y3 - tri.y, z3 = tri.z3 - tri.z;
-            buffer.addVertex(mat, x1, y1, z1).setColor(r, g, b, a);
-            buffer.addVertex(mat, x2, y2, z2).setColor(r, g, b, a);
-            buffer.addVertex(mat, x3, y3, z3).setColor(r, g, b, a);
+            buffer.vertex(mat, x1, y1, z1).color(r, g, b, a).endVertex();
+            buffer.vertex(mat, x2, y2, z2).color(r, g, b, a).endVertex();
+            buffer.vertex(mat, x3, y3, z3).color(r, g, b, a).endVertex();
         }
     }
 }

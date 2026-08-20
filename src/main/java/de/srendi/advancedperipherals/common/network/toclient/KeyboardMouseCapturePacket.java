@@ -1,16 +1,14 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.screens.KeyboardScreen;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class KeyboardMouseCapturePacket implements IAPPacket {
-
-    public static final Type<KeyboardMouseCapturePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_capture"));
 
     private final boolean enable;
 
@@ -18,12 +16,12 @@ public class KeyboardMouseCapturePacket implements IAPPacket {
         this.enable = enable;
     }
 
-    public KeyboardMouseCapturePacket(RegistryFriendlyByteBuf buffer) {
+    public KeyboardMouseCapturePacket(FriendlyByteBuf buffer) {
         this(buffer.readBoolean());
     }
 
     @Override
-    public void handle(IPayloadContext context) {
+    public void handle(Supplier<NetworkEvent.Context> context) {
         if (!(Minecraft.getInstance().screen instanceof KeyboardScreen screen)) {
             return;
         }
@@ -31,12 +29,7 @@ public class KeyboardMouseCapturePacket implements IAPPacket {
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeBoolean(this.enable);
-    }
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
     }
 }

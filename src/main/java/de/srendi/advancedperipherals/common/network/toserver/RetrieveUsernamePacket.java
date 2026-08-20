@@ -1,21 +1,17 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
 import com.mojang.authlib.GameProfile;
-import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.network.toclient.UsernameToCachePacket;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class RetrieveUsernamePacket implements IAPPacket {
-
-    public static final Type<RetrieveUsernamePacket> TYPE = new Type<>(AdvancedPeripherals.getRL("retrieve_username"));
 
     public UUID uuid;
 
@@ -23,30 +19,22 @@ public class RetrieveUsernamePacket implements IAPPacket {
         this.uuid = uuid;
     }
 
-    public RetrieveUsernamePacket(RegistryFriendlyByteBuf buffer) {
+    public RetrieveUsernamePacket(FriendlyByteBuf buffer) {
         this.uuid = buffer.readUUID();
     }
 
     @Override
-    public void handle(IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+    public void handle(Supplier<NetworkEvent.Context> context) {
+        ServerPlayer player = context.get().getSender();
         GameProfile gameProfile = player.serverLevel().getServer().getProfileCache().get(uuid).orElse(null);
         if (gameProfile == null) {
             return;
         }
-        PacketDistributor.sendToPlayer(player, new UsernameToCachePacket(gameProfile.getId(), gameProfile.getName()));
+        APNetworking.sendToPlayer(player, new UsernameToCachePacket(gameProfile.getId(), gameProfile.getName()));
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeUUID(uuid);
-    }
-
-    @Override
-    @NotNull
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
     }
 }

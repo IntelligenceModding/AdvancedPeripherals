@@ -1,25 +1,21 @@
 package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.addons.ae2.AEApi;
 import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
-import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
-import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Random;
 
 @Mod(AdvancedPeripherals.MOD_ID)
-@EventBusSubscriber
+@Mod.EventBusSubscriber
 public class AdvancedPeripherals {
 
     public static final String MOD_ID = "advancedperipherals";
@@ -44,7 +40,6 @@ public class AdvancedPeripherals {
 
         modBus.addListener(this::onLoadComplete);
         modBus.addListener(this::registerCapabilities);
-        modBus.addListener(ChunkManager::registerTicketController);
 
         APRegistration.register(modBus);
 
@@ -76,7 +71,7 @@ public class AdvancedPeripherals {
     }
 
     public static ResourceLocation getRL(String resource) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, resource);
+        return new ResourceLocation(MOD_ID, resource);
     }
 
     public void onLoadComplete(FMLLoadCompleteEvent event) {
@@ -86,13 +81,6 @@ public class AdvancedPeripherals {
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
-        if (APAddon.AE2.isLoaded()) {
-            AEApi.registerCapabilities(event);
-        }
-        if (APAddon.REFINEDSTORAGE.isLoaded()) {
-            RSApi.registerCapabilities(event);
-        }
-
         IntegrationPeripheralProvider.registerBlockIntegrations(event);
     }
 

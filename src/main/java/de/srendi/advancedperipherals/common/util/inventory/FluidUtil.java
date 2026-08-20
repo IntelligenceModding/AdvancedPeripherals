@@ -10,9 +10,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +47,9 @@ public class FluidUtil {
             if (!filter.test(stack)) {
                 continue;
             }
-            FluidStack extracted = inventoryFrom.drain(stack.copyWithAmount(needs), IFluidHandler.FluidAction.SIMULATE);
+            FluidStack needsStack = stack.copy();
+            needsStack.setAmount(needs);
+            FluidStack extracted = inventoryFrom.drain(needsStack, IFluidHandler.FluidAction.SIMULATE);
             if (extracted.isEmpty()) {
                 continue;
             }
@@ -74,7 +76,7 @@ public class FluidUtil {
         }
         if (target instanceof BlockEntity be) {
             Direction side = peripheral instanceof GenericPeripheral sided ? sided.side() : null;
-            return be.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), side);
+            return be.getCapability(ForgeCapabilities.FLUID_HANDLER, side).orElse(null);
         }
         return null;
     }
@@ -88,7 +90,10 @@ public class FluidUtil {
             level = blockEntity.getLevel();
         }
         if (level != null && pos != null) {
-            return level.getCapability(Capabilities.FluidHandler.BLOCK, pos, direction != null ? direction : Direction.NORTH);
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be != null) {
+                return be.getCapability(ForgeCapabilities.FLUID_HANDLER, direction != null ? direction : Direction.NORTH).orElse(null);
+            }
         }
         return null;
     }

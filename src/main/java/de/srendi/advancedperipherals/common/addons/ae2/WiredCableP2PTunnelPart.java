@@ -8,13 +8,14 @@ import appeng.parts.p2p.CapabilityP2PTunnelPart;
 import appeng.parts.p2p.P2PModels;
 import dan200.computercraft.api.ComputerCraftAPI;
 import dan200.computercraft.api.network.wired.WiredElement;
-import dan200.computercraft.api.network.wired.WiredElementCapability;
 import dan200.computercraft.api.network.wired.WiredNetworkChange;
 import dan200.computercraft.api.network.wired.WiredNode;
+import dan200.computercraft.shared.Capabilities;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +35,7 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
     private boolean activated = false;
 
     public WiredCableP2PTunnelPart(IPartItem<?> partItem) {
-        super(partItem, WiredElementCapability.get());
+        super(partItem, Capabilities.CAPABILITY_WIRED_ELEMENT);
         this.inputHandler = outElement;
         this.outputHandler = outElement;
         this.emptyHandler = null; // should never used
@@ -122,7 +123,8 @@ public class WiredCableP2PTunnelPart extends CapabilityP2PTunnelPart<WiredCableP
     }
 
     protected void refreshConnection() {
-        WiredElement elem = this.getLevel().getCapability(WiredElementCapability.get(), this.getFacingPos(), this.getSide().getOpposite());
+        BlockEntity cable = this.getLevel().getBlockEntity(this.getFacingPos());
+        WiredElement elem = cable == null ? null : cable.getCapability(Capabilities.CAPABILITY_WIRED_ELEMENT, this.getSide().getOpposite()).orElse(null);
         if (elem == null) {
             return;
         }

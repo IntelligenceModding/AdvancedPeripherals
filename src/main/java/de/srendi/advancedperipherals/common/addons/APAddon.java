@@ -1,6 +1,6 @@
 package de.srendi.advancedperipherals.common.addons;
 
-import net.neoforged.fml.ModList;
+import net.minecraftforge.fml.ModList;
 
 import java.util.Arrays;
 
@@ -8,7 +8,6 @@ public enum APAddon {
 
     AE2("ae2"),
     AE2THINGS("ae2things"),
-    APP_MEKANISTICS("appmek"),
     CREATE("create"),
     CURIOS("curios"),
     DIMSTORAGE("dimstorage"),

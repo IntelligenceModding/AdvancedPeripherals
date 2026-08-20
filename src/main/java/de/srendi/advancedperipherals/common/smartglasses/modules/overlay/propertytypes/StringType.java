@@ -1,9 +1,8 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
 import de.srendi.advancedperipherals.common.util.StringUtil;
+import de.srendi.advancedperipherals.lib.codec.StreamCodec;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 
 public class StringType implements PropertyType<String, StringProperty> {
     private boolean utf8;
@@ -22,7 +21,7 @@ public class StringType implements PropertyType<String, StringProperty> {
     public StreamCodec<ByteBuf, String> codec(Class<?> type) {
         // TODO: is non-utf8 string safe to use utf8 codec?
         // we don't have non-utf8 string right now anyways.
-        return ByteBufCodecs.STRING_UTF8;
+        return StreamCodec.STRING_UTF8;
     }
 
     @Override

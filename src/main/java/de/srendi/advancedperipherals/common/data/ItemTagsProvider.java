@@ -9,8 +9,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -24,8 +25,8 @@ public class ItemTagsProvider extends TagsProvider<Item> {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         this.tag(APTags.Items.SMART_GLASSES)
-            .add(APItems.SMART_GLASSES.getKey())
-            .add(APItems.SMART_GLASSES_NETHERITE.getKey());
+            .add((ResourceKey<Item>) (ResourceKey<? extends Item>) APItems.SMART_GLASSES.getKey())
+            .add((ResourceKey<Item>) (ResourceKey<? extends Item>) APItems.SMART_GLASSES_NETHERITE.getKey());
 
         AE2Registries.registerTags(this::tag);
         CuriosRegistries.registerTags(this::tag);

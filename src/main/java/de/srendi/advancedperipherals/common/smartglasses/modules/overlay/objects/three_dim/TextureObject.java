@@ -22,7 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -324,7 +324,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     }
 
     @Override
-    public void encode(RegistryFriendlyByteBuf buffer) {
+    public void encode(FriendlyByteBuf buffer) {
         super.encode(buffer);
         buffer.writeVarInt(this.width);
         buffer.writeVarInt(this.height);
@@ -332,7 +332,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     }
 
     @Override
-    public void decode(RegistryFriendlyByteBuf buffer) {
+    public void decode(FriendlyByteBuf buffer) {
         super.decode(buffer);
         this.textureId = AdvancedPeripherals.getRL("programmable/texture_object/id_" + this.getId());
         this.renderTypesMap = APRenderTypes.createQuadsTex3DMap(this.textureId);
@@ -344,7 +344,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     }
 
     @Override
-    public void encodeUpdated(RegistryFriendlyByteBuf buffer) {
+    public void encodeUpdated(FriendlyByteBuf buffer) {
         super.encodeUpdated(buffer);
         buffer.writeBoolean(this.resized);
         if (this.resized) {
@@ -368,7 +368,7 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     }
 
     @Override
-    public void decodeUpdated(RegistryFriendlyByteBuf buffer) {
+    public void decodeUpdated(FriendlyByteBuf buffer) {
         super.decodeUpdated(buffer);
         int resizingWidth = 0, resizingHeight = 0;
         boolean resized = buffer.readBoolean();

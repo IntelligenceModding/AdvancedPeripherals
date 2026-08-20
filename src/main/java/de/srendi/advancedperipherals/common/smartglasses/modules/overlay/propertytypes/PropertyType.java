@@ -1,8 +1,8 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectProperty;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import de.srendi.advancedperipherals.lib.codec.StreamCodec;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -18,7 +18,7 @@ public interface PropertyType<T, A> {
 
     boolean checkIsValid(Object value);
 
-    StreamCodec<? super RegistryFriendlyByteBuf, ? extends T> codec(Class<?> type);
+    StreamCodec<? super FriendlyByteBuf, ? extends T> codec(Class<?> type);
 
     T fixValue(T value);
 

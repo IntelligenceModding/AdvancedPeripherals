@@ -4,12 +4,11 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.pocket.AbstractPocketUpgrade;
 import dan200.computercraft.api.pocket.IPocketAccess;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
-import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -17,28 +16,42 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends AbstractPocketUpgrade {
     protected BasePocketUpgrade(ResourceLocation id, ItemStack stack) {
-        super(TranslationUtil.pocket(id.getPath()), stack);
+        super(id, TranslationUtil.pocket(id.getPath()), stack);
     }
 
     @NotNull
     protected abstract T buildPeripheral(@NotNull IPocketAccess access);
 
     @Override
-    public ItemStack getUpgradeItem(DataComponentPatch upgradeData) {
-        return DataComponentUtil.patchStoredDataToItem(this.getCraftingItem(), upgradeData);
+    public ItemStack getUpgradeItem(CompoundTag upgradeData) {
+        ItemStack stack = this.getCraftingItem().copy();
+        CompoundTag data = upgradeData.getCompound(APDataComponents.STORED_DATA);
+        stack.getOrCreateTag().put(APDataComponents.STORED_DATA, data);
+        String name = data.getString("CustomName");
+        if (!name.isEmpty()) {
+            stack.setHoverName(Component.literal(name));
+        }
+        return stack;
     }
 
     @Override
-    public DataComponentPatch getUpgradeData(ItemStack stack) {
-        return DataComponentUtil.getStoredDataFromItem(stack);
+    public CompoundTag getUpgradeData(ItemStack stack) {
+        CompoundTag data = stack.getOrCreateTagElement(APDataComponents.STORED_DATA);
+        if (stack.hasCustomHoverName()) {
+            data.putString("CustomName", stack.getHoverName().getString());
+        }
+        CompoundTag wrapped = new CompoundTag();
+        wrapped.put(APDataComponents.STORED_DATA, data);
+        return wrapped;
     }
 
     @Override
     public boolean isItemSuitable(ItemStack stack) {
-        if (stack.has(DataComponents.CUSTOM_NAME) || stack.has(APDataComponents.STORED_DATA)) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null && (tag.contains("display") || tag.contains(APDataComponents.STORED_DATA))) {
             stack = stack.copy();
-            stack.remove(DataComponents.CUSTOM_NAME);
-            stack.remove(APDataComponents.STORED_DATA);
+            stack.removeTagKey("display");
+            stack.removeTagKey(APDataComponents.STORED_DATA);
         }
         return super.isItemSuitable(stack);
     }

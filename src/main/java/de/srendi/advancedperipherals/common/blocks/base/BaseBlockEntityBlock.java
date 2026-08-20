@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.blocks.base;
 
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -10,7 +9,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -38,30 +36,43 @@ public abstract class BaseBlockEntityBlock extends BaseBlock implements EntityBl
     }
 
     @Override
-    @NotNull
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!stack.isEmpty()) {
+            InteractionResult result = this.useItemOn(stack, state, level, pos, player, hand, hit);
+            if (result != InteractionResult.PASS) {
+                return result;
+            }
+        }
+        InteractionResult result = this.useWithoutItem(state, level, pos, player, hit);
+        if (result != InteractionResult.PASS) {
+            return result;
+        }
+        return super.use(state, level, pos, player, hand, hit);
+    }
+
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         BlockEntity tileEntity = level.getBlockEntity(pos);
         if (tileEntity instanceof VarNameable nameable && stack.getItem() instanceof NameTagItem) {
             if (level.isClientSide()) {
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
-            nameable.setName(stack.get(DataComponents.CUSTOM_NAME));
-            return ItemInteractionResult.CONSUME;
+            nameable.setName(stack.getHoverName());
+            return InteractionResult.CONSUME;
         }
-        return super.useItemOn(stack, state, level, pos, player, hand, hit);
+        return InteractionResult.PASS;
     }
 
-    @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         MenuProvider namedContainerProvider = this.getMenuProvider(state, level, pos);
         if (namedContainerProvider != null) {
             if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.openMenu(namedContainerProvider, pos);
+                serverPlayer.openMenu(namedContainerProvider);
                 return InteractionResult.CONSUME;
             }
             return InteractionResult.SUCCESS;
         }
-        return super.useWithoutItem(state, level, pos, player, hit);
+        return InteractionResult.PASS;
     }
 
     @Override

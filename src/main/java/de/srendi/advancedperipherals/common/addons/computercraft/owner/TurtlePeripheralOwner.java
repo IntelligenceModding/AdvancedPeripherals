@@ -13,8 +13,7 @@ import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -78,22 +77,24 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public DataComponentPatch getDataStorage() {
-        return turtle.getUpgradeData(side);
+    public CompoundTag getDataStorage() {
+        CompoundTag data = turtle.getUpgradeNBTData(side);
+        return data.getCompound("data");
     }
 
     @Override
-    public void putDataStorage(DataComponentPatch dataStorage) {
-        turtle.setUpgradeData(side, dataStorage);
+    public void putDataStorage(CompoundTag dataStorage) {
+        turtle.getUpgradeNBTData(side).put("data", dataStorage);
+        turtle.updateUpgradeNBTData(side);
     }
 
     public UUID getChunkLoadUUID() {
-        PatchedDataComponentMap patchMap = this.getPatchedDataStorage();
-        UUID id = patchMap.get(APDataComponents.CHUNKY_ID.get());
+        CompoundTag data = this.getDataStorage();
+        UUID id = data.getUUID(APDataComponents.CHUNKY_ID);
         if (id == null) {
             id = UUID.randomUUID();
-            patchMap.set(APDataComponents.CHUNKY_ID.get(), id);
-            this.putDataStorage(patchMap.asPatch());
+            data.putUUID(APDataComponents.CHUNKY_ID, id);
+            this.putDataStorage(data);
         }
         return id;
     }

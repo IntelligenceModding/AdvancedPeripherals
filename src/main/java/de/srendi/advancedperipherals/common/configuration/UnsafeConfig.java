@@ -1,13 +1,13 @@
 package de.srendi.advancedperipherals.common.configuration;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class UnsafeConfig {
 
-    private static ModConfigSpec.BooleanValue enableUnsafe;
-    private static ModConfigSpec.BooleanValue ignoreTurtlePeripheralItemNBT;
+    private static ForgeConfigSpec.BooleanValue enableUnsafe;
+    private static ForgeConfigSpec.BooleanValue ignoreTurtlePeripheralItemNBT;
 
-    public static void build(final ModConfigSpec.Builder builder) {
+    public static void build(final ForgeConfigSpec.Builder builder) {
         enableUnsafe = builder.comment("By setting this value to true, I understand all operations below are danger to my adventure, and if they caused unexpected behavior in my world, I will not consider it as AP's liability").define("enableUnsafe", false);
         ignoreTurtlePeripheralItemNBT = builder.comment("[Unused] Ignore turtle peripheral item's NBT when equipping. **YOU WILL LOSE ALL NBT ON THE ITEM**").define("ignoreTurtlePeripheralItemNBT", false);
     }

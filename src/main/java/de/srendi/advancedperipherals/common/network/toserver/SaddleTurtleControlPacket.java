@@ -1,17 +1,15 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.util.InputKeySet;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class SaddleTurtleControlPacket implements IAPPacket {
-
-    public static final Type<SaddleTurtleControlPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("saddle_turtle_control"));
 
     public final InputKeySet inputs;
 
@@ -23,25 +21,20 @@ public class SaddleTurtleControlPacket implements IAPPacket {
         this(new InputKeySet(forward, back, left, right, up, down));
     }
 
-    public SaddleTurtleControlPacket(RegistryFriendlyByteBuf buffer) {
+    public SaddleTurtleControlPacket(FriendlyByteBuf buffer) {
         this(InputKeySet.fromByte(buffer.readByte()));
     }
 
     @Override
-    public void handle(IPayloadContext context) {
-        Player player = context.player();
+    public void handle(Supplier<NetworkEvent.Context> context) {
+        Player player = context.get().getSender();
         if (player != null && player.getRootVehicle() instanceof TurtleSeatEntity seat) {
             seat.handleSaddleTurtleControlPacket(this);
         }
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeByte(this.inputs.toByte());
-    }
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
     }
 }

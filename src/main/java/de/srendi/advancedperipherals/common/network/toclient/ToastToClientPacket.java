@@ -1,18 +1,14 @@
 package de.srendi.advancedperipherals.common.network.toclient;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.util.ToastUtil;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class ToastToClientPacket implements IAPPacket {
-
-    public static final Type<ToastToClientPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("toast_to_client"));
 
     private final Component title;
     private final Component component;
@@ -22,30 +18,19 @@ public class ToastToClientPacket implements IAPPacket {
         this.component = component;
     }
 
-    public ToastToClientPacket(RegistryFriendlyByteBuf buffer) {
-        title = ComponentSerialization.STREAM_CODEC.decode(buffer);
-        component = ComponentSerialization.STREAM_CODEC.decode(buffer);
+    public ToastToClientPacket(FriendlyByteBuf buffer) {
+        this.title = buffer.readComponent();
+        this.component = buffer.readComponent();
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer) {
-        ComponentSerialization.STREAM_CODEC.encode(buffer, title);
-        ComponentSerialization.STREAM_CODEC.encode(buffer, component);
+    public void write(FriendlyByteBuf buffer) {
+        buffer.writeComponent(this.title);
+        buffer.writeComponent(this.component);
     }
 
     @Override
-    public void handle(@NotNull IPayloadContext context) {
-        // Should in the theory not happen, but safe is safe.
-        if (!FMLEnvironment.dist.isClient()) {
-            AdvancedPeripherals.debug("Tried to display toasts on the server, aborting.");
-            return;
-        }
-        ToastUtil.displayToast(title, component);
-    }
-
-    @Override
-    @NotNull
-    public Type<ToastToClientPacket> type() {
-        return TYPE;
+    public void handle(Supplier<NetworkEvent.Context> context) {
+        ToastUtil.displayToast(this.title, this.component);
     }
 }

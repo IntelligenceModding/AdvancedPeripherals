@@ -43,8 +43,6 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,14 +58,6 @@ import java.util.stream.Collectors;
  * Refined Storage Api helper methods and parsers
  */
 public class RSApi {
-
-    public static void registerCapabilities(@NotNull RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                RefinedStorageNeoForgeApi.INSTANCE.getNetworkNodeContainerProviderCapability(),
-                APBlockEntityTypes.RS_BRIDGE.get(),
-                (blockEntity, side) -> blockEntity);
-    }
-
     /**
      * Returns the first item resource that fits to the filter
      *

@@ -6,6 +6,7 @@ import dan200.computercraft.shared.ModRegistry;
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClientInfoPacket;
 import de.srendi.advancedperipherals.common.network.toserver.PlayerInteractionPacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
@@ -22,17 +23,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.neoforge.event.entity.EntityMountEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.event.MovementInputUpdateEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.entity.EntityMountEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 import java.util.UUID;
 
@@ -56,7 +56,10 @@ public class ClientEventSubscriber {
     }
 
     @SubscribeEvent
-    public static void preClientTick(ClientTickEvent.Pre event) {
+    public static void preClientTick(ClientTickEvent event) {
+        if (event.phase != ClientTickEvent.Phase.START) {
+            return;
+        }
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         if (player == null) {
@@ -82,8 +85,8 @@ public class ClientEventSubscriber {
     }
 
     @SubscribeEvent
-    public static void renderingHuds(RenderGuiLayerEvent.Pre event) {
-        if (ClientRegistry.SADDLE_TURTLE_OVERLAY.shouldRenderFuelBar() && event.getName().equals(VanillaGuiLayers.EXPERIENCE_BAR)) {
+    public static void renderingHuds(RenderGuiOverlayEvent.Pre event) {
+        if (ClientRegistry.SADDLE_TURTLE_OVERLAY.shouldRenderFuelBar() && event.getOverlay().id().equals(VanillaGuiOverlay.EXPERIENCE_BAR.id())) {
             event.setCanceled(true);
         }
     }
@@ -141,7 +144,7 @@ public class ClientEventSubscriber {
             lastInput.right = input.right;
             lastInput.jumping = input.jumping;
             lastSneak = sneaking;
-            PacketDistributor.sendToServer(new SaddleTurtleControlPacket(input.up, input.down, input.left, input.right, input.jumping, sneaking));
+            APNetworking.sendToServer(new SaddleTurtleControlPacket(input.up, input.down, input.left, input.right, input.jumping, sneaking));
         }
     }
 
@@ -174,9 +177,9 @@ public class ClientEventSubscriber {
         BlockState hitBlock = null;
         UUID hitEntity = null;
 
-        float partialTicks = minecraft.getTimer().getGameTimeDeltaTicks();
+        float partialTicks = minecraft.getFrameTime();
         Vec3 playerEyes = player.getEyePosition(partialTicks);
-        double reachRange = player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE);
+        double reachRange = player.getBlockReach();
 
         HitResult hitResultBlock = player.pick(reachRange, partialTicks, false);
         if (hitResultBlock instanceof BlockHitResult result && result.getType() == HitResult.Type.BLOCK) {
@@ -187,6 +190,6 @@ public class ClientEventSubscriber {
             hitEntity = hitResultEntity.getEntity().getUUID();
         }
 
-        PacketDistributor.sendToServer(new PlayerInteractionPacket(button + 1, hitBlock, hitEntity));
+        APNetworking.sendToServer(new PlayerInteractionPacket(button + 1, hitBlock, hitEntity));
     }
 }

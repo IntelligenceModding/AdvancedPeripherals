@@ -4,9 +4,9 @@ import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.core.ServerContext;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.server.MinecraftServer;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -77,7 +77,10 @@ public final class SwarmEventDispatcher {
     }
 
     @SubscribeEvent
-    public static void serverTick(ServerTickEvent.Post tickEvent) {
+    public static void serverTick(ServerTickEvent tickEvent) {
+        if (tickEvent.phase != ServerTickEvent.Phase.END) {
+            return;
+        }
         if (!updated) {
             return;
         }

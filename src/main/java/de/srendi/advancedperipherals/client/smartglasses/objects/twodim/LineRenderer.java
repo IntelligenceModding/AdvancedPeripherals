@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.APRenderTypes;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.LineObject;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -14,7 +13,7 @@ import java.util.List;
 
 public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
     @Override
-    public void renderBatch(List<LineObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
+    public void renderBatch(List<LineObject> objects, GuiGraphics gui, float partialTick) {
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
         VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.QUADS_2D);
@@ -49,25 +48,25 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
             // Normal, smooth lines
             if (!line.pixelated) {
                 if (y1 == y2) {
-                    bufferBuilder.addVertex(matrix, x1, y1 - halfWidth, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1, y1 + halfWidth, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x2, y1 + halfWidth, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x2, y1 - halfWidth, z).setColor(red, green, blue, alpha);
+                    bufferBuilder.vertex(matrix, x1, y1 - halfWidth, z).color(red, green, blue, alpha).endVertex();
+                    bufferBuilder.vertex(matrix, x1, y1 + halfWidth, z).color(red, green, blue, alpha).endVertex();
+                    bufferBuilder.vertex(matrix, x2, y1 + halfWidth, z).color(red, green, blue, alpha).endVertex();
+                    bufferBuilder.vertex(matrix, x2, y1 - halfWidth, z).color(red, green, blue, alpha).endVertex();
                     continue;
                 }
                 if (x1 == x2) {
-                    bufferBuilder.addVertex(matrix, x1 - halfWidth, y1, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1 + halfWidth, y1, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1 + halfWidth, y2, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1 - halfWidth, y2, z).setColor(red, green, blue, alpha);
+                    bufferBuilder.vertex(matrix, x1 - halfWidth, y1, z).color(red, green, blue, alpha).endVertex();
+                    bufferBuilder.vertex(matrix, x1 + halfWidth, y1, z).color(red, green, blue, alpha).endVertex();
+                    bufferBuilder.vertex(matrix, x1 + halfWidth, y2, z).color(red, green, blue, alpha).endVertex();
+                    bufferBuilder.vertex(matrix, x1 - halfWidth, y2, z).color(red, green, blue, alpha).endVertex();
                     continue;
                 }
                 float l = (float) Math.sqrt(dx * dx + dy * dy);
                 float rx = -dy / l * halfWidth, ry = dx / l * halfWidth;
-                bufferBuilder.addVertex(matrix, x1 - rx, y1 - ry, z).setColor(red, green, blue, alpha);
-                bufferBuilder.addVertex(matrix, x1 + rx, y1 + ry, z).setColor(red, green, blue, alpha);
-                bufferBuilder.addVertex(matrix, x2 + rx, y2 + ry, z).setColor(red, green, blue, alpha);
-                bufferBuilder.addVertex(matrix, x2 - rx, y2 - ry, z).setColor(red, green, blue, alpha);
+                bufferBuilder.vertex(matrix, x1 - rx, y1 - ry, z).color(red, green, blue, alpha).endVertex();
+                bufferBuilder.vertex(matrix, x1 + rx, y1 + ry, z).color(red, green, blue, alpha).endVertex();
+                bufferBuilder.vertex(matrix, x2 + rx, y2 + ry, z).color(red, green, blue, alpha).endVertex();
+                bufferBuilder.vertex(matrix, x2 - rx, y2 - ry, z).color(red, green, blue, alpha).endVertex();
                 continue;
             }
 
@@ -99,10 +98,10 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
                 float pX2 = currentX + width;
                 float pY2 = currentY + width;
 
-                bufferBuilder.addVertex(matrix, pX1, pY2, z).setColor(red, green, blue, alpha); // Bottom-left
-                bufferBuilder.addVertex(matrix, pX2, pY2, z).setColor(red, green, blue, alpha); // Bottom-right
-                bufferBuilder.addVertex(matrix, pX2, pY1, z).setColor(red, green, blue, alpha); // Top-right
-                bufferBuilder.addVertex(matrix, pX1, pY1, z).setColor(red, green, blue, alpha); // Top-left
+                bufferBuilder.vertex(matrix, pX1, pY2, z).color(red, green, blue, alpha).endVertex(); // Bottom-left
+                bufferBuilder.vertex(matrix, pX2, pY2, z).color(red, green, blue, alpha).endVertex(); // Bottom-right
+                bufferBuilder.vertex(matrix, pX2, pY1, z).color(red, green, blue, alpha).endVertex(); // Top-right
+                bufferBuilder.vertex(matrix, pX1, pY1, z).color(red, green, blue, alpha).endVertex(); // Top-left
             }
         }
     }

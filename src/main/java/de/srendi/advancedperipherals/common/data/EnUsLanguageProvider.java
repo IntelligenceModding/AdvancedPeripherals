@@ -10,17 +10,19 @@ import de.srendi.advancedperipherals.lib.annotation.DefaultTooltip;
 import de.srendi.advancedperipherals.lib.annotation.DefaultTranslation;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.data.LanguageProvider;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -31,7 +33,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     @Override
-    protected void addTranslations() {
+    public void addTranslations() {
         add("advancedperipherals.name", AdvancedPeripherals.NAME);
         add("itemGroup.advancedperipheralstab", AdvancedPeripherals.NAME);
         add("curios.identifier.glasses", "Glasses");
@@ -47,11 +49,11 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void addBlocks() {
-        forEachField(APBlocks.class, DeferredHolder.class, DefaultTranslation.class, (block, tr) -> addBlock(block, tr.value()));
+        forEachField(APBlocks.class, RegistryObject.class, DefaultTranslation.class, (block, tr) -> addBlock(block, tr.value()));
     }
 
     private void addItems() {
-        forEachField(APItems.class, DeferredHolder.class, DefaultTranslation.class, (item, tr) -> addItem(item, tr.value()));
+        forEachField(APItems.class, RegistryObject.class, DefaultTranslation.class, (item, tr) -> addItem(item, tr.value()));
     }
 
     private void addTurtles() {
@@ -79,8 +81,8 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addTooltip("item.", "show_desc", "&b[&7%s&b] &7For Description");
         addTooltip("item.", "disabled", "&cThis item is disabled in config, so you can craft it, but it'll not have any functionality.");
 
-        forEachField(APBlocks.class, DeferredHolder.class, DefaultTooltip.class, (block, tr) -> addTooltip((Block) block.get(), tr.value()));
-        forEachField(APItems.class, DeferredHolder.class, DefaultTooltip.class, (item, tr) -> addTooltip((Item) item.get(), tr.value()));
+        forEachField(APBlocks.class, RegistryObject.class, DefaultTooltip.class, (block, tr) -> addTooltip((Block) block.get(), tr.value()));
+        forEachField(APItems.class, RegistryObject.class, DefaultTooltip.class, (item, tr) -> addTooltip((Item) item.get(), tr.value()));
 
         addTooltip("item.", "keyboard.binding.bound_to", "&7Bound to &b%s&7.");
         addTooltip("item.", "memory_card.bound", "&7Bound to &b%s&7.");
@@ -110,7 +112,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void add(@NotNull Supplier<VillagerProfession> key, @NotNull String value) {
-        add(ResourceLocation.parse(key.get().name()).toLanguageKey("entity.minecraft.villager"), value);
+        add(new ResourceLocation(key.get().name()).toLanguageKey("entity.minecraft.villager"), value);
     }
 
     private void addText(String key, String value) {
@@ -165,5 +167,17 @@ public class EnUsLanguageProvider extends LanguageProvider {
                 consumer.accept((U) value, tr);
             }
         }
+    }
+
+    @Override
+    public CompletableFuture<?> run(CachedOutput output) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'run'");
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
     }
 }

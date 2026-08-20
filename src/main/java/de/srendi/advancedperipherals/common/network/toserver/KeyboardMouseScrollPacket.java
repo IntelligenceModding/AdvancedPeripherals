@@ -1,19 +1,17 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class KeyboardMouseScrollPacket implements IAPPacket {
-
-    public static final Type<KeyboardMouseScrollPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_scroll"));
 
     private final int deltaX;
     private final int deltaY;
@@ -23,15 +21,13 @@ public class KeyboardMouseScrollPacket implements IAPPacket {
         this.deltaY = deltaY;
     }
 
-    public KeyboardMouseScrollPacket(RegistryFriendlyByteBuf buffer) {
+    public KeyboardMouseScrollPacket(FriendlyByteBuf buffer) {
         this(buffer.readVarInt(), buffer.readVarInt());
     }
 
     @Override
-    public void handle(IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+    public void handle(Supplier<NetworkEvent.Context> context) {
+        ServerPlayer player = context.get().getSender();
 
         ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
         if (smartGlasses.isEmpty()) {
@@ -45,13 +41,8 @@ public class KeyboardMouseScrollPacket implements IAPPacket {
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeVarInt(this.deltaX);
         buffer.writeVarInt(this.deltaY);
-    }
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
     }
 }

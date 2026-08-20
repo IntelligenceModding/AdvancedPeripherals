@@ -6,13 +6,12 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
-import de.srendi.advancedperipherals.common.util.DataComponentUtil;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +21,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     protected int tick = 0;
 
     protected PeripheralTurtleUpgrade(ResourceLocation id, ItemStack item) {
-        super(TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
+        super(id, TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
     }
 
     public abstract ModelResourceLocation getLeftModel();
@@ -33,21 +32,35 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     protected abstract T buildPeripheral(@NotNull ITurtleAccess turtle, @NotNull TurtleSide side);
 
     @Override
-    public ItemStack getUpgradeItem(DataComponentPatch upgradeData) {
-        return DataComponentUtil.patchStoredDataToItem(this.getCraftingItem(), upgradeData);
+    public ItemStack getUpgradeItem(CompoundTag upgradeData) {
+        ItemStack stack = this.getCraftingItem().copy();
+        CompoundTag data = upgradeData.getCompound(APDataComponents.STORED_DATA);
+        stack.getOrCreateTag().put(APDataComponents.STORED_DATA, data);
+        String name = data.getString("CustomName");
+        if (!name.isEmpty()) {
+            stack.setHoverName(Component.literal(name));
+        }
+        return stack;
     }
 
     @Override
-    public DataComponentPatch getUpgradeData(ItemStack stack) {
-        return DataComponentUtil.getStoredDataFromItem(stack);
+    public CompoundTag getUpgradeData(ItemStack stack) {
+        CompoundTag data = stack.getOrCreateTagElement(APDataComponents.STORED_DATA);
+        if (stack.hasCustomHoverName()) {
+            data.putString("CustomName", stack.getHoverName().getString());
+        }
+        CompoundTag wrapped = new CompoundTag();
+        wrapped.put(APDataComponents.STORED_DATA, data);
+        return wrapped;
     }
 
     @Override
-    public boolean isItemSuitable(@NotNull ItemStack stack) {
-        if (stack.has(DataComponents.CUSTOM_NAME) || stack.has(APDataComponents.STORED_DATA)) {
+    public boolean isItemSuitable(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag != null && (tag.contains("display") || tag.contains(APDataComponents.STORED_DATA))) {
             stack = stack.copy();
-            stack.remove(DataComponents.CUSTOM_NAME);
-            stack.remove(APDataComponents.STORED_DATA);
+            stack.removeTagKey("display");
+            stack.removeTagKey(APDataComponents.STORED_DATA);
         }
         return super.isItemSuitable(stack);
     }

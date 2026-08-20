@@ -1,8 +1,7 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
+import de.srendi.advancedperipherals.lib.codec.StreamCodec;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 
 public class BooleanType implements PropertyType<Boolean, BooleanProperty> {
     private String getterPrefix;
@@ -23,7 +22,7 @@ public class BooleanType implements PropertyType<Boolean, BooleanProperty> {
 
     @Override
     public StreamCodec<ByteBuf, Boolean> codec(Class<?> type) {
-        return ByteBufCodecs.BOOL;
+        return StreamCodec.BOOL;
     }
 
     @Override

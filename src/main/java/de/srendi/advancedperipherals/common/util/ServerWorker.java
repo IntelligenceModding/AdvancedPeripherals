@@ -1,9 +1,9 @@
 package de.srendi.advancedperipherals.common.util;
 
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -31,7 +31,10 @@ public class ServerWorker {
     }
 
     @SubscribeEvent
-    public static void serverTick(final ServerTickEvent.Post event) {
+    public static void serverTick(final ServerTickEvent event) {
+        if (event.phase != ServerTickEvent.Phase.END) {
+            return;
+        }
         for (int remain = callQueue.size(); remain > 0; remain--) {
             final Runnable runnable = callQueue.poll();
             tasksRan++;

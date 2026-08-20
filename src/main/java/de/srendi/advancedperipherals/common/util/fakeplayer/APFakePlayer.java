@@ -19,8 +19,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -36,11 +34,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.util.FakePlayer;
-import net.neoforged.neoforge.common.util.TriState;
-import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -162,15 +159,7 @@ public class APFakePlayer extends FakePlayer {
     }
 
     public double getReachRange() {
-        AttributeInstance reachAttribute = this.getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
-        if (reachAttribute == null) {
-            throw new IllegalArgumentException("How did this happened?");
-        }
-        double range = reachAttribute.getValue();
-        if (this.reachRange >= 0 && this.reachRange < range) {
-            range = this.reachRange;
-        }
-        return range;
+        return this.getBlockReach();
     }
 
     public Pair<Boolean, String> digBlock() {
@@ -192,7 +181,8 @@ public class APFakePlayer extends FakePlayer {
             setState(block, pos);
         }
 
-        Direction direction = Direction.getNearest(this.getLookAngle()).getOpposite();
+        Vec3 look = this.getLookAngle();
+        Direction direction = Direction.getNearest(look.x, look.y, look.z).getOpposite();
 
         if (world.isEmptyBlock(pos) || state.liquid()) {
             return Pair.of(false, "Nothing to dig here");
@@ -244,7 +234,7 @@ public class APFakePlayer extends FakePlayer {
         if (simpleInteraction == InteractionResult.SUCCESS) {
             return simpleInteraction;
         }
-        if (CommonHooks.onInteractEntityAt(this, entity, result.getLocation(), InteractionHand.MAIN_HAND) == InteractionResult.FAIL) {
+        if (ForgeHooks.onInteractEntityAt(this, entity, result.getLocation(), InteractionHand.MAIN_HAND) == InteractionResult.FAIL) {
             return InteractionResult.FAIL;
         }
 
@@ -261,12 +251,12 @@ public class APFakePlayer extends FakePlayer {
         if (hit instanceof BlockHitResult blockHit) {
             ItemStack stack = getMainHandItem();
             BlockPos pos = blockHit.getBlockPos();
-            PlayerInteractEvent.RightClickBlock event = CommonHooks.onRightClickBlock(this, InteractionHand.MAIN_HAND, pos, blockHit);
+            PlayerInteractEvent.RightClickBlock event = ForgeHooks.onRightClickBlock(this, InteractionHand.MAIN_HAND, pos, blockHit);
             if (event.isCanceled()) {
                 return event.getCancellationResult();
             }
-            boolean usedItem = event.getUseItem() != TriState.FALSE;
-            boolean usedOnBlock = event.getUseBlock() != TriState.FALSE;
+            boolean usedItem = event.getUseItem() != PlayerInteractEvent.Result.DENY;
+            boolean usedOnBlock = event.getUseBlock() != PlayerInteractEvent.Result.DENY;
             if (usedItem) {
                 InteractionResult result = stack.onItemUseFirst(new UseOnContext(level(), this, InteractionHand.MAIN_HAND, stack, blockHit));
                 if (result != InteractionResult.PASS) {
@@ -300,7 +290,7 @@ public class APFakePlayer extends FakePlayer {
             ItemStack copyBeforeUse = stack.copy();
             InteractionResult result = stack.useOn(new UseOnContext(level(), this, InteractionHand.MAIN_HAND, stack, blockHit));
             if (stack.isEmpty()) {
-                EventHooks.onPlayerDestroyItem(this, copyBeforeUse, InteractionHand.MAIN_HAND);
+                ForgeEventFactory.onPlayerDestroyItem(this, copyBeforeUse, InteractionHand.MAIN_HAND);
             }
             return result;
         } else if (hit instanceof EntityHitResult entityHit) {
@@ -322,7 +312,7 @@ public class APFakePlayer extends FakePlayer {
 
         BlockHitResult blockHit;
         if (skipBlock) {
-            Direction traceDirection = Direction.getNearest(look);
+            Direction traceDirection = Direction.getNearest(look.x, look.y, look.z);
             blockHit = BlockHitResult.miss(target, traceDirection, BlockPos.containing(target));
         } else {
             blockHit = HitResultUtil.getBlockHitResult(origin, target, level(), ClipContext.Block.OUTLINE, this.source);

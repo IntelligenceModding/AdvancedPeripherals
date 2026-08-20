@@ -12,9 +12,9 @@ import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class VillageStructures {
             return;
 
         Holder<StructureProcessorList> emptyProcessor = event.getServer().registryAccess().registryOrThrow(Registries.PROCESSOR_LIST)
-                .getHolderOrThrow(ResourceKey.create(Registries.PROCESSOR_LIST, ResourceLocation.parse("minecraft:empty")));
+                .getHolderOrThrow(ResourceKey.create(Registries.PROCESSOR_LIST, new ResourceLocation("minecraft:empty")));
 
         Registry<StructureTemplatePool> templatePoolRegistry = event.getServer().registryAccess().registryOrThrow(Registries.TEMPLATE_POOL);
 
@@ -63,7 +63,7 @@ public class VillageStructures {
             addPieceToPool(
                 templatePoolRegistry,
                 emptyProcessor,
-                ResourceLocation.withDefaultNamespace("village/" + biome + "/houses"),
+                new ResourceLocation("village/" + biome + "/houses"),
                 AdvancedPeripherals.getRL("villages/scientist_" + biome).toString(),
                 StructureTemplatePool.Projection.RIGID,
                 APConfig.WORLD_CONFIG.villagerStructureWeight.get()

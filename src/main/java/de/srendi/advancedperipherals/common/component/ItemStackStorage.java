@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.component;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@ public final class ItemStackStorage {
     public static final Codec<ItemStackStorage> CODEC = ItemStack.OPTIONAL_CODEC.listOf()
         .xmap(ItemStackStorage::of, ItemStackStorage::getAllAsList);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ItemStackStorage> STREAM_CODEC = ItemStack.OPTIONAL_LIST_STREAM_CODEC
+    public static final StreamCodec<FriendlyByteBuf, ItemStackStorage> STREAM_CODEC = ItemStack.OPTIONAL_LIST_STREAM_CODEC
         .map(ItemStackStorage::of, ItemStackStorage::getAllAsList);
 
     private final ItemStack[] items;

@@ -8,32 +8,32 @@ import de.srendi.advancedperipherals.common.container.SmartGlassesContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.registries.RegistryObject;
 
 public class APContainerTypes {
 
-    public static final DeferredHolder<MenuType<?>, MenuType<InventoryManagerContainer>> INVENTORY_MANAGER_CONTAINER = APRegistration.CONTAINER_TYPES.register(
+    public static final RegistryObject<MenuType<InventoryManagerContainer>> INVENTORY_MANAGER_CONTAINER = APRegistration.CONTAINER_TYPES.register(
         "memory_card_container",
-        () -> IMenuTypeExtension.create((windowId, inv, buf) -> {
+        () -> IForgeMenuType.create((windowId, inv, buf) -> {
             BlockPos pos = buf.readBlockPos();
             Level level = inv.player.getCommandSenderWorld();
             return new InventoryManagerContainer(windowId, inv, pos, level);
         })
     );
 
-    public static final DeferredHolder<MenuType<?>, MenuType<KeyboardContainer>> KEYBOARD_CONTAINER = APRegistration.CONTAINER_TYPES.register(
+    public static final RegistryObject<MenuType<KeyboardContainer>> KEYBOARD_CONTAINER = APRegistration.CONTAINER_TYPES.register(
         "keyboard_container",
-        () -> IMenuTypeExtension.create((windowId, inv, buf) -> {
+        () -> IForgeMenuType.create((windowId, inv, buf) -> {
             Level level = inv.player.getCommandSenderWorld();
             return new KeyboardContainer(windowId, inv, level);
         })
     );
 
-    public static final DeferredHolder<MenuType<?>, MenuType<SmartGlassesContainer>> SMART_GLASSES_CONTAINER = APRegistration.CONTAINER_TYPES.register(
+    public static final RegistryObject<MenuType<SmartGlassesContainer>> SMART_GLASSES_CONTAINER = APRegistration.CONTAINER_TYPES.register(
         "smart_glasses_container",
         () -> ContainerData.toType(
-            ComputerContainerData.STREAM_CODEC,
+            ComputerContainerData::new,
             (id, inv, buf) -> new SmartGlassesContainer(id, player -> true, buf, inv)
         )
     );

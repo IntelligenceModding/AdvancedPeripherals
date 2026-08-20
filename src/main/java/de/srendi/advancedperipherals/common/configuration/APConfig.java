@@ -1,9 +1,10 @@
 package de.srendi.advancedperipherals.common.configuration;
 
-import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.fml.config.IConfigSpec;
-import net.neoforged.fml.loading.FMLPaths;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.IConfigSpec;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class APConfig {
         }
 
         public static void registerConfig(Map<IConfigSpec, IAPConfig> knownConfigs, ModContainer modContainer, IAPConfig config) {
-            modContainer.registerConfig(config.getType(), config.getConfigSpec(), getAPConfigFilePath(config));
+            modContainer.addConfig(new ModConfig(config.getType(), config.getConfigSpec(), modContainer, getAPConfigFilePath(config)));
             knownConfigs.put(config.getConfigSpec(), config);
         }
     }

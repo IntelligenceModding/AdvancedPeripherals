@@ -56,10 +56,10 @@ public final class FakePlayerProviderTurtle {
         // Add properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (!activeStack.isEmpty()) {
-            activeStack.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (attr, modif) -> {
+            activeStack.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((attr, modif) -> {
                 AttributeInstance inst = player.getAttribute(attr);
                 if (inst != null) {
-                    inst.addOrUpdateTransientModifier(modif);
+                    inst.addTransientModifier(modif);
                 }
             });
         }
@@ -72,10 +72,10 @@ public final class FakePlayerProviderTurtle {
         // Remove properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (!activeStack.isEmpty()) {
-            activeStack.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (attr, modif) -> {
+            activeStack.getAttributeModifiers(EquipmentSlot.MAINHAND).forEach((attr, modif) -> {
                 AttributeInstance inst = player.getAttribute(attr);
                 if (inst != null) {
-                    inst.addOrUpdateTransientModifier(modif);
+                    inst.addTransientModifier(modif);
                 }
             });
         }

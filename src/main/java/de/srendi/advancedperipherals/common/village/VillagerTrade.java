@@ -2,23 +2,20 @@ package de.srendi.advancedperipherals.common.village;
 
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
-import dan200.computercraft.api.upgrades.UpgradeData;
+import dan200.computercraft.impl.PocketUpgrades;
+import dan200.computercraft.impl.TurtleUpgrades;
 import dan200.computercraft.shared.ModRegistry;
-import dan200.computercraft.shared.util.DataComponentUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
-import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.event.village.VillagerTradesEvent;
-import net.neoforged.neoforge.event.village.WandererTradesEvent;
+import net.minecraftforge.event.village.VillagerTradesEvent;
+import net.minecraftforge.event.village.WandererTradesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,16 +46,16 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
     public MerchantOffer getOffer(@NotNull Entity trader, @NotNull RandomSource rand) {
         if (type == Type.EMERALD_FOR_ITEM) {
             if (itemStack != null)
-                return new MerchantOffer(new ItemCost(itemStack.getItem()), new ItemStack(Items.EMERALD, emeraldAmount), maxUses, xp, 1);
+                return new MerchantOffer(itemStack, new ItemStack(Items.EMERALD, emeraldAmount), maxUses, xp, 1);
             if (item != null)
-                return new MerchantOffer(new ItemCost(new ItemStack(item, itemAmount).getItem()), new ItemStack(Items.EMERALD, emeraldAmount), maxUses, xp, 1);
+                return new MerchantOffer(new ItemStack(item, itemAmount), new ItemStack(Items.EMERALD, emeraldAmount), maxUses, xp, 1);
 
         }
         if (type == Type.ITEM_FOR_EMERALD) {
             if (itemStack != null)
-                return new MerchantOffer(new ItemCost(new ItemStack(Items.EMERALD, emeraldAmount).getItem()), itemStack, maxUses, xp, 1);
+                return new MerchantOffer(new ItemStack(Items.EMERALD, emeraldAmount), itemStack, maxUses, xp, 1);
             if (item != null)
-                return new MerchantOffer(new ItemCost(new ItemStack(Items.EMERALD, emeraldAmount).getItem()), new ItemStack(item, itemAmount), maxUses, xp, 1);
+                return new MerchantOffer(new ItemStack(Items.EMERALD, emeraldAmount), new ItemStack(item, itemAmount), maxUses, xp, 1);
         }
         return null;
     }
@@ -174,18 +171,15 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
          * @return the current instance of the builder
          */
         public TradeBuilder withPocketUpgrade(boolean advanced, ResourceLocation id) {
-            RegistryAccess access = wandererEvent != null ? wandererEvent.getRegistryAccess() : villagerEvent.getRegistryAccess();
+            IPocketUpgrade pocketUpgrade = PocketUpgrades.instance().get(id.toString());
 
-            Holder.Reference<IPocketUpgrade> pocketUpgrade = access.registryOrThrow(IPocketUpgrade.REGISTRY)
-                    .getHolder(id)
-                    .orElse(null);
             if (pocketUpgrade == null) {
                 AdvancedPeripherals.debug("Pocket upgrade {} does not exist or was removed by a datapack, skipping villager trade", id);
                 return this;
             }
 
-            ItemStack pocketStack = DataComponentUtil.createStack(advanced ? ModRegistry.Items.POCKET_COMPUTER_ADVANCED.get() : ModRegistry.Items.POCKET_COMPUTER_NORMAL.get(), ModRegistry.DataComponents.POCKET_UPGRADE.get(), UpgradeData.ofDefault(pocketUpgrade));
-
+            ItemStack pocketStack = new ItemStack(advanced ? ModRegistry.Items.POCKET_COMPUTER_ADVANCED.get() : ModRegistry.Items.POCKET_COMPUTER_NORMAL.get());
+            pocketStack.getOrCreateTag().putString("Upgrade", id.toString());
             return withItemStack(pocketStack);
         }
 
@@ -197,19 +191,15 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
          * @return the current instance of the builder
          */
         public TradeBuilder withTurtleUpgrade(boolean advanced, ResourceLocation id) {
-            RegistryAccess access = wandererEvent != null ? wandererEvent.getRegistryAccess() : villagerEvent.getRegistryAccess();
-
-            Holder.Reference<ITurtleUpgrade> turtleUpgrade = access.registryOrThrow(ITurtleUpgrade.REGISTRY)
-                    .getHolder(id)
-                    .orElse(null);
+            ITurtleUpgrade turtleUpgrade = TurtleUpgrades.instance().get(id.toString());
 
             if (turtleUpgrade == null) {
-                AdvancedPeripherals.debug("Pocket upgrade {} does not exist or was removed by a datapack, skipping villager trade", id);
+                AdvancedPeripherals.debug("Turtle upgrade {} does not exist or was removed by a datapack, skipping villager trade", id);
                 return this;
             }
 
-            ItemStack turtleStack = DataComponentUtil.createStack(advanced ? ModRegistry.Items.TURTLE_ADVANCED.get() : ModRegistry.Items.TURTLE_NORMAL.get(), ModRegistry.DataComponents.RIGHT_TURTLE_UPGRADE.get(), UpgradeData.ofDefault(turtleUpgrade));
-
+            ItemStack turtleStack = new ItemStack(advanced ? ModRegistry.Items.TURTLE_ADVANCED.get() : ModRegistry.Items.TURTLE_NORMAL.get());
+            turtleStack.getOrCreateTag().putString("RightUpgrade", id.toString());
             return withItemStack(turtleStack);
         }
 

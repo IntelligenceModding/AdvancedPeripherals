@@ -24,13 +24,12 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 import java.util.Comparator;
 import java.util.UUID;
-
 
 @EventBusSubscriber
 public class APCommands {
@@ -77,7 +76,7 @@ public class APCommands {
             source.sendFailure(Component.literal("You need an item in your main hand."));
             return 0;
         }
-        String hash = FingerprintUtil.hash(playerEntity.getMainHandItem().getComponentsPatch());
+        String hash = FingerprintUtil.hash(playerEntity.getMainHandItem().getTag());
 
         source.sendSuccess(() -> Component.literal("NBT hash of the item: "), true);
         source.sendSuccess(() -> ComponentUtils.wrapInSquareBrackets(

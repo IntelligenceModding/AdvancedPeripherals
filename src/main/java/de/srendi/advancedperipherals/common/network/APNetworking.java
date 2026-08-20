@@ -20,49 +20,87 @@ import de.srendi.advancedperipherals.common.network.toserver.OverlayModuleClient
 import de.srendi.advancedperipherals.common.network.toserver.PlayerInteractionPacket;
 import de.srendi.advancedperipherals.common.network.toserver.RetrieveUsernamePacket;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.codec.StreamDecoder;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 @EventBusSubscriber
 public class APNetworking {
+    private static final String PROTOCOL_VERSION = ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString();
+    private static final SimpleChannel NETWORK_CHANNEL = NetworkRegistry.newSimpleChannel(AdvancedPeripherals.getRL("main_channel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+    private static int id = 0;
 
-    private static void init(PayloadRegistrar registrar) {
-        registrar.playToClient(KeyboardMouseCapturePacket.TYPE, makeReader(KeyboardMouseCapturePacket::new), KeyboardMouseCapturePacket::handle);
-        registrar.playToClient(NarrateToClientPacket.TYPE, makeReader(NarrateToClientPacket::new), NarrateToClientPacket::handle);
-        registrar.playToClient(RenderableObjectAddPacket.TYPE, makeReader(RenderableObjectAddPacket::new), RenderableObjectAddPacket::handle);
-        registrar.playToClient(RenderableObjectBulkAddPacket.TYPE, makeReader(RenderableObjectBulkAddPacket::new), RenderableObjectBulkAddPacket::handle);
-        registrar.playToClient(RenderableObjectBulkSyncPacket.TYPE, makeReader(RenderableObjectBulkSyncPacket::new), RenderableObjectBulkSyncPacket::handle);
-        registrar.playToClient(RenderableObjectClearPacket.TYPE, makeReader(RenderableObjectClearPacket::new), RenderableObjectClearPacket::handle);
-        registrar.playToClient(RenderableObjectDeletePacket.TYPE, makeReader(RenderableObjectDeletePacket::new), RenderableObjectDeletePacket::handle);
-        registrar.playToClient(RenderableObjectSyncPacket.TYPE, makeReader(RenderableObjectSyncPacket::new), RenderableObjectSyncPacket::handle);
-        registrar.playToClient(SaddleTurtleInfoPacket.TYPE, makeReader(SaddleTurtleInfoPacket::new), SaddleTurtleInfoPacket::handle);
-        registrar.playToClient(ToastToClientPacket.TYPE, makeReader(ToastToClientPacket::new), ToastToClientPacket::handle);
-        registrar.playToClient(UsernameToCachePacket.TYPE, makeReader(UsernameToCachePacket::new), UsernameToCachePacket::handle);
+    private static void init() {
+        registerServerToClient(KeyboardMouseCapturePacket.class, KeyboardMouseCapturePacket::new);
+        registerServerToClient(NarrateToClientPacket.class, NarrateToClientPacket::new);
+        registerServerToClient(RenderableObjectAddPacket.class, RenderableObjectAddPacket::new);
+        registerServerToClient(RenderableObjectBulkAddPacket.class, RenderableObjectBulkAddPacket::new);
+        registerServerToClient(RenderableObjectBulkSyncPacket.class, RenderableObjectBulkSyncPacket::new);
+        registerServerToClient(RenderableObjectClearPacket.class, RenderableObjectClearPacket::new);
+        registerServerToClient(RenderableObjectDeletePacket.class, RenderableObjectDeletePacket::new);
+        registerServerToClient(RenderableObjectSyncPacket.class, RenderableObjectSyncPacket::new);
+        registerServerToClient(SaddleTurtleInfoPacket.class, SaddleTurtleInfoPacket::new);
+        registerServerToClient(ToastToClientPacket.class, ToastToClientPacket::new);
+        registerServerToClient(UsernameToCachePacket.class, UsernameToCachePacket::new);
 
-        registrar.playToServer(GlassesHotkeyPacket.TYPE, makeReader(GlassesHotkeyPacket::new), GlassesHotkeyPacket::handle);
-        registrar.playToServer(KeyboardMouseClickPacket.TYPE, makeReader(KeyboardMouseClickPacket::new), KeyboardMouseClickPacket::handle);
-        registrar.playToServer(KeyboardMouseMovePacket.TYPE, makeReader(KeyboardMouseMovePacket::new), KeyboardMouseMovePacket::handle);
-        registrar.playToServer(KeyboardMouseScrollPacket.TYPE, makeReader(KeyboardMouseScrollPacket::new), KeyboardMouseScrollPacket::handle);
-        registrar.playToServer(OverlayModuleClientInfoPacket.TYPE, makeReader(OverlayModuleClientInfoPacket::new), OverlayModuleClientInfoPacket::handle);
-        registrar.playToServer(PlayerInteractionPacket.TYPE, makeReader(PlayerInteractionPacket::new), PlayerInteractionPacket::handle);
-        registrar.playToServer(RetrieveUsernamePacket.TYPE, makeReader(RetrieveUsernamePacket::new), RetrieveUsernamePacket::handle);
-        registrar.playToServer(SaddleTurtleControlPacket.TYPE, makeReader(SaddleTurtleControlPacket::new), SaddleTurtleControlPacket::handle);
+        registerClientToServer(GlassesHotkeyPacket.class, GlassesHotkeyPacket::new);
+        registerClientToServer(KeyboardMouseClickPacket.class, KeyboardMouseClickPacket::new);
+        registerClientToServer(KeyboardMouseMovePacket.class, KeyboardMouseMovePacket::new);
+        registerClientToServer(KeyboardMouseScrollPacket.class, KeyboardMouseScrollPacket::new);
+        registerClientToServer(OverlayModuleClientInfoPacket.class, OverlayModuleClientInfoPacket::new);
+        registerClientToServer(PlayerInteractionPacket.class, PlayerInteractionPacket::new);
+        registerClientToServer(RetrieveUsernamePacket.class, RetrieveUsernamePacket::new);
+        registerClientToServer(SaddleTurtleControlPacket.class, SaddleTurtleControlPacket::new);
     }
 
-    private static <T extends IAPPacket> StreamCodec<RegistryFriendlyByteBuf, T> makeReader(StreamDecoder<RegistryFriendlyByteBuf, T> reader) {
-        return StreamCodec.ofMember(IAPPacket::write, reader);
+    public static <MSG extends IAPPacket> void registerServerToClient(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
+        NETWORK_CHANNEL.registerMessage(id++, packet, IAPPacket::write, decode, IAPPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
-    @SubscribeEvent
-    public static void register(final RegisterPayloadHandlersEvent event) {
-        final String version = ModLoadingContext.get().getActiveContainer().getModInfo().getVersion().toString();
-        final PayloadRegistrar registrar = event.registrar(AdvancedPeripherals.MOD_ID).versioned(version);
-        init(registrar);
+    public static <MSG extends IAPPacket> void registerClientToServer(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
+        NETWORK_CHANNEL.registerMessage(id++, packet, IAPPacket::write, decode, IAPPacket::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+    }
+
+    /**
+     * Sends a packet to the server.<p>
+     * Must be called Client side.
+     */
+    public static void sendToServer(Object msg) {
+        NETWORK_CHANNEL.sendToServer(msg);
+    }
+
+    /**
+     * Send a packet to a specific player.<p>
+     * Must be called Server side.
+     */
+    public static void sendToPlayer(ServerPlayer player, Object msg) {
+        if (!(player instanceof FakePlayer)) {
+            NETWORK_CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), msg);
+        }
+    }
+
+    public static void sendPacketToAll(Object packet) {
+        NETWORK_CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
+    }
+
+    public static void sendToAllAround(Object mes, ResourceKey<Level> dim, BlockPos pos, int radius) {
+        NETWORK_CHANNEL.send(PacketDistributor.NEAR.with(() -> new PacketDistributor.TargetPoint(pos.getX(), pos.getY(), pos.getZ(), radius, dim)), mes);
+    }
+
+    public static void sendToAllInWorld(Object mes, ServerLevel world) {
+        NETWORK_CHANNEL.send(PacketDistributor.DIMENSION.with(world::dimension), mes);
     }
 }

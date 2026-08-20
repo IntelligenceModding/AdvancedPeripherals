@@ -88,7 +88,7 @@ public class NBTUtil {
     }
 
     public static Pair<Level, BlockPos> levelAndBlockPosFromNBT(MinecraftServer server, CompoundTag nbt) {
-        ServerLevel level = server.getLevel(ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(nbt.getString("dim"))));
+        ServerLevel level = server.getLevel(ResourceKey.create(Registries.DIMENSION, new ResourceLocation(nbt.getString("dim"))));
         return new Pair<>(level, blockPosFromNBT(nbt));
     }
 

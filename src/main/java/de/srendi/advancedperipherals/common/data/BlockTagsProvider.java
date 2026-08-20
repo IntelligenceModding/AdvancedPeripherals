@@ -7,12 +7,13 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +38,7 @@ public class BlockTagsProvider extends TagsProvider<Block> {
 
     @Override
     protected void addTags(@NotNull HolderLookup.Provider provider) {
-        for (DeferredHolder<Block, ? extends Block> holder : blockRegistry.getEntries()) {
+        for (RegistryObject<Block> holder : blockRegistry.getEntries()) {
             if (!(holder.get() instanceof IHarvestableBlock harvesterBlock)) {
                 throw new IllegalArgumentException("For any block you should define harvester logic!");
             }
@@ -45,7 +46,7 @@ public class BlockTagsProvider extends TagsProvider<Block> {
             tag(harvesterBlock.getToolTag()).add(holder.getKey());
         }
 
-        tag(BlockTags.RAILS).add(APBlocks.SMART_RAIL.getKey());
+        tag(BlockTags.RAILS).add((ResourceKey<Block>) (ResourceKey<? extends Block>) APBlocks.SMART_RAIL.getKey());
     }
 
     @Override

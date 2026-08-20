@@ -6,7 +6,6 @@ import dan200.computercraft.api.upgrades.UpgradeData;
 import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.impl.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ServerComputer;
-import dan200.computercraft.shared.computer.core.TerminalSize;
 import de.srendi.advancedperipherals.common.component.ItemStackStorage;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APComputerComponents;
@@ -17,11 +16,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.ModulePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Stream;
 
@@ -47,7 +41,7 @@ public class SmartGlassesComputer extends ServerComputer {
     private final ModulePeripheral modulePeripheral = new ModulePeripheral(this);
     private final NonNullList<ItemStack> moduleItems = NonNullList.withSize(SmartGlassesSlot.MODULE_SLOTS, ItemStack.EMPTY);
     private final IModule[] modules = new IModule[SmartGlassesSlot.MODULE_SLOTS];
-    private DataComponentPatch moduleDatas;
+    private CompoundTag moduleDatas;
 
     private volatile boolean upgradesUpdated = false;
     private volatile boolean modulesUpdated = false;
@@ -56,18 +50,17 @@ public class SmartGlassesComputer extends ServerComputer {
     protected SmartGlassesComputer(ServerLevel level, BlockPos pos, ServerComputer.Properties properties, ItemStack stack) {
         super(level, pos, properties);
         this.stack = stack;
-        this.moduleDatas = stack.getOrDefault(APDataComponents.MODULE_DATAS.get(), DataComponentPatch.EMPTY);
+        this.moduleDatas = stack.getOrCreateTag().getCompound(APDataComponents.MODULE_DATAS);
         for (ComputerSide side : ComputerSide.values()) {
             this.sideAccesses[side.ordinal()] = new SmartGlassesSideAccess(side, this);
         }
 
-        RegistryAccess registryAccess = level.registryAccess();
         ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
         // build upgrades
         for (ComputerSide side : SmartGlassesSlot.UPGRADE_SIDES) {
             int slot = SmartGlassesSlot.sideToIndex(side);
             ItemStack upgradeStack = items.getAllUnsafe()[slot];
-            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(registryAccess, upgradeStack);
+            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(upgradeStack);
             this.upgrades[slot] = upgradeData;
             if (upgradeData == null) {
                 this.setPeripheral(side, null);
@@ -97,7 +90,7 @@ public class SmartGlassesComputer extends ServerComputer {
             level,
             pos,
             properties
-                .terminalSize(new TerminalSize(39, 13))
+                .terminalSize(39, 13)
                 .addComponent(APComputerComponents.SMARTGLASSES_EQUIPPED, wrapper),
             stack
         );
@@ -150,40 +143,21 @@ public class SmartGlassesComputer extends ServerComputer {
         if (this.moduleDatasUpdated) {
             this.moduleDatasUpdated = false;
             changed = true;
-            stack.set(APDataComponents.MODULE_DATAS.get(), this.moduleDatas);
+            stack.getOrCreateTag().put(APDataComponents.MODULE_DATAS, this.moduleDatas);
         }
         return changed;
     }
 
     @NotNull
-    public DataComponentPatch getModulesData() {
+    public CompoundTag getModulesData() {
         return this.moduleDatas;
     }
 
-    public void setModulesData(DataComponentPatch data) {
+    public void setModulesData(CompoundTag data) {
         if (this.moduleDatas.equals(data)) {
             return;
         }
         this.moduleDatas = data;
-        this.moduleDatasUpdated = true;
-    }
-
-    public <T> T getModuleData(final DataComponentType<? extends T> component, final T defaultValue) {
-        Optional<T> value = (Optional<T>) this.moduleDatas.get(component);
-        if (value == null) {
-            return defaultValue;
-        }
-        return value.orElse(defaultValue);
-    }
-
-    public <T> void setModuleData(final DataComponentType<? super T> component, final @Nullable T value) {
-        if (value == null) {
-            this.moduleDatas = this.moduleDatas.forget(component::equals);
-        } else {
-            PatchedDataComponentMap datas = PatchedDataComponentMap.fromPatch(DataComponentMap.EMPTY, this.moduleDatas);
-            datas.set(component, value);
-            this.moduleDatas = datas.asPatch();
-        }
         this.moduleDatasUpdated = true;
     }
 
@@ -216,12 +190,12 @@ public class SmartGlassesComputer extends ServerComputer {
         this.setPeripheral(side, peripheral);
     }
 
-    public DataComponentPatch getUpgradeData(@NotNull ComputerSide side) {
+    public CompoundTag getUpgradeData(@NotNull ComputerSide side) {
         UpgradeData<IPocketUpgrade> upgradeData = this.getUpgrade(side);
-        return upgradeData == null ? DataComponentPatch.EMPTY : upgradeData.data();
+        return upgradeData == null ? new CompoundTag() : upgradeData.data();
     }
 
-    public void setUpgradeData(@NotNull ComputerSide side, DataComponentPatch data) {
+    public void setUpgradeData(@NotNull ComputerSide side, CompoundTag data) {
         int slot = SmartGlassesSlot.sideToIndex(side);
         synchronized (this.upgrades) {
             UpgradeData<IPocketUpgrade> upgradeData = this.upgrades[slot];
@@ -231,7 +205,7 @@ public class SmartGlassesComputer extends ServerComputer {
             if (upgradeData.data().equals(data)) {
                 return;
             }
-            this.upgrades[slot] = UpgradeData.of(upgradeData.holder(), data);
+            this.upgrades[slot] = UpgradeData.of(upgradeData.upgrade(), data);
         }
         this.upgradesUpdated = true;
     }

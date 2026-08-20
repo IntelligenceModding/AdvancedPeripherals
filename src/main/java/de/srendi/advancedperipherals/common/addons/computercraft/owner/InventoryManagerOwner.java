@@ -4,8 +4,8 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManage
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.Nullable;
 
 public class InventoryManagerOwner extends BlockEntityPeripheralOwner<InventoryManagerEntity> implements IItemHandler {
@@ -52,7 +52,7 @@ public class InventoryManagerOwner extends BlockEntityPeripheralOwner<InventoryM
         if (inv == null) {
             return stack;
         }
-        return new PlayerInvWrapper(inv).insertItem(slot, stack, simulate);
+        return new InvWrapper(inv).insertItem(slot, stack, simulate);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class InventoryManagerOwner extends BlockEntityPeripheralOwner<InventoryM
         if (inv == null) {
             return ItemStack.EMPTY;
         }
-        return new PlayerInvWrapper(inv).extractItem(slot, amount, simulate);
+        return new InvWrapper(inv).extractItem(slot, amount, simulate);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class InventoryManagerOwner extends BlockEntityPeripheralOwner<InventoryM
         if (inv == null) {
             return 0;
         }
-        return new PlayerInvWrapper(inv).getSlotLimit(slot);
+        return new InvWrapper(inv).getSlotLimit(slot);
     }
 
     @Override
@@ -79,6 +79,6 @@ public class InventoryManagerOwner extends BlockEntityPeripheralOwner<InventoryM
         if (inv == null) {
             return false;
         }
-        return new PlayerInvWrapper(inv).isItemValid(slot, stack);
+        return new InvWrapper(inv).isItemValid(slot, stack);
     }
 }

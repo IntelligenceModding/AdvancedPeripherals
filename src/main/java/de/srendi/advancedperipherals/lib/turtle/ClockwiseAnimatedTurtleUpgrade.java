@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class ClockwiseAnimatedTurtleUpgrade<T extends IBasePeripheral<?>> extends PeripheralTurtleUpgrade<T> {
 
-
     protected ClockwiseAnimatedTurtleUpgrade(ResourceLocation id, ItemStack item) {
         super(id, item);
     }

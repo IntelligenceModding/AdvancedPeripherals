@@ -1,25 +1,21 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraftforge.network.NetworkEvent;
 
-import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class PlayerInteractionPacket implements IAPPacket {
-
-    public static final Type<PlayerInteractionPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("player_interaction"));
 
     private final int button;
     private final BlockState hitBlock;
@@ -31,17 +27,15 @@ public class PlayerInteractionPacket implements IAPPacket {
         this.hitEntity = hitEntity;
     }
 
-    public PlayerInteractionPacket(RegistryFriendlyByteBuf buffer) {
+    public PlayerInteractionPacket(FriendlyByteBuf buffer) {
         this.button = buffer.readVarInt();
-        this.hitBlock = buffer.readOptional((b) -> b.readById(Block.BLOCK_STATE_REGISTRY::byId)).orElse(null);
-        this.hitEntity = buffer.readOptional(RegistryFriendlyByteBuf::readUUID).orElse(null);
+        this.hitBlock = buffer.readNullable((b) -> b.readById(Block.BLOCK_STATE_REGISTRY));
+        this.hitEntity = buffer.readNullable(FriendlyByteBuf::readUUID);
     }
 
     @Override
-    public void handle(IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+    public void handle(Supplier<NetworkEvent.Context> context) {
+        ServerPlayer player = context.get().getSender();
 
         ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
         if (smartGlasses.isEmpty()) {
@@ -59,14 +53,9 @@ public class PlayerInteractionPacket implements IAPPacket {
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeVarInt(button);
-        buffer.writeOptional(Optional.ofNullable(this.hitBlock), (b, v) -> b.writeById(Block.BLOCK_STATE_REGISTRY::getId, v));
-        buffer.writeOptional(Optional.ofNullable(this.hitEntity), RegistryFriendlyByteBuf::writeUUID);
-    }
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
+        buffer.writeNullable(this.hitBlock, (b, v) -> b.writeId(Block.BLOCK_STATE_REGISTRY, v));
+        buffer.writeNullable(this.hitEntity, FriendlyByteBuf::writeUUID);
     }
 }

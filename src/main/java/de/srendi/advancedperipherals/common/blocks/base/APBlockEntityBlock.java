@@ -6,20 +6,20 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class APBlockEntityBlock<T extends BlockEntity> extends BaseBlockEntityBlock {
 
-    private final DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> tileEntity;
+    private final RegistryObject<BlockEntityType<T>> tileEntity;
 
-    public APBlockEntityBlock(DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> tileEntity, Properties properties) {
+    public APBlockEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity, Properties properties) {
         super(properties);
         this.tileEntity = tileEntity;
     }
 
-    public APBlockEntityBlock(DeferredHolder<BlockEntityType<?>, BlockEntityType<T>> tileEntity) {
+    public APBlockEntityBlock(RegistryObject<BlockEntityType<T>> tileEntity) {
         this(
             tileEntity,
             Properties.of()

@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.smartglasses.modules.hotkey;
 
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
@@ -10,7 +11,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -55,6 +55,6 @@ public class HotkeyModuleItem extends BaseItem implements IModuleItem<HotkeyModu
         this.clientKeyPressDuration.remove(entity);
 
         String keyBind = KeyBindings.GLASSES_HOTKEY_KEYBINDING.getKey().getName();
-        PacketDistributor.sendToServer(new GlassesHotkeyPacket(keyBind, duration));
+        APNetworking.sendToServer(new GlassesHotkeyPacket(keyBind, duration));
     }
 }

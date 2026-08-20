@@ -6,6 +6,7 @@ import dan200.computercraft.shared.computer.core.ServerContext;
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
@@ -13,6 +14,7 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -30,9 +32,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -87,7 +87,8 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
     @NotNull
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!stack.has(APDataComponents.BINDING_COMPUTER.get())) {
+        CompoundTag tag = stack.getTag();
+        if (tag == null || !tag.contains(APDataComponents.BINDING_COMPUTER)) {
             if (level.isClientSide()) {
                 player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard_notbound")), false);
             }
@@ -97,7 +98,7 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
             return InteractionResultHolder.success(stack);
         }
         ServerComputer computer = null;
-        int computerId = stack.get(APDataComponents.BINDING_COMPUTER.get());
+        int computerId = tag.getInt(APDataComponents.BINDING_COMPUTER);
         for (ServerComputer computr : ServerContext.get(serverLevel.getServer()).registry().getComputers()) {
             if (computr.getID() == computerId) {
                 computer = computr;
@@ -133,19 +134,20 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
         if (!pressed) {
             return;
         }
-        PacketDistributor.sendToServer(GlassesHotkeyPacket.KEYBOARD_OPEN_PACKET);
+        APNetworking.sendToServer(GlassesHotkeyPacket.KEYBOARD_OPEN_PACKET);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, context, tooltip, flagIn);
-        if (stack.has(APDataComponents.BINDING_COMPUTER.get())) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.keyboard.binding.bound_to", stack.get(APDataComponents.BINDING_COMPUTER.get()))));
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flagIn) {
+        super.appendHoverText(stack, level, tooltip, flagIn);
+        CompoundTag tag = stack.getTag();
+        if (tag != null && tag.contains(APDataComponents.BINDING_COMPUTER)) {
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.keyboard.binding.bound_to", tag.getInt(APDataComponents.BINDING_COMPUTER))));
         }
     }
 
     private void bind(Player player, ItemStack stack, AbstractComputerBlockEntity computer) {
-        stack.remove(APDataComponents.BINDING_COMPUTER.get());
+        stack.removeTagKey(APDataComponents.BINDING_COMPUTER);
 
         int id = computer.getComputerID();
         if (id < 0) {
@@ -153,17 +155,17 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
             player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_keyboard.not_init")), true);
             return;
         }
-        stack.set(APDataComponents.BINDING_COMPUTER.get(), id);
+        stack.getOrCreateTag().putInt(APDataComponents.BINDING_COMPUTER, id);
 
         player.getInventory().setChanged();
         player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_keyboard", id)), true);
     }
 
     private void clear(Player player, ItemStack stack) {
-        if (!stack.has(APDataComponents.BINDING_COMPUTER.get())) {
+        if (!stack.hasTag() || !stack.getTag().contains(APDataComponents.BINDING_COMPUTER)) {
             return;
         }
-        stack.remove(APDataComponents.BINDING_COMPUTER.get());
+        stack.removeTagKey(APDataComponents.BINDING_COMPUTER);
 
         player.getInventory().setChanged();
         player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.cleared_keyboard")), true);

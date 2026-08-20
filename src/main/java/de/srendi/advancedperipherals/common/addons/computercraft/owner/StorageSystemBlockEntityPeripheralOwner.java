@@ -8,7 +8,7 @@ import de.srendi.advancedperipherals.common.util.inventory.StorageProcessor;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class StorageSystemBlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlockEntity>
@@ -24,10 +24,6 @@ public abstract class StorageSystemBlockEntityPeripheralOwner<T extends BlockEnt
 
     @NotNull
     public abstract IStorageSystemFluidHandler getStorageSystemFluidHandler();
-
-    // TODO: figure out how to implement IStorageSystemChemicalHandler on the owner dynamically
-    // @NotNull
-    // public abstract Object /*IStorageSystemChemicalHandler*/ getStorageSystemChemicalHandler();
 
     @Override
     public ItemStack insertItem(ItemStack stack, boolean simulate) {

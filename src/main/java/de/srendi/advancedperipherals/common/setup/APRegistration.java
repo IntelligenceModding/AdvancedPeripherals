@@ -1,10 +1,9 @@
 package de.srendi.advancedperipherals.common.setup;
 
-import dan200.computercraft.api.media.MediaCapability;
-import dan200.computercraft.api.peripheral.PeripheralCapability;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
+import dan200.computercraft.api.pocket.PocketUpgradeSerialiser;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
-import dan200.computercraft.api.upgrades.UpgradeType;
+import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import dan200.computercraft.shared.media.MountMedia;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
@@ -12,38 +11,37 @@ import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProviders
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import mekanism.api.chemical.IChemicalHandler;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NewRegistryEvent;
-import net.neoforged.neoforge.registries.RegistryBuilder;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryBuilder;
 import top.theillusivec4.curios.api.CuriosCapability;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 
 public class APRegistration {
 
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(AdvancedPeripherals.MOD_ID);
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(AdvancedPeripherals.MOD_ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, AdvancedPeripherals.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, AdvancedPeripherals.MOD_ID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, AdvancedPeripherals.MOD_ID);
     public static final DeferredRegister<MenuType<?>> CONTAINER_TYPES = DeferredRegister.create(Registries.MENU, AdvancedPeripherals.MOD_ID);
     public static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(Registries.POINT_OF_INTEREST_TYPE, AdvancedPeripherals.MOD_ID);
     public static final DeferredRegister<VillagerProfession> VILLAGER_PROFESSIONS = DeferredRegister.create(Registries.VILLAGER_PROFESSION, AdvancedPeripherals.MOD_ID);
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, AdvancedPeripherals.MOD_ID);
-    public static final DeferredRegister<UpgradeType<? extends ITurtleUpgrade>> TURTLE_SERIALIZER = DeferredRegister.create(ITurtleUpgrade.typeRegistry(), AdvancedPeripherals.MOD_ID);
-    public static final DeferredRegister<UpgradeType<? extends IPocketUpgrade>> POCKET_SERIALIZER = DeferredRegister.create(IPocketUpgrade.typeRegistry(), AdvancedPeripherals.MOD_ID);
+    public static final DeferredRegister<TurtleUpgradeSerialiser<?>> TURTLE_SERIALIZER = DeferredRegister.create(TurtleUpgradeSerialiser.registryId(), AdvancedPeripherals.MOD_ID);
+    public static final DeferredRegister<PocketUpgradeSerialiser<?>> POCKET_SERIALIZER = DeferredRegister.create(PocketUpgradeSerialiser.registryId(), AdvancedPeripherals.MOD_ID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, AdvancedPeripherals.MOD_ID);
-    public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, AdvancedPeripherals.MOD_ID);
 
     public static final DeferredRegister<OverlayObjectType<?>> OVERLAY_OBJECTS = DeferredRegister.create(APRegistries.OVERLAY_OBJECTS, AdvancedPeripherals.MOD_ID);
 
@@ -70,16 +68,10 @@ public class APRegistration {
         TURTLE_SERIALIZER.register(modEventBus);
         POCKET_SERIALIZER.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
-        DATA_COMPONENT_TYPES.register(modEventBus);
         OVERLAY_OBJECTS.register(modEventBus);
 
-        modEventBus.addListener(APRegistration::registerRegistries);
         modEventBus.addListener(APRegistration::registerCapabilities);
         modEventBus.addListener(APRegistration::onCommonSetup);
-    }
-
-    private static void registerRegistries(NewRegistryEvent event) {
-        event.create(new RegistryBuilder<>(OVERLAY_OBJECTS.getRegistryKey()));
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {

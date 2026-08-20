@@ -14,16 +14,17 @@ import dan200.computercraft.core.input.UserComputerInput;
 import dan200.computercraft.core.terminal.Terminal;
 import de.srendi.advancedperipherals.client.ClientWorker;
 import de.srendi.advancedperipherals.common.container.KeyboardContainer;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseClickPacket;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseMovePacket;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseScrollPacket;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -44,7 +45,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
     private final byte[] lastPosLock = new byte[0];
     private double lastX = 0;
     private double lastY = 0;
-    private double lastScrollX = 0;
+    private double lastScrollX = 0; // scroll X doesn't exists in 1.20.1
     private double lastScrollY = 0;
 
     public KeyboardScreen(KeyboardContainer keyboardContainer, Inventory inv, Component titleIn) {
@@ -61,24 +62,13 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
     }
 
     @Override
-    public void renderBackground(GuiGraphics gui, int x, int y, float partialTicks) {
-    }
-
-    @Override
     public void render(GuiGraphics gui, int x, int y, float partialTicks) {
         super.render(gui, x, y, partialTicks);
 
-        int screenWidth = gui.minecraft.getWindow().getGuiScaledWidth();
-
-        // float scale = 2f;
-        // // Make the text a bit smaller on small screens
-        // if (screenWidth <= 1080) {
-        //     scale = 1f;
-        // }
-        // poseStack.scale(scale, scale, 1);
+        int screenWidth = gui.guiWidth();
 
         Component text = Component.translatable("text.advancedperipherals.keyboard.close");
-        gui.drawCenteredString(gui.minecraft.font, text, screenWidth / 2, 1, 0xFFFFFF);
+        gui.drawCenteredString(Minecraft.getInstance().font, text, screenWidth / 2, 1, 0xFFFFFF);
     }
 
     @Override
@@ -130,7 +120,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
             synchronized (this.lastPosLock) {
                 double dx = x - this.lastX;
                 double dy = y - this.lastY;
-                PacketDistributor.sendToServer(new KeyboardMouseMovePacket(dx, dy));
+                APNetworking.sendToServer(new KeyboardMouseMovePacket(dx, dy));
                 this.lastX = x;
                 this.lastY = y;
             }
@@ -142,7 +132,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         if (this.mouseState != MouseState.CAPTURE) {
             return false;
         }
-        PacketDistributor.sendToServer(new KeyboardMouseClickPacket(button + 1, false));
+        APNetworking.sendToServer(new KeyboardMouseClickPacket(button + 1, false));
         return true;
     }
 
@@ -151,17 +141,15 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         if (this.mouseState != MouseState.CAPTURE) {
             return false;
         }
-        PacketDistributor.sendToServer(new KeyboardMouseClickPacket(button + 1, true));
+        APNetworking.sendToServer(new KeyboardMouseClickPacket(button + 1, true));
         return true;
     }
 
     @Override
-    public boolean mouseScrolled(double x, double y, double scrollX, double scrollY) {
-        this.lastScrollX += scrollX;
-        this.lastScrollY += scrollY;
-        int scrolledX = (int) this.lastScrollX;
-        int scrolledY = (int) this.lastScrollY;
-        if (scrolledX == 0 && scrolledY == 0) {
+    public boolean mouseScrolled(double x, double y, double direction) {
+        this.lastScrollY += direction;
+        int scrolled = (int) this.lastScrollY;
+        if (scrolled == 0) {
             return true;
         }
         if (this.mouseState == MouseState.CAPTURE) {
@@ -169,14 +157,12 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
                 if (this.mouseState != MouseState.CAPTURE) {
                     return;
                 }
-                this.lastScrollX -= scrolledX;
-                this.lastScrollY -= scrolledY;
-                PacketDistributor.sendToServer(new KeyboardMouseScrollPacket(scrolledX, scrolledY));
+                this.lastScrollY -= scrolled;
+                APNetworking.sendToServer(new KeyboardMouseScrollPacket(0, scrolled));
             });
         } else {
-            this.lastScrollX -= scrolledX;
-            this.lastScrollY -= scrolledY;
-            this.minecraft.player.getInventory().swapPaint(scrolledY == 0 ? -scrolledX : scrolledY);
+            this.lastScrollY -= scrolled;
+            minecraft.player.getInventory().swapPaint(scrolled);
         }
         return true;
     }

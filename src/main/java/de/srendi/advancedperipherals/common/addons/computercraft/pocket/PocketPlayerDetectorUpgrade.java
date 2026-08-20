@@ -1,8 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.pocket;
 
 import dan200.computercraft.api.pocket.IPocketAccess;
-import dan200.computercraft.api.pocket.IPocketUpgrade;
-import dan200.computercraft.api.upgrades.UpgradeType;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.PlayerDetectorPeripheral;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import de.srendi.advancedperipherals.lib.pocket.BasePocketUpgrade;
@@ -19,10 +17,5 @@ public class PocketPlayerDetectorUpgrade extends BasePocketUpgrade<PlayerDetecto
     @NotNull
     protected PlayerDetectorPeripheral buildPeripheral(@NotNull IPocketAccess iPocketAccess) {
         return new PlayerDetectorPeripheral(iPocketAccess);
-    }
-
-    @Override
-    public UpgradeType<? extends IPocketUpgrade> getType() {
-        return CCRegistration.PLAYER_DETECTOR_POCKET.get();
     }
 }

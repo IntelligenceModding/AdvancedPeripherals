@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
@@ -46,17 +45,17 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
         return 256;
     }
 
-    @Override
-    public AABB getRenderBoundingBox(DistanceDetectorEntity be) {
-        float currentDistance = be.getCurrentDistance();
-        if (currentDistance == -1) {
-            currentDistance = be.getMaxRange();
-        }
-        currentDistance += 1.5f;
-        Direction direction = be.getBlockState().getValue(BaseBlock.ORIENTATION).front();
-        Vec3 blockPos = Vec3.atCenterOf(be.getBlockPos());
-        return new AABB(blockPos, blockPos.add(direction.getStepX() * currentDistance, direction.getStepY() * currentDistance, direction.getStepZ() * currentDistance));
-    }
+    // @Override
+    // public AABB getRenderBoundingBox(DistanceDetectorEntity be) {
+    //     float currentDistance = be.getCurrentDistance();
+    //     if (currentDistance == -1) {
+    //         currentDistance = be.getMaxRange();
+    //     }
+    //     currentDistance += 1.5f;
+    //     Direction direction = be.getBlockState().getValue(BaseBlock.ORIENTATION).front();
+    //     Vec3 blockPos = Vec3.atCenterOf(be.getBlockPos());
+    //     return new AABB(blockPos, blockPos.add(direction.getStepX() * currentDistance, direction.getStepY() * currentDistance, direction.getStepZ() * currentDistance));
+    // }
 
     @Override
     public boolean shouldRender(@NotNull DistanceDetectorEntity pBlockEntity, @NotNull Vec3 pCameraPos) {
@@ -106,7 +105,7 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
     }
 
     private static void addVertex(Matrix4f pPose, PoseStack.Pose pNormal, VertexConsumer pConsumer, float pRed, float pGreen, float pBlue, float pAlpha, float pY, float pX, float pZ, float pU, float pV) {
-        pConsumer.addVertex(pPose, pX, pY, pZ).setColor(pRed, pGreen, pBlue, pAlpha).setUv(pU, pV).setOverlay(OverlayTexture.NO_OVERLAY).setLight(15728880).setNormal(pNormal, 0.0F, 1.0F, 0.0F);
+        pConsumer.vertex(pPose, pX, pY, pZ).color(pRed, pGreen, pBlue, pAlpha).uv(pU, pV).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xf000f0).normal(pNormal.normal(), 0.0F, 1.0F, 0.0F).endVertex();
     }
 
 }

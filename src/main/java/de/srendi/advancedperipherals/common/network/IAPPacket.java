@@ -1,13 +1,13 @@
 package de.srendi.advancedperipherals.common.network;
 
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
-public interface IAPPacket extends CustomPacketPayload {
+import java.util.function.Supplier;
 
-    void write(@NotNull RegistryFriendlyByteBuf buffer);
+public interface IAPPacket {
 
-    void handle(@NotNull IPayloadContext context);
+    void write(FriendlyByteBuf buffer);
+
+    void handle(Supplier<NetworkEvent.Context> context);
 }

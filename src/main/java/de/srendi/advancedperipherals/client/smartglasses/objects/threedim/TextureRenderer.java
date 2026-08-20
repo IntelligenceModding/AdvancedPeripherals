@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -44,10 +44,10 @@ public class TextureRenderer implements IThreeDObjectRenderer<TextureObject> {
             mat.translate(obj.x, obj.y, obj.z);
             mat.rotate(obj.getRotation());
 
-            buffer.addVertex(mat, 0, 0, 0).setColor(r, g, b, a).setUv(0, 1);
-            buffer.addVertex(mat, obj.sizeX, 0, 0).setColor(r, g, b, a).setUv(1, 1);
-            buffer.addVertex(mat, obj.sizeX, obj.sizeY, 0).setColor(r, g, b, a).setUv(1, 0);
-            buffer.addVertex(mat, 0, obj.sizeY, 0).setColor(r, g, b, a).setUv(0, 0);
+            buffer.vertex(mat, 0, 0, 0).color(r, g, b, a).uv(0, 1).endVertex();
+            buffer.vertex(mat, obj.sizeX, 0, 0).color(r, g, b, a).uv(1, 1).endVertex();
+            buffer.vertex(mat, obj.sizeX, obj.sizeY, 0).color(r, g, b, a).uv(1, 0).endVertex();
+            buffer.vertex(mat, 0, obj.sizeY, 0).color(r, g, b, a).uv(0, 0).endVertex();
         }
     }
 }

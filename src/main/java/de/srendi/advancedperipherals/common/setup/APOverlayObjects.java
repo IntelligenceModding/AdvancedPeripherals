@@ -23,30 +23,30 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.LineObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.RectangleObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.TextObject;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraftforge.registries.RegistryObject;
 
 public final class APOverlayObjects {
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<BlockObject>> BLOCK =
+    public static final RegistryObject<OverlayObjectType<BlockObject>> BLOCK =
         APRegistration.OVERLAY_OBJECTS.register("block", () -> new OverlayObjectType<>(BlockObject::new, BlockObject::new, () -> new BlockRenderer()));
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<BoxObject>> BOX =
+    public static final RegistryObject<OverlayObjectType<BoxObject>> BOX =
         APRegistration.OVERLAY_OBJECTS.register("box", () -> new OverlayObjectType<>(BoxObject::new, BoxObject::new, () -> new BoxRenderer()));
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<SphereObject>> SPHERE =
+    public static final RegistryObject<OverlayObjectType<SphereObject>> SPHERE =
         APRegistration.OVERLAY_OBJECTS.register("sphere", () -> new OverlayObjectType<>(SphereObject::new, SphereObject::new, () -> new SphereRenderer()));
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<TorusObject>> TORUS =
+    public static final RegistryObject<OverlayObjectType<TorusObject>> TORUS =
         APRegistration.OVERLAY_OBJECTS.register("torus", () -> new OverlayObjectType<>(TorusObject::new, TorusObject::new, () -> new TorusRenderer()));
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<TextureObject>> TEXTURE =
+    public static final RegistryObject<OverlayObjectType<TextureObject>> TEXTURE =
         APRegistration.OVERLAY_OBJECTS.register("texture", () -> new OverlayObjectType<>(TextureObject::new, TextureObject::new, () -> new TextureRenderer()));
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<TriangleObject>> TRIANGLE =
+    public static final RegistryObject<OverlayObjectType<TriangleObject>> TRIANGLE =
         APRegistration.OVERLAY_OBJECTS.register("triangle", () -> new OverlayObjectType<>(TriangleObject::new, TriangleObject::new, () -> TriangleRenderer.INSTANCE));
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<CircleObject>> CIRCLE =
+    public static final RegistryObject<OverlayObjectType<CircleObject>> CIRCLE =
         APRegistration.OVERLAY_OBJECTS.register("circle", () -> new OverlayObjectType<>(CircleObject::new, CircleObject::new, () -> new CircleRenderer()));
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<ItemObject>> ITEM =
+    public static final RegistryObject<OverlayObjectType<ItemObject>> ITEM =
         APRegistration.OVERLAY_OBJECTS.register("item", () -> new OverlayObjectType<>(ItemObject::new, ItemObject::new, () -> new ItemRenderer()));
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<LineObject>> LINE =
+    public static final RegistryObject<OverlayObjectType<LineObject>> LINE =
         APRegistration.OVERLAY_OBJECTS.register("line", () -> new OverlayObjectType<>(LineObject::new, LineObject::new, () -> new LineRenderer()));
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<RectangleObject>> RECTANGLE =
+    public static final RegistryObject<OverlayObjectType<RectangleObject>> RECTANGLE =
         APRegistration.OVERLAY_OBJECTS.register("rectangle", () -> new OverlayObjectType<>(RectangleObject::new, RectangleObject::new, () -> new RectangleRenderer()));
-    public static final DeferredHolder<OverlayObjectType<?>, OverlayObjectType<TextObject>> TEXT =
+    public static final RegistryObject<OverlayObjectType<TextObject>> TEXT =
         APRegistration.OVERLAY_OBJECTS.register("text", () -> new OverlayObjectType<>(TextObject::new, TextObject::new, () -> new TextRenderer()));
 
     public static void register() {}

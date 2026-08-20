@@ -4,14 +4,13 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.base.VarNameable;
-import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
-import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.Entity;
@@ -102,13 +101,13 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlock
     }
 
     @Override
-    public DataComponentPatch getDataStorage() {
-        return DataStorageUtil.getDataStorage(blockEntity);
+    public CompoundTag getDataStorage() {
+        return blockEntity.getPeripheralSettings();
     }
 
     @Override
-    public void putDataStorage(DataComponentPatch dataStorage) {
-        DataStorageUtil.putDataStorage(blockEntity, dataStorage);
+    public void putDataStorage(CompoundTag dataStorage) {
+        blockEntity.setPeripheralSettings(dataStorage);
     }
 
     @Override

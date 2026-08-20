@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.client.ClientUUIDCache;
 import de.srendi.advancedperipherals.client.screens.base.BaseScreen;
 import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManagerEntity;
 import de.srendi.advancedperipherals.common.container.InventoryManagerContainer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -40,7 +41,7 @@ public class InventoryManagerScreen extends BaseScreen<InventoryManagerContainer
     public void render(@NotNull GuiGraphics gui, int x, int y, float partialTicks) {
         super.render(gui, x, y, partialTicks);
         InventoryManagerEntity blockEntity = (InventoryManagerEntity) this.menu.getBlockEntity();
-        Font font = gui.minecraft.font;
+        Font font = Minecraft.getInstance().font;
         UUID owner = blockEntity.getOwnerUUID();
 
         String textToDraw = "No Owner";

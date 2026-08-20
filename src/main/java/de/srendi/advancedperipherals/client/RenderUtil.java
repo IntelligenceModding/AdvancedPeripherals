@@ -34,40 +34,40 @@ public final class RenderUtil {
 
         switch (perspective) {
             case UP -> {
-                buffer.addVertex(pose, -sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.usw).setNormal(0f, 1f, 0f);
-                buffer.addVertex(pose, sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.use).setNormal(0f, 1f, 0f);
-                buffer.addVertex(pose, sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.une).setNormal(0f, 1f, 0f);
-                buffer.addVertex(pose, -sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.unw).setNormal(0f, 1f, 0f);
+                buffer.vertex(pose, -sX, sY, sZ).color(r, g, b, a).uv2(lightMap.usw).normal(0f, 1f, 0f).endVertex();
+                buffer.vertex(pose, sX, sY, sZ).color(r, g, b, a).uv2(lightMap.use).normal(0f, 1f, 0f).endVertex();
+                buffer.vertex(pose, sX, sY, -sZ).color(r, g, b, a).uv2(lightMap.une).normal(0f, 1f, 0f).endVertex();
+                buffer.vertex(pose, -sX, sY, -sZ).color(r, g, b, a).uv2(lightMap.unw).normal(0f, 1f, 0f).endVertex();
             }
             case DOWN -> {
-                buffer.addVertex(pose, -sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.dsw).setNormal(0f, -1f, 0f);
-                buffer.addVertex(pose, -sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.dnw).setNormal(0f, -1f, 0f);
-                buffer.addVertex(pose, sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.dne).setNormal(0f, -1f, 0f);
-                buffer.addVertex(pose, sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.dse).setNormal(0f, -1f, 0f);
+                buffer.vertex(pose, -sX, -sY, sZ).color(r, g, b, a).uv2(lightMap.dsw).normal(0f, -1f, 0f).endVertex();
+                buffer.vertex(pose, -sX, -sY, -sZ).color(r, g, b, a).uv2(lightMap.dnw).normal(0f, -1f, 0f).endVertex();
+                buffer.vertex(pose, sX, -sY, -sZ).color(r, g, b, a).uv2(lightMap.dne).normal(0f, -1f, 0f).endVertex();
+                buffer.vertex(pose, sX, -sY, sZ).color(r, g, b, a).uv2(lightMap.dse).normal(0f, -1f, 0f).endVertex();
             }
             case SOUTH -> {
-                buffer.addVertex(pose, -sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.sde).setNormal(0f, 0f, 1f);
-                buffer.addVertex(pose, sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.sdw).setNormal(0f, 0f, 1f);
-                buffer.addVertex(pose, sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.sue).setNormal(0f, 0f, 1f);
-                buffer.addVertex(pose, -sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.suw).setNormal(0f, 0f, 1f);
+                buffer.vertex(pose, -sX, -sY, sZ).color(r, g, b, a).uv2(lightMap.sde).normal(0f, 0f, 1f).endVertex();
+                buffer.vertex(pose, sX, -sY, sZ).color(r, g, b, a).uv2(lightMap.sdw).normal(0f, 0f, 1f).endVertex();
+                buffer.vertex(pose, sX, sY, sZ).color(r, g, b, a).uv2(lightMap.sue).normal(0f, 0f, 1f).endVertex();
+                buffer.vertex(pose, -sX, sY, sZ).color(r, g, b, a).uv2(lightMap.suw).normal(0f, 0f, 1f).endVertex();
             }
             case NORTH -> {
-                buffer.addVertex(pose, -sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.ndw).setNormal(0f, 0f, -1f);
-                buffer.addVertex(pose, -sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.nuw).setNormal(0f, 0f, -1f);
-                buffer.addVertex(pose, sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.nue).setNormal(0f, 0f, -1f);
-                buffer.addVertex(pose, sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.nde).setNormal(0f, 0f, -1f);
+                buffer.vertex(pose, -sX, -sY, -sZ).color(r, g, b, a).uv2(lightMap.ndw).normal(0f, 0f, -1f).endVertex();
+                buffer.vertex(pose, -sX, sY, -sZ).color(r, g, b, a).uv2(lightMap.nuw).normal(0f, 0f, -1f).endVertex();
+                buffer.vertex(pose, sX, sY, -sZ).color(r, g, b, a).uv2(lightMap.nue).normal(0f, 0f, -1f).endVertex();
+                buffer.vertex(pose, sX, -sY, -sZ).color(r, g, b, a).uv2(lightMap.nde).normal(0f, 0f, -1f).endVertex();
             }
             case EAST -> {
-                buffer.addVertex(pose, sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.edn).setNormal(1f, 0f, 0f);
-                buffer.addVertex(pose, sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.eun).setNormal(1f, 0f, 0f);
-                buffer.addVertex(pose, sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.eus).setNormal(1f, 0f, 0f);
-                buffer.addVertex(pose, sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.eds).setNormal(1f, 0f, 0f);
+                buffer.vertex(pose, sX, -sY, -sZ).color(r, g, b, a).uv2(lightMap.edn).normal(1f, 0f, 0f).endVertex();
+                buffer.vertex(pose, sX, sY, -sZ).color(r, g, b, a).uv2(lightMap.eun).normal(1f, 0f, 0f).endVertex();
+                buffer.vertex(pose, sX, sY, sZ).color(r, g, b, a).uv2(lightMap.eus).normal(1f, 0f, 0f).endVertex();
+                buffer.vertex(pose, sX, -sY, sZ).color(r, g, b, a).uv2(lightMap.eds).normal(1f, 0f, 0f).endVertex();
             }
             case WEST -> {
-                buffer.addVertex(pose, -sX, -sY, -sZ).setColor(r, g, b, a).setLight(lightMap.wdn).setNormal(-1f, 0f, 0f);
-                buffer.addVertex(pose, -sX, -sY, sZ).setColor(r, g, b, a).setLight(lightMap.wds).setNormal(-1f, 0f, 0f);
-                buffer.addVertex(pose, -sX, sY, sZ).setColor(r, g, b, a).setLight(lightMap.wus).setNormal(-1f, 0f, 0f);
-                buffer.addVertex(pose, -sX, sY, -sZ).setColor(r, g, b, a).setLight(lightMap.wun).setNormal(-1f, 0f, 0f);
+                buffer.vertex(pose, -sX, -sY, -sZ).color(r, g, b, a).uv2(lightMap.wdn).normal(-1f, 0f, 0f).endVertex();
+                buffer.vertex(pose, -sX, -sY, sZ).color(r, g, b, a).uv2(lightMap.wds).normal(-1f, 0f, 0f).endVertex();
+                buffer.vertex(pose, -sX, sY, sZ).color(r, g, b, a).uv2(lightMap.wus).normal(-1f, 0f, 0f).endVertex();
+                buffer.vertex(pose, -sX, sY, -sZ).color(r, g, b, a).uv2(lightMap.wun).normal(-1f, 0f, 0f).endVertex();
             }
         }
     }
@@ -116,50 +116,50 @@ public final class RenderUtil {
             case UP -> {
                 final float u2 = stillTexture.getU(pUOffset + size.z * textureScale);
                 final float v2 = stillTexture.getV(pVOffset + size.x * textureScale);
-                buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(r, g, b, a).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.unw).setNormal(0f, 1f, 0f);
-                buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(r, g, b, a).setUv(u1, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.usw).setNormal(0f, 1f, 0f);
-                buffer.addVertex(matrix4f, sX, sY, sZ).setColor(r, g, b, a).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.use).setNormal(0f, 1f, 0f);
-                buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(r, g, b, a).setUv(u2, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.une).setNormal(0f, 1f, 0f);
+                buffer.vertex(matrix4f, -sX, sY, -sZ).color(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.unw).normal(0f, 1f, 0f).endVertex();
+                buffer.vertex(matrix4f, -sX, sY, sZ).color(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.usw).normal(0f, 1f, 0f).endVertex();
+                buffer.vertex(matrix4f, sX, sY, sZ).color(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.use).normal(0f, 1f, 0f).endVertex();
+                buffer.vertex(matrix4f, sX, sY, -sZ).color(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.une).normal(0f, 1f, 0f).endVertex();
             }
             case DOWN -> {
                 final float u2 = stillTexture.getU(pUOffset + size.z * textureScale);
                 final float v2 = stillTexture.getV(pVOffset + size.x * textureScale);
-                buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(r, g, b, a).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.dnw).setNormal(0f, -1f, 0f);
-                buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(r, g, b, a).setUv(u2, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.dne).setNormal(0f, -1f, 0f);
-                buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(r, g, b, a).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.dse).setNormal(0f, -1f, 0f);
-                buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(r, g, b, a).setUv(u1, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.dsw).setNormal(0f, -1f, 0f);
+                buffer.vertex(matrix4f, -sX, -sY, -sZ).color(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.dnw).normal(0f, -1f, 0f).endVertex();
+                buffer.vertex(matrix4f, sX, -sY, -sZ).color(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.dne).normal(0f, -1f, 0f).endVertex();
+                buffer.vertex(matrix4f, sX, -sY, sZ).color(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.dse).normal(0f, -1f, 0f).endVertex();
+                buffer.vertex(matrix4f, -sX, -sY, sZ).color(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.dsw).normal(0f, -1f, 0f).endVertex();
             }
             case SOUTH -> {
                 final float u2 = stillTexture.getU(pUOffset + size.x * textureScale);
                 final float v2 = stillTexture.getV(pVOffset + size.y * textureScale);
-                buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(r, g, b, a).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.sde).setNormal(0f, 0f, 1f);
-                buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(r, g, b, a).setUv(u2, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.sdw).setNormal(0f, 0f, 1f);
-                buffer.addVertex(matrix4f, sX, sY, sZ).setColor(r, g, b, a).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.sue).setNormal(0f, 0f, 1f);
-                buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(r, g, b, a).setUv(u1, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.suw).setNormal(0f, 0f, 1f);
+                buffer.vertex(matrix4f, -sX, -sY, sZ).color(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.sde).normal(0f, 0f, 1f).endVertex();
+                buffer.vertex(matrix4f, sX, -sY, sZ).color(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.sdw).normal(0f, 0f, 1f).endVertex();
+                buffer.vertex(matrix4f, sX, sY, sZ).color(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.sue).normal(0f, 0f, 1f).endVertex();
+                buffer.vertex(matrix4f, -sX, sY, sZ).color(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.suw).normal(0f, 0f, 1f).endVertex();
             }
             case NORTH -> {
                 final float u2 = stillTexture.getU(pUOffset + size.x * textureScale);
                 final float v2 = stillTexture.getV(pVOffset + size.y * textureScale);
-                buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(r, g, b, a).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.ndw).setNormal(0f, 0f, -1f);
-                buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(r, g, b, a).setUv(u1, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.nuw).setNormal(0f, 0f, -1f);
-                buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(r, g, b, a).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.nue).setNormal(0f, 0f, -1f);
-                buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(r, g, b, a).setUv(u2, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.nde).setNormal(0f, 0f, -1f);
+                buffer.vertex(matrix4f, -sX, -sY, -sZ).color(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.ndw).normal(0f, 0f, -1f).endVertex();
+                buffer.vertex(matrix4f, -sX, sY, -sZ).color(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.nuw).normal(0f, 0f, -1f).endVertex();
+                buffer.vertex(matrix4f, sX, sY, -sZ).color(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.nue).normal(0f, 0f, -1f).endVertex();
+                buffer.vertex(matrix4f, sX, -sY, -sZ).color(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.nde).normal(0f, 0f, -1f).endVertex();
             }
             case EAST -> {
                 final float u2 = stillTexture.getU(pUOffset + size.y * textureScale);
                 final float v2 = stillTexture.getV(pVOffset + size.z * textureScale);
-                buffer.addVertex(matrix4f, sX, -sY, -sZ).setColor(r, g, b, a).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.edn).setNormal(1f, 0f, 0f);
-                buffer.addVertex(matrix4f, sX, sY, -sZ).setColor(r, g, b, a).setUv(u2, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.eun).setNormal(1f, 0f, 0f);
-                buffer.addVertex(matrix4f, sX, sY, sZ).setColor(r, g, b, a).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.eus).setNormal(1f, 0f, 0f);
-                buffer.addVertex(matrix4f, sX, -sY, sZ).setColor(r, g, b, a).setUv(u1, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.eds).setNormal(1f, 0f, 0f);
+                buffer.vertex(matrix4f, sX, -sY, -sZ).color(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.edn).normal(1f, 0f, 0f).endVertex();
+                buffer.vertex(matrix4f, sX, sY, -sZ).color(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.eun).normal(1f, 0f, 0f).endVertex();
+                buffer.vertex(matrix4f, sX, sY, sZ).color(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.eus).normal(1f, 0f, 0f).endVertex();
+                buffer.vertex(matrix4f, sX, -sY, sZ).color(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.eds).normal(1f, 0f, 0f).endVertex();
             }
             case WEST -> {
                 final float u2 = stillTexture.getU(pUOffset + size.y * textureScale);
                 final float v2 = stillTexture.getV(pVOffset + size.z * textureScale);
-                buffer.addVertex(matrix4f, -sX, -sY, -sZ).setColor(r, g, b, a).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.wdn).setNormal(-1f, 0f, 0f);
-                buffer.addVertex(matrix4f, -sX, -sY, sZ).setColor(r, g, b, a).setUv(u1, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.wds).setNormal(-1f, 0f, 0f);
-                buffer.addVertex(matrix4f, -sX, sY, sZ).setColor(r, g, b, a).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.wus).setNormal(-1f, 0f, 0f);
-                buffer.addVertex(matrix4f, -sX, sY, -sZ).setColor(r, g, b, a).setUv(u2, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightMap.wun).setNormal(-1f, 0f, 0f);
+                buffer.vertex(matrix4f, -sX, -sY, -sZ).color(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.wdn).normal(-1f, 0f, 0f).endVertex();
+                buffer.vertex(matrix4f, -sX, -sY, sZ).color(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.wds).normal(-1f, 0f, 0f).endVertex();
+                buffer.vertex(matrix4f, -sX, sY, sZ).color(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.wus).normal(-1f, 0f, 0f).endVertex();
+                buffer.vertex(matrix4f, -sX, sY, -sZ).color(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightMap.wun).normal(-1f, 0f, 0f).endVertex();
             }
         }
         poseStack.popPose();
@@ -167,7 +167,7 @@ public final class RenderUtil {
 
     public static void drawSphere(PoseStack poseStack, VertexConsumer consumer, float radius, float r, float g, float b, float a, int sectors, int stacks) {
         Matrix4f matrix4f = poseStack.last().pose();
-        TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(ResourceLocation.withDefaultNamespace("block/dirt"));
+        TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(new ResourceLocation("block/dirt"));
 
         float z, xy;
         float nx1, ny1, nz1, nx2, ny2, nz2, nx3, ny3, nz3, nx4, ny4, nz4, lengthInv = (1.0f / radius); // vertex normal
@@ -230,10 +230,10 @@ public final class RenderUtil {
                 v1 -= (texture.getV1() - texture.getV0()) / stacks;
                 v2 -= (texture.getV1() - texture.getV0()) / stacks;
 
-                consumer.addVertex(matrix4f, x1, y1, z).setColor(r, g, b, a).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(nx1, ny1, nz1);
-                consumer.addVertex(matrix4f, x2, y2, z).setColor(r, g, b, a).setUv(u2, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(nx2, ny2, nz2);
-                consumer.addVertex(matrix4f, x3, y3, z3).setColor(r, g, b, a).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(nx3, ny3, nz3);
-                consumer.addVertex(matrix4f, x4, y4, z4).setColor(r, g, b, a).setUv(u1, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(nx4, ny4, nz4);
+                consumer.vertex(matrix4f, x1, y1, z).color(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx1, ny1, nz1).endVertex();
+                consumer.vertex(matrix4f, x2, y2, z).color(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx2, ny2, nz2).endVertex();
+                consumer.vertex(matrix4f, x3, y3, z3).color(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx3, ny3, nz3).endVertex();
+                consumer.vertex(matrix4f, x4, y4, z4).color(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx4, ny4, nz4).endVertex();
 
             }
         }
@@ -241,7 +241,7 @@ public final class RenderUtil {
 
     public static void drawTorus(PoseStack poseStack, VertexConsumer consumer, float majorRadius, float minorRadius, float r, float g, float b, float a, int sides, int rings) {
         Matrix4f matrix4f = poseStack.last().pose();
-        TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(ResourceLocation.withDefaultNamespace("block/crimson_stem"));
+        TextureAtlasSprite texture = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(new ResourceLocation("block/crimson_stem"));
 
         float x, y, z;
         float nx, ny, nz;
@@ -289,7 +289,7 @@ public final class RenderUtil {
                 nx = x - centerX;
                 ny = y - centerY;
                 nz = z;
-                consumer.addVertex(matrix4f, x, y, z).setColor(r, g, b, a).setUv(u1, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(nx, ny, nz);
+                consumer.vertex(matrix4f, x, y, z).color(r, g, b, a).uv(u1, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx, ny, nz).endVertex();
 
                 // Calculate vertex positions
                 x = centerX + minorRadius * cosSideAngle * cosRingAngle;
@@ -301,7 +301,7 @@ public final class RenderUtil {
                 ny = y - centerY;
                 nz = z;
 
-                consumer.addVertex(matrix4f, x, y, z).setColor(r, g, b, a).setUv(u1, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(nx, ny, nz);
+                consumer.vertex(matrix4f, x, y, z).color(r, g, b, a).uv(u1, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx, ny, nz).endVertex();
 
                 x = nextCenterX + minorRadius * cosSideAngle * nextCosRingAngle;
                 y = nextCenterY + minorRadius * cosSideAngle * nextSinRingAngle;
@@ -310,7 +310,7 @@ public final class RenderUtil {
                 nx = x - nextCenterX;
                 ny = y - nextCenterY;
                 nz = z;
-                consumer.addVertex(matrix4f, x, y, z).setColor(r, g, b, a).setUv(u2, v2).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(nx, ny, nz);
+                consumer.vertex(matrix4f, x, y, z).color(r, g, b, a).uv(u2, v2).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx, ny, nz).endVertex();
 
 
                 x = nextCenterX + minorRadius * nextCosSideAngle * nextCosRingAngle;
@@ -320,7 +320,7 @@ public final class RenderUtil {
                 nx = x - nextCenterX;
                 ny = y - nextCenterY;
                 nz = z;
-                consumer.addVertex(matrix4f, x, y, z).setColor(r, g, b, a).setUv(u2, v1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0).setNormal(nx, ny, nz);
+                consumer.vertex(matrix4f, x, y, z).color(r, g, b, a).uv(u2, v1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0).normal(nx, ny, nz).endVertex();
             }
         }
     }

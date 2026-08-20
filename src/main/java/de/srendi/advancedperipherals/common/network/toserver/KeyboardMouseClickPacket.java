@@ -1,19 +1,17 @@
 package de.srendi.advancedperipherals.common.network.toserver;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraftforge.network.NetworkEvent;
+
+import java.util.function.Supplier;
 
 public class KeyboardMouseClickPacket implements IAPPacket {
-
-    public static final Type<KeyboardMouseClickPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("keyboard_mouse_click"));
 
     private final int button;
     private final boolean isRelease;
@@ -23,16 +21,14 @@ public class KeyboardMouseClickPacket implements IAPPacket {
         this.isRelease = isRelease;
     }
 
-    public KeyboardMouseClickPacket(RegistryFriendlyByteBuf buffer) {
+    public KeyboardMouseClickPacket(FriendlyByteBuf buffer) {
         this.button = buffer.readVarInt();
         this.isRelease = buffer.readBoolean();
     }
 
     @Override
-    public void handle(IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer player)) {
-            return;
-        }
+    public void handle(Supplier<NetworkEvent.Context> context) {
+        ServerPlayer player = context.get().getSender();
 
         ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
         if (smartGlasses.isEmpty()) {
@@ -46,13 +42,8 @@ public class KeyboardMouseClickPacket implements IAPPacket {
     }
 
     @Override
-    public void write(RegistryFriendlyByteBuf buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeVarInt(button);
         buffer.writeBoolean(isRelease);
-    }
-
-    @Override
-    public Type<? extends CustomPacketPayload> type() {
-        return TYPE;
     }
 }

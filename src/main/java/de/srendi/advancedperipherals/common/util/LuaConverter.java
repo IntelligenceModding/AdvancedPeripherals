@@ -1,14 +1,10 @@
 package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
-import mekanism.api.MekanismAPI;
-import mekanism.api.MekanismAPITags;
-import mekanism.api.chemical.Chemical;
-import mekanism.api.chemical.ChemicalStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -33,9 +29,9 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
-import net.neoforged.neoforge.common.IShearable;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidType;
+import net.minecraftforge.common.IForgeShearable;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.joml.Matrix3dc;
@@ -185,7 +181,7 @@ public class LuaConverter {
                 data.put("lastDamageSource", lastDamageSource == null ? null : lastDamageSource.toString());
                 Map<String, Object> effMap = new HashMap<>();
                 entity.getActiveEffectsMap().forEach((key, value) -> {
-                    effMap.put(key.value().getDescriptionId(), effectToLua(value));
+                    effMap.put(key.getDescriptionId(), effectToLua(value));
                 });
                 data.put("effects", effMap);
             }
@@ -195,8 +191,8 @@ public class LuaConverter {
         });
         registerEntityConverter(Animal.class, (entity, data, ctx) -> {
             data.put("inLove", entity.isInLove());
-            if (ctx.detailed() && !ctx.itemInHand().isEmpty() && entity instanceof IShearable shareable) {
-                data.put("shareable", shareable.isShearable(null, ctx.itemInHand(), entity.level(), entity.blockPosition()));
+            if (ctx.detailed() && !ctx.itemInHand().isEmpty() && entity instanceof IForgeShearable shareable) {
+                data.put("shareable", shareable.isShearable(ctx.itemInHand(), entity.level(), entity.blockPosition()));
             }
         });
         registerEntityConverter(Player.class, (entity, data, ctx) -> {
@@ -289,17 +285,6 @@ public class LuaConverter {
         return properties;
     }
 
-    public static Map<String, Object> chemicalToLua(@NotNull Object /*Chemical*/ chemical0) {
-        Chemical chemical = (Chemical) chemical0;
-        Holder<Chemical> chemicalHolder = MekanismAPI.CHEMICAL_REGISTRY.wrapAsHolder(chemical);
-        Map<String, Object> properties = new HashMap<>();
-        properties.put("name", ChemicalUtil.getRegistryKey(chemical).toString());
-        properties.put("tags", getHolderTags(chemicalHolder));
-        properties.put("isGaseous", chemicalHolder.is(MekanismAPITags.Chemicals.GASEOUS));
-        properties.put("radioactivity", chemical.isRadioactive());
-        return properties;
-    }
-
     public static Map<String, Object> itemStackToLuaNoCount(@NotNull ItemStack stack) {
         if (stack.isEmpty()) {
             return null;
@@ -307,9 +292,8 @@ public class LuaConverter {
         Map<String, Object> properties = itemToLua(stack.getItem());
         properties.put("displayName", stack.getDisplayName().getString());
         properties.put("maxStackSize", stack.getMaxStackSize());
-        properties.put("prototype", DataComponentUtil.mapToLua(stack.getPrototype()));
-        properties.put("components", DataComponentUtil.patchToLua(stack.getComponentsPatch()));
-        properties.put("nbt", FingerprintUtil.hash(stack.getComponentsPatch()));
+        properties.put("components", NBTUtil.toLua(stack.getTag()));
+        properties.put("nbt", FingerprintUtil.hash(stack.getTag()));
         return properties;
     }
 
@@ -328,21 +312,10 @@ public class LuaConverter {
         }
         Map<String, Object> properties = fluidToLua(stack.getFluid());
         properties.put("count", stack.getAmount());
-        properties.put("displayName", stack.getHoverName().getString());
-        properties.put("type", fluidTypeToLua(stack.getFluidType()));
-        properties.put("components", DataComponentUtil.patchToLua(stack.getComponentsPatch()));
-        properties.put("nbt", FingerprintUtil.hash(stack.getComponentsPatch()));
-        return properties;
-    }
-
-    public static Map<String, Object> chemicalStackToLua(@NotNull Object /*ChemicalStack*/ stack0) {
-        ChemicalStack stack = (ChemicalStack) stack0;
-        if (stack.isEmpty()) {
-            return null;
-        }
-        Map<String, Object> properties = chemicalToLua(stack.getChemical());
-        properties.put("count", stack.getAmount());
-        properties.put("displayName", stack.getTextComponent().getString());
+        properties.put("displayName", stack.getDisplayName().getString());
+        properties.put("type", fluidTypeToLua(stack.getFluid().getFluidType()));
+        properties.put("components", NBTUtil.toLua(stack.getTag()));
+        properties.put("nbt", FingerprintUtil.hash(stack.getTag()));
         return properties;
     }
 
@@ -375,16 +348,6 @@ public class LuaConverter {
             return null;
         }
         Map<String, Object> properties = fluidStackToLua(fluidStack);
-        properties.put("count", count);
-        return properties;
-    }
-
-    public static Map<String, Object> chemicalStackToLua(@NotNull Object /*ChemicalStack*/ chemicalStack0, long count) {
-        ChemicalStack chemicalStack = (ChemicalStack) chemicalStack0;
-        if (chemicalStack.isEmpty()) {
-            return null;
-        }
-        Map<String, Object> properties = chemicalStackToLua(chemicalStack);
         properties.put("count", count);
         return properties;
     }
