@@ -2,8 +2,8 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.GenericStack;
-import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
+// import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+// import com.refinedmods.refinedstorage.common.support.resource.ItemResource;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.LuaValues;
@@ -114,16 +114,16 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         return false;
     }
 
-    @Override
-    public boolean testRS(ResourceAmount resourceAmount) {
-        if (!APAddon.REFINEDSTORAGE.isLoaded())
-            return false;
+    // @Override
+    // public boolean testRS(ResourceAmount resourceAmount) {
+    //     if (!APAddon.REFINEDSTORAGE.isLoaded())
+    //         return false;
 
-        if (resourceAmount.resource() instanceof ItemResource itemResource) {
-            return test(itemResource.toItemStack(1));
-        }
-        return false;
-    }
+    //     if (resourceAmount.resource() instanceof ItemResource itemResource) {
+    //         return test(itemResource.toItemStack(1));
+    //     }
+    //     return false;
+    // }
 
     @Override
     public ItemFilter copy() {

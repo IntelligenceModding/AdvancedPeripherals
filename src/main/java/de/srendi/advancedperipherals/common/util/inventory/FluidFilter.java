@@ -2,9 +2,9 @@ package de.srendi.advancedperipherals.common.util.inventory;
 
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.GenericStack;
-import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
-import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
-import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
+// import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+// import com.refinedmods.refinedstorage.common.support.resource.FluidResource;
+// import com.refinedmods.refinedstorage.neoforge.support.resource.VariantUtil;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.LuaValues;
@@ -111,17 +111,17 @@ public class FluidFilter extends GenericFilter<FluidStack> {
         return false;
     }
 
-    @Override
-    public boolean testRS(ResourceAmount resourceAmount) {
-        if (!APAddon.REFINEDSTORAGE.isLoaded()) {
-            return false;
-        }
+    // @Override
+    // public boolean testRS(ResourceAmount resourceAmount) {
+    //     if (!APAddon.REFINEDSTORAGE.isLoaded()) {
+    //         return false;
+    //     }
 
-        if (resourceAmount.resource() instanceof FluidResource fluidResource) {
-            return test(VariantUtil.toFluidStack(fluidResource, 1));
-        }
-        return false;
-    }
+    //     if (resourceAmount.resource() instanceof FluidResource fluidResource) {
+    //         return test(VariantUtil.toFluidStack(fluidResource, 1));
+    //     }
+    //     return false;
+    // }
 
     @Override
     public FluidFilter copy() {

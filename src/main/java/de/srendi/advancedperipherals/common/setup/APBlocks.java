@@ -78,9 +78,9 @@ public class APBlocks {
     @DefaultTranslation("ME Bridge")
     @DefaultTooltip("&7The ME Bridge interacts with Applied Energistics to manage your items.")
     public static final RegistryObject<APBlockEntityBlock<?>> ME_BRIDGE = register("me_bridge", () -> new APBlockEntityBlock<>(APAddon.AE2.isLoaded() ? APBlockEntityTypes.ME_BRIDGE : null), () -> new APBlockItem(APBlocks.ME_BRIDGE.get(), APConfig.PERIPHERALS_CONFIG.enableMEBridge));
-    @DefaultTranslation("RS Bridge")
-    @DefaultTooltip("&7The RS Bridge interacts with Refined Storage to manage your items.")
-    public static final RegistryObject<APBlockEntityBlock<?>> RS_BRIDGE = register("rs_bridge", () -> new APBlockEntityBlock<>(APAddon.REFINEDSTORAGE.isLoaded() ? APBlockEntityTypes.RS_BRIDGE : null), () -> new APBlockItem(APBlocks.RS_BRIDGE.get(), APConfig.PERIPHERALS_CONFIG.enableRSBridge));
+    // @DefaultTranslation("RS Bridge")
+    // @DefaultTooltip("&7The RS Bridge interacts with Refined Storage to manage your items.")
+    // public static final RegistryObject<APBlockEntityBlock<?>> RS_BRIDGE = register("rs_bridge", () -> new APBlockEntityBlock<>(APAddon.REFINEDSTORAGE.isLoaded() ? APBlockEntityTypes.RS_BRIDGE : null), () -> new APBlockItem(APBlocks.RS_BRIDGE.get(), APConfig.PERIPHERALS_CONFIG.enableRSBridge));
 
     @DefaultTranslation("Smart Rail")
     @DefaultTooltip("&7An advanced rail that can be controlled by computer.")

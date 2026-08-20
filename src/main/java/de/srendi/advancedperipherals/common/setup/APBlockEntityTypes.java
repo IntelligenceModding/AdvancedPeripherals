@@ -14,7 +14,7 @@ import de.srendi.advancedperipherals.common.blocks.blockentities.InventoryManage
 import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.NBTStorageEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.PlayerDetectorEntity;
-import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
+// import de.srendi.advancedperipherals.common.blocks.blockentities.RSBridgeEntity;
 import de.srendi.advancedperipherals.common.blocks.blockentities.SmartRailBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.RegistryObject;
@@ -39,7 +39,7 @@ public class APBlockEntityTypes {
     public static final RegistryObject<BlockEntityType<MEBridgeEntity>> ME_BRIDGE = APAddon.AE2.isLoaded() ? APRegistration.BLOCK_ENTITIES.register("me_bridge", () -> new BlockEntityType<>(MEBridgeEntity::new, Set.of(APBlocks.ME_BRIDGE.get()), null)) : null;
     public static final RegistryObject<BlockEntityType<NBTStorageEntity>> NBT_STORAGE = APRegistration.BLOCK_ENTITIES.register("nbt_storage", () -> new BlockEntityType<>(NBTStorageEntity::new, Set.of(APBlocks.NBT_STORAGE.get()), null));
     public static final RegistryObject<BlockEntityType<PlayerDetectorEntity>> PLAYER_DETECTOR = APRegistration.BLOCK_ENTITIES.register("player_detector", () -> new BlockEntityType<>(PlayerDetectorEntity::new, Set.of(APBlocks.PLAYER_DETECTOR.get()), null));
-    public static final RegistryObject<BlockEntityType<RSBridgeEntity>> RS_BRIDGE = APAddon.REFINEDSTORAGE.isLoaded() ? APRegistration.BLOCK_ENTITIES.register("rs_bridge", () -> new BlockEntityType<>(RSBridgeEntity::new, Set.of(APBlocks.RS_BRIDGE.get()), null)) : null;
+    // public static final RegistryObject<BlockEntityType<RSBridgeEntity>> RS_BRIDGE = APAddon.REFINEDSTORAGE.isLoaded() ? APRegistration.BLOCK_ENTITIES.register("rs_bridge", () -> new BlockEntityType<>(RSBridgeEntity::new, Set.of(APBlocks.RS_BRIDGE.get()), null)) : null;
     public static final RegistryObject<BlockEntityType<SmartRailBlockEntity>> SMART_RAIL = APRegistration.BLOCK_ENTITIES.register("smart_rail", () -> new BlockEntityType<>(SmartRailBlockEntity::new, Set.of(APBlocks.SMART_RAIL.get()), null));
 
 }

@@ -30,7 +30,7 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
         peripheralBlock(APBlocks.ENVIRONMENT_DETECTOR.get(), "front", "top");
         peripheralBlock(APBlocks.CHAT_BOX.get(), "front", "top");
         peripheralBlock(APBlocks.ME_BRIDGE.get(), "front", "top");
-        peripheralBlock(APBlocks.RS_BRIDGE.get(), "front", "top");
+        // peripheralBlock(APBlocks.RS_BRIDGE.get(), "front", "top");
         peripheralBlock(APBlocks.ENERGY_DETECTOR.get(), "front", "back", "top", "east");
         peripheralBlock(APBlocks.FLUID_DETECTOR.get(), "front", "back", "top", "east");
         peripheralBlock(APBlocks.GAS_DETECTOR.get(), "front", "back", "top", "east");

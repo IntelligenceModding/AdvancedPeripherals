@@ -6,7 +6,7 @@ import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
 import com.minecolonies.api.blocks.ModBlocks;
 import com.minecolonies.api.items.ModItems;
-import com.refinedmods.refinedstorage.common.misc.ProcessorItem;
+// import com.refinedmods.refinedstorage.common.misc.ProcessorItem;
 import dan200.computercraft.shared.ModRegistry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
@@ -46,8 +46,8 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
     private static final Block CASING = APBlocks.PERIPHERAL_CASING.get();
     private static final String HAS_ITEM = "has_item";
 
-    private static final com.refinedmods.refinedstorage.common.content.Items RS_ITEMS = com.refinedmods.refinedstorage.common.content.Items.INSTANCE;
-    private static final com.refinedmods.refinedstorage.common.content.Blocks RS_BLOCKS = com.refinedmods.refinedstorage.common.content.Blocks.INSTANCE;
+    // private static final com.refinedmods.refinedstorage.common.content.Items RS_ITEMS = com.refinedmods.refinedstorage.common.content.Items.INSTANCE;
+    // private static final com.refinedmods.refinedstorage.common.content.Blocks RS_BLOCKS = com.refinedmods.refinedstorage.common.content.Blocks.INSTANCE;
 
     public RecipesProvider(PackOutput output) {
         super(output);
@@ -434,23 +434,23 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             )
             .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APBlocks.ME_BRIDGE.get()));
 
-        ConditionalRecipe.builder()
-            .addCondition(modLoaded(APAddon.REFINEDSTORAGE.getModId()))
-            .addRecipe(
-                ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.RS_BRIDGE.get())
-                    .define('C', CASING)
-                    .define('P', RS_ITEMS.getProcessor(ProcessorItem.Type.ADVANCED))
-                    .define('I', RS_BLOCKS.getInterface())
-                    .define('X', com.refinedmods.refinedstorage.common.content.Tags.EXTERNAL_STORAGES)
-                    .define('E', com.refinedmods.refinedstorage.common.content.Tags.EXPORTERS)
-                    .define('R', com.refinedmods.refinedstorage.common.content.Tags.IMPORTERS)
-                    .pattern("PXP")
-                    .pattern("ECR")
-                    .pattern("PIP")
-                    .unlockedBy(HAS_ITEM, has(CASING))
-                    ::save
-            )
-            .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APBlocks.RS_BRIDGE.get()));
+        // ConditionalRecipe.builder()
+        //     .addCondition(modLoaded(APAddon.REFINEDSTORAGE.getModId()))
+        //     .addRecipe(
+        //         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.RS_BRIDGE.get())
+        //             .define('C', CASING)
+        //             .define('P', RS_ITEMS.getProcessor(ProcessorItem.Type.ADVANCED))
+        //             .define('I', RS_BLOCKS.getInterface())
+        //             .define('X', com.refinedmods.refinedstorage.common.content.Tags.EXTERNAL_STORAGES)
+        //             .define('E', com.refinedmods.refinedstorage.common.content.Tags.EXPORTERS)
+        //             .define('R', com.refinedmods.refinedstorage.common.content.Tags.IMPORTERS)
+        //             .pattern("PXP")
+        //             .pattern("ECR")
+        //             .pattern("PIP")
+        //             .unlockedBy(HAS_ITEM, has(CASING))
+        //             ::save
+        //     )
+        //     .build(recipeOutput, RecipeBuilder.getDefaultRecipeId(APBlocks.RS_BRIDGE.get()));
 
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.SMART_RAIL.get())
             .define('M', ModRegistry.Blocks.WIRED_MODEM_FULL.get())

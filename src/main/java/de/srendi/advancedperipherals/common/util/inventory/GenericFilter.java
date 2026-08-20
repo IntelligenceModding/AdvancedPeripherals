@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
 import appeng.api.stacks.GenericStack;
-import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
+// import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.common.addons.APAddon;
@@ -23,10 +23,10 @@ public abstract class GenericFilter<T> {
             return false;
         }
 
-        @Override
-        public boolean testRS(ResourceAmount resourceAmount) {
-            return false;
-        }
+        // @Override
+        // public boolean testRS(ResourceAmount resourceAmount) {
+        //     return false;
+        // }
 
         @Override
         public boolean test(Object toTest) {
@@ -84,7 +84,7 @@ public abstract class GenericFilter<T> {
     public abstract boolean testAE(GenericStack genericStack);
 
     // RS stuff
-    public abstract boolean testRS(ResourceAmount resourceAmount);
+    // public abstract boolean testRS(ResourceAmount resourceAmount);
 
     public abstract boolean test(T toTest);
 
