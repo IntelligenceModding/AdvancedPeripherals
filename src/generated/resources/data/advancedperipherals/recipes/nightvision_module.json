@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "N": {
+      "type": "forge:nbt",
+      "count": 1,
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"minecraft:night_vision\"}"
+    }
+  },
+  "pattern": [
+    "N",
+    "A"
+  ],
+  "result": {
+    "item": "advancedperipherals:nightvision_module"
+  },
+  "show_notification": true
+}

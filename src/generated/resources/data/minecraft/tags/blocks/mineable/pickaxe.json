@@ -1,0 +1,19 @@
+{
+  "values": [
+    "advancedperipherals:peripheral_casing",
+    "advancedperipherals:chat_box",
+    "advancedperipherals:distance_detector",
+    "advancedperipherals:environment_detector",
+    "advancedperipherals:geo_scanner",
+    "advancedperipherals:player_detector",
+    "advancedperipherals:energy_detector",
+    "advancedperipherals:fluid_detector",
+    "advancedperipherals:gas_detector",
+    "advancedperipherals:block_reader",
+    "advancedperipherals:nbt_storage",
+    "advancedperipherals:inventory_manager",
+    "advancedperipherals:colony_integrator",
+    "advancedperipherals:me_bridge",
+    "advancedperipherals:smart_rail"
+  ]
+}

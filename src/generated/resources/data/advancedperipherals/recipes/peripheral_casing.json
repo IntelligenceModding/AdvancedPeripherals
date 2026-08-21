@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "minecraft:iron_bars"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "R": {
+      "tag": "forge:storage_blocks/redstone"
+    }
+  },
+  "pattern": [
+    "IBI",
+    "BRB",
+    "IBI"
+  ],
+  "result": {
+    "item": "advancedperipherals:peripheral_casing"
+  },
+  "show_notification": true
+}

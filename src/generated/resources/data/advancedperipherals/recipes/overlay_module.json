@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "M": {
+      "item": "computercraft:monitor_advanced"
+    }
+  },
+  "pattern": [
+    "MAM"
+  ],
+  "result": {
+    "item": "advancedperipherals:overlay_module"
+  },
+  "show_notification": true
+}

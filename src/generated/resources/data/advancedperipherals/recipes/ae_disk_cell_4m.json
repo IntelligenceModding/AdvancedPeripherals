@@ -1,0 +1,40 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "key": {
+          "D": {
+            "item": "advancedperipherals:ae_disk_cell_1m"
+          },
+          "G": {
+            "item": "ae2:quartz_glass"
+          },
+          "P": {
+            "item": "ae2:calculation_processor"
+          },
+          "R": {
+            "tag": "forge:dusts/redstone"
+          }
+        },
+        "pattern": [
+          "RPR",
+          "DGD",
+          "RDR"
+        ],
+        "result": {
+          "item": "advancedperipherals:ae_disk_cell_4m"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}

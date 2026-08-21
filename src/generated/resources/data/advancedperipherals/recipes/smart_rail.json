@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "minecraft:activator_rail"
+    },
+    "D": {
+      "item": "minecraft:detector_rail"
+    },
+    "M": {
+      "item": "computercraft:wired_modem_full"
+    },
+    "P": {
+      "item": "minecraft:powered_rail"
+    }
+  },
+  "pattern": [
+    "D ",
+    "PM",
+    "A "
+  ],
+  "result": {
+    "item": "advancedperipherals:smart_rail"
+  },
+  "show_notification": true
+}

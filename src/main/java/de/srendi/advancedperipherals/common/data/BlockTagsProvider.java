@@ -51,7 +51,7 @@ public class BlockTagsProvider extends TagsProvider<Block> {
 
     @Override
     protected Path getPath(ResourceLocation block) {
-        return this.packOutput.getOutputFolder().resolve("data/" + block.getNamespace() + "/tags/block/" + block.getPath() + ".json");
+        return this.packOutput.getOutputFolder().resolve("data/" + block.getNamespace() + "/tags/blocks/" + block.getPath() + ".json");
     }
 
     @Override

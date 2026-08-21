@@ -1,0 +1,40 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "ae2"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "key": {
+          "D": {
+            "item": "advancedperipherals:ae_disk_cell_16m"
+          },
+          "G": {
+            "item": "ae2:quartz_glass"
+          },
+          "P": {
+            "item": "ae2:calculation_processor"
+          },
+          "R": {
+            "tag": "forge:dusts/glowstone"
+          }
+        },
+        "pattern": [
+          "RPR",
+          "DGD",
+          "RDR"
+        ],
+        "result": {
+          "item": "advancedperipherals:ae_disk_cell_64m"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}

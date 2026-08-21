@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.setup;
 import dan200.computercraft.api.pocket.PocketUpgradeSerialiser;
 import dan200.computercraft.api.turtle.TurtleUpgradeSerialiser;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -68,6 +69,7 @@ public class APRegistration {
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
+        APNetworking.init();
         event.enqueueWork(() -> {
             // CC:T's registries are not thread safe
             CCRegistration.registerMain();

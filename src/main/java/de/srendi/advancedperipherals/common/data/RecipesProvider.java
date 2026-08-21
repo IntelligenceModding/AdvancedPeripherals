@@ -4,14 +4,13 @@ package de.srendi.advancedperipherals.common.data;
 
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
-import com.minecolonies.api.blocks.ModBlocks;
-import com.minecolonies.api.items.ModItems;
 // import com.refinedmods.refinedstorage.common.misc.ProcessorItem;
 import dan200.computercraft.shared.ModRegistry;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
+import de.srendi.advancedperipherals.common.util.RawValue;
 import mekanism.common.registries.MekanismBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -21,6 +20,7 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
@@ -33,6 +33,7 @@ import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class RecipesProvider extends RecipeProvider implements IConditionBuilder {
 
@@ -401,9 +402,9 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
                 ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.COLONY_INTEGRATOR.get())
                     .define('A', CASING)
                     .define('O', ItemTags.LOGS)
-                    .define('B', ModItems.buildGoggles)
-                    .define('S', com.ldtteam.structurize.items.ModItems.buildTool.get())
-                    .define('R', ModBlocks.blockRack)
+                    .define('B', Ingredient.fromValues(Stream.of(new RawValue(new ResourceLocation("minecolonies", "build_goggles")))))
+                    .define('S', Ingredient.fromValues(Stream.of(new RawValue(new ResourceLocation("structurize", "sceptergold")))))
+                    .define('R', Ingredient.fromValues(Stream.of(new RawValue(new ResourceLocation("minecolonies", "blockminecoloniesrack")))))
                     .pattern("ORO")
                     .pattern("BAS")
                     .pattern("ORO")

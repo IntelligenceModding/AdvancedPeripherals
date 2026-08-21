@@ -43,7 +43,7 @@ public class APNetworking {
     private static final SimpleChannel NETWORK_CHANNEL = NetworkRegistry.newSimpleChannel(AdvancedPeripherals.getRL("main_channel"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
     private static int id = 0;
 
-    private static void init() {
+    public static void init() {
         registerServerToClient(KeyboardMouseCapturePacket.class, KeyboardMouseCapturePacket::new);
         registerServerToClient(NarrateToClientPacket.class, NarrateToClientPacket::new);
         registerServerToClient(RenderableObjectAddPacket.class, RenderableObjectAddPacket::new);

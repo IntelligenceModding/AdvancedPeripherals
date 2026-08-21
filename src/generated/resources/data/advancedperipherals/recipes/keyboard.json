@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "B": {
+      "tag": "minecraft:buttons"
+    },
+    "G": {
+      "tag": "forge:ingots/gold"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "BGB",
+    "BAB"
+  ],
+  "result": {
+    "item": "advancedperipherals:keyboard"
+  },
+  "show_notification": true
+}

@@ -101,7 +101,7 @@ legacyForge {
         data {
             data()
 
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+            programArguments.addAll '--mod', "${mod_id}", '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
     }
@@ -307,10 +307,12 @@ dependencies {
     modCompileOnly "com.ldtteam:minecolonies:${minecolonies_version}"
     modCompileOnly "com.ldtteam:structurize:${structurize_version}"
     if (!minimumRuntime) {
-        modRuntimeOnly "com.ldtteam:blockui:${blockui_version}"
-        modRuntimeOnly "curse.maven:domum-ornamentum-527361:${domumornamentum_version}"
-        modRuntimeOnly "com.ldtteam:minecolonies:${minecolonies_version}"
-        modRuntimeOnly "com.ldtteam:structurize:${structurize_version}"
+        if (!project.gradle.startParameter.taskNames.contains("runData")) {
+            modRuntimeOnly "com.ldtteam:blockui:${blockui_version}"
+            modRuntimeOnly "curse.maven:domum-ornamentum-527361:${domumornamentum_version}"
+            modRuntimeOnly "com.ldtteam:minecolonies:${minecolonies_version}"
+            modRuntimeOnly "com.ldtteam:structurize:${structurize_version}"
+        }
     }
 
     // Patchouli

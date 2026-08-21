@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "computercraft:pocket_computer_advanced"
+    },
+    "G": {
+      "tag": "forge:glass_panes/colorless"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "pattern": [
+    "G G",
+    "IAI",
+    "I I"
+  ],
+  "result": {
+    "item": "advancedperipherals:smart_glasses"
+  },
+  "show_notification": true
+}

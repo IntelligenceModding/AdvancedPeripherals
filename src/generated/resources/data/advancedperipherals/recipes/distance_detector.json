@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "advancedperipherals:peripheral_casing"
+    },
+    "D": {
+      "tag": "forge:gems/diamond"
+    },
+    "G": {
+      "tag": "forge:glass"
+    },
+    "O": {
+      "item": "minecraft:observer"
+    },
+    "R": {
+      "tag": "forge:storage_blocks/redstone"
+    }
+  },
+  "pattern": [
+    "GDG",
+    "GCG",
+    "ROR"
+  ],
+  "result": {
+    "item": "advancedperipherals:distance_detector"
+  },
+  "show_notification": true
+}

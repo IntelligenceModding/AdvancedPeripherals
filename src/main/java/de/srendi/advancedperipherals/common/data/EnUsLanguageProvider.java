@@ -10,7 +10,6 @@ import de.srendi.advancedperipherals.lib.annotation.DefaultTooltip;
 import de.srendi.advancedperipherals.lib.annotation.DefaultTranslation;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -167,17 +165,5 @@ public class EnUsLanguageProvider extends LanguageProvider {
                 consumer.accept((U) value, tr);
             }
         }
-    }
-
-    @Override
-    public CompletableFuture<?> run(CachedOutput output) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'run'");
-    }
-
-    @Override
-    public String getName() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getName'");
     }
 }

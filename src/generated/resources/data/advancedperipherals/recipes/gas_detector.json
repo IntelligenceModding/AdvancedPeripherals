@@ -1,0 +1,43 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "forge:mod_loaded",
+          "modid": "mekanism"
+        }
+      ],
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "redstone",
+        "key": {
+          "A": {
+            "item": "advancedperipherals:peripheral_casing"
+          },
+          "B": {
+            "item": "mekanism:basic_pressurized_tube"
+          },
+          "C": {
+            "item": "minecraft:comparator"
+          },
+          "G": {
+            "tag": "forge:ingots/gold"
+          },
+          "P": {
+            "item": "minecraft:piston"
+          }
+        },
+        "pattern": [
+          "BPB",
+          "CAC",
+          "BGB"
+        ],
+        "result": {
+          "item": "advancedperipherals:gas_detector"
+        },
+        "show_notification": true
+      }
+    }
+  ]
+}
