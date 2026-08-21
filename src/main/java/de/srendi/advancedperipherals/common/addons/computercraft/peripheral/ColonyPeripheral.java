@@ -287,6 +287,6 @@ public class ColonyPeripheral extends BasePeripheral<IPeripheralOwner> {
     @Nullable
     private IColony getColonyWithoutPermission() {
         IMinecoloniesAPI api = IMinecoloniesAPI.getInstance();
-        return api.getColonyManager().getColonyByPosFromWorld(getLevel(), getPos());
+        return api.getColonyManager().getColonyByPosFromWorld(getLevel(), getPhysicsBlockPos());
     }
 }
