@@ -162,7 +162,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
             computer.setEntity(entity);
         }
 
-        if (computer.updateStack(stack)) {
+        if (computer.updateStack(stack, false)) {
             changed = true;
         }
 

@@ -148,7 +148,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
         } else {
             this.computer.setModuleStack(slot - SmartGlassesSlot.MODULE_SLOT_OFFSET, stack);
         }
-        this.computer.updateStack(this.glasses);
+        this.computer.updateStack(this.glasses, true);
     }
 
     public static final void saveItems(ItemStack glasses, ItemStackStorage items) {

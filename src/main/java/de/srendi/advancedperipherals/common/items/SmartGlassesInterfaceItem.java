@@ -13,7 +13,6 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class SmartGlassesInterfaceItem extends BaseItem {
@@ -42,15 +41,13 @@ public class SmartGlassesInterfaceItem extends BaseItem {
             computer.turnOn();
         }
 
-        IItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer);
-        if (itemHandler != null) {
-            PlatformHelper.get().openMenu(
-                player,
-                glasses.getHoverName(),
-                new SmartGlassesMenuProvider(computer, glasses, itemHandler)::createMenu,
-                new ComputerContainerData(computer, glasses)
-            );
-        }
+        SmartGlassesItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer);
+        PlatformHelper.get().openMenu(
+            player,
+            glasses.getHoverName(),
+            new SmartGlassesMenuProvider(computer, glasses, itemHandler)::createMenu,
+            new ComputerContainerData(computer, glasses)
+        );
 
         return InteractionResultHolder.consume(handItemStack);
     }
