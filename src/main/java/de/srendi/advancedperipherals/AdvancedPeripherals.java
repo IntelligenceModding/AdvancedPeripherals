@@ -14,6 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,8 +30,9 @@ public class AdvancedPeripherals {
     public static final Logger LOGGER = LogManager.getLogger(NAME);
     public static final Random RANDOM = new Random();
 
-    public AdvancedPeripherals(IEventBus modBus) {
+    public AdvancedPeripherals() {
         LOGGER.info("AdvancedPeripherals says hello!");
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         APAddon.setup();
 

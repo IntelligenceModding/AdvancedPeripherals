@@ -17,6 +17,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 public class APRegistration {
 
@@ -43,7 +44,6 @@ public class APRegistration {
         APEntities.register();
         APCreativeTabs.register();
         APDataComponents.register();
-        APOverlayObjects.register();
         CCRegistration.register();
 
         BLOCKS.register(modEventBus);
@@ -59,6 +59,12 @@ public class APRegistration {
         OVERLAY_OBJECTS.register(modEventBus);
 
         modEventBus.addListener(APRegistration::onCommonSetup);
+    }
+
+    private static void onRegister(RegisterEvent event) {
+        if (event.getRegistryKey() == APRegistries.OVERLAY_OBJECTS) {
+            APOverlayObjects.register();
+        }
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
