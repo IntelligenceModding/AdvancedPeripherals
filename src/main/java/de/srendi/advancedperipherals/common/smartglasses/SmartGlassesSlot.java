@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
 import dan200.computercraft.core.computer.ComputerSide;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 

@@ -10,7 +10,6 @@ import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
-import de.srendi.advancedperipherals.common.setup.APRegistries;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.PropertyType;
