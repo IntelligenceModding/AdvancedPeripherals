@@ -130,7 +130,7 @@ public class SmartGlassesItem extends ArmorItem {
             computer.setEntity(entity);
         }
 
-        if (computer.updateStack(stack)) {
+        if (computer.updateStack(stack, false)) {
             changed = true;
         }
 

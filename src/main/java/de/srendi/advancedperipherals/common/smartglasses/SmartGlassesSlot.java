@@ -1,7 +1,8 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
 import dan200.computercraft.core.computer.ComputerSide;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
 public class SmartGlassesSlot extends SlotItemHandler {
@@ -16,8 +17,9 @@ public class SmartGlassesSlot extends SlotItemHandler {
 
     public final SlotType slotType;
     private SlotType activeSlotType;
+    private ItemStack lastCopy = ItemStack.EMPTY;
 
-    public SmartGlassesSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition, SlotType slotType) {
+    public SmartGlassesSlot(IItemHandlerModifiable itemHandler, int index, int xPosition, int yPosition, SlotType slotType) {
         super(itemHandler, index, xPosition, yPosition);
         this.slotType = slotType;
         this.activeSlotType = SlotType.defaultType();

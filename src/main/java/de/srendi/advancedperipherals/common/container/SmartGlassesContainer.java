@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,7 @@ public class SmartGlassesContainer extends AbstractComputerMenu {
     public static final int PLAYER_START_Y = 134;
     public static final int PLAYER_START_X = AbstractComputerMenu.SIDEBAR_WIDTH + BORDER;
 
-    protected SmartGlassesContainer(int id, Predicate<Player> canUse, SmartGlassesComputer computer, Inventory inventory, IItemHandler handler, ComputerContainerData data) {
+    protected SmartGlassesContainer(int id, Predicate<Player> canUse, SmartGlassesComputer computer, Inventory inventory, IItemHandlerModifiable handler, ComputerContainerData data) {
         super(APContainerTypes.SMART_GLASSES_CONTAINER.get(), id, canUse, ComputerFamily.ADVANCED, computer, data);
 
         /*
@@ -70,7 +70,7 @@ public class SmartGlassesContainer extends AbstractComputerMenu {
         }
     }
 
-    public SmartGlassesContainer(int id, Predicate<Player> canUse, SmartGlassesComputer computer, Inventory inventory, IItemHandler handler) {
+    public SmartGlassesContainer(int id, Predicate<Player> canUse, SmartGlassesComputer computer, Inventory inventory, IItemHandlerModifiable handler) {
         this(id, canUse, computer, inventory, handler, null);
     }
 
@@ -88,34 +88,27 @@ public class SmartGlassesContainer extends AbstractComputerMenu {
     @Override
     @NotNull
     public ItemStack quickMoveStack(Player player, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
-        if (slot.hasItem()) {
-            ItemStack itemstack1 = slot.getItem();
-            itemstack = itemstack1.copy();
-            if (index >= 36) {
-                if (!this.moveItemStackTo(itemstack1, 0, 36, true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else {
-                if (!this.moveItemStackTo(itemstack1, 36, 36 + 11, true)) {
-                    return ItemStack.EMPTY;
-                }
-            }
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack srcStack = slot.getItem();
+        ItemStack left = srcStack.copy();
+        ItemStack wasMoving = srcStack.copy();
 
-            if (itemstack1.isEmpty()) {
-                slot.set(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-
-            if (itemstack1.getCount() == itemstack.getCount()) {
-                return ItemStack.EMPTY;
-            }
-
-            slot.onTake(player, itemstack1);
+        if (index >= Inventory.INVENTORY_SIZE) {
+            this.moveItemStackTo(left, 0, Inventory.INVENTORY_SIZE, false);
+        } else {
+            this.moveItemStackTo(left, Inventory.INVENTORY_SIZE, Inventory.INVENTORY_SIZE + 11, false);
         }
 
-        return itemstack;
+        if (ItemStack.isSameItemSameComponents(wasMoving, left)) {
+            return ItemStack.EMPTY;
+        }
+
+        slot.setByPlayer(left.isEmpty() ? ItemStack.EMPTY : left);
+        slot.setChanged();
+
+        return wasMoving;
     }
 }

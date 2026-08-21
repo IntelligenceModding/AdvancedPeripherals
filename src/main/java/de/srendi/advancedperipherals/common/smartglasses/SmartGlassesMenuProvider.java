@@ -8,16 +8,16 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SmartGlassesMenuProvider implements MenuProvider {
     private final SmartGlassesComputer computer;
     private final ItemStack stack;
-    private final IItemHandler glassesContainer;
+    private final IItemHandlerModifiable glassesContainer;
 
-    public SmartGlassesMenuProvider(SmartGlassesComputer computer, ItemStack stack, IItemHandler glassesContainer) {
+    public SmartGlassesMenuProvider(SmartGlassesComputer computer, ItemStack stack, IItemHandlerModifiable glassesContainer) {
         this.computer = computer;
         this.stack = stack;
         this.glassesContainer = glassesContainer;

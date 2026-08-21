@@ -97,7 +97,7 @@ public class OverlayModule implements IModule {
             return;
         }
         this.equipped = false;
-        PacketDistributor.sendToPlayer(player, new RenderableObjectClearPacket());
+        this.clear();
     }
 
     public void setScreenSizes(int screenWidth, int screenHeight, double guiScale) {

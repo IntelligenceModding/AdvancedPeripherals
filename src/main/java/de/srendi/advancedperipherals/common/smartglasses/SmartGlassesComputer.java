@@ -122,12 +122,16 @@ public class SmartGlassesComputer extends ServerComputer {
         return SmartGlassesItem.getEquipped(livingEntity) == this.stack;
     }
 
-    public boolean updateStack(ItemStack stack) {
+    public boolean updateStack(ItemStack stack, boolean keepFlags) {
         boolean changed = false;
-        this.stack = stack;
+        if (!keepFlags) {
+            this.stack = stack;
+        }
         ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
         if (this.upgradesUpdated) {
-            this.upgradesUpdated = false;
+            if (!keepFlags) {
+                this.upgradesUpdated = false;
+            }
             changed = true;
             synchronized (this.upgrades) {
                 for (int slot = 0; slot < SmartGlassesSlot.PERIPHERAL_SLOTS; slot++) {
@@ -137,7 +141,9 @@ public class SmartGlassesComputer extends ServerComputer {
             }
         }
         if (this.modulesUpdated) {
-            this.modulesUpdated = false;
+            if (!keepFlags) {
+                this.modulesUpdated = false;
+            }
             changed = true;
             for (int slot = 0; slot < SmartGlassesSlot.MODULE_SLOTS; slot++) {
                 ItemStack moduleStack = this.moduleItems.get(slot);
@@ -148,7 +154,9 @@ public class SmartGlassesComputer extends ServerComputer {
             SmartGlassesItemHandler.saveItems(stack, items);
         }
         if (this.moduleDatasUpdated) {
-            this.moduleDatasUpdated = false;
+            if (!keepFlags) {
+                this.moduleDatasUpdated = false;
+            }
             changed = true;
             stack.set(APDataComponents.MODULE_DATAS.get(), this.moduleDatas);
         }
