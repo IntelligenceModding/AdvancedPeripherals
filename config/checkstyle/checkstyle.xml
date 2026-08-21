@@ -125,11 +125,11 @@
         <module name="NoWhitespaceBefore" />
         <module name="SeparatorWrap">
             <property name="option" value="EOL" />
-            <property name="tokens" value="COMMA,SEMI,ELLIPSIS,ARRAY_DECLARATOR,RBRACK,METHOD_REF" />
+            <property name="tokens" value="COMMA,SEMI,ELLIPSIS,ARRAY_DECLARATOR,RBRACK" />
         </module>
         <module name="SeparatorWrap">
             <property name="option" value="NL" />
-            <property name="tokens" value="DOT,AT" />
+            <property name="tokens" value="DOT,AT,METHOD_REF" />
         </module>
         <module name="SingleSpaceSeparator" />
         <module name="TypecastParenPad" />

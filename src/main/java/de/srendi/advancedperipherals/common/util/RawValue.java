@@ -29,6 +29,7 @@ public class RawValue implements Ingredient.Value {
         return Collections.singleton(new ItemStack(RegistryUtil.getRegistryEntry(this.item.toString(), BuiltInRegistries.ITEM)));
     }
 
+    @Override
     @NotNull
     public JsonObject serialize() {
         JsonObject jsonobject = new JsonObject();

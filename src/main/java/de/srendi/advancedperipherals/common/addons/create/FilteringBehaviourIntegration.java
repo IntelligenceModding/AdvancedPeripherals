@@ -47,7 +47,7 @@ public class FilteringBehaviourIntegration implements APGenericPeripheral {
         if (!behaviour.setFilter(result.left())) {
             return MethodResult.of(false, "invalid filter");
         }
-        behaviour.count = Math.min(Math.max(filterTable.optInt("count").orElse(behaviour.getMaxStackSize()), 1), behaviour.getMaxStackSize());
+        behaviour.count = Math.min(Math.max(filterTable.optInt("count").orElse(behaviour.getFilter().getMaxStackSize()), 1), behaviour.getFilter().getMaxStackSize());
         behaviour.upTo = filterTable.optBoolean("upTo").orElse(true);
         return MethodResult.of(true);
     }

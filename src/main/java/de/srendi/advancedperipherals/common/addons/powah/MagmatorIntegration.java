@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.powah;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.lib.peripherals.APGenericPeripheral;
+import dev.architectury.hooks.fluid.forge.FluidStackHooksForge;
 import owmii.powah.block.magmator.MagmatorTile;
 
 public class MagmatorIntegration implements APGenericPeripheral {
@@ -30,6 +31,6 @@ public class MagmatorIntegration implements APGenericPeripheral {
     // getTank is thread safe
     @LuaFunction
     public final Object getFuelTank(MagmatorTile blockEntity) {
-        return LuaConverter.fluidStackToLua(blockEntity.getTank().getFluid());
+        return LuaConverter.fluidStackToLua(FluidStackHooksForge.toForge(blockEntity.getTank().getFluid()));
     }
 }

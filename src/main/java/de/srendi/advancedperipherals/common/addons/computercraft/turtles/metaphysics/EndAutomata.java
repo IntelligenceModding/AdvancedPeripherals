@@ -1,7 +1,6 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.turtles.metaphysics;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
-import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.metaphysics.EndAutomataCorePeripheral;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;

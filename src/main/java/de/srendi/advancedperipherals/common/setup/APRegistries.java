@@ -11,7 +11,8 @@ public final class APRegistries {
 
     private APRegistries() {}
 
-    public static final Registry<OverlayObjectType<?>> getOverlayObjectsRegistry() {
-        return (Registry<OverlayObjectType<?>>) BuiltInRegistries.REGISTRY.getOrThrow((ResourceKey<Registry<?>>) (ResourceKey<?>) OVERLAY_OBJECTS);
+    @SuppressWarnings("rawtypes")
+    public static Registry<OverlayObjectType<?>> getOverlayObjectsRegistry() {
+        return (Registry<OverlayObjectType<?>>) BuiltInRegistries.REGISTRY.getOrThrow((ResourceKey) (ResourceKey<?>) OVERLAY_OBJECTS);
     }
 }

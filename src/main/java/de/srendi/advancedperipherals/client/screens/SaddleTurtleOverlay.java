@@ -11,15 +11,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
-import org.jetbrains.annotations.NotNull;
 
 public class SaddleTurtleOverlay implements IGuiOverlay {
     public static final ResourceLocation ID = AdvancedPeripherals.getRL("saddle_turtle_overlay");
 
     private static final long ACTIVE_TIMEOUT = 5000;
 
-    private static final ResourceLocation JUMP_BAR_COOLDOWN_SPRITE = new ResourceLocation("hud/jump_bar_cooldown");
-    private static final ResourceLocation JUMP_BAR_PROGRESS_SPRITE = new ResourceLocation("hud/jump_bar_progress");
+    private static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
 
     private int fuelLevel = 0;
     private int fuelLimit = 0;
@@ -93,10 +91,10 @@ public class SaddleTurtleOverlay implements IGuiOverlay {
         int left = gui.guiWidth() / 2 - 91;
         int top = gui.guiHeight() - 32 + 3;
         RenderSystem.enableBlend();
-        gui.blitSprite(JUMP_BAR_COOLDOWN_SPRITE, left, top, width, 5);
+        gui.blit(GUI_ICONS_LOCATION, left, top, 0, 74, width, 5);
         if (fuelLevel > 0 && fuelLimit > 0) {
             int progWidth = fuelLevel * width / fuelLimit;
-            gui.blitSprite(JUMP_BAR_PROGRESS_SPRITE, width, 5, 0, 0, left, top, progWidth, 5);
+            gui.blit(GUI_ICONS_LOCATION, width, 5, 0, 0, left, top, 0, 89, progWidth, 5);
         }
         RenderSystem.disableBlend();
 

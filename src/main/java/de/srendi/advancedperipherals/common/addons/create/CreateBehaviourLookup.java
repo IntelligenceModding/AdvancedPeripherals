@@ -4,6 +4,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import dan200.computercraft.shared.peripheral.generic.ComponentLookup;
+import dan200.computercraft.shared.platform.InvalidateCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -13,10 +14,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiFunction;
 
-public record CreateBehaviourLookup<T extends BlockEntityBehaviour>(BehaviourType<T> behaviourType, BiFunction<T, SmartBlockEntity, ?> mapper) implements ComponentLookup {
+public record CreateBehaviourLookup<T extends BlockEntityBehaviour>(BehaviourType<T> behaviourType, BiFunction<T, SmartBlockEntity, ?> mapper) implements ComponentLookup<InvalidateCallback> {
     @Override
     @Nullable
-    public Object find(ServerLevel level, BlockPos pos, BlockState state, BlockEntity be, Direction side) {
+    public Object find(ServerLevel level, BlockPos pos, BlockState state, BlockEntity be, Direction side, InvalidateCallback invalidate) {
         if (be instanceof SmartBlockEntity smartBe) {
             T behaviour = smartBe.getBehaviour(this.behaviourType);
             if (behaviour != null) {

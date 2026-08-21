@@ -174,7 +174,7 @@ repositories {
     }
     maven {
         name = "Create Registrate maven"
-        url = "https://maven.ithundxr.dev/snapshots"
+        url = "https://maven.ithundxr.dev/mirror"
         content {
             includeGroup("com.tterrag.registrate")
         }
@@ -280,9 +280,15 @@ dependencies {
     }
 
     // Create
-    modCompileOnly "com.simibubi.create:create-${minecraft_version}:${create_version}:all"
+    modCompileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+    modCompileOnly "com.tterrag.registrate:Registrate:${registrate_version}"
+    modCompileOnly "dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"
+    modCompileOnly "net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"
     if (!minimumRuntime) {
-        modRuntimeOnly "com.simibubi.create:create-${minecraft_version}:${create_version}:all"
+        modRuntimeOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
+        modRuntimeOnly "com.tterrag.registrate:Registrate:${registrate_version}"
+        modRuntimeOnly "dev.engine-room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"
+        modRuntimeOnly "net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"
     }
 
     // Curios
@@ -315,8 +321,9 @@ dependencies {
 
     // Powah
     modCompileOnly "curse.maven:powah-633483:${powah_version}"
+    modCompileOnly "dev.architectury:architectury-forge:${architectury_version}"
     if (!minimumRuntime) {
-        modRuntimeOnly "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
+        modRuntimeOnly "me.shedaniel.cloth:cloth-config-forge:${cloth_config_version}"
         modRuntimeOnly "curse.maven:powah-633483:${powah_version}"
     }
 

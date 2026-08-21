@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.addons.create;
 
-import com.mojang.serialization.DataResult;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.logistics.box.PackageItem;
 import com.simibubi.create.content.logistics.filter.AttributeFilterItem;
@@ -8,27 +7,26 @@ import com.simibubi.create.content.logistics.filter.FilterItem;
 import com.simibubi.create.content.logistics.filter.FilterItemStack;
 import com.simibubi.create.content.logistics.filter.ListFilterItem;
 import com.simibubi.create.content.logistics.filter.PackageFilterItem;
+import com.simibubi.create.content.logistics.filter.FilterItemStack.AttributeFilterItemStack;
 import com.simibubi.create.content.logistics.item.filter.attribute.ItemAttribute;
-import com.simibubi.create.foundation.item.ItemHelper;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.ObjectLuaTable;
+import dan200.computercraft.shared.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
-import de.srendi.advancedperipherals.common.util.LuaOps;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.RegistryOps;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public final class CreateFilter {
@@ -54,11 +52,9 @@ public final class CreateFilter {
                 "attributes",
                 attributeFilter.attributeTests.stream()
                     .map((pair) -> {
-                        Map<Object, Object> data = new HashMap<>((Map<?, ?>) ItemAttribute.CODEC
-                            .encodeStart(RegistryOps.create(LuaOps.INSTANCE, registryAccess), pair.getFirst())
-                            .getOrThrow());
-                        data.put("inverted", pair.getSecond());
-                        return data;
+                        CompoundTag data = ItemAttribute.saveStatic(pair.getFirst());
+                        data.putBoolean("inverted", pair.getSecond());
+                        return NBTUtil.toLua(data);
                     })
                     .toList()
             );
@@ -94,8 +90,10 @@ public final class CreateFilter {
                 if (!(stack.getItem() instanceof ListFilterItem listFilterItem)) {
                     return Pair.onlyRight("existing filter item is not list filter");
                 }
-                stack.set(AllDataComponents.FILTER_ITEMS_BLACKLIST, data.optBoolean("blacklist").orElse(false));
-                stack.set(AllDataComponents.FILTER_ITEMS_RESPECT_NBT, !data.optBoolean("ignoreNBT").orElse(false));
+                CompoundTag tag = stack.getOrCreateTag();
+
+                tag.putBoolean("Blacklist", data.optBoolean("blacklist").orElse(false));
+                tag.putBoolean("RespectNBT", !data.optBoolean("ignoreNBT").orElse(false));
 
                 LuaTable<?, ?> filters = EmptyLuaTable.orEmpty(data.optTable("filters"));
                 ItemStackHandler handler = listFilterItem.getFilterItemHandler(stack);
@@ -106,7 +104,7 @@ public final class CreateFilter {
                     }
                     handler.setStackInSlot(slot, res.left());
                 }
-                stack.set(AllDataComponents.FILTER_ITEMS, ItemHelper.containerContentsFromHandler(handler));
+                tag.put("Items", handler.serializeNBT());
                 return Pair.onlyLeft(stack);
             }
             case "attribute" -> {
@@ -116,12 +114,14 @@ public final class CreateFilter {
                 if (!(stack.getItem() instanceof AttributeFilterItem)) {
                     return Pair.onlyRight("existing filter item is not attribute filter");
                 }
+                CompoundTag tag = stack.getOrCreateTag();
 
                 String modeOpt = data.optString("mode").orElse(null);
                 if (modeOpt != null) {
-                    AttributeFilterWhitelistMode mode = null;
-                    for (AttributeFilterWhitelistMode m : AttributeFilterWhitelistMode.values()) {
-                        if (m.getSerializedName().equals(modeOpt)) {
+                    modeOpt = modeOpt.toUpperCase(Locale.ROOT);
+                    AttributeFilterItemStack.WhitelistMode mode = null;
+                    for (AttributeFilterItemStack.WhitelistMode m : AttributeFilterItemStack.WhitelistMode.values()) {
+                        if (m.name().equals(modeOpt)) {
                             mode = m;
                             break;
                         }
@@ -129,24 +129,26 @@ public final class CreateFilter {
                     if (mode == null) {
                         return Pair.onlyRight("unexpected value for attributes filter mode: " + modeOpt);
                     }
-                    stack.set(AllDataComponents.ATTRIBUTE_FILTER_WHITELIST_MODE, mode);
+                    tag.putInt("WhitelistMode", mode.ordinal());
                 } else {
-                    stack.remove(AllDataComponents.ATTRIBUTE_FILTER_WHITELIST_MODE);
+                    tag.remove("WhitelistMode");
                 }
 
                 LuaTable<?, ?> attributes = EmptyLuaTable.orEmpty(data.optTable("attributes"));
-                List<ItemAttribute.ItemAttributeEntry> attrs = new ArrayList<>(attributes.size());
+                ListTag attrs = new ListTag();
                 for (int i = 1; i <= attributes.size(); i++) {
-                    LuaTable<?, ?> attribute = new ObjectLuaTable(attributes.getTable(i));
-                    boolean inverted = attribute.optBoolean("inverted").orElse(false);
-                    DataResult<ItemAttribute> attr = ItemAttribute.CODEC.parse(RegistryOps.create(LuaOps.INSTANCE, registryAccess), attribute);
-                    DataResult.Error<ItemAttribute> error = attr.error().orElse(null);
-                    if (error != null) {
-                        return Pair.onlyRight("cannot parse attributes: " + error.message());
+                    CompoundTag attribute = de.srendi.advancedperipherals.common.util.NBTUtil.mapToNBT(attributes.getTable(i));
+                    boolean inverted = attribute.getBoolean("inverted");
+                    ItemAttribute attr = ItemAttribute.loadStatic(attribute);
+                    if (attr == null) {
+                        return Pair.onlyRight("cannot parse attributes");
                     }
-                    attrs.add(new ItemAttribute.ItemAttributeEntry(attr.result().orElseThrow(), inverted));
+
+                    CompoundTag attr2 = ItemAttribute.saveStatic(attr);
+                    attr2.putBoolean("Inverted", inverted);
+                    attrs.add(attr2);
                 }
-                stack.set(AllDataComponents.ATTRIBUTE_FILTER_MATCHED_ATTRIBUTES, attrs);
+                tag.put("MatchedAttributes", attrs);
                 return Pair.onlyLeft(stack);
             }
             case "package" -> {
@@ -178,7 +180,7 @@ public final class CreateFilter {
                 ItemStack newStack = new ItemStack(item);
                 Map<?, ?> components = data.optTable("components").orElse(null);
                 if (components != null) {
-                    newStack.applyComponents(DataComponentUtil.luaToPatch(components, registryAccess));
+                    newStack.setTag(de.srendi.advancedperipherals.common.util.NBTUtil.mapToNBT(components));
                 }
                 return Pair.onlyLeft(newStack);
             }

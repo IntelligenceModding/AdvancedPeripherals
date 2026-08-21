@@ -4,8 +4,6 @@ import appeng.api.stacks.GenericStack;
 // import com.refinedmods.refinedstorage.api.resource.ResourceAmount;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaTable;
-import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.addons.mekanism.Mekanism;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.RegistryUtil;
 import net.minecraft.core.registries.BuiltInRegistries;

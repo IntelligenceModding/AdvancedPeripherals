@@ -10,14 +10,12 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -69,8 +67,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
     public void addAdditionalSaveData(CompoundTag storage) {}
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-
+    protected void defineSynchedData() {
     }
 
     @Override
@@ -146,18 +143,17 @@ public class TurtleEnderPearl extends ThrowableProjectile {
     }
 
     @Override
-    public boolean canChangeDimensions(@NotNull Level oldLevel, @NotNull Level newLevel) {
-        return !this.changedDim && super.canChangeDimensions(oldLevel, newLevel);
+    public boolean canChangeDimensions() {
+        return !this.changedDim && super.canChangeDimensions();
     }
 
     @Override
     @Nullable
-    public Entity changeDimension(@NotNull DimensionTransition transition) {
+    public Entity changeDimension(ServerLevel newLevel, net.minecraftforge.common.util.ITeleporter teleporter) {
         if (this.changedDim) {
             return null;
         }
-        ServerLevel newLevel = transition.newLevel();
-        Entity newEntity = super.changeDimension(transition);
+        Entity newEntity = super.changeDimension(newLevel, teleporter);
         this.changedDim = newEntity != null;
         if (newEntity instanceof TurtleEnderPearl newPearl) {
             AdvancedPeripherals.debug("Turtle Ender Pearl crossed to dimension {}", newLevel.dimension());

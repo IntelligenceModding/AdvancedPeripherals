@@ -19,7 +19,10 @@ public class BasinIntegration implements APGenericPeripheral {
 
     @LuaFunction(mainThread = true)
     public final List<Object> inputTanks(BasinBlockEntity blockEntity) {
-        IFluidHandler handler = blockEntity.getTanks().getFirst().getCapability();
+        IFluidHandler handler = blockEntity.getTanks().getFirst().getCapability().orElse(null);
+        if (handler == null) {
+            return List.of();
+        }
         int size = handler.getTanks();
         List<Object> tanks = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -30,7 +33,10 @@ public class BasinIntegration implements APGenericPeripheral {
 
     @LuaFunction(mainThread = true)
     public final List<Object> outputTanks(BasinBlockEntity blockEntity) {
-        IFluidHandler handler = blockEntity.getTanks().getSecond().getCapability();
+        IFluidHandler handler = blockEntity.getTanks().getSecond().getCapability().orElse(null);
+        if (handler == null) {
+            return List.of();
+        }
         int size = handler.getTanks();
         List<Object> tanks = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {

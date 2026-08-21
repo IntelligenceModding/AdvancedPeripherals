@@ -92,6 +92,7 @@ public class SmartGlassesSideAccess implements IPocketAccess {
         this.computer.invalidatePeripheral(this.side);
     }
 
+    @SuppressWarnings("removal")
     @Override
     public Map<ResourceLocation, IPeripheral> getUpgrades() {
         UpgradeData<IPocketUpgrade> upgrade = this.getUpgrade();

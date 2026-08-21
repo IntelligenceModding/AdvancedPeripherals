@@ -8,7 +8,6 @@ import de.srendi.advancedperipherals.common.items.MemoryCardItem;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -61,7 +60,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     }
 
     @Override
-    public boolean canPlaceItemThroughFace(int index, @NotNull ItemStack itemStackIn, @Nullable Direction direction) {
+    public boolean canPlaceItemThroughFace(int index, ItemStack itemStackIn, @Nullable Direction direction) {
         return itemStackIn.getItem() instanceof MemoryCardItem;
     }
 
@@ -71,8 +70,9 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
             super.setItem(index, stack);
             return;
         }
-        if (stack.getItem() instanceof MemoryCardItem && stack.has(OWNER)) {
-            this.owner = stack.remove(OWNER);
+        if (stack.getItem() instanceof MemoryCardItem && stack.hasTag() && stack.getTag().contains(OWNER)) {
+            this.owner = stack.getTag().getUUID(OWNER);
+            stack.removeTagKey(OWNER);
         } else {
             this.owner = null;
         }

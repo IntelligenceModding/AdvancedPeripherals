@@ -2,14 +2,12 @@ package de.srendi.advancedperipherals;
 
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
-import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,7 +37,6 @@ public class AdvancedPeripherals {
         APConfig.register(ModLoadingContext.get());
 
         modBus.addListener(this::onLoadComplete);
-        modBus.addListener(this::registerCapabilities);
 
         APRegistration.register(modBus);
 
@@ -80,16 +77,12 @@ public class AdvancedPeripherals {
         }
     }
 
-    public void registerCapabilities(RegisterCapabilitiesEvent event) {
-        IntegrationPeripheralProvider.registerBlockIntegrations(event);
-    }
-
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         ItemStack stack = event.getFrom();
         ItemStack newStack = event.getTo();
         if (stack.getItem() instanceof SmartGlassesItem glassesItem) {
-            if (newStack.getItem() == glassesItem && SmartGlassesItem.getComputerID(stack) == SmartGlassesItem.getComputerID(newStack)) {
+            if (newStack.getItem() == glassesItem && glassesItem.getComputerID(stack) == glassesItem.getComputerID(newStack)) {
                 return;
             }
             glassesItem.onUnequip(stack, (ServerLevel) event.getEntity().level(), event.getEntity());
