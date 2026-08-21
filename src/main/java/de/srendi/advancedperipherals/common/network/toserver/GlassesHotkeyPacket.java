@@ -11,8 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
 public class GlassesHotkeyPacket implements IAPPacket {
     public static final GlassesHotkeyPacket KEYBOARD_OPEN_PACKET = new GlassesHotkeyPacket("", -1);
 
@@ -30,8 +28,8 @@ public class GlassesHotkeyPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        ServerPlayer player = context.get().getSender();
+    public void handle(NetworkEvent.Context context) {
+        ServerPlayer player = context.getSender();
 
         ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
         if (smartGlasses.isEmpty()) {

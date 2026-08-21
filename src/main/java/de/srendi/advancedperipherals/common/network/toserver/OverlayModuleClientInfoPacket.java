@@ -13,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class OverlayModuleClientInfoPacket implements IAPPacket {
 
@@ -37,8 +36,8 @@ public class OverlayModuleClientInfoPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        ServerPlayer player = context.get().getSender();
+    public void handle(NetworkEvent.Context context) {
+        ServerPlayer player = context.getSender();
 
         ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
         if (smartGlasses.isEmpty()) {

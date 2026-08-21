@@ -6,8 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
 public class NarrateToClientPacket implements IAPPacket {
     private final String message;
     private final boolean interrupt;
@@ -33,7 +31,7 @@ public class NarrateToClientPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void handle(NetworkEvent.Context context) {
         // TODO: limit source range on client side?
         NarratorUtil.say(this.message, this.interrupt);
     }

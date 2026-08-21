@@ -7,8 +7,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
 public class SaddleTurtleControlPacket implements IAPPacket {
 
     public final InputKeySet inputs;
@@ -26,8 +24,8 @@ public class SaddleTurtleControlPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        Player player = context.get().getSender();
+    public void handle(NetworkEvent.Context context) {
+        Player player = context.getSender();
         if (player != null && player.getRootVehicle() instanceof TurtleSeatEntity seat) {
             seat.handleSaddleTurtleControlPacket(this);
         }

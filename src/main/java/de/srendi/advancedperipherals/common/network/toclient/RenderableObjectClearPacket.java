@@ -5,8 +5,6 @@ import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
 public class RenderableObjectClearPacket implements IAPPacket {
     public RenderableObjectClearPacket() {
     }
@@ -15,7 +13,7 @@ public class RenderableObjectClearPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void handle(NetworkEvent.Context context) {
         OverlayObjectHolder.clear();
     }
 

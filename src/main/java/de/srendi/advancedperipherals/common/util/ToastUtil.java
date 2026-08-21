@@ -19,8 +19,6 @@ public class ToastUtil {
     public static void displayToast(Component title, Component message) {
         Minecraft minecraft = Minecraft.getInstance();
 
-        minecraft.getToasts().addToast(SystemToast.multiline(minecraft,
-                SystemToast.SystemToastIds.PERIODIC_NOTIFICATION, title, message));
+        minecraft.getToasts().addToast(SystemToast.multiline(minecraft, SystemToast.SystemToastIds.PERIODIC_NOTIFICATION, title, message));
     }
-
 }

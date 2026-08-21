@@ -9,8 +9,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 import org.apache.logging.log4j.Level;
 
-import java.util.function.Supplier;
-
 public class RenderableObjectSyncPacket implements IAPPacket {
     private final int id;
     private final FriendlyByteBuf data;
@@ -30,13 +28,13 @@ public class RenderableObjectSyncPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void handle(NetworkEvent.Context context) {
         OverlayObject object = OverlayObjectHolder.getObject(this.id);
         if (object == null) {
             AdvancedPeripherals.debug(Level.ERROR, "Received update packet for unknown overlay object {}", this.id);
             return;
         }
-        context.get().enqueueWork(() -> {
+        context.enqueueWork(() -> {
             this.data.readerIndex(0);
             object.decodeUpdated(this.data);
         });

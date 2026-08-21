@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class RenderableObjectBulkAddPacket implements IAPPacket {
 
@@ -42,7 +41,7 @@ public class RenderableObjectBulkAddPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void handle(NetworkEvent.Context context) {
         OverlayObjectHolder.putObjects(this.objects);
     }
 

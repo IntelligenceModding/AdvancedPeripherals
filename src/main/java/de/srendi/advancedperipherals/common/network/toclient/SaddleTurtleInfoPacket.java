@@ -4,8 +4,6 @@ import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
 import static de.srendi.advancedperipherals.client.ClientRegistry.SADDLE_TURTLE_OVERLAY;
 
 public class SaddleTurtleInfoPacket implements IAPPacket {
@@ -27,7 +25,7 @@ public class SaddleTurtleInfoPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void handle(NetworkEvent.Context context) {
         SADDLE_TURTLE_OVERLAY.setFuelLevel(this.fuelLevel);
         SADDLE_TURTLE_OVERLAY.setFuelLimit(this.fuelLimit);
         SADDLE_TURTLE_OVERLAY.setBarColor(this.barColor);

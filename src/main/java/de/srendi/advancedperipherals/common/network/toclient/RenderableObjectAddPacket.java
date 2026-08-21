@@ -12,7 +12,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class RenderableObjectAddPacket implements IAPPacket {
     private final UUID player;
@@ -32,7 +31,7 @@ public class RenderableObjectAddPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void handle(NetworkEvent.Context context) {
         OverlayObjectHolder.putObject(this.object);
     }
 

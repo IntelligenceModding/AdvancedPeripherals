@@ -6,8 +6,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
 public class ToastToClientPacket implements IAPPacket {
 
     private final Component title;
@@ -30,7 +28,9 @@ public class ToastToClientPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void handle(NetworkEvent.Context context) {
+        System.out.println("displaying toast " + context.getPacketHandled());
+        new Exception().printStackTrace(System.out);
         ToastUtil.displayToast(this.title, this.component);
     }
 }

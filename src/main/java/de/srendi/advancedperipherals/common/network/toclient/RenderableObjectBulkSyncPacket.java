@@ -10,7 +10,6 @@ import net.minecraftforge.network.NetworkEvent;
 import org.apache.logging.log4j.Level;
 
 import java.util.Collection;
-import java.util.function.Supplier;
 
 public class RenderableObjectBulkSyncPacket implements IAPPacket {
 
@@ -35,8 +34,8 @@ public class RenderableObjectBulkSyncPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        context.get().enqueueWork(() -> {
+    public void handle(NetworkEvent.Context context) {
+        context.enqueueWork(() -> {
             this.data.readerIndex(0);
             for (int i = 0; i < this.count; i++) {
                 int id = this.data.readVarInt();

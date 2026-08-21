@@ -6,7 +6,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class UsernameToCachePacket implements IAPPacket {
 
@@ -30,7 +29,7 @@ public class UsernameToCachePacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void handle(NetworkEvent.Context context) {
         ClientUUIDCache.putUsername(uuid, username);
     }
 }

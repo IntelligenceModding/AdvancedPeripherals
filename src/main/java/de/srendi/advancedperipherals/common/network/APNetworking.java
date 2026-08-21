@@ -67,11 +67,11 @@ public class APNetworking {
     }
 
     public static <MSG extends IAPPacket> void registerServerToClient(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
-        NETWORK_CHANNEL.registerMessage(id++, packet, IAPPacket::write, decode, IAPPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        NETWORK_CHANNEL.registerMessage(id++, packet, IAPPacket::write, decode, IAPPacket::handle1, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
     public static <MSG extends IAPPacket> void registerClientToServer(Class<MSG> packet, Function<FriendlyByteBuf, MSG> decode) {
-        NETWORK_CHANNEL.registerMessage(id++, packet, IAPPacket::write, decode, IAPPacket::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        NETWORK_CHANNEL.registerMessage(id++, packet, IAPPacket::write, decode, IAPPacket::handle1, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
     /**

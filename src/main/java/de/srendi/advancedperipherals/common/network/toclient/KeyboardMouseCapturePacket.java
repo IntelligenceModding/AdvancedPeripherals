@@ -6,8 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
 public class KeyboardMouseCapturePacket implements IAPPacket {
 
     private final boolean enable;
@@ -21,7 +19,7 @@ public class KeyboardMouseCapturePacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void handle(NetworkEvent.Context context) {
         if (!(Minecraft.getInstance().screen instanceof KeyboardScreen screen)) {
             return;
         }

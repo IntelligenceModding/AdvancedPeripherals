@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class RetrieveUsernamePacket implements IAPPacket {
 
@@ -24,8 +23,8 @@ public class RetrieveUsernamePacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        ServerPlayer player = context.get().getSender();
+    public void handle(NetworkEvent.Context context) {
+        ServerPlayer player = context.getSender();
         GameProfile gameProfile = player.serverLevel().getServer().getProfileCache().get(uuid).orElse(null);
         if (gameProfile == null) {
             return;

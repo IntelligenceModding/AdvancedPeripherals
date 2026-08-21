@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class PlayerInteractionPacket implements IAPPacket {
 
@@ -34,8 +33,8 @@ public class PlayerInteractionPacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
-        ServerPlayer player = context.get().getSender();
+    public void handle(NetworkEvent.Context context) {
+        ServerPlayer player = context.getSender();
 
         ItemStack smartGlasses = SmartGlassesItem.getEquipped(player);
         if (smartGlasses.isEmpty()) {

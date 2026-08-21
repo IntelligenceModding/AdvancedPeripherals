@@ -5,8 +5,6 @@ import de.srendi.advancedperipherals.common.network.IAPPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
-
 public class RenderableObjectDeletePacket implements IAPPacket {
     private final int object;
 
@@ -19,7 +17,7 @@ public class RenderableObjectDeletePacket implements IAPPacket {
     }
 
     @Override
-    public void handle(Supplier<NetworkEvent.Context> context) {
+    public void handle(NetworkEvent.Context context) {
         OverlayObjectHolder.removeObject(object);
     }
 
