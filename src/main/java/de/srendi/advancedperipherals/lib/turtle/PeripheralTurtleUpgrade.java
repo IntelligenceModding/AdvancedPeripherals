@@ -36,9 +36,9 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
         ItemStack stack = this.getCraftingItem().copy();
         CompoundTag data = upgradeData.getCompound(APDataComponents.STORED_DATA);
         stack.getOrCreateTag().put("BlockEntityTag", data);
-        String name = data.getString("CustomName");
-        if (!name.isEmpty()) {
-            stack.setHoverName(Component.literal(name));
+        Component name = Component.Serializer.fromJson(data.getString("CustomName"));
+        if (name != null) {
+            stack.setHoverName(name);
         }
         return stack;
     }
@@ -50,7 +50,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
             data = new CompoundTag();
         }
         if (stack.hasCustomHoverName()) {
-            data.putString("CustomName", stack.getHoverName().getString());
+            data.putString("CustomName", Component.Serializer.toJson(stack.getHoverName()));
         }
         CompoundTag wrapped = new CompoundTag();
         wrapped.put(APDataComponents.STORED_DATA, data);

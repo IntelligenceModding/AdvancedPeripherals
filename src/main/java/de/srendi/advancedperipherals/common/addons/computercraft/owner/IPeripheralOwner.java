@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
@@ -28,11 +29,11 @@ public interface IPeripheralOwner {
 
     @Nullable
     default String getCustomName() {
-        String name = this.getDataStorage().getString("CustomName");
-        if (name == null || name.isEmpty()) {
+        Component name = Component.Serializer.fromJson(this.getDataStorage().getString("CustomName"));
+        if (name == null) {
             return null;
         }
-        return name;
+        return name.getString();
     }
 
     default void setCustomName(String name) {
@@ -41,7 +42,7 @@ public interface IPeripheralOwner {
         if (name == null || name.isEmpty()) {
             data.remove("CustomName");
         } else {
-            data.putString("CustomName", name);
+            data.putString("CustomName", Component.Serializer.toJson(Component.literal(name)));
         }
         this.putDataStorage(data);
     }
