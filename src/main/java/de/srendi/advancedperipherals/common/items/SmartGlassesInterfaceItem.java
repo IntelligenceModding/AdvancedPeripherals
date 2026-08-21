@@ -1,5 +1,7 @@
 package de.srendi.advancedperipherals.common.items;
 
+import dan200.computercraft.shared.network.container.ComputerContainerData;
+import dan200.computercraft.shared.platform.PlatformHelper;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
@@ -42,8 +44,11 @@ public class SmartGlassesInterfaceItem extends BaseItem {
 
         IItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer);
         if (itemHandler != null) {
-            player.openMenu(
-                new SmartGlassesMenuProvider(computer, glasses, itemHandler)
+            PlatformHelper.get().openMenu(
+                player,
+                glasses.getHoverName(),
+                new SmartGlassesMenuProvider(computer, glasses, itemHandler)::createMenu,
+                new ComputerContainerData(computer, glasses)
             );
         }
 

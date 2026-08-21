@@ -2,6 +2,8 @@ package de.srendi.advancedperipherals.common.entity;
 
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.shared.computer.core.ServerComputer;
+import dan200.computercraft.shared.network.container.ComputerContainerData;
+import dan200.computercraft.shared.platform.PlatformHelper;
 import dan200.computercraft.shared.turtle.blocks.TurtleBlockEntity;
 import dan200.computercraft.shared.turtle.core.TurtleBrain;
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
@@ -24,6 +26,7 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
@@ -178,17 +181,15 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
                 if (!tile.isUsable(player)) {
                     return;
                 }
-                player.openMenu(new MenuProvider() {
-                    @Override
-                    public Component getDisplayName() {
-                        return tile.getDisplayName();
-                    }
-
-                    @Override
-                    public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
-                        return tile.createMenu(containerId, inventory, player);
-                    }
-                });
+                ServerComputer computer = tile.createServerComputer();
+                ItemStack stack = new ItemStack(tile.getBlockState().getBlock().asItem());
+                tile.saveToItem(stack);
+                PlatformHelper.get().openMenu(
+                    player,
+                    tile.getDisplayName(),
+                    tile::createMenu,
+                    new ComputerContainerData(computer, stack)
+                );
             }
         }
     }

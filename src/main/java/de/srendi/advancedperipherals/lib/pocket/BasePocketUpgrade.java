@@ -51,9 +51,10 @@ public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends Ab
     @Override
     public boolean isItemSuitable(ItemStack stack) {
         CompoundTag tag = stack.getTag();
-        if (tag != null && (tag.contains("display") || tag.contains("BlockEntityTag"))) {
+        if (tag != null && (tag.contains("display") || tag.contains("RepairCost") || tag.contains("BlockEntityTag"))) {
             stack = stack.copy();
             stack.removeTagKey("display");
+            stack.removeTagKey("RepairCost");
             stack.removeTagKey("BlockEntityTag");
         }
         return super.isItemSuitable(stack);

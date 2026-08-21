@@ -76,7 +76,7 @@ public class ClientRegistry {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void registeringOverlays(RegisterGuiOverlaysEvent event) {
-        event.registerAboveAll(SaddleTurtleOverlay.ID.toString(), SADDLE_TURTLE_OVERLAY);
-        event.registerAboveAll(OverlayModuleOverlay.ID.toString(), OVERLAY_MODULE_OVERLAY);
+        event.registerAboveAll(SaddleTurtleOverlay.ID.getPath(), SADDLE_TURTLE_OVERLAY);
+        event.registerAboveAll(OverlayModuleOverlay.ID.getPath(), OVERLAY_MODULE_OVERLAY);
     }
 }

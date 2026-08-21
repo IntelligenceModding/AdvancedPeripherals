@@ -42,6 +42,9 @@ public class StringUtil {
      * @return A String, with all characters correctly interpreted as UTF-8.
      */
     public static String byteStringToUTF8(String asciiByteString) {
+        if (asciiByteString == null) {
+            return null;
+        }
         return new String(asciiByteString.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
     }
 
@@ -56,6 +59,9 @@ public class StringUtil {
      * @return a string, with all multibyte sequence characters split into their individual byte characters.
      */
     public static String utf8ToByteString(String utf8String) {
+        if (utf8String == null) {
+            return null;
+        }
         return new String(utf8String.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
     }
 

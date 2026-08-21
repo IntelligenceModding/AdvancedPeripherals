@@ -17,6 +17,8 @@ import dan200.computercraft.shared.computer.core.ServerComputerRegistry;
 import dan200.computercraft.shared.computer.core.ServerContext;
 import dan200.computercraft.shared.computer.items.IComputerItem;
 import dan200.computercraft.shared.media.MountMedia;
+import dan200.computercraft.shared.network.container.ComputerContainerData;
+import dan200.computercraft.shared.platform.PlatformHelper;
 import dan200.computercraft.shared.util.IDAssigner;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.curios.SmartGlassesCurio;
@@ -267,8 +269,11 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
         }
 
         SmartGlassesItemHandler itemHandler = new SmartGlassesItemHandler(glasses, computer);
-        player.openMenu(
-            new SmartGlassesMenuProvider(computer, glasses, itemHandler)
+        PlatformHelper.get().openMenu(
+            player,
+            glasses.getHoverName(),
+            new SmartGlassesMenuProvider(computer, glasses, itemHandler)::createMenu,
+            new ComputerContainerData(computer, glasses)
         );
         return InteractionResultHolder.consume(glasses);
     }
@@ -422,7 +427,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     public static CompoundTag getModuleDatas(final ItemStack stack, final ResourceLocation moduleID) {
         CompoundTag moduleDatas = stack.getTagElement(APDataComponents.MODULE_DATAS);
         if (moduleDatas == null || moduleDatas.isEmpty()) {
-            return null;
+            return new CompoundTag();
         }
         ItemStackStorage items = SmartGlassesItemHandler.loadItems(stack);
         for (int slot = 0; slot < SmartGlassesSlot.MODULE_SLOTS; slot++) {
@@ -431,6 +436,6 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
                 return moduleDatas;
             }
         }
-        return null;
+        return new CompoundTag();
     }
 }

@@ -79,12 +79,12 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     @Override
     public CompoundTag getDataStorage() {
         CompoundTag data = turtle.getUpgradeNBTData(side);
-        return data.getCompound("data");
+        return data.getCompound(APDataComponents.STORED_DATA);
     }
 
     @Override
     public void putDataStorage(CompoundTag dataStorage) {
-        turtle.getUpgradeNBTData(side).put("data", dataStorage);
+        turtle.getUpgradeNBTData(side).put(APDataComponents.STORED_DATA, dataStorage);
         turtle.updateUpgradeNBTData(side);
     }
 
