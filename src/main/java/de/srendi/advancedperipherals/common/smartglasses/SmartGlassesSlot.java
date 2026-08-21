@@ -17,7 +17,6 @@ public class SmartGlassesSlot extends SlotItemHandler {
 
     public final SlotType slotType;
     private SlotType activeSlotType;
-    private ItemStack lastCopy = ItemStack.EMPTY;
 
     public SmartGlassesSlot(IItemHandlerModifiable itemHandler, int index, int xPosition, int yPosition, SlotType slotType) {
         super(itemHandler, index, xPosition, yPosition);
