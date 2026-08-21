@@ -114,6 +114,11 @@ public class TurtleSeatEntity extends Entity implements HasCustomInventoryScreen
     }
 
     @Override
+    public double getPassengersRidingOffset() {
+        return 0.05;
+    }
+
+    @Override
     public boolean isInvisible() {
         return true;
     }
