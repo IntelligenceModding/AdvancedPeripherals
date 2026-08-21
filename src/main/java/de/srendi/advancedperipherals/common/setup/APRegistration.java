@@ -18,7 +18,11 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryBuilder;
+
+import java.util.function.Supplier;
 
 public class APRegistration {
 
@@ -34,6 +38,7 @@ public class APRegistration {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, AdvancedPeripherals.MOD_ID);
 
     public static final DeferredRegister<OverlayObjectType<?>> OVERLAY_OBJECTS = DeferredRegister.create(APRegistries.OVERLAY_OBJECTS, AdvancedPeripherals.MOD_ID);
+    public static final Supplier<IForgeRegistry<OverlayObjectType<?>>> OVERLAY_OBJECTS_REG = OVERLAY_OBJECTS.makeRegistry(RegistryBuilder::new);
 
     public static void register(IEventBus modEventBus) {
         APBlocks.register();
@@ -46,6 +51,7 @@ public class APRegistration {
         APCreativeTabs.register();
         APDataComponents.register();
         CCRegistration.register();
+        APOverlayObjects.register();
 
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
@@ -60,12 +66,6 @@ public class APRegistration {
         OVERLAY_OBJECTS.register(modEventBus);
 
         modEventBus.addListener(APRegistration::onCommonSetup);
-    }
-
-    private static void onRegister(RegisterEvent event) {
-        if (event.getRegistryKey() == APRegistries.OVERLAY_OBJECTS) {
-            APOverlayObjects.register();
-        }
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {

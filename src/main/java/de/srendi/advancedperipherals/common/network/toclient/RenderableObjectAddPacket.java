@@ -2,13 +2,15 @@ package de.srendi.advancedperipherals.common.network.toclient;
 
 import de.srendi.advancedperipherals.client.smartglasses.OverlayObjectHolder;
 import de.srendi.advancedperipherals.common.network.IAPPacket;
-import de.srendi.advancedperipherals.common.setup.APRegistries;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
-import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -22,10 +24,10 @@ public class RenderableObjectAddPacket implements IAPPacket {
     }
 
     public RenderableObjectAddPacket(FriendlyByteBuf buffer) {
-        Registry<OverlayObjectType<?>> registry = APRegistries.getOverlayObjectsRegistry();
+        IForgeRegistry<OverlayObjectType<?>> registry = APRegistration.OVERLAY_OBJECTS_REG.get();
         this.player = buffer.readUUID();
-        int typeId = buffer.readVarInt();
-        this.object = registry.byIdOrThrow(typeId).createClient(this.player);
+        ResourceLocation typeId = buffer.readResourceLocation();
+        this.object = Objects.requireNonNull(registry.getValue(typeId)).createClient(this.player);
         this.object.decode(buffer);
     }
 
@@ -36,9 +38,9 @@ public class RenderableObjectAddPacket implements IAPPacket {
 
     @Override
     public void write(FriendlyByteBuf buffer) {
-        Registry<OverlayObjectType<?>> registry = APRegistries.getOverlayObjectsRegistry();
+        IForgeRegistry<OverlayObjectType<?>> registry = APRegistration.OVERLAY_OBJECTS_REG.get();
         buffer.writeUUID(this.player);
-        buffer.writeVarInt(registry.getId(this.object.getType()));
+        buffer.writeResourceLocation(registry.getKey(this.object.getType()));
         object.encode(buffer);
     }
 }

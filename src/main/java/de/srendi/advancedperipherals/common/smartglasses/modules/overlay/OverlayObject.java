@@ -9,6 +9,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.setup.APRegistries;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanType;
@@ -172,7 +173,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
 
     @LuaFunction("getType")
     public final String getTypeLua() {
-        return APRegistries.getOverlayObjectsRegistry().getKey(this.getType()).toString();
+        return APRegistration.OVERLAY_OBJECTS_REG.get().getKey(this.getType()).toString();
     }
 
     @LuaFunction("getId")
