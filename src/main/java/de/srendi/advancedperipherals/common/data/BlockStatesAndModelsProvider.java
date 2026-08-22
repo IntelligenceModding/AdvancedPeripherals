@@ -5,7 +5,6 @@ import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.core.FrontAndTop;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -15,6 +14,7 @@ import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Arrays;
 
@@ -134,7 +134,7 @@ public class BlockStatesAndModelsProvider extends BlockStateProvider {
     }
 
     private ResourceLocation key(Block block) {
-        return BuiltInRegistries.BLOCK.getKey(block);
+        return ForgeRegistries.BLOCKS.getKey(block);
     }
 
     private String name(Block block) {

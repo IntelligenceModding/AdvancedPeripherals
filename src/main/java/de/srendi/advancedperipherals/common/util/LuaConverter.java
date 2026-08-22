@@ -8,7 +8,6 @@ import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
@@ -32,6 +31,7 @@ import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.IForgeShearable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.joml.Matrix3dc;
@@ -255,8 +255,8 @@ public class LuaConverter {
         return BLOCKSTATES_CACHE.computeIfAbsent(state0, (state) -> {
             Map<String, Object> data = new HashMap<>(8);
             Block block = state.getBlock();
-            data.put("name", BuiltInRegistries.BLOCK.getKey(block).toString());
-            data.put("tags", getHolderTags(block.builtInRegistryHolder()));
+            data.put("name", ForgeRegistries.BLOCKS.getKey(block).toString());
+            data.put("tags", getHolderTags(ForgeRegistries.BLOCKS.getHolder(block).get()));
             Item blockItem = block.asItem();
             if (blockItem != Items.AIR) {
                 data.put("item", ItemUtil.getRegistryKey(blockItem).toString());
@@ -281,14 +281,14 @@ public class LuaConverter {
     public static Map<String, Object> itemToLua(@NotNull Item item) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("name", ItemUtil.getRegistryKey(item).toString());
-        properties.put("tags", getHolderTags(item.builtInRegistryHolder()));
+        properties.put("tags", getHolderTags(ForgeRegistries.ITEMS.getHolder(item).get()));
         return properties;
     }
 
     public static Map<String, Object> fluidToLua(@NotNull Fluid fluid) {
         Map<String, Object> properties = new HashMap<>();
         properties.put("name", FluidUtil.getRegistryKey(fluid).toString());
-        properties.put("tags", getHolderTags(fluid.builtInRegistryHolder()));
+        properties.put("tags", getHolderTags(ForgeRegistries.FLUIDS.getHolder(fluid).get()));
         return properties;
     }
 

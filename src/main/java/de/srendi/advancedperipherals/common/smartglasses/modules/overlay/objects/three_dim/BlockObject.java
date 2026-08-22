@@ -10,7 +10,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.Overlay
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.lib.codec.StreamCodec;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -18,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -62,7 +62,7 @@ public class BlockObject extends BoxObject {
             return MethodResult.of();
         }
         return MethodResult.of(
-            BuiltInRegistries.BLOCK.getKey(this.block.getBlock()).toString(),
+            ForgeRegistries.BLOCKS.getKey(this.block.getBlock()).toString(),
             this.getStates()
         );
     }
@@ -74,7 +74,7 @@ public class BlockObject extends BoxObject {
             this.block = null;
         } else {
             ResourceLocation name = ResourceLocation.tryParse(block0);
-            Holder<Block> holder = BuiltInRegistries.BLOCK.getHolder(ResourceKey.create(Registries.BLOCK, name)).orElse(null);
+            Holder<Block> holder = ForgeRegistries.BLOCKS.getHolder(ResourceKey.create(Registries.BLOCK, name)).orElse(null);
             if (holder == null) {
                 this.block = null;
             } else {

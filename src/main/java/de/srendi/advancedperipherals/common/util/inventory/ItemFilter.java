@@ -12,8 +12,6 @@ import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.RegistryUtil;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -21,6 +19,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
@@ -51,8 +50,11 @@ public class ItemFilter extends GenericFilter<ItemStack> {
             String name = item.getString("name");
             if (name.startsWith("#")) {
                 itemFilter.tag = TagKey.create(Registries.ITEM, new ResourceLocation(name.substring(1)));
-            } else if ((itemFilter.item = RegistryUtil.getRegistryEntry(name, BuiltInRegistries.ITEM)) == null) {
-                return Pair.of(null, "ITEM_NOT_FOUND");
+            } else {
+                itemFilter.item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
+                if (itemFilter.item == null) {
+                    return Pair.of(null, "ITEM_NOT_FOUND");
+                }
             }
         }
         if (item.containsKey("components")) {

@@ -19,7 +19,6 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.ScanUtil;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -30,6 +29,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3dc;
 
@@ -96,11 +96,11 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 TagKey<Block> tag = TagKey.create(Registries.BLOCK, id);
                 blockTester = (b) -> b.is(tag);
             } else {
-                ResourceLocation id = ResourceLocation.tryParse(filter.substring(1));
+                ResourceLocation id = ResourceLocation.tryParse(filter);
                 if (id == null) {
                     throw new LuaException("argument #1 is an invalid block ID");
                 }
-                Block block = BuiltInRegistries.BLOCK.get(id);
+                Block block = ForgeRegistries.BLOCKS.getValue(id);
                 blockTester = block == null ? null : (b) -> b.is(block);
             }
         }
@@ -110,7 +110,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(Map.of());
             }
             Level level = getLevel();
-            LevelChunk chunk = level.getChunkAt(getPos());
+            LevelChunk chunk = level.getChunkAt(getPhysicsBlockPos());
             Object2IntOpenHashMap<ResourceLocation> data = new Object2IntOpenHashMap<>();
             for (LevelChunkSection section : chunk.getSections()) {
                 if (section.hasOnlyAir()) {
@@ -120,7 +120,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                     if (!blockTesterFinal.test(block)) {
                         return;
                     }
-                    ResourceLocation name = BuiltInRegistries.BLOCK.getKey(block.getBlock());
+                    ResourceLocation name = ForgeRegistries.BLOCKS.getKey(block.getBlock());
                     if (name != null) {
                         data.addTo(name, count);
                     }
@@ -149,6 +149,20 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             CoordUtil.putRelativeCoords(data, x, y, z, orientation);
             result.add(data);
         });
+
+        Vec3 center2 = owner.getPhysicsPos();
+        if (!center2.equals(center)) {
+            Matrix3dc orientation2 = owner.getPhysicsOrientation();
+            ScanUtil.traverseBlocks(owner.getLevel(), center, radius, (state, pos) -> {
+                Map<String, Object> data = new HashMap<>(LuaConverter.blockStateToLua(state));
+                double x = pos.getX() + 0.5 - center.x;
+                double y = pos.getY() + 0.5 - center.y;
+                double z = pos.getZ() + 0.5 - center.z;
+                CoordUtil.putRelativeCoords(data, x, y, z, orientation2);
+                data.put("notOnShip", true);
+                result.add(data);
+            });
+        }
 
         return result;
     }

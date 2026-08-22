@@ -12,10 +12,10 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.LuaOps;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
@@ -45,7 +45,7 @@ public class BlockReaderPeripheral extends BasePeripheral<IPeripheralOwner> {
         if (getTargetBlock().isAir()) {
             return null;
         }
-        return BuiltInRegistries.BLOCK.getKey(getTargetBlock().getBlock()).toString();
+        return ForgeRegistries.BLOCKS.getKey(getTargetBlock().getBlock()).toString();
     }
 
     @LuaFunction(mainThread = true)

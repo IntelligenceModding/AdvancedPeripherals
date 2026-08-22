@@ -139,6 +139,15 @@ public interface IPeripheralOwner {
         );
     }
 
+    @NotNull
+    default Matrix3dc getPhysicsOrientation() {
+        Matrix3dc orientation = this.getOrientation();
+        if (APAddon.VALKYRIENSKIES.isLoaded()) {
+            return new Matrix3d(ValkyrienSkies.getTransformation(this.getLevel(), this.getPos())).mul(orientation);
+        }
+        return orientation;
+    }
+
     @Nullable Entity getHoldingEntity();
 
     @Nullable

@@ -49,7 +49,6 @@ import io.github.projectet.ae2things.storage.DISKCellHandler;
 import io.github.projectet.ae2things.storage.DISKCellInventory;
 import io.github.projectet.ae2things.storage.IDISKCellItem;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -58,6 +57,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -392,7 +392,7 @@ public class AEApi {
             properties.put("name", nameable.hasCustomName() ? nameable.getCustomName().getString() : nameable.getDisplayName().getString());
         }
         if (drive instanceof BlockEntity be) {
-            properties.put("type", BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(be.getType()));
+            properties.put("type", ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(be.getType()));
             properties.put("position", LuaConverter.posToLua(be.getBlockPos()));
         }
         if (drive instanceof IPriorityHost priHost) {

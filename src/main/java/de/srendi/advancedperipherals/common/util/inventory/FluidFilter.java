@@ -13,8 +13,6 @@ import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.util.FingerprintUtil;
 import de.srendi.advancedperipherals.common.util.NBTUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.RegistryUtil;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +20,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
@@ -51,7 +50,7 @@ public class FluidFilter extends GenericFilter<FluidStack> {
             if (name.startsWith("#")) {
                 fluidFilter.tag = TagKey.create(Registries.FLUID, new ResourceLocation(name.substring(1)));
             } else {
-                fluidFilter.fluid = RegistryUtil.getRegistryEntry(name, BuiltInRegistries.FLUID);
+                fluidFilter.fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(name));
                 if (fluidFilter.fluid == null) {
                     return Pair.of(null, "FLUID_NOT_FOUND");
                 }

@@ -5,7 +5,6 @@ import dan200.computercraft.shared.peripheral.generic.GenericPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.Item;
@@ -16,6 +15,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -165,7 +165,7 @@ public class ItemUtil {
     }
 
     public static ResourceLocation getRegistryKey(Item item) {
-        return BuiltInRegistries.ITEM.getKey(item);
+        return ForgeRegistries.ITEMS.getKey(item);
     }
 
     public static ResourceLocation getRegistryKey(ItemStack item) {

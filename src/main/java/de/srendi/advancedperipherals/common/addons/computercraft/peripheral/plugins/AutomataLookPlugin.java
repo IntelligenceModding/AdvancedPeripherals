@@ -14,13 +14,13 @@ import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -50,12 +50,12 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         BlockPos blockPos = blockHit.getBlockPos();
         BlockState state = owner.getLevel().getBlockState(blockPos);
         Map<String, Object> data = new HashMap<>();
-        ResourceLocation blockName = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        ResourceLocation blockName = ForgeRegistries.BLOCKS.getKey(state.getBlock());
         if (blockName != null) {
             data.put("name", blockName.toString());
         }
 
-        data.put("tags", LuaConverter.getHolderTags(state.getBlock().builtInRegistryHolder()));
+        data.put("tags", LuaConverter.getHolderTags(ForgeRegistries.BLOCKS.getHolder(state.getBlock()).get()));
         Vec3 pos = blockHit.getLocation();
         Vec3 origin = automataCore.getPhysicsPos();
         CoordUtil.putRelativeCoords(data, pos.x - origin.x, pos.y - origin.y, pos.z - origin.z, owner.getOrientation());

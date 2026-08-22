@@ -14,6 +14,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -49,7 +50,7 @@ public class ItemObject extends RenderableObject {
             this.item = null;
         } else {
             ResourceLocation name = ResourceLocation.tryParse(item0);
-            this.item = BuiltInRegistries.ITEM.getHolder(ResourceKey.create(Registries.ITEM, name)).orElse(null);
+            this.item = ForgeRegistries.ITEMS.getHolder(ResourceKey.create(Registries.ITEM, name)).orElse(null);
         }
         this.markAndTryUpdate("item");
     }

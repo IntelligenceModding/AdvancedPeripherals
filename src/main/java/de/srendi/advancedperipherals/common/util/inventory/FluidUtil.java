@@ -5,7 +5,6 @@ import dan200.computercraft.shared.peripheral.generic.GenericPeripheral;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -13,6 +12,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,10 +109,10 @@ public class FluidUtil {
     }
 
     public static ResourceLocation getRegistryKey(Fluid fluid) {
-        return BuiltInRegistries.FLUID.getKey(fluid);
+        return ForgeRegistries.FLUIDS.getKey(fluid);
     }
 
     public static ResourceLocation getRegistryKey(FluidStack fluid) {
-        return BuiltInRegistries.FLUID.getKey(fluid.getFluid());
+        return getRegistryKey(fluid.getFluid());
     }
 }

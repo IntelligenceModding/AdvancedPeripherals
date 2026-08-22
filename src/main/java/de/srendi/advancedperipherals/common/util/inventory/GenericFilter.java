@@ -5,11 +5,12 @@ import appeng.api.stacks.GenericStack;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaTable;
 import de.srendi.advancedperipherals.common.util.Pair;
-import de.srendi.advancedperipherals.common.util.RegistryUtil;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public abstract class GenericFilter<T> {
 
+    @SuppressWarnings("rawtypes")
     private static final GenericFilter EMPTY = new GenericFilter() {
         @Override
         public boolean isEmpty() {
@@ -64,12 +65,12 @@ public abstract class GenericFilter<T> {
         if (!rawFilter.containsKey("name"))
             throw new LuaException("Generic filter requires either field \"type\" or \"name\"");
 
-        String name = rawFilter.getString("name");
+        ResourceLocation name = new ResourceLocation(rawFilter.getString("name"));
 
         // Let's check in which registry this thing is
-        if (RegistryUtil.getRegistryEntry(name, BuiltInRegistries.ITEM) != null) {
+        if (ForgeRegistries.ITEMS.containsKey(name)) {
             return ItemFilter.parse(rawFilter);
-        } else if (RegistryUtil.getRegistryEntry(name, BuiltInRegistries.FLUID) != null) {
+        } else if (ForgeRegistries.FLUIDS.containsKey(name)) {
             return FluidFilter.parse(rawFilter);
         }
         // If the name is in neither of the registries, we will just return an empty filter

@@ -8,11 +8,11 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.StatType;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -71,7 +71,7 @@ public final class APLuaAPI implements ILuaAPI {
         private Iterator<Stat> currentStatIter = null;
 
         StatTypeIterator() {
-            this.typeIter = BuiltInRegistries.STAT_TYPE.iterator();
+            this.typeIter = ForgeRegistries.STAT_TYPES.iterator();
         }
 
         @Override

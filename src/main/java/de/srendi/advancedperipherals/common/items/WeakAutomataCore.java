@@ -4,7 +4,6 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APItems;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -18,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -36,13 +36,13 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
 
     static {
         Map<String, Integer> endSouls = new HashMap<>();
-        endSouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.ENDERMAN).toString(), 10);
+        endSouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.ENDERMAN).toString(), 10);
         WeakAutomataCoreRecord endSoulRecord = new WeakAutomataCoreRecord(endSouls, () -> APItems.END_AUTOMATA_CORE.get());
 
         Map<String, Integer> husbandrySouls = new HashMap<>();
-        husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW).toString(), 3);
-        husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.SHEEP).toString(), 3);
-        husbandrySouls.put(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.CHICKEN).toString(), 3);
+        husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.COW).toString(), 3);
+        husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.SHEEP).toString(), 3);
+        husbandrySouls.put(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.CHICKEN).toString(), 3);
         WeakAutomataCoreRecord husbandrySoulRecord = new WeakAutomataCoreRecord(husbandrySouls, () -> APItems.HUSBANDRY_AUTOMATA_CORE.get());
 
         endSoulRecord.ingredients.keySet().forEach(entityType -> AUTOMATA_CORE_REGISTRY.put(entityType, endSoulRecord));

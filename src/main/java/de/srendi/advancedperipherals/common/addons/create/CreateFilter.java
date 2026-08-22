@@ -17,13 +17,13 @@ import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
@@ -170,7 +170,7 @@ public final class CreateFilter {
                 if (itemId == null) {
                     return Pair.onlyRight("invalid item ID: " + itemData.getString("name"));
                 }
-                Item item = BuiltInRegistries.ITEM.getOptional(itemId).orElse(null);
+                Item item = ForgeRegistries.ITEMS.getValue(itemId);
                 if (item == null) {
                     return Pair.onlyRight("item does not exists: " + itemId);
                 }

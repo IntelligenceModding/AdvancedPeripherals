@@ -1,10 +1,10 @@
 package de.srendi.advancedperipherals.common.util.proxy;
 
 import de.srendi.advancedperipherals.common.blocks.blockentities.FluidDetectorEntity;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHandler {
@@ -57,7 +57,7 @@ public class FluidStorageProxy extends AbstractStorageProxy implements IFluidHan
             FluidStack transferring = resource.copy();
             transferring.setAmount((int) Math.min(resource.getAmount(), this.getTransferRate()));
             int transferred = storage.fill(transferring, action);
-            ResourceLocation id = BuiltInRegistries.FLUID.getKey(resource.getFluid());
+            ResourceLocation id = ForgeRegistries.FLUIDS.getKey(resource.getFluid());
             // TODO: what if filler may transfer multiple types of fluids?
             this.wasReady = id;
             if (!action.simulate() && transferred > 0) {
