@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4d;
+import org.joml.Matrix4dc;
 import org.joml.Vector3d;
 import org.valkyrienskies.core.api.ships.ServerShip;
 import org.valkyrienskies.core.api.ships.Ship;
@@ -36,6 +38,14 @@ public final class ValkyrienSkies {
         }
         Vector3d newDir = ship.getShipToWorld().transformDirection(new Vector3d(dir.x, dir.y, dir.z));
         return new Vec3(newDir.x, newDir.y, newDir.z);
+    }
+
+    public static Matrix4dc getTransformation(Level level, BlockPos blockPos) {
+        Ship ship = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
+        if (ship == null) {
+            return new Matrix4d();
+        }
+        return ship.getShipToWorld();
     }
 
     public static void encodeShipInfo(Level level, BlockPos blockPos, Map<String, Object> data) {

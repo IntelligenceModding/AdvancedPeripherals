@@ -96,7 +96,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 TagKey<Block> tag = TagKey.create(Registries.BLOCK, id);
                 blockTester = (b) -> b.is(tag);
             } else {
-                ResourceLocation id = ResourceLocation.tryParse(filter.substring(1));
+                ResourceLocation id = ResourceLocation.tryParse(filter);
                 if (id == null) {
                     throw new LuaException("argument #1 is an invalid block ID");
                 }
@@ -110,7 +110,7 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
                 return MethodResult.of(Map.of());
             }
             Level level = getLevel();
-            LevelChunk chunk = level.getChunkAt(getPos());
+            LevelChunk chunk = level.getChunkAt(getPhysicsBlockPos());
             Object2IntOpenHashMap<ResourceLocation> data = new Object2IntOpenHashMap<>();
             for (LevelChunkSection section : chunk.getSections()) {
                 if (section.hasOnlyAir()) {
@@ -149,6 +149,20 @@ public class GeoScannerPeripheral extends BasePeripheral<IPeripheralOwner> {
             CoordUtil.putRelativeCoords(data, x, y, z, orientation);
             result.add(data);
         });
+
+        Vec3 center2 = owner.getPhysicsPos();
+        if (!center2.equals(center)) {
+            Matrix3dc orientation2 = owner.getPhysicsOrientation();
+            ScanUtil.traverseBlocks(owner.getLevel(), center, radius, (state, pos) -> {
+                Map<String, Object> data = new HashMap<>(LuaConverter.blockStateToLua(state));
+                double x = pos.getX() + 0.5 - center.x;
+                double y = pos.getY() + 0.5 - center.y;
+                double z = pos.getZ() + 0.5 - center.z;
+                CoordUtil.putRelativeCoords(data, x, y, z, orientation2);
+                data.put("notOnShip", true);
+                result.add(data);
+            });
+        }
 
         return result;
     }

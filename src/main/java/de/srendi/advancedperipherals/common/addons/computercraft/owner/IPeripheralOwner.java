@@ -64,7 +64,7 @@ public interface IPeripheralOwner {
     default Vec3 getPhysicsPos() {
         Vec3 pos = this.getCenterPos();
         return pos;
-        // if (!APAddons.vs2Loaded) {
+        // if (!APAddon.VALKYRIENSKIES.isLoaded()) {
         //     return pos;
         // }
         // return ValkyrienSkies.transformToWorldPos(getLevel(), getPos(), pos);
@@ -74,7 +74,7 @@ public interface IPeripheralOwner {
     default Vec3 getDirection() {
         Vec3 dir = Vec3.atLowerCornerOf(getFacing().getNormal());
         return dir;
-        // if (!APAddons.vs2Loaded) {
+        // if (!APAddon.VALKYRIENSKIES.isLoaded()) {
         //     return dir;
         // }
         // return ValkyrienSkies.transformToWorldDir(getLevel(), getPos(), dir);
@@ -141,6 +141,15 @@ public interface IPeripheralOwner {
             ux, uy, uz,
             fx, fy, fz
         );
+    }
+
+    @NotNull
+    default Matrix3dc getPhysicsOrientation() {
+        Matrix3dc orientation = this.getOrientation();
+        // if (APAddon.VALKYRIENSKIES.isLoaded()) {
+        //     return new Matrix3d(ValkyrienSkies.getTransformation(this.getLevel(), this.getPos())).mul(orientation);
+        // }
+        return orientation;
     }
 
     @Nullable Entity getHoldingEntity();
