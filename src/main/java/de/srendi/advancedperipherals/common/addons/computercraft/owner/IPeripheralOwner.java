@@ -2,6 +2,8 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IPeripheral;
+import de.srendi.advancedperipherals.common.addons.APAddon;
+import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
@@ -59,21 +61,19 @@ public interface IPeripheralOwner {
     @NotNull
     default Vec3 getPhysicsPos() {
         Vec3 pos = this.getCenterPos();
-        return pos;
-        // if (!APAddons.vs2Loaded) {
-        //     return pos;
-        // }
-        // return ValkyrienSkies.transformToWorldPos(getLevel(), getPos(), pos);
+        if (!APAddon.VALKYRIENSKIES.isLoaded()) {
+            return pos;
+        }
+        return ValkyrienSkies.transformToWorldPos(getLevel(), getPos(), pos);
     }
 
     @NotNull
     default Vec3 getDirection() {
         Vec3 dir = Vec3.atLowerCornerOf(getFacing().getNormal());
-        return dir;
-        // if (!APAddons.vs2Loaded) {
-        //     return dir;
-        // }
-        // return ValkyrienSkies.transformToWorldDir(getLevel(), getPos(), dir);
+        if (!APAddon.VALKYRIENSKIES.isLoaded()) {
+            return dir;
+        }
+        return ValkyrienSkies.transformToWorldDir(getLevel(), getPos(), dir);
     }
 
     @NotNull Direction getFacing();

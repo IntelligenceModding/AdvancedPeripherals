@@ -33,7 +33,7 @@ public class AutomataVSMountPlugin extends AutomataCorePlugin {
     @LuaFunction(mainThread = true)
     public final boolean isOnShip() {
         IPeripheralOwner owner = this.automataCore.getPeripheralOwner();
-        return APAddon.isBlockOnShip(owner.getLevel(), owner.getPos());
+        return APAddon.VALKYRIENSKIES.isLoaded() && ValkyrienSkies.isBlockOnShip(owner.getLevel(), owner.getPos());
     }
 
     @LuaFunction(mainThread = true)
@@ -82,7 +82,7 @@ public class AutomataVSMountPlugin extends AutomataCorePlugin {
         Level level = owner.getLevel();
         Vec3 pos = this.getMountDetectPosition();
         Vector3d targetPos = targetShip.getWorldToShip().transformPosition(new Vector3d(pos.x, pos.y, pos.z));
-        BlockPos newPosition = new BlockPos(targetPos.x, targetPos.y, targetPos.z);
+        BlockPos newPosition = BlockPos.containing(targetPos.x, targetPos.y, targetPos.z);
         return this.automataCore.withOperation(MOUNT_SHIP, new SingleOperationContext(1, 1), context -> {
             boolean result = owner.move(level, newPosition);
             if (!result) {

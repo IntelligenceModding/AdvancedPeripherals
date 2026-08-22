@@ -209,6 +209,19 @@ repositories {
     exclusiveContent {
         forRepository {
             maven {
+                name = "Valkyrien Skies"
+                url = "https://maven.valkyrienskies.org"
+            }
+        }
+        filter {
+            includeGroup("com.github.Rubydesic")
+            includeGroup("org.mapstruct")
+            includeGroupAndSubgroups("org.valkyrienskies")
+        }
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
                 url = "https://cursemaven.com"
             }
         }
@@ -247,6 +260,15 @@ dependencies {
 
     // Minimal requirements end
 
+    // Common Dependencies
+    modCompileOnly "dev.architectury:architectury-forge:${architectury_version}"
+    modCompileOnly "thedarkcolour:kotlinforforge:4.10.0"
+    if (!minimumRuntime) {
+        modRuntimeOnly "dev.architectury:architectury-forge:${architectury_version}"
+        modRuntimeOnly "thedarkcolour:kotlinforforge:4.10.0"
+    }
+
+    // Refined Storage
     modCompileOnly "curse.maven:refined-storage-243076:${refinedstorage_version}"
     if (!minimumRuntime) {
         modRuntimeOnly "curse.maven:refined-storage-243076:${refinedstorage_version}"
@@ -323,11 +345,37 @@ dependencies {
 
     // Powah
     modCompileOnly "curse.maven:powah-633483:${powah_version}"
-    modCompileOnly "dev.architectury:architectury-forge:${architectury_version}"
     if (!minimumRuntime) {
         modRuntimeOnly "curse.maven:powah-633483:${powah_version}"
-        modRuntimeOnly "dev.architectury:architectury-forge:${architectury_version}"
         modRuntimeOnly "me.shedaniel.cloth:cloth-config-forge:${cloth_config_version}"
+    }
+
+    // Valkyrien Skies
+    modApi("org.valkyrienskies:valkyrienskies-120-forge:${vs2_version}") {
+        transitive = false
+        exclude group: "org.joml"
+    }
+    compileOnly("org.valkyrienskies.core:api:${vs_core_version}")
+    compileOnly("org.valkyrienskies.core:impl:${vs_core_version}")
+    compileOnly("org.valkyrienskies.core:internal:${vs_core_version}")
+    compileOnly("org.valkyrienskies.core:util:${vs_core_version}")
+    if (!minimumRuntime) {
+        runtimeOnly("org.valkyrienskies.core:api:${vs_core_version}") {
+            transitive = false
+            exclude group: "org.joml"
+        }
+        runtimeOnly("org.valkyrienskies.core:impl:${vs_core_version}") {
+            transitive = false
+            exclude group: "org.joml"
+        }
+        runtimeOnly("org.valkyrienskies.core:internal:${vs_core_version}") {
+            transitive = false
+            exclude group: "org.joml"
+        }
+        runtimeOnly("org.valkyrienskies.core:util:${vs_core_version}") {
+            transitive = false
+            exclude group: "org.joml"
+        }
     }
 
     testModImplementation sourceSets.main.output

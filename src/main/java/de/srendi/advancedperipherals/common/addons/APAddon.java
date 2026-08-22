@@ -16,7 +16,8 @@ public enum APAddon {
     PATCHOULI("patchouli"),
     POWAH("powah"),
     REFINEDSTORAGE("refinedstorage"),
-    REFINEDSTORAGE_MEKANISM("refinedstorage_mekanism_integration");
+    REFINEDSTORAGE_MEKANISM("refinedstorage_mekanism_integration"),
+    VALKYRIENSKIES("valkyrienskies");
 
     private final String modId;
     private boolean loaded;
@@ -46,12 +47,4 @@ public enum APAddon {
                 .map(APAddon::getModId)
                 .toArray(String[]::new);
     }
-
-    /*
-    public static boolean isBlockOnShip(Level level, BlockPos pos) {
-        if (!vs2Loaded) {
-            return false;
-        }
-        return ValkyrienSkies.isBlockOnShip(level, pos);
-    }*/
 }

@@ -5,7 +5,9 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
+import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -57,9 +59,9 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
         Vec3 pos = blockHit.getLocation();
         Vec3 origin = automataCore.getPhysicsPos();
         CoordUtil.putRelativeCoords(data, pos.x - origin.x, pos.y - origin.y, pos.z - origin.z, owner.getOrientation());
-        // if (APAddon.VALKYRIENSKIES) {
-        //     ValkyrienSkies.encodeShipInfo(automataCore.getLevel(), blockPos, data);
-        // }
+        if (APAddon.VALKYRIENSKIES.isLoaded()) {
+            ValkyrienSkies.putShipInfo(automataCore.getLevel(), blockPos, data);
+        }
         return MethodResult.of(data);
     }
 

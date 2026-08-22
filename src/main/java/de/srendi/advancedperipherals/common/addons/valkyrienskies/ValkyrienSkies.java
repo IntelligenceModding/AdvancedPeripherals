@@ -38,7 +38,7 @@ public final class ValkyrienSkies {
         return new Vec3(newDir.x, newDir.y, newDir.z);
     }
 
-    public static void encodeShipInfo(Level level, BlockPos blockPos, Map<String, Object> data) {
+    public static void putShipInfo(Level level, BlockPos blockPos, Map<String, Object> data) {
         Ship ship = VSGameUtilsKt.getShipObjectManagingPos(level, blockPos);
         if (ship == null) {
             return;
@@ -48,7 +48,7 @@ public final class ValkyrienSkies {
     }
 
     public static List<ServerShip> getNearbyShips(ServerLevel level, Vec3 pos, double radius) {
-        Ship ship = VSGameUtilsKt.getShipObjectManagingPos(level, new BlockPos(pos));
+        Ship ship = VSGameUtilsKt.getShipObjectManagingPos(level, BlockPos.containing(pos));
         if (ship != null) {
             Vector3d newPos = ship.getShipToWorld().transformPosition(new Vector3d(pos.x, pos.y, pos.z));
             pos = new Vec3(newPos.x, newPos.y, newPos.z);
