@@ -1,10 +1,12 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral;
+import de.srendi.advancedperipherals.common.blocks.base.BaseBlock;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
@@ -12,6 +14,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetectorPeripheral> {
@@ -98,5 +102,17 @@ public class DistanceDetectorEntity extends PeripheralBlockEntity<DistanceDetect
             float distance = this.currentDistance;
             this.currentDistanceLerped = Mth.lerp(dt, this.currentDistanceLerped, distance == -1 ? this.getMaxRange() : distance);
         }
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        float currentDistance = this.getCurrentDistance();
+        if (currentDistance == -1) {
+            currentDistance = this.getMaxRange();
+        }
+        currentDistance += 1.5f;
+        Direction direction = this.getBlockState().getValue(BaseBlock.ORIENTATION).front();
+        Vec3 blockPos = Vec3.atCenterOf(this.getBlockPos());
+        return new AABB(blockPos, blockPos.add(direction.getStepX() * currentDistance, direction.getStepY() * currentDistance, direction.getStepZ() * currentDistance));
     }
 }

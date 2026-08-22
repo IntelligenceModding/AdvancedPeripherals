@@ -45,18 +45,6 @@ public class DistanceDetectorRenderer implements BlockEntityRenderer<DistanceDet
         return 256;
     }
 
-    // @Override
-    // public AABB getRenderBoundingBox(DistanceDetectorEntity be) {
-    //     float currentDistance = be.getCurrentDistance();
-    //     if (currentDistance == -1) {
-    //         currentDistance = be.getMaxRange();
-    //     }
-    //     currentDistance += 1.5f;
-    //     Direction direction = be.getBlockState().getValue(BaseBlock.ORIENTATION).front();
-    //     Vec3 blockPos = Vec3.atCenterOf(be.getBlockPos());
-    //     return new AABB(blockPos, blockPos.add(direction.getStepX() * currentDistance, direction.getStepY() * currentDistance, direction.getStepZ() * currentDistance));
-    // }
-
     @Override
     public boolean shouldRender(@NotNull DistanceDetectorEntity pBlockEntity, @NotNull Vec3 pCameraPos) {
         return true;
