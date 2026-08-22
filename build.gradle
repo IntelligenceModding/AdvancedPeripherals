@@ -351,7 +351,7 @@ dependencies {
     }
 
     // Valkyrien Skies
-    modApi("org.valkyrienskies:valkyrienskies-120-forge:${vs2_version}") {
+    modCompileOnly("org.valkyrienskies:valkyrienskies-120-forge:${vs2_version}") {
         transitive = false
         exclude group: "org.joml"
     }
@@ -360,6 +360,10 @@ dependencies {
     compileOnly("org.valkyrienskies.core:internal:${vs_core_version}")
     compileOnly("org.valkyrienskies.core:util:${vs_core_version}")
     if (!minimumRuntime) {
+        modRuntimeOnly("org.valkyrienskies:valkyrienskies-120-forge:${vs2_version}") {
+            transitive = false
+            exclude group: "org.joml"
+        }
         runtimeOnly("org.valkyrienskies.core:api:${vs_core_version}") {
             transitive = false
             exclude group: "org.joml"
