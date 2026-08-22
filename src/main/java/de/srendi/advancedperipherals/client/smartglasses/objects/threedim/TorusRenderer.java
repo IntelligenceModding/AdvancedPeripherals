@@ -36,7 +36,7 @@ public class TorusRenderer implements IThreeDObjectRenderer<TorusObject> {
             }
             poseStack.translate(torus.x, torus.y, torus.z);
             poseStack.mulPose(torus.getRotation());
-            RenderUtil.drawTorus(poseStack, bufferBuilder, torus.majorRadius, torus.minorRadius, red, green, blue, alpha, torus.rings, torus.sides);
+            RenderUtil.drawTorus(poseStack, bufferBuilder, torus.majorRadius, torus.minorRadius, red, green, blue, alpha, torus.sides, torus.rings);
 
             poseStack.popPose();
         }
