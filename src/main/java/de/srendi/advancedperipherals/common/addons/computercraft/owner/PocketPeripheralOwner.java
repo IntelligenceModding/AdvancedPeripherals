@@ -9,6 +9,7 @@ import dan200.computercraft.shared.pocket.core.PocketBrain;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,6 +26,18 @@ import org.joml.Matrix3dc;
 
 public class PocketPeripheralOwner extends BasePeripheralOwner {
     private final IPocketAccess pocket;
+
+    private final AbstractDataStorage dataStorage = new AbstractDataStorage() {
+        @Override
+        protected DataComponentPatch getPatch() {
+            return pocket.getUpgradeData();
+        }
+
+        @Override
+        protected void setPatch(DataComponentPatch patch) {
+            pocket.setUpgradeData(patch);
+        }
+    };
 
     protected PocketPeripheralOwner(IPocketAccess pocket) {
         super();
@@ -109,13 +122,8 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public DataComponentPatch getDataStorage() {
-        return pocket.getUpgradeData();
-    }
-
-    @Override
-    public void putDataStorage(DataComponentPatch dataStorage) {
-        pocket.setUpgradeData(dataStorage);
+    public AbstractDataStorage getDataStorage() {
+        return this.dataStorage;
     }
 
     @Override

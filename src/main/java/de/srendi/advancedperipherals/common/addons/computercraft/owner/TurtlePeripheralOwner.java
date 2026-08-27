@@ -9,6 +9,7 @@ import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,6 +28,18 @@ import java.util.UUID;
 public class TurtlePeripheralOwner extends BasePeripheralOwner {
     private final ITurtleAccess turtle;
     private final TurtleSide side;
+
+    private final AbstractDataStorage dataStorage = new AbstractDataStorage() {
+        @Override
+        protected DataComponentPatch getPatch() {
+            return turtle.getUpgradeData(side);
+        }
+
+        @Override
+        protected void setPatch(DataComponentPatch patch) {
+            turtle.setUpgradeData(side, patch);
+        }
+    };
 
     public TurtlePeripheralOwner(ITurtleAccess turtle, TurtleSide side) {
         super();
@@ -78,24 +91,28 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public DataComponentPatch getDataStorage() {
-        return turtle.getUpgradeData(side);
-    }
-
-    @Override
-    public void putDataStorage(DataComponentPatch dataStorage) {
-        turtle.setUpgradeData(side, dataStorage);
+    public AbstractDataStorage getDataStorage() {
+        return this.dataStorage;
     }
 
     public UUID getChunkLoadUUID() {
-        PatchedDataComponentMap patchMap = this.getPatchedDataStorage();
-        UUID id = patchMap.get(APDataComponents.CHUNKY_ID.get());
-        if (id == null) {
+        try (AbstractDataStorage.ReadView storage = this.getDataStorage().allocRead()) {
+            UUID id = storage.getPatched().get(APDataComponents.CHUNKY_ID.get());
+            if (id != null) {
+                return id;
+            }
             id = UUID.randomUUID();
-            patchMap.set(APDataComponents.CHUNKY_ID.get(), id);
-            this.putDataStorage(patchMap.asPatch());
+            try (AbstractDataStorage.WriteView writeable = storage.upgradeToWrite()) {
+                PatchedDataComponentMap patch = writeable.getPatched();
+                UUID id2 = patch.get(APDataComponents.CHUNKY_ID.get());
+                if (id2 != null) {
+                    return id2;
+                }
+                patch.set(APDataComponents.CHUNKY_ID.get(), id);
+                writeable.setPatch(patch.asPatch());
+            }
+            return id;
         }
-        return id;
     }
 
     @Override

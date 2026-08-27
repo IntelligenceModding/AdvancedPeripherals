@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.blocks.base.VarNameable;
 import de.srendi.advancedperipherals.common.util.DataStorageUtil;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,6 +27,18 @@ import org.jetbrains.annotations.Nullable;
 public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlockEntity> extends BasePeripheralOwner {
     @NotNull
     private final T blockEntity;
+
+    private final AbstractDataStorage dataStorage = new AbstractDataStorage() {
+        @Override
+        protected DataComponentPatch getPatch() {
+            return DataStorageUtil.getDataStorage(blockEntity);
+        }
+
+        @Override
+        protected void setPatch(DataComponentPatch patch) {
+            DataStorageUtil.putDataStorage(blockEntity, patch);
+        }
+    };
 
     public BlockEntityPeripheralOwner(@NotNull T blockEntity) {
         super();
@@ -102,13 +115,8 @@ public class BlockEntityPeripheralOwner<T extends BlockEntity & IPeripheralBlock
     }
 
     @Override
-    public DataComponentPatch getDataStorage() {
-        return DataStorageUtil.getDataStorage(blockEntity);
-    }
-
-    @Override
-    public void putDataStorage(DataComponentPatch dataStorage) {
-        DataStorageUtil.putDataStorage(blockEntity, dataStorage);
+    public AbstractDataStorage getDataStorage() {
+        return this.dataStorage;
     }
 
     @Override

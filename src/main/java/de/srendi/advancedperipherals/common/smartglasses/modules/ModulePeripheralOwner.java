@@ -6,6 +6,7 @@ import dan200.computercraft.core.computer.ComputerSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BasePeripheralOwner;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,6 +27,18 @@ import java.util.stream.Stream;
 
 public class ModulePeripheralOwner extends BasePeripheralOwner {
     private final SmartGlassesComputer computer;
+
+    private final AbstractDataStorage dataStorage = new AbstractDataStorage() {
+        @Override
+        protected DataComponentPatch getPatch() {
+            return computer.getModulesData();
+        }
+
+        @Override
+        protected void setPatch(DataComponentPatch patch) {
+            computer.setModulesData(patch);
+        }
+    };
 
     public ModulePeripheralOwner(SmartGlassesComputer computer) {
         this.computer = computer;
@@ -108,13 +121,8 @@ public class ModulePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     @NotNull
-    public DataComponentPatch getDataStorage() {
-        return computer.getModulesData();
-    }
-
-    @Override
-    public void putDataStorage(DataComponentPatch patch) {
-        computer.setModulesData(patch);
+    public AbstractDataStorage getDataStorage() {
+        return this.dataStorage;
     }
 
     @Override

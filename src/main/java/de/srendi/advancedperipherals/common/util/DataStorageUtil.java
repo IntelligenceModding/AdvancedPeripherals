@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentPatch;
@@ -59,10 +60,12 @@ public class DataStorageUtil {
         }
 
         public static void addCycles(IPeripheralOwner owner, int count) {
-            PatchedDataComponentMap patch = owner.getPatchedDataStorage();
-            int currentCharge = patch.getOrDefault(ROTATION_CHARGE_SETTING.get(), 0);
-            patch.set(ROTATION_CHARGE_SETTING.get(), currentCharge + count * ROTATION_STEPS);
-            owner.putDataStorage(patch.asPatch());
+            try (AbstractDataStorage.WriteView storage = owner.getDataStorage().allocWrite()) {
+                PatchedDataComponentMap patch = storage.getPatched();
+                int currentCharge = patch.getOrDefault(ROTATION_CHARGE_SETTING.get(), 0);
+                patch.set(ROTATION_CHARGE_SETTING.get(), currentCharge + count * ROTATION_STEPS);
+                storage.setPatch(patch.asPatch());
+            }
         }
     }
 }

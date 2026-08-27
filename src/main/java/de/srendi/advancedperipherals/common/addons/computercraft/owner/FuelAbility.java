@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import org.jetbrains.annotations.NotNull;
@@ -26,13 +27,15 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
      * @return the fuel consumption rate
      */
     protected int getConsumptionRate() {
-        return Math.min(
-            Math.max(
-                owner.getPatchedDataStorage().getOrDefault(APDataComponents.FUEL_CONSUMPTION_RATE.get(), MIN_FUEL_CONSUMING_RATE),
-                MIN_FUEL_CONSUMING_RATE
-            ),
-            getMaxFuelConsumptionRate()
-        );
+        try (AbstractDataStorage.ReadView storage = owner.getDataStorage().allocRead()) {
+            return Math.min(
+                Math.max(
+                    storage.getPatched().getOrDefault(APDataComponents.FUEL_CONSUMPTION_RATE.get(), MIN_FUEL_CONSUMING_RATE),
+                    MIN_FUEL_CONSUMING_RATE
+                ),
+                getMaxFuelConsumptionRate()
+            );
+        }
     }
 
     /**
@@ -48,9 +51,11 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
         if (rate > maxFuelRate) {
             rate = maxFuelRate;
         }
-        PatchedDataComponentMap settings = owner.getPatchedDataStorage();
-        settings.set(APDataComponents.FUEL_CONSUMPTION_RATE.get(), rate);
-        owner.putDataStorage(settings.asPatch());
+        try (AbstractDataStorage.WriteView storage = owner.getDataStorage().allocWrite()) {
+            PatchedDataComponentMap settings = storage.getPatched();
+            settings.set(APDataComponents.FUEL_CONSUMPTION_RATE.get(), rate);
+            storage.setPatch(settings.asPatch());
+        }
     }
 
     public abstract boolean isFuelConsumptionDisabled();

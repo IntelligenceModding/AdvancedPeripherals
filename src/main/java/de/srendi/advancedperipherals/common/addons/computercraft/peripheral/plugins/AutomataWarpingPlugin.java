@@ -18,6 +18,7 @@ import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
@@ -56,15 +57,17 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @NotNull
     @Unmodifiable
     protected Map<String, GlobalPos> getPointDatas() {
-        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        return owner.getPatchedDataStorage().getOrDefault(APDataComponents.POINT_DATA_MARK.get(), Map.of());
+        try (AbstractDataStorage.ReadView storage = automataCore.getPeripheralOwner().getDataStorage().allocRead()) {
+            return storage.getPatched().getOrDefault(APDataComponents.POINT_DATA_MARK.get(), Map.of());
+        }
     }
 
     protected void setPointData(@NotNull Map<String, GlobalPos> data) {
-        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        PatchedDataComponentMap settings = owner.getPatchedDataStorage();
-        settings.set(APDataComponents.POINT_DATA_MARK.get(), Map.copyOf(data));
-        owner.putDataStorage(settings.asPatch());
+        try (AbstractDataStorage.WriteView storage = automataCore.getPeripheralOwner().getDataStorage().allocWrite()) {
+            PatchedDataComponentMap settings = storage.getPatched();
+            settings.set(APDataComponents.POINT_DATA_MARK.get(), Map.copyOf(data));
+            storage.setPatch(settings.asPatch());
+        }
     }
 
     protected Pair<MethodResult, GlobalPos> getPoint(String name) {

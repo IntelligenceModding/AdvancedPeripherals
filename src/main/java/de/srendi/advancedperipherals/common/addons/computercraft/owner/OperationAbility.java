@@ -2,10 +2,10 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 
 import dan200.computercraft.api.lua.ILuaFunction;
 import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.lib.LibConfig;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralCheck;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralFunction;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
@@ -26,18 +26,22 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
     }
 
     protected void setCooldown(@NotNull IPeripheralOperation<?> operation, int cooldown) {
-        PatchedDataComponentMap patch = owner.getPatchedDataStorage();
-        Map<String, Long> cooldowns = new HashMap<>(patch.getOrDefault(APDataComponents.ABILITY_COOLDOWNS.get(), Map.of()));
+        try (AbstractDataStorage.WriteView storage = owner.getDataStorage().allocWrite()) {
+            PatchedDataComponentMap patch = storage.getPatched();
+            Map<String, Long> cooldowns = new HashMap<>(patch.getOrDefault(APDataComponents.ABILITY_COOLDOWNS.get(), Map.of()));
 
-        long newTS = System.currentTimeMillis() + cooldown;
-        cooldowns.put(operation.settingsName(), newTS);
-        patch.set(APDataComponents.ABILITY_COOLDOWNS.get(), cooldowns);
-        owner.putDataStorage(patch.asPatch());
+            long newTS = System.currentTimeMillis() + cooldown;
+            cooldowns.put(operation.settingsName(), newTS);
+            patch.set(APDataComponents.ABILITY_COOLDOWNS.get(), cooldowns);
+            storage.setPatch(patch.asPatch());
+        }
     }
 
-    protected int getCooldown(@NotNull IPeripheralOperation<?> operation) {
-        PatchedDataComponentMap patch = owner.getPatchedDataStorage();
-        Map<String, Long> cooldowns = patch.getOrDefault(APDataComponents.ABILITY_COOLDOWNS.get(), Map.of());
+    public int getCooldown(@NotNull IPeripheralOperation<?> operation) {
+        Map<String, Long> cooldowns;
+        try (AbstractDataStorage.ReadView storage = owner.getDataStorage().allocRead()) {
+            cooldowns = storage.getPatched().getOrDefault(APDataComponents.ABILITY_COOLDOWNS.get(), Map.of());
+        }
         String operationName = operation.settingsName();
         if (!cooldowns.containsKey(operationName)) {
             return 0;
@@ -52,20 +56,22 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
         if (!LibConfig.initialCooldownEnabled) {
             return;
         }
-        PatchedDataComponentMap patch = owner.getPatchedDataStorage();
-        Map<String, Long> cooldowns = patch.getOrDefault(APDataComponents.ABILITY_COOLDOWNS.get(), Map.of());
-        if (cooldowns.containsKey(operation.settingsName())) {
-            return;
+        try (AbstractDataStorage.WriteView storage = owner.getDataStorage().allocWrite()) {
+            PatchedDataComponentMap patch = storage.getPatched();
+            Map<String, Long> cooldowns = patch.getOrDefault(APDataComponents.ABILITY_COOLDOWNS.get(), Map.of());
+            if (cooldowns.containsKey(operation.settingsName())) {
+                return;
+            }
+            int initialCooldown = operation.getInitialCooldown();
+            if (initialCooldown < LibConfig.initialCooldownSensitivity) {
+                return;
+            }
+            long newTS = System.currentTimeMillis() + initialCooldown;
+            cooldowns = new HashMap<>(cooldowns);
+            cooldowns.put(operation.settingsName(), newTS);
+            patch.set(APDataComponents.ABILITY_COOLDOWNS.get(), cooldowns);
+            storage.setPatch(patch.asPatch());
         }
-        int initialCooldown = operation.getInitialCooldown();
-        if (initialCooldown < LibConfig.initialCooldownSensitivity) {
-            return;
-        }
-        long newTS = System.currentTimeMillis() + initialCooldown;
-        cooldowns = new HashMap<>(cooldowns);
-        cooldowns.put(operation.settingsName(), newTS);
-        patch.set(APDataComponents.ABILITY_COOLDOWNS.get(), cooldowns);
-        owner.putDataStorage(patch.asPatch());
     }
 
     public <T> @NotNull MethodResult performOperation(
@@ -99,7 +105,7 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
             fuelAbility = owner.getAbility(PeripheralOwnerAbility.FUEL);
             String errorMsg = null;
             if (fuelAbility == null) {
-                errorMsg = "This peripheral has no fuel at all";
+                errorMsg = "This peripheral does not have fuel abilty";
             } else if (!fuelAbility.consumeFuel(cost, false)) {
                 errorMsg = "Not enough fuel for operation";
             }
@@ -122,12 +128,8 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
         return result;
     }
 
-    public int getCurrentCooldown(IPeripheralOperation<?> operation) {
-        return getCooldown(operation);
-    }
-
     public boolean isOnCooldown(IPeripheralOperation<?> operation) {
-        return getCurrentCooldown(operation) > 0;
+        return getCooldown(operation) > 0;
     }
 
     @Override
@@ -136,18 +138,10 @@ public class OperationAbility implements IOwnerAbility, IPeripheralPlugin {
         for (IPeripheralOperation<?> operation : allowedOperations.values()) {
             Map<String, Object> operData = operation.computerDescription();
             operData.put("getCost", (ILuaFunction) operation::getCostLua);
+            operData.put("getCooldown", (ILuaFunction) (args) -> MethodResult.of(getCooldown(operation)));
             operations.put(operation.settingsName(), operData);
         }
         data.put("operations", operations);
-    }
-
-    @LuaFunction(mainThread = true)
-    public final MethodResult getOperationCooldown(String name) {
-        IPeripheralOperation<?> op = allowedOperations.get(name);
-        if (op == null) {
-            return MethodResult.of(null, "Cannot find this operation");
-        }
-        return MethodResult.of(getCurrentCooldown(op));
     }
 
     public enum FailReason {

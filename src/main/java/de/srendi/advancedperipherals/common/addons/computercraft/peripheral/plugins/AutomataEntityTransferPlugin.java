@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
@@ -44,23 +45,31 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     }
 
     protected boolean isEntityInside() {
-        return automataCore.getPeripheralOwner().getPatchedDataStorage().has(ENTITY_TRANSFER.get());
+        try (AbstractDataStorage.ReadView storage = automataCore.getPeripheralOwner().getDataStorage().allocRead()) {
+            return storage.getPatched().has(ENTITY_TRANSFER.get());
+        }
     }
 
     protected void saveEntity(CompoundTag data) {
-        PatchedDataComponentMap patch = automataCore.getPeripheralOwner().getPatchedDataStorage();
-        patch.set(ENTITY_TRANSFER.get(), CustomData.of(data));
-        automataCore.getPeripheralOwner().putDataStorage(patch.asPatch());
+        try (AbstractDataStorage.WriteView storage = automataCore.getPeripheralOwner().getDataStorage().allocWrite()) {
+            PatchedDataComponentMap patch = storage.getPatched();
+            patch.set(ENTITY_TRANSFER.get(), CustomData.of(data));
+            storage.setPatch(patch.asPatch());
+        }
     }
 
     protected CustomData getEntity() {
-        return automataCore.getPeripheralOwner().getPatchedDataStorage().getOrDefault(ENTITY_TRANSFER.get(), CustomData.EMPTY);
+        try (AbstractDataStorage.ReadView storage = automataCore.getPeripheralOwner().getDataStorage().allocRead()) {
+            return storage.getPatched().getOrDefault(ENTITY_TRANSFER.get(), CustomData.EMPTY);
+        }
     }
 
     protected void removeEntity() {
-        PatchedDataComponentMap patch = automataCore.getPeripheralOwner().getPatchedDataStorage();
-        patch.remove(ENTITY_TRANSFER.get());
-        automataCore.getPeripheralOwner().putDataStorage(patch.asPatch());
+        try (AbstractDataStorage.WriteView storage = automataCore.getPeripheralOwner().getDataStorage().allocWrite()) {
+            PatchedDataComponentMap patch = storage.getPatched();
+            patch.remove(ENTITY_TRANSFER.get());
+            storage.setPatch(patch.asPatch());
+        }
     }
 
     @Nullable

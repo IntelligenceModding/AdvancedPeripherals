@@ -9,7 +9,7 @@ public class OperationAbilityTest {
         owner.attachOperation(DummyOperations.LONG);
         OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
         assertNotNull(operationAbility);
-        int abilityCooldown = operationAbility.getCurrentCooldown(DummyOperations.LONG);
+        int abilityCooldown = operationAbility.getCooldown(DummyOperations.LONG);
         assertTrue(operationAbility.isOnCooldown(DummyOperations.LONG));
         assertTrue(abilityCooldown > 10_000);
         assertTrue(abilityCooldown < 20_001);
@@ -22,7 +22,7 @@ public class OperationAbilityTest {
         owner.attachOperation(DummyOperations.LONG);
         OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
         assertNotNull(operationAbility);
-        int abilityCooldown = operationAbility.getCurrentCooldown(DummyOperations.SHORT);
+        int abilityCooldown = operationAbility.getCooldown(DummyOperations.SHORT);
         assertFalse(operationAbility.isOnCooldown(DummyOperations.SHORT));
         assertEquals(0, abilityCooldown);
     }
@@ -34,7 +34,7 @@ public class OperationAbilityTest {
         owner.attachOperation(DummyOperations.LONG);
         OperationAbility operationAbility = owner.getAbility(PeripheralOwnerAbility.OPERATION);
         assertNotNull(operationAbility);
-        int abilityCooldown = operationAbility.getCurrentCooldown(DummyOperations.LONG);
+        int abilityCooldown = operationAbility.getCooldown(DummyOperations.LONG);
         assertFalse(operationAbility.isOnCooldown(DummyOperations.LONG));
         assertEquals(0, abilityCooldown);
         LibConfig.setTestMode(false);
