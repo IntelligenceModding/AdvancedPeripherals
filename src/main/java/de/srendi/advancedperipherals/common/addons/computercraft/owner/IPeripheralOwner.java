@@ -6,6 +6,7 @@ import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import de.srendi.advancedperipherals.common.util.StringUtil;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,7 +32,10 @@ public interface IPeripheralOwner {
 
     @Nullable
     default String getCustomName() {
-        Component name = Component.Serializer.fromJson(this.getDataStorage().getString("CustomName"));
+        Component name;
+        try (AbstractDataStorage.ReadView storage = this.getDataStorage().allocRead()) {
+            name = Component.Serializer.fromJson(storage.getData().getString("CustomName"));
+        }
         if (name == null) {
             return null;
         }
@@ -40,13 +44,15 @@ public interface IPeripheralOwner {
 
     default void setCustomName(String name) {
         name = StringUtil.validateName(name);
-        CompoundTag data = this.getDataStorage();
-        if (name == null || name.isEmpty()) {
-            data.remove("CustomName");
-        } else {
-            data.putString("CustomName", Component.Serializer.toJson(Component.literal(name)));
+        try (AbstractDataStorage.WriteView storage = this.getDataStorage().allocWrite()) {
+            CompoundTag data = storage.getData();
+            if (name == null || name.isEmpty()) {
+                data.remove("CustomName");
+            } else {
+                data.putString("CustomName", Component.Serializer.toJson(Component.literal(name)));
+            }
+            storage.setData(data);
         }
-        this.putDataStorage(data);
     }
 
     @NotNull Level getLevel();
@@ -166,9 +172,7 @@ public interface IPeripheralOwner {
         return null;
     }
 
-    CompoundTag getDataStorage();
-
-    void putDataStorage(CompoundTag dataStorage);
+    AbstractDataStorage getDataStorage();
 
     <T> T withPlayer(APFakePlayer.Action<T> function) throws LuaException;
 

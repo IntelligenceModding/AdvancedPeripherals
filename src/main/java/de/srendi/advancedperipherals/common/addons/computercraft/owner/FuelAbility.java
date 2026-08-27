@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.addons.computercraft.owner;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
@@ -26,14 +27,16 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
      * @return the fuel consumption rate
      */
     protected int getConsumptionRate() {
-        CompoundTag settings = owner.getDataStorage();
-        return Math.min(
-            Math.max(
-                settings.contains(APDataComponents.FUEL_CONSUMPTION_RATE) ? settings.getInt(APDataComponents.FUEL_CONSUMPTION_RATE) : MIN_FUEL_CONSUMING_RATE,
-                MIN_FUEL_CONSUMING_RATE
-            ),
-            getMaxFuelConsumptionRate()
-        );
+        try (AbstractDataStorage.ReadView storage = owner.getDataStorage().allocRead()) {
+            CompoundTag settings = storage.getData();
+            return Math.min(
+                Math.max(
+                    settings.contains(APDataComponents.FUEL_CONSUMPTION_RATE) ? settings.getInt(APDataComponents.FUEL_CONSUMPTION_RATE) : MIN_FUEL_CONSUMING_RATE,
+                    MIN_FUEL_CONSUMING_RATE
+                ),
+                getMaxFuelConsumptionRate()
+            );
+        }
     }
 
     /**
@@ -49,9 +52,11 @@ public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerA
         if (rate > maxFuelRate) {
             rate = maxFuelRate;
         }
-        CompoundTag settings = owner.getDataStorage();
-        settings.putInt(APDataComponents.FUEL_CONSUMPTION_RATE, rate);
-        owner.putDataStorage(settings);
+        try (AbstractDataStorage.WriteView storage = owner.getDataStorage().allocWrite()) {
+            CompoundTag settings = storage.getData();
+            settings.putInt(APDataComponents.FUEL_CONSUMPTION_RATE, rate);
+            storage.setData(settings);
+        }
     }
 
     public abstract boolean isFuelConsumptionDisabled();

@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.util;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.IPeripheralOwner;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,10 +38,12 @@ public class DataStorageUtil {
         }
 
         public static void addCycles(IPeripheralOwner owner, int count) {
-            CompoundTag data = owner.getDataStorage();
-            int currentCharge = data.getInt(ROTATION_CHARGE_SETTING);
-            data.putInt(ROTATION_CHARGE_SETTING, currentCharge + count * ROTATION_STEPS);
-            owner.putDataStorage(data);
+            try (AbstractDataStorage.WriteView storage = owner.getDataStorage().allocWrite()) {
+                CompoundTag data = storage.getData();
+                int currentCharge = data.getInt(ROTATION_CHARGE_SETTING);
+                data.putInt(ROTATION_CHARGE_SETTING, currentCharge + count * ROTATION_STEPS);
+                storage.setData(data);
+            }
         }
     }
 }

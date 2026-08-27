@@ -9,6 +9,7 @@ import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,6 +27,19 @@ import java.util.UUID;
 public class TurtlePeripheralOwner extends BasePeripheralOwner {
     private final ITurtleAccess turtle;
     private final TurtleSide side;
+
+    private final AbstractDataStorage dataStorage = new AbstractDataStorage() {
+        @Override
+        protected CompoundTag getData() {
+            return turtle.getUpgradeNBTData(side).getCompound(APDataComponents.STORED_DATA);
+        }
+
+        @Override
+        protected void setData(CompoundTag data) {
+            turtle.getUpgradeNBTData(side).put(APDataComponents.STORED_DATA, data);
+            turtle.updateUpgradeNBTData(side);
+        }
+    };
 
     public TurtlePeripheralOwner(ITurtleAccess turtle, TurtleSide side) {
         super();
@@ -77,26 +91,28 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public CompoundTag getDataStorage() {
-        CompoundTag data = turtle.getUpgradeNBTData(side);
-        return data.getCompound(APDataComponents.STORED_DATA);
-    }
-
-    @Override
-    public void putDataStorage(CompoundTag dataStorage) {
-        turtle.getUpgradeNBTData(side).put(APDataComponents.STORED_DATA, dataStorage);
-        turtle.updateUpgradeNBTData(side);
+    public AbstractDataStorage getDataStorage() {
+        return this.dataStorage;
     }
 
     public UUID getChunkLoadUUID() {
-        CompoundTag data = this.getDataStorage();
-        UUID id = data.getUUID(APDataComponents.CHUNKY_ID);
-        if (id == null) {
+        try (AbstractDataStorage.ReadView storage = this.getDataStorage().allocRead()) {
+            UUID id = storage.getData().getUUID(APDataComponents.CHUNKY_ID);
+            if (id != null) {
+                return id;
+            }
             id = UUID.randomUUID();
-            data.putUUID(APDataComponents.CHUNKY_ID, id);
-            this.putDataStorage(data);
+            try (AbstractDataStorage.WriteView writeable = storage.upgradeToWrite()) {
+                CompoundTag data = writeable.getData();
+                UUID id2 = data.getUUID(APDataComponents.CHUNKY_ID);
+                if (id2 != null) {
+                    return id2;
+                }
+                data.putUUID(APDataComponents.CHUNKY_ID, id);
+                writeable.setData(data);
+            }
+            return id;
         }
-        return id;
     }
 
     @Override

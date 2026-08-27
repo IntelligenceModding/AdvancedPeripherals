@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePer
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
@@ -42,23 +43,31 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
     }
 
     protected boolean isEntityInside() {
-        return automataCore.getPeripheralOwner().getDataStorage().contains(ENTITY_TRANSFER);
+        try (AbstractDataStorage.ReadView storage = automataCore.getPeripheralOwner().getDataStorage().allocRead()) {
+            return storage.getData().contains(ENTITY_TRANSFER);
+        }
     }
 
     protected void saveEntity(CompoundTag data) {
-        CompoundTag storage = automataCore.getPeripheralOwner().getDataStorage();
-        storage.put(ENTITY_TRANSFER, data.copy());
-        automataCore.getPeripheralOwner().putDataStorage(storage);
+        try (AbstractDataStorage.WriteView storage = automataCore.getPeripheralOwner().getDataStorage().allocWrite()) {
+            CompoundTag patch = storage.getData();
+            patch.put(ENTITY_TRANSFER, data.copy());
+            storage.setData(patch);
+        }
     }
 
     protected CompoundTag getEntity() {
-        return automataCore.getPeripheralOwner().getDataStorage().getCompound(ENTITY_TRANSFER);
+        try (AbstractDataStorage.ReadView storage = automataCore.getPeripheralOwner().getDataStorage().allocRead()) {
+            return storage.getData().getCompound(ENTITY_TRANSFER);
+        }
     }
 
     protected void removeEntity() {
-        CompoundTag storage = automataCore.getPeripheralOwner().getDataStorage();
-        storage.remove(ENTITY_TRANSFER);
-        automataCore.getPeripheralOwner().putDataStorage(storage);
+        try (AbstractDataStorage.WriteView storage = automataCore.getPeripheralOwner().getDataStorage().allocWrite()) {
+            CompoundTag patch = storage.getData();
+            patch.remove(ENTITY_TRANSFER);
+            storage.setData(patch);
+        }
     }
 
     @Nullable

@@ -10,6 +10,7 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,6 +27,19 @@ import org.joml.Matrix3dc;
 
 public class PocketPeripheralOwner extends BasePeripheralOwner {
     private final IPocketAccess pocket;
+
+    private final AbstractDataStorage dataStorage = new AbstractDataStorage() {
+        @Override
+        protected CompoundTag getData() {
+            return pocket.getUpgradeNBTData().getCompound(APDataComponents.STORED_DATA);
+        }
+
+        @Override
+        protected void setData(CompoundTag data) {
+            pocket.getUpgradeNBTData().put(APDataComponents.STORED_DATA, data);
+            pocket.updateUpgradeNBTData();
+        }
+    };
 
     protected PocketPeripheralOwner(IPocketAccess pocket) {
         super();
@@ -112,14 +126,8 @@ public class PocketPeripheralOwner extends BasePeripheralOwner {
     }
 
     @Override
-    public CompoundTag getDataStorage() {
-        return pocket.getUpgradeNBTData().getCompound(APDataComponents.STORED_DATA);
-    }
-
-    @Override
-    public void putDataStorage(CompoundTag dataStorage) {
-        pocket.getUpgradeNBTData().put(APDataComponents.STORED_DATA, dataStorage);
-        pocket.updateUpgradeNBTData();
+    public AbstractDataStorage getDataStorage() {
+        return this.dataStorage;
     }
 
     @Override

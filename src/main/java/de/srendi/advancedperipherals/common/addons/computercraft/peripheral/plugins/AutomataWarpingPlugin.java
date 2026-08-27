@@ -18,6 +18,7 @@ import de.srendi.advancedperipherals.common.util.ChunkManager;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.ServerWorker;
+import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.AutomataCorePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralOperation;
 import net.minecraft.core.BlockPos;
@@ -57,30 +58,32 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
     @NotNull
     @Unmodifiable
     protected Map<String, GlobalPos> getPointDatas() {
-        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        CompoundTag points = owner.getDataStorage().getCompound(APDataComponents.POINT_DATA_MARK);
-        if (points.isEmpty()) {
-            return Map.of();
-        }
-        Map<String, GlobalPos> data = new HashMap<>();
-        for (String name : points.getAllKeys()) {
-            GlobalPos pos = GlobalPos.CODEC.parse(NbtOps.INSTANCE, points.get(name)).result().orElse(null);
-            if (pos != null) {
-                data.put(name, pos);
+        try (AbstractDataStorage.ReadView storage = automataCore.getPeripheralOwner().getDataStorage().allocRead()) {
+            CompoundTag points = storage.getData().getCompound(APDataComponents.POINT_DATA_MARK);
+            if (points.isEmpty()) {
+                return Map.of();
             }
+            Map<String, GlobalPos> data = new HashMap<>();
+            for (String name : points.getAllKeys()) {
+                GlobalPos pos = GlobalPos.CODEC.parse(NbtOps.INSTANCE, points.get(name)).result().orElse(null);
+                if (pos != null) {
+                    data.put(name, pos);
+                }
+            }
+            return data;
         }
-        return data;
     }
 
     protected void setPointData(@NotNull Map<String, GlobalPos> data) {
-        TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        CompoundTag settings = owner.getDataStorage();
-        CompoundTag points = new CompoundTag();
-        for (Map.Entry<String, GlobalPos> point : data.entrySet()) {
-            points.put(point.getKey(), GlobalPos.CODEC.encodeStart(NbtOps.INSTANCE, point.getValue()).result().orElseThrow());
+        try (AbstractDataStorage.WriteView storage = automataCore.getPeripheralOwner().getDataStorage().allocWrite()) {
+            CompoundTag settings = storage.getData();
+            CompoundTag points = new CompoundTag();
+            for (Map.Entry<String, GlobalPos> point : data.entrySet()) {
+                points.put(point.getKey(), GlobalPos.CODEC.encodeStart(NbtOps.INSTANCE, point.getValue()).result().orElseThrow());
+            }
+            settings.put(APDataComponents.POINT_DATA_MARK, points);
+            storage.setData(settings);
         }
-        settings.put(APDataComponents.POINT_DATA_MARK, points);
-        owner.putDataStorage(settings);
     }
 
     protected Pair<MethodResult, GlobalPos> getPoint(String name) {
