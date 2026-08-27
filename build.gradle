@@ -34,10 +34,8 @@ def githubRepo = 'AdvancedPeripherals'
 def curseforgeProjectId = 431725
 def modrinthProjectId = 'SOw6jD6x'
 
-version = "${mod_version}" + (isSnapshotVersion ? "-SNAPSHOT" : "") + "${mod_artifact_suffix}"
+version = "${minecraft_version}-${mod_version}${isSnapshotVersion ? '-SNAPSHOT' : ''}${mod_artifact_suffix}"
 group = 'de.srendi.advancedperipherals'
-
-def fullVersionTag = "${minecraft_version}-${project.version}"
 
 def static getenv(path = ".env") {
     def env = [:]
@@ -361,9 +359,9 @@ dependencies {
 }
 
 changelog {
-    version = "${project.version}"
+    version = "${mod_version}"
     path = "${project.projectDir}/CHANGELOG.md"
-    header = "[${fullVersionTag}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
+    header = "[${version}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
     // Valid patterns would be:
     //   1.16.5-1.1.1.1b
     //   1.18-1.0r
@@ -408,7 +406,6 @@ jar {
                     "Implementation-Vendor"   : "Srendi",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")])
     })
-    archiveFileName = "AdvancedPeripherals-${minecraft_version}-${mod_version}.jar"
 }
 
 tasks.withType(Test).configureEach {
@@ -470,12 +467,12 @@ githubRelease {
         token = githubKey
     owner = githubUser
     repo = githubRepo
-    tagName = fullVersionTag
-    releaseName = fullVersionTag
+    tagName = version
+    releaseName = version
     targetCommitish = System.getenv("GITHUB_REF_NAME")
     generateReleaseNotes = false
     try {
-        body = project.changelog.get("${fullVersionTag}").withHeader(false).toText()
+        body = project.changelog.get("${version}").withHeader(false).toText()
     } catch (err) {
         System.out.println(err)
         body = ""
@@ -503,7 +500,7 @@ curseforge {
 
             artifacts.register('main') {
                 from jar
-                displayName = jar.archiveFileName.get()
+                displayName = "AP ${version}"
                 releaseType = release_type
 
                 relations {
@@ -521,7 +518,7 @@ curseforge {
                 changelog {
                     format = io.github.themrmilchmann.gradle.publish.curseforge.ChangelogFormat.MARKDOWN
                     try {
-                        content = "${project.changelog.get("${fullVersionTag}").withHeader(false).toText()}"
+                        content = "${project.changelog.get("${version}").withHeader(false).toText()}"
                     } catch (err) {
                         System.out.println(err)
                         content = ""
@@ -535,8 +532,8 @@ curseforge {
 modrinth {
     token = modrinthKey
     projectId = modrinthProjectId
-    versionNumber = "${fullVersionTag}"
-    versionName = "Advanced Peripherals ${minecraft_version} ${version}"
+    versionNumber = "${version}"
+    versionName = "AP ${version}"
     versionType = release_type
     uploadFile = jar
     gameVersions = [minecraft_version]
@@ -546,7 +543,7 @@ modrinth {
     }
 
     try {
-        changelog = project.changelog.get("${fullVersionTag}").withHeader(false).toText()
+        changelog = project.changelog.get("${version}").withHeader(false).toText()
     } catch (err) {
         System.out.println(err)
         changelog = ""
@@ -558,7 +555,7 @@ publishing {
         publicationContainer.register("maven", MavenPublication) { MavenPublication publication ->
             publication.from((SoftwareComponent) components.java)
             publication.groupId = project.group
-            publication.version = isSnapshotVersion ? "${minecraft_version}-${version}-${project.teamcityBuild}" : "${minecraft_version}-${version}"
+            publication.version = isSnapshotVersion ? "${version}-SNAPSHOT-${project.teamcityBuild}" : "${version}"
             publication.artifactId = isSnapshotVersion ? "advancedperipherals-snapshots" : "advancedperipherals"
             publication.artifacts = [jar, sourcesJar]
             publication.pom {
@@ -566,7 +563,8 @@ publishing {
                 packaging = 'jar'
                 description.set(
                     'Advanced Peripherals provides multiple extensions for ComputerCraft in form of Peripherals, Pocket Upgrades, Turtles or new gear.\n' +
-                    'It also integrates with multiple third party mods.')
+                    'It also integrates with multiple third party mods.'
+                )
                 url.set('https://docs.intelligence-modding.de/')
                 scm {
                     url.set("https://github.com/${githubUser}/${githubRepo}.git")
@@ -594,9 +592,9 @@ publishing {
                     allDeps.<Node> findAll() { Node el ->
                         el.version.text().contains('_mapped_')
                     }.each { Node el ->
-                        el.version.each { Node version ->
-                            def versionText = version.text()
-                            version.setValue(versionText.substring(0, versionText.indexOf('_mapped_')))
+                        el.version.each { Node v ->
+                            def versionText = v.text()
+                            v.setValue(versionText.substring(0, versionText.indexOf('_mapped_')))
                         }
                         el.appendNode('optional', true)
                     }
