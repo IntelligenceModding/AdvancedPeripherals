@@ -2,7 +2,9 @@ package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.shared.util.NBTUtil;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
+import de.srendi.advancedperipherals.common.addons.valkyrienskies.ValkyrienSkies;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.BlockPos;
@@ -22,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -264,6 +267,17 @@ public class LuaConverter {
             data.put("state", blockStateValuesToLua(state));
             return Collections.unmodifiableMap(data);
         });
+    }
+
+    public static Map<String, Object> blockStateToLua(BlockState state, Level level, BlockPos pos) {
+        Map<String, Object> data = new HashMap<>(blockStateToLua(state));
+        if (APAddon.VALKYRIENSKIES.isLoaded()) {
+            ValkyrienSkies.putShipInfo(level, pos, data);
+        }
+        data.put("x", pos.getX());
+        data.put("y", pos.getY());
+        data.put("z", pos.getZ());
+        return data;
     }
 
     @Unmodifiable
