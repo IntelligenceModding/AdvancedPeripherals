@@ -383,6 +383,7 @@ tasks.withType(JavaCompile).configureEach {
             "MissingSummary",
             "MutablePublicArray",
             "ReferenceEquality",
+            "UnnecessaryBreakInSwitch",
 
             "StringSplitter",
         )

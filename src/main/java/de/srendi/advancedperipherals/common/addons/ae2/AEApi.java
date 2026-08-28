@@ -696,7 +696,7 @@ public class AEApi {
     /**
      * Calculates the available external item storage of a given grid node.
      *
-     * @param node The grid node for which to calculate the available external item storage.
+     * @param gird The grid for which to calculate the available external item storage.
      * @return The available external item storage.
      */
     public static double getAvailableExternalItemStorage(IGrid grid) {
@@ -711,7 +711,7 @@ public class AEApi {
      * Calculates the available external fluid storage on a given grid node by subtracting the used external fluid storage
      * from the total external fluid storage.
      *
-     * @param node The grid node on which to calculate the available external fluid storage.
+     * @param grid The grid for which to calculate the available external fluid storage.
      * @return The available external fluid storage on the grid node.
      */
     public static long getAvailableExternalFluidStorage(IGrid grid) {
