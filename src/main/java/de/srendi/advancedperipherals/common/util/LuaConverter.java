@@ -263,6 +263,14 @@ public class LuaConverter {
         });
     }
 
+    public static Map<String, Object> blockStateToLua(BlockState state, BlockPos pos) {
+        Map<String, Object> data = new HashMap<>(blockStateToLua(state));
+        data.put("x", pos.getX());
+        data.put("y", pos.getY());
+        data.put("z", pos.getZ());
+        return data;
+    }
+
     @Unmodifiable
     public static Map<String, Object> posToLua(BlockPos pos) {
         if (pos == null) {

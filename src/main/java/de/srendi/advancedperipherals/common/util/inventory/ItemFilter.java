@@ -31,6 +31,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
 
     private Item item = Items.AIR;
     private TagKey<Item> tag = null;
+    private ComponentMatcher matcher = ComponentMatcher.PATCH;
     private DataComponentPatch components = null;
     private int count = Integer.MAX_VALUE;
     private String nbtHash = null;
@@ -64,6 +65,10 @@ public class ItemFilter extends GenericFilter<ItemStack> {
                 itemFilter.components = DataComponentUtil.luaToPatch(map);
             } else {
                 throw LuaValues.badField("components", "string or table", LuaValues.getType(components));
+            }
+            String matcher = item.optString("matcher").orElse(null);
+            if (matcher != null) {
+                itemFilter.matcher = ComponentMatcher.CODEC.byName(matcher, itemFilter.matcher);
             }
         }
         if (item.containsKey("nbtHash")) {
@@ -131,6 +136,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         ItemFilter newFilter = new ItemFilter();
         newFilter.item = this.item;
         newFilter.tag = this.tag;
+        newFilter.matcher = this.matcher;
         newFilter.components = this.components;
         newFilter.count = this.count;
         newFilter.nbtHash = this.nbtHash;
@@ -164,7 +170,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         if (tag != null && !stack.is(tag)) {
             return false;
         }
-        if (components != null && !stack.getComponentsPatch().equals(components)) {
+        if (components != null && !matcher.test(stack.getComponents(), components)) {
             return false;
         }
         if (nbtHash != null && !nbtHash.equals(FingerprintUtil.hashOrEmpty(stack.getComponentsPatch()))) {
@@ -198,6 +204,7 @@ public class ItemFilter extends GenericFilter<ItemStack> {
         return "ItemFilter{" +
                 "item=" + ItemUtil.getRegistryKey(item) +
                 ", tag=" + tag +
+                ", matcher=" + matcher +
                 ", components=" + components +
                 ", count=" + count +
                 ", nbtHash='" + nbtHash + '\'' +

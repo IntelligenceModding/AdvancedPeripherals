@@ -15,9 +15,9 @@ import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -171,7 +171,7 @@ public class ClientEventSubscriber {
         event.setSwingHand(true);
         event.setCanceled(true);
 
-        BlockState hitBlock = null;
+        BlockPos hitBlock = null;
         UUID hitEntity = null;
 
         float partialTicks = minecraft.getTimer().getGameTimeDeltaTicks();
@@ -180,7 +180,7 @@ public class ClientEventSubscriber {
 
         HitResult hitResultBlock = player.pick(reachRange, partialTicks, false);
         if (hitResultBlock instanceof BlockHitResult result && result.getType() == HitResult.Type.BLOCK) {
-            hitBlock = player.level().getBlockState(result.getBlockPos());
+            hitBlock = result.getBlockPos();
         }
         EntityHitResult hitResultEntity = HitResultUtil.getEntityHitResult(playerEyes, playerEyes.add(player.getViewVector(partialTicks).scale(reachRange)), player.level(), player);
         if (hitResultEntity.getType() == HitResult.Type.ENTITY) {

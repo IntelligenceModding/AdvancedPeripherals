@@ -6,12 +6,11 @@ import de.srendi.advancedperipherals.common.network.IAPPacket;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.Optional;
@@ -22,10 +21,10 @@ public class PlayerInteractionPacket implements IAPPacket {
     public static final Type<PlayerInteractionPacket> TYPE = new Type<>(AdvancedPeripherals.getRL("player_interaction"));
 
     private final int button;
-    private final BlockState hitBlock;
+    private final BlockPos hitBlock;
     private final UUID hitEntity;
 
-    public PlayerInteractionPacket(int button, BlockState hitBlock, UUID hitEntity) {
+    public PlayerInteractionPacket(int button, BlockPos hitBlock, UUID hitEntity) {
         this.button = button;
         this.hitBlock = hitBlock;
         this.hitEntity = hitEntity;
@@ -33,7 +32,7 @@ public class PlayerInteractionPacket implements IAPPacket {
 
     public PlayerInteractionPacket(RegistryFriendlyByteBuf buffer) {
         this.button = buffer.readVarInt();
-        this.hitBlock = buffer.readOptional((b) -> b.readById(Block.BLOCK_STATE_REGISTRY::byId)).orElse(null);
+        this.hitBlock = buffer.readOptional(RegistryFriendlyByteBuf::readBlockPos).orElse(null);
         this.hitEntity = buffer.readOptional(RegistryFriendlyByteBuf::readUUID).orElse(null);
     }
 
@@ -53,7 +52,7 @@ public class PlayerInteractionPacket implements IAPPacket {
         }
         computer.queueEvent(CCEvents.PLAYER_INTERACTION, new Object[]{
             button,
-            this.hitBlock == null ? null : LuaConverter.blockStateToLua(this.hitBlock),
+            this.hitBlock == null ? null : LuaConverter.blockStateToLua(player.level().getBlockState(this.hitBlock), this.hitBlock),
             this.hitEntity == null ? null : this.hitEntity.toString(),
         });
     }
@@ -61,7 +60,7 @@ public class PlayerInteractionPacket implements IAPPacket {
     @Override
     public void write(RegistryFriendlyByteBuf buffer) {
         buffer.writeVarInt(button);
-        buffer.writeOptional(Optional.ofNullable(this.hitBlock), (b, v) -> b.writeById(Block.BLOCK_STATE_REGISTRY::getId, v));
+        buffer.writeOptional(Optional.ofNullable(this.hitBlock), RegistryFriendlyByteBuf::writeBlockPos);
         buffer.writeOptional(Optional.ofNullable(this.hitEntity), RegistryFriendlyByteBuf::writeUUID);
     }
 
