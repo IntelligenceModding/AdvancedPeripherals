@@ -534,7 +534,7 @@ public class ChatBoxPeripheral extends BasePeripheral<IPeripheralOwner> {
             }
             queueEvent(
                 CCEvents.CHAT,
-                message.senderId().toString(),
+                message.senderId() != null ? message.senderId().toString() : null,
                 message.senderName(),
                 message.message(),
                 message.isHidden(),

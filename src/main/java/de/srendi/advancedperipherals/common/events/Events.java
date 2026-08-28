@@ -25,6 +25,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import org.jetbrains.annotations.Nullable;
 import vazkii.patchouli.api.PatchouliAPI;
 
 import java.util.UUID;
@@ -171,7 +172,7 @@ public class Events {
         return true;
     }
 
-    public record ChatMessageRecord(UUID senderId, String senderName, String message, boolean isHidden, ResourceKey<Level> level, Vec3 position) {}
+    public record ChatMessageRecord(@Nullable UUID senderId, String senderName, String message, boolean isHidden, ResourceKey<Level> level, Vec3 position) {}
 
     public interface IPlayerEvent {
         String eventName();
