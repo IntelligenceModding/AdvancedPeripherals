@@ -217,8 +217,8 @@ public final class RenderUtil {
                 ny4 = y4 * lengthInv;
                 nz4 = z4 * lengthInv;
 
-                s = j / sectors;
-                t = i / stacks;
+                s = (float) j / sectors;
+                t = (float) i / stacks;
 
                 float u1 = getU(s * sectors, texture.getU1(), texture.getU0(), sectors);
                 float u2 = getU((s + 1.0d / sectors) * sectors, texture.getU1(), texture.getU0(), sectors);
@@ -274,8 +274,8 @@ public final class RenderUtil {
                 float nextCosSideAngle = (float) Math.cos(nextSideAngle);
                 float nextSinSideAngle = (float) Math.sin(nextSideAngle);
 
-                float s = j / sides;
-                float t = i / rings;
+                float s = (float) j / sides;
+                float t = (float) i / rings;
 
                 float u1 = getU(s * sides, texture.getU1(), texture.getU0(), sides);
                 float u2 = getU((s + 1.0f / sides) * sides, texture.getU1(), texture.getU0(), sides);

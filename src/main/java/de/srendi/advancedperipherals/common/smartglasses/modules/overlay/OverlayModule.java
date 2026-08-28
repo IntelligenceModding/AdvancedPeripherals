@@ -93,9 +93,6 @@ public class OverlayModule implements IModule {
 
     @Override
     public void onUnequipped(SmartGlassesSideAccess access) {
-        if (!(access.getEntity() instanceof ServerPlayer player)) {
-            return;
-        }
         this.equipped = false;
         this.clear();
     }
