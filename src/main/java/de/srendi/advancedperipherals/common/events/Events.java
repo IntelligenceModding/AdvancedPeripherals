@@ -25,6 +25,7 @@ import net.neoforged.neoforge.event.CommandEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import org.jetbrains.annotations.Nullable;
 import vazkii.patchouli.api.PatchouliAPI;
 
 import java.util.UUID;
@@ -171,7 +172,7 @@ public class Events {
         return true;
     }
 
-    public record ChatMessageRecord(UUID senderId, String senderName, String message, boolean isHidden, ResourceKey<Level> level, Vec3 position) {}
+    public record ChatMessageRecord(@Nullable UUID senderId, String senderName, String message, boolean isHidden, ResourceKey<Level> level, Vec3 position) {}
 
     public interface IPlayerEvent {
         String eventName();
