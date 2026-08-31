@@ -86,6 +86,11 @@ public class SmartGlassesContainer extends AbstractComputerMenu {
     }
 
     @Override
+    public void setCarried(ItemStack stack) {
+        super.setCarried(stack == ItemStack.EMPTY ? stack : stack.copy());
+    }
+
+    @Override
     @NotNull
     public ItemStack quickMoveStack(Player player, int index) {
         Slot slot = this.slots.get(index);
