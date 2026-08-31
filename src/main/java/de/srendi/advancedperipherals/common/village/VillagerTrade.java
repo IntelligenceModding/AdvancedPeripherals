@@ -8,6 +8,7 @@ import dan200.computercraft.shared.util.DataComponentUtil;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -27,40 +28,28 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
     private final Type type;
 
     private final int emeraldAmount;
-    private final int itemAmount;
     private final int maxUses;
     private final int xp;
 
-    private final ItemLike item;
     private final ItemStack itemStack;
 
-    private VillagerTrade(@NotNull Type type, int emeraldAmount, int itemAmount, int maxUses, int xp, ItemLike item, ItemStack itemStack) {
+    private VillagerTrade(@NotNull Type type, int emeraldAmount, @NotNull ItemStack itemStack, int maxUses, int xp) {
         this.type = type;
         this.emeraldAmount = emeraldAmount;
-        this.itemAmount = itemAmount;
         this.maxUses = maxUses;
         this.xp = xp;
-        this.item = item;
         this.itemStack = itemStack;
     }
 
     @Override
     @Nullable
     public MerchantOffer getOffer(@NotNull Entity trader, @NotNull RandomSource rand) {
-        if (type == Type.EMERALD_FOR_ITEM) {
-            if (itemStack != null)
-                return new MerchantOffer(new ItemCost(itemStack.getItem()), new ItemStack(Items.EMERALD, emeraldAmount), maxUses, xp, 1);
-            if (item != null)
-                return new MerchantOffer(new ItemCost(new ItemStack(item, itemAmount).getItem()), new ItemStack(Items.EMERALD, emeraldAmount), maxUses, xp, 1);
-
-        }
-        if (type == Type.ITEM_FOR_EMERALD) {
-            if (itemStack != null)
-                return new MerchantOffer(new ItemCost(new ItemStack(Items.EMERALD, emeraldAmount).getItem()), itemStack, maxUses, xp, 1);
-            if (item != null)
-                return new MerchantOffer(new ItemCost(new ItemStack(Items.EMERALD, emeraldAmount).getItem()), new ItemStack(item, itemAmount), maxUses, xp, 1);
-        }
-        return null;
+        return switch (type) {
+            case EMERALD_FOR_ITEM ->
+                new MerchantOffer(new ItemCost(itemStack.getItemHolder(), itemStack.getCount(), DataComponentPredicate.EMPTY, itemStack), new ItemStack(Items.EMERALD, emeraldAmount), maxUses, xp, 1);
+            case ITEM_FOR_EMERALD ->
+                new MerchantOffer(new ItemCost(Items.EMERALD, emeraldAmount), itemStack, maxUses, xp, 1);
+        };
     }
 
     public enum Type {
@@ -69,95 +58,52 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
     }
 
     public static class TradeBuilder {
-
         private VillagerTradesEvent villagerEvent;
         private WandererTradesEvent wandererEvent;
-        private final int professionLevel;
-
         private final Type type;
 
-        private final int emeraldAmount;
-        private int itemAmount = 1;
+        private int professionLevel = 1;
+
+        private int emeraldAmount = 1;
         private int maxUses = 10;
         private int xp = 2;
 
-        private ItemLike item;
-        private ItemStack itemStack;
+        private ItemStack itemStack = ItemStack.EMPTY;
 
-        private TradeBuilder(VillagerTradesEvent event, Type type, int emeraldAmount, int professionLevel) {
+        public TradeBuilder(VillagerTradesEvent event, Type type) {
             this.villagerEvent = event;
             this.type = type;
-            this.emeraldAmount = emeraldAmount;
-            this.professionLevel = professionLevel;
         }
 
-        private TradeBuilder(WandererTradesEvent event, Type type, int emeraldAmount, int professionLevel) {
+        public TradeBuilder(WandererTradesEvent event, Type type) {
             this.wandererEvent = event;
             this.type = type;
-            this.emeraldAmount = emeraldAmount;
-            this.professionLevel = professionLevel;
         }
 
-        /**
-         * Creates a new TradeBuilder instance. Can be used to create villager trades for normal villagers
-         * This one is for normal villagers with any type of{@link ItemLike}.
-         * {@link net.minecraft.world.item.Item} or {@link net.minecraft.world.level.block.Block} as example.
-         *
-         * @param event this should be executed in an event - pass the villager trade event here
-         * @param itemLike the item for trade
-         * @param type the trade type
-         * @param emeraldAmount the emerald amount of the trade
-         * @param professionLevel the profession level of the villager. 1 to 5
-         * @return a builder instance
-         */
-        public static TradeBuilder createTrade(VillagerTradesEvent event, ItemLike itemLike, Type type, int emeraldAmount, int professionLevel) {
-            return new TradeBuilder(event, type, emeraldAmount, professionLevel).withItem(itemLike);
+        public TradeBuilder withProfessionLevel(int level) {
+            this.professionLevel = level;
+            return this;
         }
 
-        /**
-         * Creates a new TradeBuilder instance. Can be used to create villager trades for normal villagers
-         *
-         * @param event this should be executed in an event - pass the villager trade event here
-         * @param type the trade type
-         * @param emeraldAmount the emerald amount of the trade
-         * @param professionLevel the profession level of the villager. 1 to 5
-         * @return a builder instance
-         */
-        public static TradeBuilder createTrade(VillagerTradesEvent event, Type type, int emeraldAmount, int professionLevel) {
-            return new TradeBuilder(event, type, emeraldAmount, professionLevel);
-        }
-
-        /**
-         * Creates a new TradeBuilder instance. Can be used to create villager trades for wandering traders.
-         * This one is for wandering traders with any type of{@link ItemLike}.
-         * {@link net.minecraft.world.item.Item} or {@link net.minecraft.world.level.block.Block} as example.
-         *
-         * @param event this should be executed in an event - pass the villager trade event here
-         * @param itemLike the item for trade
-         * @param type the trade type
-         * @param emeraldAmount the emerald amount of the trade
-         * @param professionLevel the profession level of the villager. 1 to 5
-         * @return a builder instance
-         */
-        public static TradeBuilder createTrade(WandererTradesEvent event, ItemLike itemLike, Type type, int emeraldAmount, int professionLevel) {
-            return new TradeBuilder(event, type, emeraldAmount, professionLevel).withItem(itemLike);
-        }
-
-        /**
-         * Creates a new TradeBuilder instance. Can be used to create villager trades for wandering traders.
-         *
-         * @param event this should be executed in an event - pass the villager trade event here
-         * @param type the trade type
-         * @param emeraldAmount the emerald amount of the trade
-         * @param professionLevel the profession level of the villager. 1 to 5
-         * @return a builder instance
-         */
-        public static TradeBuilder createTrade(WandererTradesEvent event, Type type, int emeraldAmount, int professionLevel) {
-            return new TradeBuilder(event, type, emeraldAmount, professionLevel);
+        public TradeBuilder withEmeralds(int count) {
+            this.emeraldAmount = count;
+            return this;
         }
 
         public TradeBuilder withItem(ItemLike item) {
-            this.item = item;
+            this.itemStack = new ItemStack(item, this.itemStack.isEmpty() ? 1 : this.itemStack.getCount());
+            return this;
+        }
+
+        /**
+         * Sets the item amount of the trade
+         * Normally 1
+         *
+         * @param count the item amount
+         * @return the current instance of the builder
+         */
+        public TradeBuilder withItemAmount(int count) {
+            this.itemStack = this.itemStack.copyWithCount(count);
             return this;
         }
 
@@ -214,25 +160,13 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
         }
 
         /**
-         * Sets the item amount of the trade
-         * Normally 1
-         *
-         * @param itemAmount the item amount
-         * @return the current instance of the builder
-         */
-        public TradeBuilder setItemAmount(int itemAmount) {
-            this.itemAmount = itemAmount;
-            return this;
-        }
-
-        /**
          * Sets the max uses of the trade
          * Normally 2
          *
          * @param maxUses the item amount
          * @return the current instance of the builder
          */
-        public TradeBuilder setMaxUses(int maxUses) {
+        public TradeBuilder withMaxUses(int maxUses) {
             this.maxUses = maxUses;
             return this;
         }
@@ -244,7 +178,7 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
          * @param xp the item amount
          * @return the current instance of the builder
          */
-        public TradeBuilder setXp(int xp) {
+        public TradeBuilder withXp(int xp) {
             this.xp = xp;
             return this;
         }
@@ -253,16 +187,17 @@ public class VillagerTrade implements VillagerTrades.ItemListing {
          * Builds and places the villager trade into the given event.
          */
         public void build() {
-            VillagerTrade trade = new VillagerTrade(type, emeraldAmount, itemAmount, maxUses, xp, item, itemStack);
-            if(wandererEvent != null) {
-                if(professionLevel == 1)
+            VillagerTrade trade = new VillagerTrade(type, emeraldAmount, itemStack, maxUses, xp);
+            if (wandererEvent != null) {
+                if (professionLevel == 1) {
                     wandererEvent.getGenericTrades().add(trade);
-                if(professionLevel == 2)
+                }
+                if (professionLevel == 2) {
                     wandererEvent.getRareTrades().add(trade);
+                }
                 return;
             }
             villagerEvent.getTrades().get(professionLevel).add(trade);
         }
     }
-
 }
