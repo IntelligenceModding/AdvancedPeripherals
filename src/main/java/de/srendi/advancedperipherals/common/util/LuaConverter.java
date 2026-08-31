@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.util;
 
 import dan200.computercraft.api.lua.LuaException;
+import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.InventoryManagerPeripheral;
 import de.srendi.advancedperipherals.common.util.inventory.ChemicalUtil;
 import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
@@ -315,7 +316,14 @@ public class LuaConverter {
         Map<String, Object> properties = itemToLua(stack.getItem());
         properties.put("displayName", stack.getDisplayName().getString());
         properties.put("maxStackSize", stack.getMaxStackSize());
-        properties.put("prototype", DataComponentUtil.mapToLua(stack.getPrototype()));
+        try {
+            properties.put("prototype", DataComponentUtil.mapToLua(stack.getPrototype()));
+        } catch (RuntimeException e) {
+            AdvancedPeripherals.exception("Failed to encode prototype components for " + stack.getItem().builtInRegistryHolder().getRegisteredName(), e);
+            properties.put("prototype", Map.of(
+                "_error", e.toString()
+            ));
+        }
         properties.put("components", DataComponentUtil.patchToLua(stack.getComponentsPatch()));
         properties.put("nbt", FingerprintUtil.hash(stack.getComponentsPatch()));
         return properties;
