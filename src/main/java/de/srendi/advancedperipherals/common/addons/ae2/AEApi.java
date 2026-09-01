@@ -855,7 +855,7 @@ public class AEApi {
             if (item instanceof IBasicCellItem cell) {
                 return new BasicCellWrapper(cell, stack);
             }
-            if (item instanceof IDISKCellItem cell) {
+            if (APAddon.AE2THINGS.isLoaded() && item instanceof IDISKCellItem cell) {
                 return new AE2ThingsDiskCellWrapper(cell, stack);
             }
             if (item instanceof AEDiskCellItem cell) {
