@@ -33,6 +33,7 @@ import appeng.me.cells.BasicCellInventory;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellItem;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellStorage;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskHandler;
@@ -769,7 +770,7 @@ public class AEApi {
             if (item instanceof IBasicCellItem cell) {
                 return new BasicCellWrapper(cell, stack);
             }
-            if (item instanceof IDISKCellItem cell) {
+            if (APAddon.AE2THINGS.isLoaded() && item instanceof IDISKCellItem cell) {
                 return new AE2ThingsDiskCellWrapper(cell, stack);
             }
             if (item instanceof AEDiskCellItem cell) {
