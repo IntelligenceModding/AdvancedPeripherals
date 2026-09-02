@@ -5,29 +5,40 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.APRenderTypes;
 import de.srendi.advancedperipherals.client.RenderUtil;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.BlockObject;
+import de.srendi.advancedperipherals.common.util.fakelevel.FakeLevel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Quaternionf;
 
 import java.util.List;
+import java.util.WeakHashMap;
 
 public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
+    private final WeakHashMap<ClientLevel, FakeLevel> fakeLevels = new WeakHashMap<>();
 
     @Override
     public void renderBatch(List<BlockObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos, Quaternionf eyeRotation) {
         Minecraft minecraft = Minecraft.getInstance();
         BlockRenderDispatcher blockRenderer = minecraft.getBlockRenderer();
+        BlockEntityRenderDispatcher blockEntityRenderer = minecraft.getBlockEntityRenderDispatcher();
+        float partialTick = event.getPartialTick().getGameTimeDeltaPartialTick(true);
         MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
 
         RandomSource random = RandomSource.create();
@@ -55,10 +66,10 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
             poseStack.translate(block.x, block.y, block.z);
             poseStack.mulPose(block.getRotation());
             poseStack.scale(block.sizeX, block.sizeY, block.sizeZ);
-            poseStack.translate(-0.5f, -0.5f, -0.5f);
 
             float alpha = block.opacity;
 
+            poseStack.translate(-0.5f, -0.5f, -0.5f);
             renderBlockModel(
                 poseStack.last(),
                 bufferBuilder,
@@ -72,6 +83,24 @@ public class BlockRenderer implements IThreeDObjectRenderer<BlockObject> {
                 OverlayTexture.NO_OVERLAY,
                 random
             );
+            if (!(state.getBlock() instanceof EntityBlock eb)) {
+                continue;
+            }
+            BlockEntity blockEntity = eb.newBlockEntity(BlockPos.ZERO, state);
+            if (blockEntity == null) {
+                continue;
+            }
+            FakeLevel fakeLevel = this.fakeLevels.computeIfAbsent(minecraft.level, (level) -> new FakeLevel(minecraft.getConnection(), level));
+            fakeLevel.setBlockAndUpdate(BlockPos.ZERO, state);
+            fakeLevel.setBlockEntity(blockEntity);
+            blockEntity.setLevel(fakeLevel);
+            @SuppressWarnings("rawtypes")
+            BlockEntityRenderer renderer = blockEntityRenderer.getRenderer(blockEntity);
+            if (renderer == null) {
+                continue;
+            }
+            poseStack.translate(0.5f, 0.5f, 0.5f);
+            renderer.render(blockEntity, partialTick, poseStack, bufferSource, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
         }
         poseStack.popPose();
     }
