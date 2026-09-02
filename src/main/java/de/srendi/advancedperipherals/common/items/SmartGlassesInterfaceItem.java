@@ -45,7 +45,7 @@ public class SmartGlassesInterfaceItem extends BaseItem {
         PlatformHelper.get().openMenu(
             player,
             glasses.getHoverName(),
-            new SmartGlassesMenuProvider(computer, glasses, itemHandler)::createMenu,
+            new SmartGlassesMenuProvider(computer, glasses, itemHandler),
             new ComputerContainerData(computer, glasses)
         );
 

@@ -76,10 +76,10 @@ public class LuaConverter {
     public interface EntityConverter<T extends Entity> {
         void entityToMap(T entity, Map<String, Object> data, Context ctx);
 
-        record Context(boolean detailed, ItemStack itemInHand, Vec3 position, Matrix3dc orientation) {}
+        record Context(boolean detailed, @NotNull ItemStack itemInHand, Vec3 position, Matrix3dc orientation) {}
     }
 
-    private static final EntityConverter.Context EMPTY_ENTITY_CONVERTER_CONTEXT = new EntityConverter.Context(false, null, null, null);
+    private static final EntityConverter.Context EMPTY_ENTITY_CONVERTER_CONTEXT = new EntityConverter.Context(false, ItemStack.EMPTY, null, null);
 
     public static EntityContextBuilder entityContextBuilder() {
         return new EntityContextBuilder();
@@ -87,7 +87,8 @@ public class LuaConverter {
 
     public static final class EntityContextBuilder {
         private boolean detailed = false;
-        private ItemStack itemInHand = null;
+        @NotNull
+        private ItemStack itemInHand = ItemStack.EMPTY;
         private Vec3 position = null;
         private Matrix3dc orientation = null;
 
@@ -100,7 +101,7 @@ public class LuaConverter {
             return this.detailed(true);
         }
 
-        public EntityContextBuilder itemInHand(ItemStack stack) {
+        public EntityContextBuilder itemInHand(@NotNull ItemStack stack) {
             this.itemInHand = stack;
             return this;
         }

@@ -645,7 +645,7 @@ public class AEApi {
     /**
      * Calculates the available external item storage of a given grid node.
      *
-     * @param gird The grid for which to calculate the available external item storage.
+     * @param grid The grid for which to calculate the available external item storage.
      * @return The available external item storage.
      */
     public static double getAvailableExternalItemStorage(IGrid grid) {

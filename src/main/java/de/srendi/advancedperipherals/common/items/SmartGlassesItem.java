@@ -65,8 +65,6 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
 public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia {
 
-    private static final String NBT_UPGRADE = "Upgrade";
-    private static final String NBT_UPGRADE_INFO = "UpgradeInfo";
     public static final String NBT_LIGHT = "Light";
     public static final String NBT_ON = "On";
 
@@ -272,7 +270,7 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
         PlatformHelper.get().openMenu(
             player,
             glasses.getHoverName(),
-            new SmartGlassesMenuProvider(computer, glasses, itemHandler)::createMenu,
+            new SmartGlassesMenuProvider(computer, glasses, itemHandler),
             new ComputerContainerData(computer, glasses)
         );
         return InteractionResultHolder.consume(glasses);
