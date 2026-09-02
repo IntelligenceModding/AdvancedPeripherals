@@ -65,11 +65,12 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
         }
         if (!initialized) {
             initialized = true;
-            mainNode.setFlags(GridFlags.REQUIRE_CHANNEL);
-            mainNode.setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get());
-            mainNode.setVisualRepresentation(new ItemStack(APBlocks.ME_BRIDGE.get()));
-            mainNode.setInWorldNode(true);
-            mainNode.create(level, getBlockPos());
+            mainNode.setFlags(GridFlags.REQUIRE_CHANNEL)
+                .setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get())
+                .setVisualRepresentation(new ItemStack(APBlocks.ME_BRIDGE.get()))
+                .setInWorldNode(true)
+                .addService(ICraftingRequester.class, this)
+                .create(level, getBlockPos());
             MEBridgePeripheral peripheral = this.getPeripheral();
             if (peripheral != null) {
                 peripheral.setNode(mainNode);
