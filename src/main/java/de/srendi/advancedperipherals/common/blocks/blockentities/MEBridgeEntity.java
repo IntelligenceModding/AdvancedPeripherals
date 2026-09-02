@@ -46,6 +46,7 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
     private boolean initialized = false;
     private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MEBridgeEntityListener.INSTANCE);
 
+
     public MEBridgeEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.ME_BRIDGE.get(), pos, state);
         getMainNode().setExposedOnSides(getGridConnectableSides(null));
@@ -60,27 +61,28 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
     @Override
     public <T extends BlockEntity> void handleTick(Level level, BlockState state, BlockEntityType<T> type) {
         super.handleTick(level, state, type);
-        if (!level.isClientSide()) {
-            if (!initialized) {
-                initialized = true;
-                mainNode.setFlags(GridFlags.REQUIRE_CHANNEL)
-                        .setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get())
-                        .setVisualRepresentation(new ItemStack(APBlocks.ME_BRIDGE.get()))
-                        .setInWorldNode(true)
-                        .addService(MEBridgeEntity.class, this)
-                        .create(level, getBlockPos());
-                MEBridgePeripheral peripheral = this.getPeripheral();
-                if (peripheral != null) {
-                    peripheral.setNode(mainNode);
-                }
-            }
-
-            // Try to start the job if the job calculation finished
-            jobs.forEach(AECraftJob::tick);
-
-            // Remove the job if the crafting started, we can't do anything with it anymore
-            jobs.removeIf(AECraftJob::canBePurged);
+        if (level.isClientSide()) {
+            return;
         }
+        if (!initialized) {
+            initialized = true;
+            mainNode.setFlags(GridFlags.REQUIRE_CHANNEL)
+                    .setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get())
+                    .setVisualRepresentation(new ItemStack(APBlocks.ME_BRIDGE.get()))
+                    .setInWorldNode(true)
+                    .addService(ICraftingRequester.class, this)
+                    .create(level, getBlockPos());
+            MEBridgePeripheral peripheral = this.getPeripheral();
+            if (peripheral != null) {
+                peripheral.setNode(mainNode);
+            }
+        }
+
+        // Try to start the job if the job calculation finished
+        jobs.forEach(AECraftJob::tick);
+
+        // Remove the job if the crafting started, we can't do anything with it anymore
+        jobs.removeIf(AECraftJob::canBePurged);
     }
 
     @Override
