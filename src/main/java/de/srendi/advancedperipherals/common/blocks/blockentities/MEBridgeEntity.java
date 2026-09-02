@@ -46,6 +46,7 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
     private boolean initialized = false;
     private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MEBridgeEntityListener.INSTANCE);
 
+
     public MEBridgeEntity(BlockPos pos, BlockState state) {
         super(APBlockEntityTypes.ME_BRIDGE.get(), pos, state);
         getMainNode().setExposedOnSides(getGridConnectableSides(null));
@@ -65,11 +66,12 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
         }
         if (!initialized) {
             initialized = true;
-            mainNode.setFlags(GridFlags.REQUIRE_CHANNEL);
-            mainNode.setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get());
-            mainNode.setVisualRepresentation(new ItemStack(APBlocks.ME_BRIDGE.get()));
-            mainNode.setInWorldNode(true);
-            mainNode.create(level, getBlockPos());
+            mainNode.setFlags(GridFlags.REQUIRE_CHANNEL)
+                    .setIdlePowerUsage(APConfig.PERIPHERALS_CONFIG.meConsumption.get())
+                    .setVisualRepresentation(new ItemStack(APBlocks.ME_BRIDGE.get()))
+                    .setInWorldNode(true)
+                    .addService(ICraftingRequester.class, this)
+                    .create(level, getBlockPos());
             MEBridgePeripheral peripheral = this.getPeripheral();
             if (peripheral != null) {
                 peripheral.setNode(mainNode);
