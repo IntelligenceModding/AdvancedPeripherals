@@ -32,7 +32,7 @@ public class SmartGlassesInterfaceItem extends BaseItem {
         final ItemStack glasses = SmartGlassesItem.getEquipped(player);
 
         if (!(glasses.getItem() instanceof SmartGlassesItem glassesItem)) {
-            player.displayClientMessage(Component.translatable(APTranslations.SMART_GLASSES_NOT_WEARING), false);
+            player.displayClientMessage(Component.translatable(APTranslations.SMART_GLASSES_NOT_WEARING), true);
             return InteractionResultHolder.fail(handItemStack);
         }
 

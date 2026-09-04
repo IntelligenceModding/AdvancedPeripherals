@@ -90,7 +90,7 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
         ItemStack stack = player.getItemInHand(hand);
         if (!stack.has(APDataComponents.BINDING_COMPUTER.get())) {
             if (level.isClientSide()) {
-                player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_NOT_BOUND)), false);
+                player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_NOT_BOUND)), true);
             }
             return InteractionResultHolder.pass(stack);
         }
@@ -106,11 +106,11 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
             }
         }
         if (computer == null) {
-            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_COMPUTER_NOT_FOUND)), false);
+            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_COMPUTER_NOT_FOUND)), true);
             return InteractionResultHolder.fail(stack);
         }
         if (!computer.checkUsable(player)) {
-            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_COMPUTER_UNUSABLE)), false);
+            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_COMPUTER_UNUSABLE)), true);
             return InteractionResultHolder.fail(stack);
         }
         if (!computer.isOn()) {

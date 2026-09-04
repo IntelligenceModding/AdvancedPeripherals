@@ -69,5 +69,5 @@ public final class APTranslations {
         return "text." + key.getNamespace() + "." + key.getPath() + "." + suffix;
     }
 
-    private APTranslations () {}
+    private APTranslations() {}
 }
