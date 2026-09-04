@@ -279,7 +279,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
         ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, APBlocks.DISTANCE_DETECTOR.get())
             .define('C', CASING)
             .define('O', Items.OBSERVER)
-            .define('D', Tags.Items.GEMS_DIAMOND)
+            .define('D', Items.AMETHYST_SHARD)
             .define('R', Tags.Items.STORAGE_BLOCKS_REDSTONE)
             .define('G', Tags.Items.GLASS)
             .pattern("GDG")
