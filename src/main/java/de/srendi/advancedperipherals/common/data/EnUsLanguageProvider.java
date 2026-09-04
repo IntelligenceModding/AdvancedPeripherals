@@ -4,14 +4,15 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.client.KeyBindings;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APItems;
+import de.srendi.advancedperipherals.common.setup.APTranslations;
 import de.srendi.advancedperipherals.common.setup.APVillagers;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
+import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import de.srendi.advancedperipherals.lib.annotation.DefaultTooltip;
 import de.srendi.advancedperipherals.lib.annotation.DefaultTranslation;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.LanguageProvider;
@@ -22,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 public class EnUsLanguageProvider extends LanguageProvider {
 
@@ -32,9 +32,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
 
     @Override
     public void addTranslations() {
-        add("advancedperipherals.name", AdvancedPeripherals.NAME);
-        add("itemGroup.advancedperipheralstab", AdvancedPeripherals.NAME);
-        add("curios.identifier.glasses", "Glasses");
         addBlocks();
         addItems();
         addTurtles();
@@ -42,8 +39,10 @@ public class EnUsLanguageProvider extends LanguageProvider {
         addAdvancements();
         addTooltips();
         addKeybinds();
-        addTexts();
-        add(APVillagers.COMPUTER_SCIENTIST, "Computer Scientist");
+        addVillager(APVillagers.COMPUTER_SCIENTIST.get().name(), "Computer Scientist");
+        forEachField(APTranslations.class, String.class, DefaultTranslation.class, (key, tr) -> add(key, tr.value()));
+
+        add("curios.identifier.glasses", "Glasses");
     }
 
     private void addBlocks() {
@@ -76,32 +75,13 @@ public class EnUsLanguageProvider extends LanguageProvider {
     }
 
     private void addTooltips() {
-        addTooltip("item.", "show_desc", "&b[&7%s&b] &7For Description");
-        addTooltip("item.", "disabled", "&cThis item is disabled in config, so you can craft it, but it'll not have any functionality.");
-
         forEachField(APBlocks.class, RegistryObject.class, DefaultTooltip.class, (block, tr) -> addTooltip((Block) block.get(), tr.value()));
         forEachField(APItems.class, RegistryObject.class, DefaultTooltip.class, (item, tr) -> addTooltip((Item) item.get(), tr.value()));
-
-        addTooltip("item.", "keyboard.binding.bound_to", "&7Bound to &b%s&7.");
-        addTooltip("item.", "memory_card.bound", "&7Bound to &b%s&7.");
-    }
-
-    private void addTexts() {
-        addText("automata_core.feed_by_player", "You're trying to feed an entity to a soul, but your own body refuses to do this. Maybe something more mechanical can do this?");
-        addText("keyboard.close", "Press ESC to close the Keyboard Screen");
-        addText("cleared_memorycard", "Cleared the memory card");
-        addText("bind_memorycard", "Bounded the memory card to you");
-        addText("keyboard_notbound", "The keyboard it not bound");
-        addText("bind_keyboard", "Bounded the keyboard to %s");
-        addText("cleared_keyboard", "Cleared the keyboard");
-        addText("smart_glasses.peripherals", "Peripherals");
-        addText("smart_glasses.modules", "Modules");
-        addText("saddle_turtle.dismount_hint", "Controlling %1$s. Press %2$s and %3$s to dismount.");
     }
 
     private void addKeybinds() {
         add("keybind.advancedperipherals.category", AdvancedPeripherals.NAME);
-        addKeybind(KeyBindings.DESCRIPTION_KEYBINDING, "Show Description");
+        forEachField(KeyBindings.class, KeyMapping.class, DefaultTranslation.class, (key, tr) -> addKeybind(key, tr.value()));
     }
 
     private void addAdvancement(@NotNull String advancement, @NotNull String value, @NotNull String description) {
@@ -109,32 +89,28 @@ public class EnUsLanguageProvider extends LanguageProvider {
         add("advancements." + AdvancedPeripherals.MOD_ID + "." + advancement + ".description", description);
     }
 
-    private void add(@NotNull Supplier<VillagerProfession> key, @NotNull String value) {
-        add(new ResourceLocation(key.get().name()).toLanguageKey("entity.minecraft.villager"), value);
-    }
-
-    private void addText(String key, String value) {
-        add("text." + AdvancedPeripherals.MOD_ID + "." + key, value);
+    private void addVillager(@NotNull String key, @NotNull String value) {
+        add(new ResourceLocation(key).toLanguageKey("entity.minecraft.villager"), value);
     }
 
     private void addTurtle(@NotNull ResourceLocation key, @NotNull String value) {
-        add("turtle." + key.getNamespace() + "." + key.getPath(), value);
+        add(TranslationUtil.turtle(key), value);
     }
 
     private void addPocket(@NotNull ResourceLocation key, @NotNull String value) {
-        add("pocket." + key.getNamespace() + "." + key.getPath(), value);
+        add(TranslationUtil.pocket(key), value);
     }
 
     private void addTooltip(Item item, String value) {
-        addTooltip("item.", ForgeRegistries.ITEMS.getKey(item).getPath(), value);
+        addTooltip("item.", ForgeRegistries.ITEMS.getKey(item), value);
     }
 
     private void addTooltip(Block block, String value) {
-        addTooltip("block.", ForgeRegistries.BLOCKS.getKey(block).getPath(), value);
+        addTooltip("block.", ForgeRegistries.BLOCKS.getKey(block), value);
     }
 
-    private void addTooltip(String prefix, String tooltip, String value) {
-        add(prefix + AdvancedPeripherals.MOD_ID + ".tooltip." + tooltip, value);
+    private void addTooltip(String prefix, ResourceLocation key, String value) {
+        add(TranslationUtil.tooltip(prefix + key.getNamespace() + "." + key.getPath()), value);
     }
 
     private void addKeybind(@NotNull KeyMapping keybind, String value) {

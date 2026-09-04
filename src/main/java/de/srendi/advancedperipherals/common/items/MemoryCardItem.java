@@ -3,8 +3,10 @@ package de.srendi.advancedperipherals.common.items;
 import de.srendi.advancedperipherals.client.ClientUUIDCache;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.common.setup.APTranslations;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -32,22 +34,25 @@ public class MemoryCardItem extends APItem {
         if (username == null) {
             username = uuid.toString();
         }
-        tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", username)));
+        tooltip.add(EnumColor.buildTextComponent(Component.translatable(APTranslations.TOOLTIP_MEMORY_CARD_BOUND, username)));
     }
 
     @Override
     @NotNull
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-        if (!worldIn.isClientSide) {
-            ItemStack stack = playerIn.getItemInHand(handIn);
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!level.isClientSide) {
+            if (player.getClass() != ServerPlayer.class) {
+                return InteractionResultHolder.fail(stack);
+            }
             if (stack.hasTag() && stack.getTag().contains(APDataComponents.OWNER)) {
-                playerIn.displayClientMessage(Component.translatable("text.advancedperipherals.removed_player"), true);
+                player.displayClientMessage(Component.translatable(APTranslations.MEMORY_CARD_CLEAR), true);
                 stack.removeTagKey(APDataComponents.OWNER);
             } else {
-                playerIn.displayClientMessage(Component.translatable("text.advancedperipherals.added_player"), true);
-                stack.getOrCreateTag().putUUID(APDataComponents.OWNER, playerIn.getUUID());
+                player.displayClientMessage(Component.translatable(APTranslations.MEMORY_CARD_BOUND), true);
+                stack.getOrCreateTag().putUUID(APDataComponents.OWNER, player.getUUID());
             }
         }
-        return super.use(worldIn, playerIn, handIn);
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 }

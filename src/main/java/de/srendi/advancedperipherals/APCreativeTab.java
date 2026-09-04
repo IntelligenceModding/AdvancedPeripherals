@@ -5,6 +5,7 @@ import dan200.computercraft.shared.pocket.items.PocketComputerItem;
 import dan200.computercraft.shared.turtle.items.TurtleItem;
 import de.srendi.advancedperipherals.common.setup.APBlocks;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
+import de.srendi.advancedperipherals.common.setup.APTranslations;
 import de.srendi.advancedperipherals.common.setup.CCRegistration;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +21,7 @@ public class APCreativeTab {
     public static void populateCreativeTabBuilder(CreativeModeTab.Builder builder) {
         builder
             .icon(() -> new ItemStack(APBlocks.CHAT_BOX.get()))
-            .title(Component.translatable("advancedperipherals.name"))
+            .title(Component.translatable(APTranslations.NAME))
             .displayItems((set, out) -> {
                 APRegistration.ITEMS.getEntries().stream().map(RegistryObject::get).forEach(out::accept);
 

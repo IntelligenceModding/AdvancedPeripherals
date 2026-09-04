@@ -9,6 +9,7 @@ import de.srendi.advancedperipherals.common.items.base.BaseItem;
 import de.srendi.advancedperipherals.common.network.APNetworking;
 import de.srendi.advancedperipherals.common.network.toserver.GlassesHotkeyPacket;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
+import de.srendi.advancedperipherals.common.setup.APTranslations;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesSideAccess;
 import de.srendi.advancedperipherals.common.smartglasses.modules.IModuleItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
@@ -90,7 +91,7 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
         CompoundTag tag = stack.getTag();
         if (tag == null || !tag.contains(APDataComponents.BINDING_COMPUTER)) {
             if (level.isClientSide()) {
-                player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard_notbound")), false);
+                player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_NOT_BOUND)), true);
             }
             return InteractionResultHolder.pass(stack);
         }
@@ -106,11 +107,11 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
             }
         }
         if (computer == null) {
-            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard.computer_notfound")), false);
+            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_COMPUTER_NOT_FOUND)), true);
             return InteractionResultHolder.fail(stack);
         }
         if (!computer.checkUsable(player)) {
-            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.keyboard.computer_unusable")), false);
+            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_COMPUTER_UNUSABLE)), true);
             return InteractionResultHolder.fail(stack);
         }
         if (!computer.isOn()) {
@@ -142,7 +143,7 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
         super.appendHoverText(stack, level, tooltip, flagIn);
         CompoundTag tag = stack.getTag();
         if (tag != null && tag.contains(APDataComponents.BINDING_COMPUTER)) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.keyboard.binding.bound_to", tag.getInt(APDataComponents.BINDING_COMPUTER))));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable(APTranslations.TOOLTIP_KEYBOARD_BOUND, tag.getInt(APDataComponents.BINDING_COMPUTER))));
         }
     }
 
@@ -152,13 +153,13 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
         int id = computer.getComputerID();
         if (id < 0) {
             player.getInventory().setChanged();
-            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_keyboard.not_init")), true);
+            player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_BOUND_COMPUTER_UNINIT)), true);
             return;
         }
         stack.getOrCreateTag().putInt(APDataComponents.BINDING_COMPUTER, id);
 
         player.getInventory().setChanged();
-        player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.bind_keyboard", id)), true);
+        player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_BOUND, id)), true);
     }
 
     private void clear(Player player, ItemStack stack) {
@@ -168,7 +169,7 @@ public class KeyboardItem extends BaseItem implements IModuleItem<KeyboardModule
         stack.removeTagKey(APDataComponents.BINDING_COMPUTER);
 
         player.getInventory().setChanged();
-        player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable("text.advancedperipherals.cleared_keyboard")), true);
+        player.displayClientMessage(EnumColor.buildTextComponent(Component.translatable(APTranslations.KEYBOARD_CLEAR)), true);
     }
 
     public MenuProvider createContainerWithComputer(ServerComputer computer) {

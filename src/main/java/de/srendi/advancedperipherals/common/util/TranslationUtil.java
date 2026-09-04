@@ -1,20 +1,17 @@
 package de.srendi.advancedperipherals.common.util;
 
-import de.srendi.advancedperipherals.AdvancedPeripherals;
-import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public class TranslationUtil {
-
-    public static Component itemTooltip(String descriptionId) {
-        int lastIndex = descriptionId.lastIndexOf('.');
-        return Component.translatable(String.format("%s.tooltip.%s", descriptionId.substring(0, lastIndex), descriptionId.substring(lastIndex + 1)));
+    public static String turtle(ResourceLocation id) {
+        return "turtle." + id.getNamespace() + "." + id.getPath();
     }
 
-    public static String turtle(String name) {
-        return String.format("turtle.%s.%s", AdvancedPeripherals.MOD_ID, name);
+    public static String pocket(ResourceLocation id) {
+        return "pocket." + id.getNamespace() + "." + id.getPath();
     }
 
-    public static String pocket(String name) {
-        return String.format("pocket.%s.%s", AdvancedPeripherals.MOD_ID, name);
+    public static String tooltip(String descriptionId) {
+        return descriptionId + ".tooltip";
     }
 }

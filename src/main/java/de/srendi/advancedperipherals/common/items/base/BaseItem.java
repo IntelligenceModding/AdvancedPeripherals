@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.items.base;
 
 import de.srendi.advancedperipherals.client.KeyBindings;
+import de.srendi.advancedperipherals.common.setup.APTranslations;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.KeybindUtil;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public abstract class BaseItem extends Item {
-    private Component description;
+    private Component tooltipComponent;
 
     public BaseItem(Properties properties) {
         super(properties);
@@ -41,24 +42,17 @@ public abstract class BaseItem extends Item {
         super.appendHoverText(stack, level, tooltip, flagIn);
 
         if (!KeybindUtil.isKeyPressed(KeyBindings.DESCRIPTION_KEYBINDING)) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.show_desc", KeyBindings.DESCRIPTION_KEYBINDING.getTranslatedKeyMessage())));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable(APTranslations.TOOLTIP_SHOW_DESC, KeyBindings.DESCRIPTION_KEYBINDING.getTranslatedKeyMessage())));
         } else {
-            tooltip.add(EnumColor.buildTextComponent(getDescription()));
+            if (this.tooltipComponent == null) {
+                this.tooltipComponent = Component.translatable(TranslationUtil.tooltip(getDescriptionId()));
+            }
+            tooltip.add(EnumColor.buildTextComponent(this.tooltipComponent));
         }
         if (!isEnabled()) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.disabled")));
+            tooltip.add(EnumColor.buildTextComponent(Component.translatable(APTranslations.TOOLTIP_DISABLED)));
         }
-    }
-
-    @Override
-    @NotNull
-    public Component getDescription() {
-        if (description == null) {
-            description = TranslationUtil.itemTooltip(getDescriptionId());
-        }
-        return description;
     }
 
     public abstract boolean isEnabled();
-
 }

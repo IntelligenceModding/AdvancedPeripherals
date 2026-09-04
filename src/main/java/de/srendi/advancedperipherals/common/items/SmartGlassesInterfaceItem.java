@@ -3,6 +3,7 @@ package de.srendi.advancedperipherals.common.items;
 import dan200.computercraft.shared.network.container.ComputerContainerData;
 import dan200.computercraft.shared.platform.PlatformHelper;
 import de.srendi.advancedperipherals.common.items.base.BaseItem;
+import de.srendi.advancedperipherals.common.setup.APTranslations;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesMenuProvider;
@@ -32,7 +33,7 @@ public class SmartGlassesInterfaceItem extends BaseItem {
         final ItemStack glasses = SmartGlassesItem.getEquipped(player);
 
         if (!(glasses.getItem() instanceof SmartGlassesItem glassesItem)) {
-            player.displayClientMessage(Component.translatable("item.advancedperipherals.smartglasses.dontwear"), false);
+            player.displayClientMessage(Component.translatable(APTranslations.SMART_GLASSES_NOT_WEARING), true);
             return InteractionResultHolder.fail(handItemStack);
         }
 

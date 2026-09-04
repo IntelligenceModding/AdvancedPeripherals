@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class BasePocketUpgrade<T extends IBasePeripheral<?>> extends AbstractPocketUpgrade {
     protected BasePocketUpgrade(ResourceLocation id, ItemStack stack) {
-        super(id, TranslationUtil.pocket(id.getPath()), stack);
+        super(id, TranslationUtil.pocket(id), stack);
     }
 
     @NotNull

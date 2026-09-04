@@ -21,7 +21,7 @@ public abstract class PeripheralTurtleUpgrade<T extends IBasePeripheral<?>> exte
     protected int tick = 0;
 
     protected PeripheralTurtleUpgrade(ResourceLocation id, ItemStack item) {
-        super(id, TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id.getPath()), item);
+        super(id, TurtleUpgradeType.PERIPHERAL, TranslationUtil.turtle(id), item);
     }
 
     public abstract ModelResourceLocation getLeftModel();

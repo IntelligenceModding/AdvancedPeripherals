@@ -46,7 +46,7 @@ public class InventoryManagerEntity extends PeripheralBlockEntity<InventoryManag
     @Override
     @NotNull
     public Component getDisplayName() {
-        return Component.translatable("block.advancedperipherals.inventory_manager");
+        return this.getBlockState().getBlock().getName();
     }
 
     @Override

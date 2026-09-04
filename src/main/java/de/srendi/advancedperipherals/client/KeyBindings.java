@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
+import de.srendi.advancedperipherals.lib.annotation.DefaultTranslation;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
@@ -11,6 +12,7 @@ public class KeyBindings {
     private static final String KEYBIND_PREFIX = "keybind." + AdvancedPeripherals.MOD_ID;
     private static final String CATEGORY = KEYBIND_PREFIX + ".category";
 
+    @DefaultTranslation("Show Description")
     public static final KeyMapping DESCRIPTION_KEYBINDING = new KeyMapping(
         KEYBIND_PREFIX + ".description",
         KeyConflictContext.GUI,
@@ -18,6 +20,7 @@ public class KeyBindings {
         GLFW.GLFW_KEY_LEFT_CONTROL,
         CATEGORY
     );
+    @DefaultTranslation("Smart Glasses Hotkey")
     public static final KeyMapping GLASSES_HOTKEY_KEYBINDING = new KeyMapping(
         KEYBIND_PREFIX + ".glasses_hotkey",
         KeyConflictContext.IN_GAME,
