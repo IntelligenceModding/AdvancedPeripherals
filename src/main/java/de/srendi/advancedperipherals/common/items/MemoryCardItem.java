@@ -4,6 +4,7 @@ import de.srendi.advancedperipherals.client.ClientUUIDCache;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -37,17 +38,20 @@ public class MemoryCardItem extends APItem {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(Level worldIn, @NotNull Player playerIn, @NotNull InteractionHand handIn) {
-        if (!worldIn.isClientSide) {
-            ItemStack stack = playerIn.getItemInHand(handIn);
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, @NotNull Player player, @NotNull InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!level.isClientSide) {
+            if (player.getClass() != ServerPlayer.class) {
+                return InteractionResultHolder.fail(stack);
+            }
             if (stack.has(OWNER)) {
-                playerIn.displayClientMessage(Component.translatable("text.advancedperipherals.removed_player"), true);
+                player.displayClientMessage(Component.translatable("text.advancedperipherals.removed_player"), true);
                 stack.remove(OWNER);
             } else {
-                playerIn.displayClientMessage(Component.translatable("text.advancedperipherals.added_player"), true);
-                stack.set(OWNER, playerIn.getUUID());
+                player.displayClientMessage(Component.translatable("text.advancedperipherals.added_player"), true);
+                stack.set(OWNER, player.getUUID());
             }
         }
-        return super.use(worldIn, playerIn, handIn);
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 }
