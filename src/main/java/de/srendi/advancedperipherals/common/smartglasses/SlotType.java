@@ -1,10 +1,11 @@
 package de.srendi.advancedperipherals.common.smartglasses;
 
+import de.srendi.advancedperipherals.common.setup.APTranslations;
 import net.minecraft.network.chat.Component;
 
 public enum SlotType {
-    PERIPHERALS(Component.translatable("text.advancedperipherals.smart_glasses.peripherals")),
-    MODULES(Component.translatable("text.advancedperipherals.smart_glasses.modules"));
+    PERIPHERALS(Component.translatable(APTranslations.SMART_GLASSES_PERIPHERALS)),
+    MODULES(Component.translatable(APTranslations.SMART_GLASSES_MODULES));
 
     private final Component name;
 

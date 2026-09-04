@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APItems;
+import de.srendi.advancedperipherals.common.setup.APTranslations;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.lib.metaphysics.IFeedableAutomataCore;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -75,7 +76,7 @@ public class WeakAutomataCore extends APItem implements IFeedableAutomataCore {
     @NotNull
     public InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity entity, @NotNull InteractionHand hand) {
         if (!(player instanceof FakePlayer)) {
-            player.displayClientMessage(Component.translatable("text.advancedperipherals.automata_core.feed_by_player"), true);
+            player.displayClientMessage(Component.translatable(APTranslations.AUTOMATA_CORE_FEED_BY_PLAYER), true);
             return InteractionResult.FAIL;
         }
         String entityType = EntityType.getKey(entity.getType()).toString();

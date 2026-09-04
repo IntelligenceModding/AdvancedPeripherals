@@ -17,6 +17,7 @@ import de.srendi.advancedperipherals.common.container.KeyboardContainer;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseClickPacket;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseMovePacket;
 import de.srendi.advancedperipherals.common.network.toserver.KeyboardMouseScrollPacket;
+import de.srendi.advancedperipherals.common.setup.APTranslations;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -77,7 +78,7 @@ public class KeyboardScreen extends Screen implements MenuAccess<KeyboardContain
         // }
         // poseStack.scale(scale, scale, 1);
 
-        Component text = Component.translatable("text.advancedperipherals.keyboard.close");
+        Component text = Component.translatable(APTranslations.KEYBOARD_CLOSE);
         gui.drawCenteredString(gui.minecraft.font, text, screenWidth / 2, 1, 0xFFFFFF);
     }
 

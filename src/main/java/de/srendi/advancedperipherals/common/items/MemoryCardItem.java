@@ -2,6 +2,7 @@ package de.srendi.advancedperipherals.common.items;
 
 import de.srendi.advancedperipherals.client.ClientUUIDCache;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.setup.APTranslations;
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,7 +35,7 @@ public class MemoryCardItem extends APItem {
         if (username == null) {
             username = uuid.toString();
         }
-        tooltip.add(EnumColor.buildTextComponent(Component.translatable("item.advancedperipherals.tooltip.memory_card.bound", username)));
+        tooltip.add(EnumColor.buildTextComponent(Component.translatable(APTranslations.TOOLTIP_MEMORY_CARD_BOUND, username)));
     }
 
     @Override
@@ -45,10 +46,10 @@ public class MemoryCardItem extends APItem {
                 return InteractionResultHolder.fail(stack);
             }
             if (stack.has(OWNER)) {
-                player.displayClientMessage(Component.translatable("text.advancedperipherals.removed_player"), true);
+                player.displayClientMessage(Component.translatable(APTranslations.MEMORY_CARD_CLEAR), true);
                 stack.remove(OWNER);
             } else {
-                player.displayClientMessage(Component.translatable("text.advancedperipherals.added_player"), true);
+                player.displayClientMessage(Component.translatable(APTranslations.MEMORY_CARD_BOUND), true);
                 stack.set(OWNER, player.getUUID());
             }
         }

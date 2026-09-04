@@ -3,6 +3,9 @@ package de.srendi.advancedperipherals.client.screens;
 import com.mojang.blaze3d.systems.RenderSystem;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.entity.TurtleSeatEntity;
+import de.srendi.advancedperipherals.common.setup.APTranslations;
+import de.srendi.advancedperipherals.common.setup.CCRegistration;
+import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -113,10 +116,17 @@ public class SaddleTurtleOverlay implements LayeredDraw.Layer {
     private void renderDismountHint(GuiGraphics gui) {
         Minecraft minecraft = gui.minecraft;
         Font font = minecraft.font;
-        Component name = Component.translatable("block.computercraft.turtle_normal.upgraded", Component.translatable("turtle.advancedperipherals.saddle_turtle"));
+        Component name = Component.translatable(
+            "block.computercraft.turtle_normal.upgraded",
+            Component.translatable(TranslationUtil.turtle(CCRegistration.ID.Turtle.SADDLE))
+        );
         // TODO: get and render turtle's label if exists
-        Component text = Component.translatable("text.advancedperipherals.saddle_turtle.dismount_hint",
-            name, minecraft.options.keyShift.getTranslatedKeyMessage(), minecraft.options.keyInventory.getTranslatedKeyMessage());
+        Component text = Component.translatable(
+            APTranslations.SADDLE_TURTLE_DISMOUNT_HINT,
+            name,
+            minecraft.options.keyShift.getTranslatedKeyMessage(),
+            minecraft.options.keyInventory.getTranslatedKeyMessage()
+        );
         int top = 10;
         int x = gui.guiWidth() / 2 - font.width(text) / 2;
         gui.drawString(font, text, x, top, 0xffffff, true);
