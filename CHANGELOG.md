@@ -6,6 +6,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [extension 'changelog' property 'version'] - 2026-09-04
 - `scanEntities` on envrionment detector now can detect specific type of entities by passing the entity type or tag ID as an arugment.
 - `player_interaction` event will return block position along with block states.
 - Fix chatbox crash when using `/say` command in server interface.
@@ -18,4 +19,3 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Thanks to @zyxkad and his amazing work in the last year, we were finally able to release AP 0.8 after several years of work.
 This includes a bunch of new peripherals, an overhaul to the ME and RS Bridge, our new smart glasses and much more.
 Please read the changelogs for the [0.8a release](https://docs.advanced-peripherals.de/0.8/changelogs/0.8/) for more details.
-
