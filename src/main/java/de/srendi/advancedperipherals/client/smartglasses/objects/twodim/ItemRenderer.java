@@ -16,10 +16,12 @@ public class ItemRenderer implements ITwoDObjectRenderer<ItemObject> {
                 continue;
             }
             Item renderItem = obj.item.value();
-            int x = Math.round(obj.x), y = Math.round(obj.y);
             gui.pose().pushPose();
-            gui.pose().rotateAround(obj.getRotation(), x + 8, y + 8, 150);
-            gui.renderFakeItem(new ItemStack(renderItem), x, y);
+            gui.pose().translate(obj.x, obj.y, obj.z);
+            gui.pose().scale(1, 1, 1f / 256);
+            gui.pose().mulPose(obj.getRotation());
+            gui.pose().translate(-8, -8, -150);
+            gui.renderFakeItem(new ItemStack(renderItem), 0, 0);
             gui.pose().popPose();
         }
     }
