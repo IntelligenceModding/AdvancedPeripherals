@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
 import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
@@ -9,30 +9,27 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class TorusObject extends ThreeDimensionalObject {
+public class SphereObject extends ThreeDimensionalObject {
     @FixedPointNumberProperty(min = 1, max = 1024)
-    public int sides = 32;
+    public int sectors = 16;
 
     @FixedPointNumberProperty(min = 1, max = 1024)
-    public int rings = 16;
+    public int stacks = 16;
 
     @FloatingNumberProperty(min = 0.001f, max = 128)
-    public float minorRadius = 0.1f;
+    public float radius = 1;
 
-    @FloatingNumberProperty(min = 0.001f, max = 128)
-    public float majorRadius = 0.5f;
-
-    public TorusObject(OverlayModule module) {
+    public SphereObject(OverlayModule module) {
         super(module);
     }
 
-    public TorusObject(UUID player) {
+    public SphereObject(UUID player) {
         super(player);
     }
 
     @Override
     @NotNull
     public OverlayObjectType<?> getType() {
-        return APOverlayObjects.TORUS.get();
+        return APOverlayObjects.SPHERE.get();
     }
 }

@@ -1,30 +1,20 @@
-package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
+package de.srendi.advancedperipherals.client.smartglasses.objects;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.APRenderTypes;
 import de.srendi.advancedperipherals.client.RenderUtil;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.CircleObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.CircleObject;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import org.joml.Matrix4f;
 
-import java.util.List;
-
-public class CircleRenderer implements ITwoDObjectRenderer<CircleObject> {
+public class CircleRenderer extends Simple2DObjectRenderer<CircleObject> {
     @Override
-    public void renderBatch(List<CircleObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        for (CircleObject circle : objects) {
-            float alpha = circle.opacity;
-            float red = RenderUtil.getRed(circle.color);
-            float green = RenderUtil.getGreen(circle.color);
-            float blue = RenderUtil.getBlue(circle.color);
-
-            drawCircle(bufferSource, gui.pose(), circle, red, green, blue, alpha);
-        }
+    protected void render(CircleObject circle, GuiGraphics gui, DeltaTracker partialTick) {
+        float r = RenderUtil.getRed(circle.color), g = RenderUtil.getGreen(circle.color), b = RenderUtil.getBlue(circle.color), a = circle.opacity;
+        drawCircle(gui.bufferSource(), gui.pose(), circle, r, g, b, a);
     }
 
     private void drawCircle(MultiBufferSource.BufferSource bufferSource, PoseStack poseStack, CircleObject circle, float red, float green, float blue, float alpha) {

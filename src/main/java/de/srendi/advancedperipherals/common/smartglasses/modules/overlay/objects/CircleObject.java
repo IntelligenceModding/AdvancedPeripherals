@@ -1,9 +1,8 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
 import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import org.jetbrains.annotations.NotNull;

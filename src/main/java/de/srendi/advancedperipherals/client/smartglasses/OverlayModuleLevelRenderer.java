@@ -1,10 +1,10 @@
 package de.srendi.advancedperipherals.client.smartglasses;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import de.srendi.advancedperipherals.client.smartglasses.objects.threedim.IThreeDObjectRenderer;
+import de.srendi.advancedperipherals.client.smartglasses.objects.IObjectRenderer;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import net.minecraft.client.Camera;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -50,22 +50,21 @@ public class OverlayModuleLevelRenderer {
         poseStack.pushPose();
         poseStack.translate(-view.x, -view.y, -view.z);
 
-        Map<IThreeDObjectRenderer, List<ThreeDimensionalObject>> batches = new HashMap<>();
+        Map<IObjectRenderer, List<RenderableObject>> batches = new HashMap<>();
 
         for (OverlayObject object : OverlayObjectHolder.getObjects()) {
             if (!object.isEnabled()) {
                 continue;
             }
-            if (!(object instanceof ThreeDimensionalObject threeDimObject)) {
+            if (!(object instanceof RenderableObject renderableObject) || renderableObject.gui) {
                 continue;
             }
 
-            IThreeDObjectRenderer renderer = (IThreeDObjectRenderer) object.getType().getRenderer();
-            batches.computeIfAbsent(renderer, (r) -> new ArrayList<>()).add(threeDimObject);
+            batches.computeIfAbsent(renderableObject.getType().getRenderer(), (r) -> new ArrayList<>()).add(renderableObject);
         }
 
-        for (Map.Entry<IThreeDObjectRenderer, List<ThreeDimensionalObject>> entry : batches.entrySet()) {
-            entry.getKey().renderBatch(entry.getValue(), event, poseStack, eyePos, eyeRotation);
+        for (Map.Entry<IObjectRenderer, List<RenderableObject>> entry : batches.entrySet()) {
+            entry.getKey().render3D(entry.getValue(), event, poseStack, eyePos, eyeRotation);
         }
         poseStack.popPose();
     }

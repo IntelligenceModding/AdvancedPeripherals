@@ -1,23 +1,23 @@
-package de.srendi.advancedperipherals.client.smartglasses.objects.twodim;
+package de.srendi.advancedperipherals.client.smartglasses.objects;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.APRenderTypes;
 import de.srendi.advancedperipherals.client.RenderUtil;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim.LineObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.LineObject;
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import java.util.List;
 
-public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
+public class LineRenderer implements IObjectRenderer<LineObject> {
     @Override
-    public void renderBatch(List<LineObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-
-        VertexConsumer bufferBuilder = bufferSource.getBuffer(APRenderTypes.QUADS_2D);
+    public void render2D(List<LineObject> objects, GuiGraphics gui, DeltaTracker partialTick) {
+        VertexConsumer bufferBuilder = gui.bufferSource().getBuffer(APRenderTypes.QUADS_2D);
         for (LineObject line : objects) {
             float width = line.width;
             float halfWidth = line.width / 2;
@@ -105,5 +105,10 @@ public class LineRenderer implements ITwoDObjectRenderer<LineObject> {
                 bufferBuilder.addVertex(matrix, pX1, pY1, z).setColor(red, green, blue, alpha); // Top-left
             }
         }
+    }
+
+    @Override
+    public void render3D(List<LineObject> batch, RenderLevelStageEvent event, PoseStack poseStack, Vec3 eyePos, Quaternionf eyeRotation) {
+        // TODO
     }
 }

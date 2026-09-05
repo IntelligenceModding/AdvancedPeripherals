@@ -4,6 +4,7 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import org.joml.Quaternionf;
@@ -35,6 +36,15 @@ public abstract class RenderableObject extends OverlayObject {
 
     @FloatingNumberProperty(min = 0, max = 360)
     public float rotZ = 0f;
+
+    @BooleanProperty
+    public boolean gui = false;
+
+    @BooleanProperty
+    public boolean relativePosition = false;
+
+    @BooleanProperty
+    public boolean relativeRotation = false;
 
     private Quaternionf cachedRotation = null;
     private float cachedRotX;

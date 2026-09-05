@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import dan200.computercraft.api.lua.IArguments;
