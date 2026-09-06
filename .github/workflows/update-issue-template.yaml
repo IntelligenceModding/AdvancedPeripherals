@@ -1,4 +1,4 @@
-name: Build and Publish
+name: Update Issue Template
 
 on:
   workflow_dispatch:
