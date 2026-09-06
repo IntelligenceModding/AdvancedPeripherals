@@ -1,49 +1,49 @@
 package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 
 import appeng.api.crafting.IPatternDetails;
+import appeng.api.crafting.PatternDetailsHelper;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
+import appeng.api.stacks.GenericStack;
 import appeng.api.storage.MEStorage;
 import appeng.crafting.pattern.EncodedPatternItem;
-import dan200.computercraft.api.lua.IArguments;
-import dan200.computercraft.api.lua.LuaException;
-import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.api.lua.LuaTable;
-import dan200.computercraft.api.lua.MethodResult;
-import dan200.computercraft.api.lua.ObjectLuaTable;
+import appeng.parts.encoding.PatternEncodingTerminalPart;
+import dan200.computercraft.api.lua.*;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEApi;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.AECraftJob;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.AEMekanismApi;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEFluidHandler;
-import de.srendi.advancedperipherals.common.addons.appliedenergistics.MEItemHandler;
+import de.srendi.advancedperipherals.common.addons.appliedenergistics.*;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.BlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
+import de.srendi.advancedperipherals.common.util.ListUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
-import de.srendi.advancedperipherals.common.util.inventory.ChemicalFilter;
-import de.srendi.advancedperipherals.common.util.inventory.FluidFilter;
-import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
-import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
-import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemPeripheral;
-import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
-import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
+import de.srendi.advancedperipherals.common.util.inventory.*;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Containers;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.*;
+import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwner<MEBridgeEntity>> implements IStorageSystemPeripheral {
 
@@ -51,11 +51,13 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     private final MEBridgeEntity bridge;
     private IGridNode node;
-
+    private final RecipeManager recipeManager;
+    Item blankPattern = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("ae2", "blank_pattern"));
     public MEBridgePeripheral(MEBridgeEntity tileEntity) {
         super(PERIPHERAL_TYPE, new BlockEntityPeripheralOwner<>(tileEntity));
         this.bridge = tileEntity;
         this.node = tileEntity.getActionableNode();
+        recipeManager = bridge.getLevel().getRecipeManager();
     }
 
     public void setNode(IManagedGridNode node) {
@@ -147,6 +149,170 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
         return MethodResult.of(FluidUtil.moveFluid(targetTank, fluidHandler, filter.getLeft()), null);
     }
+    /**
+     * removes blank patterns from the me system matching the number of given patterns and inserts the given patterns afterward.
+     * patterns that can not be inserted will be dropped at the location of the me bridge.
+     * @param patterns a list of ae2 patterns as itemStacks
+     * @return a {@link MethodResult}, NOT_FOUND if the given list is empty, MISSING_BLANK_PATTERN if there aren't enough blank patterns
+     * in the me system or PATTERN_CREATED if the process was successful.
+     */
+    protected MethodResult removeBlankPatternsAndInsertCreatedPatterns(List<ItemStack> patterns) {
+        if (patterns.isEmpty()) {
+            return MethodResult.of(StatusConstants.NOT_FOUND.withInfo("No matching recipe for given output"));
+        }
+        MEStorage monitor = AEApi.getMonitor(node);
+        MEItemHandler itemHandler = new MEItemHandler(monitor, bridge);
+        ItemFilter filter = ItemFilter.fromStack(new ItemStack(blankPattern));
+        ItemStack removedBlankPattern = itemHandler.extractItem(filter, patterns.size(), false);
+        if (removedBlankPattern.getCount() < patterns.size()) {
+            itemHandler.insertItem(1, removedBlankPattern, false);
+            return MethodResult.of(StatusConstants.MISSING_BLANK_PATTERN
+                                           .withInfo("Missing " + (patterns.size() - removedBlankPattern.getCount())
+                                                     + " required blank patterns in the system"));
+        }
+        List<ItemStack> notInsertedPatterns = patterns.stream()
+                                                      .map(pattern -> itemHandler.insertItem(1, pattern, false))
+                                                      .filter(itemStack -> !itemStack.isEmpty()).toList();
+        Containers.dropContents(
+                bridge.getLevel(), bridge.getBlockPos().above(),
+                new SimpleContainer(notInsertedPatterns.toArray(ItemStack[]::new)));
+        return MethodResult.of(StatusConstants.PATTERN_CREATED
+                                       .withInfo("Inserted " + (patterns.size() - notInsertedPatterns.size()) + " patterns, "
+                                                 + notInsertedPatterns.size() + " didn't fit in the system"));
+    }
+    /**
+     * creates a ae2 crafting pattern for the given recipe
+     * @param recipe a craftingRecipe to create a pattern for
+     * @param allowSubstitutes whether the me system allows using substitutes or not
+     * @param allowFluidSubstitutes whether the me system allows using fluid substitutes or not
+     * @return a itemStack of the resulting pattern
+     */
+    protected ItemStack createCraftingPatternForRecipe(RecipeHolder<CraftingRecipe> recipe, boolean allowSubstitutes,
+                                                       boolean allowFluidSubstitutes) {
+        CraftingRecipe craftingRecipe = recipe.value();
+        int width = 3;
+        int height = 3;
+        if (recipe.value() instanceof ShapedRecipe shaped) {
+            width = shaped.getWidth();
+            height = shaped.getHeight();
+        }
+        List<ItemStack> inputs = new ArrayList<>(9);
+        for (int i = 0; i < craftingRecipe.getIngredients().size(); i++) {
+            Ingredient ing = craftingRecipe.getIngredients().get(i);
+            inputs.add(ing.isEmpty() ? ItemStack.EMPTY : ing.getItems()[0]);
+            // if next row is new row add missing empty slots to row
+            if ((i + 1) % width == 0) {
+                for (int j = width; j < 3; j++) {
+                    inputs.add(ItemStack.EMPTY);
+                }
+            }
+        }
+        for (int j = height; j < 3; j++) {
+            inputs.addAll(List.of(ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY));
+        }
+        ItemStack[] inputsArray = inputs.toArray(ItemStack[]::new);
+        return PatternDetailsHelper.encodeCraftingPattern(recipe,
+                                                          inputsArray,
+                                                          craftingRecipe.getResultItem(
+                                                                  bridge.getLevel().registryAccess()),
+                                                          allowSubstitutes, allowFluidSubstitutes);
+    }
+    /**
+     * creates multiple processing patterns for all combinations of inputs for the given cooking recipe
+     * @param recipe any type of cooking recipe (smelting, blasting, e.g.)
+     * @param <T> the specific type of the cooking recipe (e.g. smeltingRecipe)
+     * @return a list of itemStacks with each itemStack representing one pattern
+     */
+    protected <T extends AbstractCookingRecipe> List<ItemStack> createCookingPatternsForRecipe(RecipeHolder<T> recipe) {
+        T cookingRecipe = recipe.value();
+        ItemStack resultItem = cookingRecipe.getResultItem(bridge.getLevel().registryAccess());
+        GenericStack result = new GenericStack(AEItemKey.of(resultItem), resultItem.getCount());
+        List<List<GenericStack>> inputs = cookingRecipe
+                .getIngredients()
+                .stream()
+                .map(Ingredient::getItems)
+                .map(stackList -> Arrays.stream(stackList)
+                                        .map(stack -> new GenericStack(AEItemKey.of(stack), stack.getCount())).toList())
+                .toList();
+        List<ItemStack> patterns = new ArrayList<>();
+        for (List<GenericStack> combinations : ListUtil.cartesianProduct(inputs)) {
+            patterns.add(PatternDetailsHelper.encodeProcessingPattern(combinations, List.of(result)));
+        }
+        return patterns;
+    }
+    /**
+     * creates multiple smithing pattern for all combinations of inputs for the given smithing recipe
+     * @param recipe a smithingRecipe to create a pattern for
+     * @param allowSubstitutes whether the me system allows substitutes
+     * @return a list of itemStacks with each itemStack representing one pattern
+     */
+    protected List<ItemStack> createSmithingPatternsForRecipe(RecipeHolder<SmithingRecipe> recipe, boolean allowSubstitutes) {
+        SmithingRecipe smithingRecipe = recipe.value();
+        ItemStack resultItem = smithingRecipe.getResultItem(bridge.getLevel().registryAccess());
+        AEItemKey result = AEItemKey.of(resultItem);
+        List<ItemStack> patterns = new ArrayList<>();
+        Class<? extends SmithingRecipe> clazz = smithingRecipe.getClass();
+        Field templateField;
+        Field baseField;
+        Field additionField;
+        try {
+            templateField = ObfuscationReflectionHelper.findField(clazz, "template");
+            baseField = ObfuscationReflectionHelper.findField(clazz, "base");
+            additionField = ObfuscationReflectionHelper.findField(clazz, "addition");
+            List<AEItemKey> template =
+                    Arrays.stream(((Ingredient) templateField.get(smithingRecipe)).getItems()).map(AEItemKey::of).toList();
+            List<AEItemKey> base = Arrays.stream(((Ingredient) baseField.get(smithingRecipe)).getItems()).map(AEItemKey::of).toList();
+            List<AEItemKey> addition = Arrays.stream(((Ingredient) additionField.get(smithingRecipe)).getItems()).map(AEItemKey::of)
+                                             .toList();
+            for (List<AEItemKey> combination : ListUtil.cartesianProduct(List.of(template, base, addition))) {
+                patterns.add(PatternDetailsHelper.encodeSmithingTablePattern(recipe, combination.get(0), combination.get(1),
+                                                                             combination.get(2), result, allowSubstitutes));
+            }
+            return patterns;
+        } catch (Exception e) {
+            return patterns;
+        }
+    }
+    /**
+     * creates a stonecutting pattern for the given stonecutting recipe
+     * @param recipe a stoneCuttingRecipe to create a pattern for
+     * @param allowSubstitutes whether the me system allows substitutes
+     * @return a itemStack of the resulting pattern
+     */
+    protected ItemStack createStonecuttingPatternForRecipe(RecipeHolder<StonecutterRecipe> recipe,
+                                                           boolean allowSubstitutes) {
+        StonecutterRecipe smithingRecipe = recipe.value();
+        ItemStack resultItem = smithingRecipe.getResultItem(bridge.getLevel().registryAccess());
+        AEItemKey result = AEItemKey.of(resultItem);
+        AEItemKey input = AEItemKey.of(smithingRecipe.getIngredients().get(0).getItems()[0]);
+        return PatternDetailsHelper.encodeStonecuttingPattern(recipe, input, result, allowSubstitutes);
+    }
+    /**
+     * creates a generic stack from the given lua table
+     * @param table a lua list containing lua tables with a resource location string and a number
+     * @return a list of genericStack based on the given table
+     */
+    protected List<GenericStack> createGenericStacksFromLuaTable(Map<?, ?> table) {
+        List<GenericStack> result = new ArrayList<>();
+        for (Map<?, ?> subTable : table.values().stream().map(Map.class::cast).toList()) {
+            ResourceLocation resourceLocation = ResourceLocation.parse(subTable.get(1.0).toString());
+            Item item = BuiltInRegistries.ITEM.get(resourceLocation);
+            int amount = subTable.size() > 1 ? ((Double) subTable.get(2.0)).intValue() : 1;
+            GenericStack stack = GenericStack.fromItemStack(new ItemStack(item, amount));
+            result.add(stack);
+        }
+        return result;
+    }
+    /**
+     * used to filter recipes based on the resultItems resource location string
+     * @param recipe the given recipe
+     * @param keyRegex a regex to match against the recipes resulting item
+     * @return whether the resultItem of the recipe matches the given regexKey or not
+     */
+    private boolean filterRecipes(RecipeHolder<?> recipe, String keyRegex) {
+        return BuiltInRegistries.ITEM.getKey(recipe.value().getResultItem(bridge.getLevel().registryAccess()).getItem())
+                                     .toString().matches(keyRegex);
+    }
 
     private MethodResult notConnected(@Nullable Object defaultValue) {
         return MethodResult.of(defaultValue, StatusConstants.NOT_CONNECTED.toString());
@@ -154,6 +320,21 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
 
     private boolean isAvailable() {
         return node.hasGridBooted();
+    }
+    /**
+     * tests whether the me system is available, the pattern creation is enabled in the config and an encoding terminal is connected to
+     * the me system
+     * @return a methodResult describing the missing requirement or null if every requirement is fulfilled
+     */
+    private MethodResult patternEncodingInactive() {
+        if (!isAvailable())
+            return notConnected(null);
+        if (!APConfig.PERIPHERALS_CONFIG.enableMEBridgePatternCreator.get())
+            return MethodResult
+                    .of(StatusConstants.PATTERN_ENCODING_DISABLED.withInfo("Pattern Encoding is disabled in config"));
+        if (node.getGrid().getActiveMachines(PatternEncodingTerminalPart.class).isEmpty())
+            return MethodResult.of(StatusConstants.NOT_CONNECTED.withInfo("Pattern Encoder not connected"));
+        return null;
     }
 
     @Override
@@ -167,7 +348,112 @@ public class MEBridgePeripheral extends BasePeripheral<BlockEntityPeripheralOwne
     public MethodResult isOnline() {
         return MethodResult.of(node.isOnline());
     }
-
+    @LuaFunction(mainThread = true)
+    public final MethodResult createCraftingPattern(IArguments arguments) throws LuaException {
+        MethodResult patternEncodingInactive = patternEncodingInactive();
+        if (patternEncodingInactive != null)
+            return patternEncodingInactive;
+        String recipeOutput = arguments.getString(0);
+        boolean allowSubstitutes = arguments.optBoolean(1).orElse(true);
+        boolean allowFluidSubstitutes = arguments.optBoolean(2).orElse(true);
+        List<ItemStack> patterns = recipeManager.getAllRecipesFor(RecipeType.CRAFTING)
+                                                .stream()
+                                                .filter(r -> filterRecipes(r, recipeOutput))
+                                                .map(r -> createCraftingPatternForRecipe(r, allowSubstitutes, allowFluidSubstitutes))
+                                                .toList();
+        return removeBlankPatternsAndInsertCreatedPatterns(patterns);
+    }
+    @LuaFunction(mainThread = true)
+    public final MethodResult createSmeltingPattern(IArguments arguments) throws LuaException {
+        MethodResult patternEncodingInactive = patternEncodingInactive();
+        if (patternEncodingInactive != null)
+            return patternEncodingInactive;
+        String recipeOutput = arguments.getString(0);
+        List<ItemStack> patterns = recipeManager.getAllRecipesFor(RecipeType.SMELTING)
+                                                .stream()
+                                                .filter(r -> filterRecipes(r, recipeOutput))
+                                                .map(this::createCookingPatternsForRecipe)
+                                                .flatMap(List::stream)
+                                                .toList();
+        return removeBlankPatternsAndInsertCreatedPatterns(patterns);
+    }
+    @LuaFunction(mainThread = true)
+    public final MethodResult createBlastingPattern(IArguments arguments) throws LuaException {
+        MethodResult patternEncodingInactive = patternEncodingInactive();
+        if (patternEncodingInactive != null)
+            return patternEncodingInactive;
+        String recipeOutput = arguments.getString(0);
+        List<ItemStack> patterns = recipeManager.getAllRecipesFor(RecipeType.BLASTING)
+                                                .stream()
+                                                .filter(r -> filterRecipes(r, recipeOutput))
+                                                .map(this::createCookingPatternsForRecipe)
+                                                .flatMap(List::stream)
+                                                .toList();
+        return removeBlankPatternsAndInsertCreatedPatterns(patterns);
+    }
+    @LuaFunction(mainThread = true)
+    public final MethodResult createSmokingPattern(IArguments arguments) throws LuaException {
+        MethodResult patternEncodingInactive = patternEncodingInactive();
+        if (patternEncodingInactive != null)
+            return patternEncodingInactive;
+        String recipeOutput = arguments.getString(0);
+        List<ItemStack> patterns = recipeManager.getAllRecipesFor(RecipeType.SMOKING)
+                                                .stream()
+                                                .filter(r -> filterRecipes(r, recipeOutput))
+                                                .map(this::createCookingPatternsForRecipe)
+                                                .flatMap(List::stream)
+                                                .toList();
+        return removeBlankPatternsAndInsertCreatedPatterns(patterns);
+    }
+    @LuaFunction(mainThread = true)
+    public final MethodResult createSmithingPattern(IArguments arguments) throws LuaException {
+        MethodResult patternEncodingInactive = patternEncodingInactive();
+        if (patternEncodingInactive != null)
+            return patternEncodingInactive;
+        String recipeOutput = arguments.getString(0);
+        boolean allowSubstitutes = arguments.optBoolean(1).orElse(true);
+        List<ItemStack> patterns = recipeManager.getAllRecipesFor(RecipeType.SMITHING)
+                                                .stream()
+                                                .filter(r -> filterRecipes(r, recipeOutput))
+                                                .filter(r -> r.value() instanceof SmithingTransformRecipe)
+                                                .flatMap(r -> createSmithingPatternsForRecipe(r,
+                                                                                              allowSubstitutes).stream())
+                                                .toList();
+        return removeBlankPatternsAndInsertCreatedPatterns(patterns);
+    }
+    @LuaFunction(mainThread = true)
+    public final MethodResult createStonecuttingPattern(IArguments arguments) throws LuaException {
+        MethodResult patternEncodingInactive = patternEncodingInactive();
+        if (patternEncodingInactive != null)
+            return patternEncodingInactive;
+        String recipeOutput = arguments.getString(0);
+        boolean allowSubstitutes = arguments.optBoolean(1).orElse(true);
+        List<ItemStack> patterns = recipeManager.getAllRecipesFor(RecipeType.STONECUTTING)
+                                                .stream()
+                                                .filter(r -> filterRecipes(r, recipeOutput))
+                                                .map(r -> createStonecuttingPatternForRecipe(r,
+                                                                                             allowSubstitutes))
+                                                .toList();
+        return removeBlankPatternsAndInsertCreatedPatterns(patterns);
+    }
+    @LuaFunction(mainThread = true)
+    public final MethodResult createProcessingPattern(IArguments arguments) throws LuaException {
+        MethodResult patternEncodingInactive = patternEncodingInactive();
+        if (patternEncodingInactive != null)
+            return patternEncodingInactive;
+        Map<?, ?> inputs = arguments.getTable(0);
+        Map<?, ?> outputs = arguments.getTable(1);
+        List<GenericStack> stackInputs;
+        List<GenericStack> stackOutputs;
+        try {
+            stackInputs = this.createGenericStacksFromLuaTable(inputs);
+            stackOutputs = this.createGenericStacksFromLuaTable(outputs);
+        } catch (Exception e) {
+            return MethodResult.of(StatusConstants.NOT_FOUND.withInfo("Invalid input or output items."));
+        }
+        ItemStack pattern = PatternDetailsHelper.encodeProcessingPattern(stackInputs, stackOutputs);
+        return removeBlankPatternsAndInsertCreatedPatterns(List.of(pattern));
+    }
     @Override
     @LuaFunction(mainThread = true)
     public final MethodResult getItem(IArguments arguments) throws LuaException {

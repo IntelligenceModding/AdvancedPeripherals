@@ -53,6 +53,8 @@ public class PeripheralsConfig implements IAPConfig {
 
     // ME Bridge
     public final ModConfigSpec.BooleanValue enableMEBridge;
+    public final ModConfigSpec.BooleanValue enableMEBridgePatternCreator;
+    public final ModConfigSpec.BooleanValue mePatternCreationRequiresPatternEncoder;
     public final ModConfigSpec.IntValue meConsumption;
 
     // Rs Bridge
@@ -158,6 +160,8 @@ public class PeripheralsConfig implements IAPConfig {
         pop("ME_Bridge", builder);
 
         enableMEBridge = builder.comment("Enable the Me Bridge or not.").define("enableMeBridge", true);
+        enableMEBridgePatternCreator = builder.comment("Allow the me bridge to create ae2 crafting patterns.").define("enableMEBridgePatternCreator", true);
+        mePatternCreationRequiresPatternEncoder = builder.comment("If true, the me bridge pattern creation only works if a pattern encoder is placed within the active network.").define("mePatternCreationRequiresPatternEncoder", true);
         meConsumption = builder.comment("Power consumption per tick.").defineInRange("mePowerConsumption", 10, 0, Integer.MAX_VALUE);
 
         pop("RS_Bridge", builder);
