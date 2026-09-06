@@ -32,13 +32,6 @@ jobs:
               // 'b': true,
             }
 
-            let output = ''
-            await exec.exec('git tag --list', {
-              listeners: {
-                stdout: (data) => output += data.toString(),
-              },
-            })
-
             const tagMatcher = /^(\d+(?:\.\d+)*)-(\d+(?:\.\d+)*)(\D?)\S*$/
 
             const versionComparer = (a, b) => {
@@ -63,19 +56,25 @@ jobs:
             }
 
             const tags = []
-            for (const t of output.split('\n')) {
-              const match = tagMatcher.exec(t)
-              if (!match) {
-                continue
-              }
-              const [fullTag, minecraftVersion, modVersion, releaseType] = match
-              tags.push({
-                full: fullTag,
-                minecraft: minecraftVersion,
-                version: modVersion,
-                type: releaseType,
-              })
-            }
+
+            await exec.exec('git', ['tag', '--list'], {
+              listeners: {
+                stdline: (line) => {
+                  const match = tagMatcher.exec(line)
+                  if (!match) {
+                    continue
+                  }
+                  const [fullTag, minecraftVersion, modVersion, releaseType] = match
+                  tags.push({
+                    full: fullTag,
+                    minecraft: minecraftVersion,
+                    version: modVersion,
+                    type: releaseType,
+                  })
+                },
+              },
+            })
+
             tags.sort((a, b) => {
               const c1 = versionComparer(a.minecraft, b.minecraft)
               if (c1) {
