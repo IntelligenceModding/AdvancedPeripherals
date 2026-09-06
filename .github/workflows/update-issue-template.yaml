@@ -62,7 +62,7 @@ jobs:
                 stdline: (line) => {
                   const match = tagMatcher.exec(line)
                   if (!match) {
-                    continue
+                    return
                   }
                   const [fullTag, minecraftVersion, modVersion, releaseType] = match
                   tags.push({
