@@ -39,7 +39,7 @@ body:
       label: Version
       description: What version of advanced peripherals are you using?
       multiple: false
-      options: ["Own compiled build.","Other. (probably unsupported)"]
+      options: {{versions}}
     validations:
       required: true
   - type: input
