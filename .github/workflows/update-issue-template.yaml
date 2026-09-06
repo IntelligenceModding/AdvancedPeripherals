@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     tags:
-      #
+      - '*'
 
 jobs:
   generate-bug_report:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Sources
         uses: actions/checkout@v7
         with:
-          ref: default
+          ref: ${{ github.event.repository.default_branch }}
           fetch-depth: 0
       - name: Generate Version List
         uses: actions/github-script@v9
