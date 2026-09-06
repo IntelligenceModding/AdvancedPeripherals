@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 public class TextureRenderer extends Simple2DObjectRenderer<TextureObject> {
     @Override
-    protected void render(TextureObject obj, GuiGraphics gui, DeltaTracker partialTick) {
+    protected void render(TextureObject obj, GuiGraphics gui, DeltaTracker partialTick, boolean is3D) {
         Function<ThreeDimensionalObject, RenderType> renderTypesMap = obj.updateAndGetRenderTypes();
         if (renderTypesMap == null) {
             return;

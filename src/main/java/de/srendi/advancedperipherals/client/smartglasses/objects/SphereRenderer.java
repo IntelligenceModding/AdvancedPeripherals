@@ -9,7 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 
 public class SphereRenderer extends Simple2DObjectRenderer<SphereObject> {
     @Override
-    protected void render(SphereObject sphere, GuiGraphics gui, DeltaTracker partialTick) {
+    protected void render(SphereObject sphere, GuiGraphics gui, DeltaTracker partialTick, boolean is3D) {
         VertexConsumer bufferBuilder = gui.bufferSource().getBuffer(APRenderTypes.QUADS_3D_MAP.apply(sphere));
 
         float r = RenderUtil.getRed(sphere.color), g = RenderUtil.getGreen(sphere.color), b = RenderUtil.getBlue(sphere.color), a = sphere.opacity;

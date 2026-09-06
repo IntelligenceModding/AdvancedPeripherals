@@ -10,7 +10,7 @@ import org.joml.Matrix4f;
 
 public class RectangleRenderer extends Simple2DObjectRenderer<RectangleObject> {
     @Override
-    protected void render(RectangleObject obj, GuiGraphics gui, DeltaTracker partialTick) {
+    protected void render(RectangleObject obj, GuiGraphics gui, DeltaTracker partialTick, boolean is3D) {
         if (obj.sizeX == 0 || obj.sizeY == 0) {
             return;
         }

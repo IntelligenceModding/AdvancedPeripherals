@@ -33,7 +33,7 @@ public class BlockRenderer extends Simple2DObjectRenderer<BlockObject> {
     private final WeakHashMap<ClientLevel, FakeLevel> fakeLevels = new WeakHashMap<>();
 
     @Override
-    protected void render(BlockObject block, GuiGraphics gui, DeltaTracker partialTickTraker) {
+    protected void render(BlockObject block, GuiGraphics gui, DeltaTracker partialTickTraker, boolean is3D) {
         BlockState state = block.getBlockState();
         if (state == null) {
             return;

@@ -12,7 +12,7 @@ public class TriangleRenderer extends Simple2DObjectRenderer<TriangleObject> {
     public static final TriangleRenderer INSTANCE = new TriangleRenderer();
 
     @Override
-    protected void render(TriangleObject tri, GuiGraphics gui, DeltaTracker partialTick) {
+    protected void render(TriangleObject tri, GuiGraphics gui, DeltaTracker partialTick, boolean is3D) {
         VertexConsumer buffer = gui.bufferSource().getBuffer(APRenderTypes.TRIANGLE_3D_MAP.apply(tri));
 
         float r = RenderUtil.getRed(tri.color), g = RenderUtil.getGreen(tri.color), b = RenderUtil.getBlue(tri.color), a = tri.opacity;

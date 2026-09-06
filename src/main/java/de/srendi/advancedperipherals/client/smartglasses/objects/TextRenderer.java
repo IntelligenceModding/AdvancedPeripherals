@@ -1,39 +1,42 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects;
 
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.TextObject;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TextRenderer extends Simple2DObjectRenderer<TextObject> {
+    private final Map<RenderType.CompositeRenderType, RenderType> noCullTexts = new HashMap<>();
+
     @Override
-    protected void render(TextObject text, GuiGraphics gui, DeltaTracker partialTick) {
+    protected void render(TextObject text, GuiGraphics gui, DeltaTracker partialTick, boolean is3D) {
         if (text.fontSize == 0) {
             return;
         }
         Font font = gui.minecraft.font;
 
-        float x = text.x;
         float width = font.width(text.content);
-        if (text.center) {
-            x -= width / 2;
-        }
 
-        gui.pose().translate(x, text.y, text.z);
-        gui.pose().scale(text.fontSize, text.fontSize, 1);
-        gui.pose().rotateAround(text.getRotation(), width / 2, 9f / 2, 0);
+        gui.pose().scale(text.fontSize, text.fontSize * (is3D ? -1 : 1), 1);
 
         int color = (text.color & 0xffffff) | ((int) (Math.min(Math.max(text.opacity, 0), 1) * 0xff) << 24);
 
         font.drawInBatch(
             text.content,
-            0,
+            text.center ? -width / 2 : 0,
             0,
             color,
             text.shadow,
             gui.pose().last().pose(),
-            gui.bufferSource(),
+            text.culling ? gui.bufferSource() : this.new NoCullBufferSource(gui.bufferSource()),
             text.depthTest ? Font.DisplayMode.NORMAL : Font.DisplayMode.SEE_THROUGH,
             0,
             LightTexture.FULL_BRIGHT
@@ -44,5 +47,48 @@ public class TextRenderer extends Simple2DObjectRenderer<TextObject> {
     @Override
     public int getWeight() {
         return 110;
+    }
+
+    private RenderType buildNoCullText(RenderType.CompositeRenderType renderType) {
+        RenderType.CompositeState state = renderType.state();
+        return RenderType.create(
+            renderType.name + "_no_cull",
+            renderType.format,
+            renderType.mode,
+            renderType.bufferSize,
+            renderType.affectsCrumbling,
+            renderType.sortOnUpload,
+            RenderType.CompositeState.builder()
+                .setTextureState(state.textureState)
+                .setShaderState(state.shaderState)
+                .setTransparencyState(state.transparencyState)
+                .setDepthTestState(state.depthTestState)
+                .setCullState(RenderStateShard.NO_CULL)
+                .setLightmapState(state.lightmapState)
+                .setOverlayState(state.overlayState)
+                .setLayeringState(state.layeringState)
+                .setOutputState(state.outputState)
+                .setTexturingState(state.texturingState)
+                .setWriteMaskState(state.writeMaskState)
+                .setLineState(state.lineState)
+                .setColorLogicState(state.colorLogicState)
+                .createCompositeState(state.outlineProperty)
+        );
+    }
+
+    private final class NoCullBufferSource implements MultiBufferSource {
+        private final MultiBufferSource source;
+
+        private NoCullBufferSource(MultiBufferSource source) {
+            this.source = source;
+        }
+
+        @Override
+        public VertexConsumer getBuffer(RenderType renderType) {
+            if (renderType instanceof RenderType.CompositeRenderType cRenderType) {
+                renderType = noCullTexts.computeIfAbsent(cRenderType, TextRenderer.this::buildNoCullText);
+            }
+            return this.source.getBuffer(renderType);
+        }
     }
 }

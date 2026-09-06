@@ -13,7 +13,7 @@ import org.joml.Quaternionf;
 import java.util.List;
 
 public abstract class Simple2DObjectRenderer<O extends RenderableObject> implements IObjectRenderer<O> {
-    protected abstract void render(O object, GuiGraphics gui, DeltaTracker partialTick);
+    protected abstract void render(O object, GuiGraphics gui, DeltaTracker partialTick, boolean is3D);
 
     @Override
     public void render2D(List<O> batch, GuiGraphics gui, DeltaTracker partialTick) {
@@ -24,7 +24,7 @@ public abstract class Simple2DObjectRenderer<O extends RenderableObject> impleme
             gui.pose().last().normal().set(last.normal());
             gui.pose().translate(obj.x, obj.y, obj.z);
             gui.pose().mulPose(obj.getRotation());
-            this.render(obj, gui, partialTick);
+            this.render(obj, gui, partialTick, false);
         }
         gui.pose().popPose();
     }
@@ -39,7 +39,7 @@ public abstract class Simple2DObjectRenderer<O extends RenderableObject> impleme
         for (O obj : batch) {
             gui.pose().last().pose().set(poseStack.last().pose());
             IObjectRenderer.apply3DTransforms(gui.pose(), obj, eyePos, eyeRotation);
-            this.render(obj, gui, partialTick);
+            this.render(obj, gui, partialTick, true);
         }
     }
 }

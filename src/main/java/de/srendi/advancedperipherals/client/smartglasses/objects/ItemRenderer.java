@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ItemRenderer extends Simple2DObjectRenderer<ItemObject> {
     @Override
-    protected void render(ItemObject object, GuiGraphics gui, DeltaTracker partialTick) {
+    protected void render(ItemObject object, GuiGraphics gui, DeltaTracker partialTick, boolean is3D) {
         if (object.item == null) {
             return;
         }

@@ -12,7 +12,7 @@ import org.joml.Matrix4f;
 
 public class CircleRenderer extends Simple2DObjectRenderer<CircleObject> {
     @Override
-    protected void render(CircleObject circle, GuiGraphics gui, DeltaTracker partialTick) {
+    protected void render(CircleObject circle, GuiGraphics gui, DeltaTracker partialTick, boolean is3D) {
         float r = RenderUtil.getRed(circle.color), g = RenderUtil.getGreen(circle.color), b = RenderUtil.getBlue(circle.color), a = circle.opacity;
         drawCircle(gui.bufferSource(), gui.pose(), circle, r, g, b, a);
     }

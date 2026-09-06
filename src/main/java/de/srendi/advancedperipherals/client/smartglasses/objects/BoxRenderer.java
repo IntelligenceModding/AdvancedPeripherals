@@ -13,7 +13,7 @@ public class BoxRenderer extends Simple2DObjectRenderer<BoxObject> {
     private static final RenderUtil.BoxLightMap FULL_BRIGHT = RenderUtil.BoxLightMap.createFullBright();
 
     @Override
-    protected void render(BoxObject box, GuiGraphics gui, DeltaTracker partialTickTraker) {
+    protected void render(BoxObject box, GuiGraphics gui, DeltaTracker partialTickTraker, boolean is3D) {
         VertexConsumer bufferBuilder = gui.bufferSource().getBuffer(APRenderTypes.QUADS_3D_MAP.apply(box));
 
         Vector4f color = new Vector4f(RenderUtil.getRed(box.color), RenderUtil.getGreen(box.color), RenderUtil.getBlue(box.color), box.opacity);
