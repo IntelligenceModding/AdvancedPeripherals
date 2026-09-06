@@ -530,7 +530,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
     }
 
-    private static final class LerpController<T> {
+    public static final class LerpController<T> {
         private final Supplier<T> getter;
         private final Consumer<T> setter;
         private final FieldLerper<T> lerper;
