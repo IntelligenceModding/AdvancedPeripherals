@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.addons.ae2;
 
 import appeng.api.AECapabilities;
+import appeng.api.config.FuzzyMode;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.implementations.blockentities.IChestOrDrive;
 import appeng.api.inventories.InternalInventory;
@@ -447,7 +448,10 @@ public class AEApi {
 
         properties.put("item", LuaConverter.itemToLua(cell));
         if (cell instanceof ICellWorkbenchItem workbenchCell) {
-            properties.put("fuzzyMode", workbenchCell.getFuzzyMode(stack).toString());
+            FuzzyMode fuzzyMode = workbenchCell.getFuzzyMode(stack);
+            if (fuzzyMode != null) {
+                properties.put("fuzzyMode", fuzzyMode.toString());
+            }
         }
         ICellWrapper wrapper = ICellWrapper.of(cell, stack);
         if (wrapper != null) {
