@@ -12,7 +12,6 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanType;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.PropertyType;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -435,7 +434,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     public interface FieldLerper<T> {
         T calc(T old, T target, float alpha);
 
-        static final FieldLerper<Float> FLOAT = new FieldLerper<Float>() {
+        FieldLerper<Float> FLOAT = new FieldLerper<Float>() {
             @Override
             public Float calc(Float old, Float target, float alpha) {
                 if (alpha == 0) {
@@ -448,7 +447,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             }
         };
 
-        static final FieldLerper<Double> DOUBLE = new FieldLerper<Double>() {
+        FieldLerper<Double> DOUBLE = new FieldLerper<Double>() {
             @Override
             public Double calc(Double old, Double target, float alpha) {
                 if (alpha == 0) {
