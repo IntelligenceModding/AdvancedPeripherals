@@ -13,6 +13,14 @@ import org.joml.Quaternionf;
 import java.util.UUID;
 
 public abstract class RenderableObject extends OverlayObject {
+    @BooleanProperty
+    public boolean gui = false;
+
+    @BooleanProperty
+    public boolean relativePosition = false;
+
+    @BooleanProperty
+    public boolean relativeRotation = false;
 
     @FloatingNumberProperty(min = 0, max = 1, lerp = true)
     public float opacity = 1;
@@ -43,15 +51,6 @@ public abstract class RenderableObject extends OverlayObject {
     @FloatingNumberProperty(min = 0, max = 360, continous = true, lerp = true)
     public float rotZ = 0;
     private float rotZLast = 0;
-
-    @BooleanProperty
-    public boolean gui = false;
-
-    @BooleanProperty
-    public boolean relativePosition = false;
-
-    @BooleanProperty
-    public boolean relativeRotation = false;
 
     private Quaternionf cachedRotation = null;
     private float cachedRotX;

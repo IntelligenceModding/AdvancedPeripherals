@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- We investigated a more efficient way to build Distance Detector, now it will use amethyst instead of diamond!
+- Fix #833 some AE2 addons may return `null` FuzzyMode and crash the game.
+- Fix some BlockEntity may crash client due to FakeLevel.
+- Make overlay objects fields update smoother by adding lerp ability.
+- All overlay objects can draw on both in world or on GUI now. Use `gui` field to differ the render space.
 
 ## [extension 'changelog' property 'version'] - 2026-09-04
 - `scanEntities` on envrionment detector now can detect specific type of entities by passing the entity type or tag ID as an arugment.
