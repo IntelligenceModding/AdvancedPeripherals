@@ -13,7 +13,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class PlayerInteractionPacket implements IAPPacket {
@@ -32,8 +31,8 @@ public class PlayerInteractionPacket implements IAPPacket {
 
     public PlayerInteractionPacket(RegistryFriendlyByteBuf buffer) {
         this.button = buffer.readVarInt();
-        this.hitBlock = buffer.readOptional(RegistryFriendlyByteBuf::readBlockPos).orElse(null);
-        this.hitEntity = buffer.readOptional(RegistryFriendlyByteBuf::readUUID).orElse(null);
+        this.hitBlock = buffer.readNullable(RegistryFriendlyByteBuf::readBlockPos);
+        this.hitEntity = buffer.readNullable(RegistryFriendlyByteBuf::readUUID);
     }
 
     @Override
@@ -60,8 +59,8 @@ public class PlayerInteractionPacket implements IAPPacket {
     @Override
     public void write(RegistryFriendlyByteBuf buffer) {
         buffer.writeVarInt(button);
-        buffer.writeOptional(Optional.ofNullable(this.hitBlock), RegistryFriendlyByteBuf::writeBlockPos);
-        buffer.writeOptional(Optional.ofNullable(this.hitEntity), RegistryFriendlyByteBuf::writeUUID);
+        buffer.writeNullable(this.hitBlock, RegistryFriendlyByteBuf::writeBlockPos);
+        buffer.writeNullable(this.hitEntity, RegistryFriendlyByteBuf::writeUUID);
     }
 
     @Override
