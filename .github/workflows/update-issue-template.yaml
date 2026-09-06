@@ -34,7 +34,9 @@ jobs:
 
             let output = ''
             await exec.exec('git tag --list', {
-              stdout: (data) => output += data.toString(),
+              listeners: {
+                stdout: (data) => output += data.toString(),
+              },
             })
 
             const tagMatcher = /^(\d+(?:\.\d+)*)-(\d+(?:\.\d+)*)(\D?)\S*$/
