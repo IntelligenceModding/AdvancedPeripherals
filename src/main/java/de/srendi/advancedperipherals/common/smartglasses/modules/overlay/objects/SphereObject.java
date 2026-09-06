@@ -16,7 +16,7 @@ public class SphereObject extends ThreeDimensionalObject {
     @FixedPointNumberProperty(min = 1, max = 1024)
     public int stacks = 16;
 
-    @FloatingNumberProperty(min = 0.001f, max = 128)
+    @FloatingNumberProperty(min = 0.001f, max = 128, lerp = true)
     public float radius = 1;
 
     public SphereObject(OverlayModule module) {

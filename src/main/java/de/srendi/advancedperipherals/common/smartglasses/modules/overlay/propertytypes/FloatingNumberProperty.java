@@ -13,4 +13,6 @@ import java.lang.annotation.Target;
 public @interface FloatingNumberProperty {
     double min() default Double.NEGATIVE_INFINITY;
     double max() default Double.POSITIVE_INFINITY;
+    boolean continous() default false;
+    boolean lerp() default false;
 }

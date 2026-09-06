@@ -41,7 +41,7 @@ public class LineRenderer implements IObjectRenderer<LineObject> {
             float dy = y2 - y1;
 
             gui.pose().pushPose();
-            gui.pose().rotateAround(line.getRotation(), (x1 + x2) / 2, (y1 + y2) / 2, z);
+            gui.pose().rotateAround(line.getRotation(partialTick.getGameTimeDeltaPartialTick(true)), (x1 + x2) / 2, (y1 + y2) / 2, z);
 
             Matrix4f matrix = gui.pose().last().pose();
             gui.pose().popPose();

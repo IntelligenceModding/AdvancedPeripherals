@@ -14,7 +14,7 @@ public class TextObject extends ThreeDimensionalObject {
     @StringProperty(utf8 = true)
     public String content = "";
 
-    @FloatingNumberProperty(min = 0, max = 128)
+    @FloatingNumberProperty(min = 0, max = 128, lerp = true)
     public float fontSize = 1;
 
     @BooleanProperty(getterPrefix = "has")

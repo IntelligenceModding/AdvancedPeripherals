@@ -26,25 +26,27 @@ public interface IObjectRenderer<O extends OverlayObject> {
         return 100;
     }
 
-    static void apply3DTransforms(PoseStack poseStack, RenderableObject obj, Vec3 eyePos, Quaternionf eyeRotation) {
+    static void apply3DTransforms(PoseStack poseStack, RenderableObject obj, DeltaTracker partialTickTracker, Vec3 eyePos, Quaternionf eyeRotation) {
         if (obj.relativePosition) {
             poseStack.translate(eyePos.x, eyePos.y, eyePos.z);
             if (obj.relativeRotation) {
                 poseStack.mulPose(eyeRotation);
             }
         }
-        poseStack.translate(obj.x, obj.y, obj.z);
-        poseStack.mulPose(obj.getRotation());
+        float partialTick = partialTickTracker.getGameTimeDeltaPartialTick(true);
+        poseStack.translate(obj.getX(partialTick), obj.getY(partialTick), obj.getZ(partialTick));
+        poseStack.mulPose(obj.getRotation(partialTick));
     }
 
-    static void apply3DTransforms(Matrix4f mat, RenderableObject obj, Vec3 eyePos, Quaternionf eyeRotation) {
+    static void apply3DTransforms(Matrix4f mat, RenderableObject obj, DeltaTracker partialTickTracker, Vec3 eyePos, Quaternionf eyeRotation) {
         if (obj.relativePosition) {
             mat.translate((float) eyePos.x, (float) eyePos.y, (float) eyePos.z);
             if (obj.relativeRotation) {
                 mat.rotate(eyeRotation);
             }
         }
-        mat.translate(obj.x, obj.y, obj.z);
-        mat.rotate(obj.getRotation());
+        float partialTick = partialTickTracker.getGameTimeDeltaPartialTick(true);
+        mat.translate(obj.getX(partialTick), obj.getY(partialTick), obj.getZ(partialTick));
+        mat.rotate(obj.getRotation(partialTick));
     }
 }

@@ -1,8 +1,10 @@
 package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes;
 
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.ObjectProperty;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -18,9 +20,14 @@ public interface PropertyType<T, A> {
 
     boolean checkIsValid(Object value);
 
-    StreamCodec<? super RegistryFriendlyByteBuf, ? extends T> codec(Class<?> type);
+    StreamCodec<? super RegistryFriendlyByteBuf, ? extends T> codec(Class<? extends T> type);
 
     T fixValue(T value);
+
+    @Nullable
+    default OverlayObject.FieldLerper<? extends T> getLerper(Class<? extends T> type) {
+        return null;
+    }
 
     static PropertyType<?, ?> of(ObjectProperty property) {
         try {

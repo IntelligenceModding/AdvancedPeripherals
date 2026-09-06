@@ -15,16 +15,16 @@ import java.util.UUID;
  * Just a line
  */
 public class LineObject extends RenderableObject {
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float endX = 0;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float endY = 0;
 
     @BooleanProperty
     public boolean pixelated = false;
 
-    @FloatingNumberProperty(min = 0, max = 32767)
+    @FloatingNumberProperty(min = 0, max = 32767, lerp = true)
     public float width = 4;
 
     public LineObject(OverlayModule module) {

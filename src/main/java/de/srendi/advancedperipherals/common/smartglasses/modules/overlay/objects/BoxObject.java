@@ -11,13 +11,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class BoxObject extends ThreeDimensionalObject {
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float sizeX = 1;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float sizeY = 1;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float sizeZ = 1;
 
     public BoxObject(OverlayModule module) {

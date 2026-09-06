@@ -12,11 +12,13 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanType;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.PropertyType;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.Mth;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -108,10 +110,12 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             fieldEncoders.add(encoder);
         };
         for (FieldWithPropertyType field : this.fields) {
+            @SuppressWarnings("rawtypes")
+            FieldLerper lerper = field.type().getLerper((Class) field.field().getType());
             registrar.accept(
                 field.field().getName(),
                 new FieldEncoder<>(
-                    (StreamCodec<? super RegistryFriendlyByteBuf, Object>) field.type().codec(field.field().getType()),
+                    (StreamCodec<? super RegistryFriendlyByteBuf, Object>) field.type().codec((Class) field.field().getType()),
                     () -> {
                         try {
                             return field.field().get(this);
@@ -125,7 +129,8 @@ public abstract class OverlayObject implements IDynamicLuaObject {
                         } catch (IllegalAccessException e) {
                             throw new RuntimeException(e);
                         }
-                    }
+                    },
+                    lerper
                 )
             );
         }
@@ -308,6 +313,12 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
     }
 
+    public void stepFields() {
+        for (FieldEncoder<?> encoder : this.fieldEncoders) {
+            encoder.step();
+        }
+    }
+
     @Override
     public String toString() {
         return "OverlayObject{" +
@@ -364,17 +375,122 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         return value;
     }
 
-    public record FieldEncoder<T>(
-        StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
-        Supplier<T> getter,
-        Consumer<T> setter
-    ) {
+    public static final class FieldEncoder<T> {
+        private final StreamCodec<? super RegistryFriendlyByteBuf, T> codec;
+        private final Supplier<T> getter;
+        private final Consumer<T> setter;
+
+        private final FieldLerper<T> lerper;
+        private T lerpTarget = null;
+        private int lerpStep = 0;
+        private int lerpTargetSteps = 2; // TODO: maybe allow script to get/set lerp steps?
+
+        public FieldEncoder(
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            Supplier<T> getter,
+            Consumer<T> setter,
+            FieldLerper<T> lerper
+        ) {
+            this.codec = codec;
+            this.getter = getter;
+            this.setter = setter;
+            this.lerper = lerper;
+        }
+
+        public FieldEncoder(
+            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
+            Supplier<T> getter,
+            Consumer<T> setter
+        ) {
+            this(codec, getter, setter, null);
+        }
+
         public void encode(RegistryFriendlyByteBuf buffer) {
             this.codec.encode(buffer, this.getter.get());
         }
 
         public void decode(RegistryFriendlyByteBuf buffer) {
-            this.setter.accept(this.codec.decode(buffer));
+            T v = this.codec.decode(buffer);
+            if (this.lerper != null && this.lerpTargetSteps > 0) {
+                this.lerpStep = this.lerpTargetSteps;
+                this.lerpTarget = v;
+            } else {
+                this.setter.accept(v);
+            }
+        }
+
+        public void step() {
+            if (this.lerper == null) {
+                return;
+            }
+            if (this.lerpStep <= 0) {
+                return;
+            }
+            this.setter.accept(this.lerper.calc(this.getter.get(), this.lerpTarget, 1f / this.lerpStep));
+            this.lerpStep--;
+        }
+    }
+
+    @FunctionalInterface
+    public interface FieldLerper<T> {
+        T calc(T old, T target, float alpha);
+
+        static final FieldLerper<Float> FLOAT = new FieldLerper<Float>() {
+            @Override
+            public Float calc(Float old, Float target, float alpha) {
+                if (alpha == 0) {
+                    return old;
+                }
+                if (alpha == 1) {
+                    return target;
+                }
+                return Mth.lerp(alpha, old, target);
+            }
+        };
+
+        static final FieldLerper<Double> DOUBLE = new FieldLerper<Double>() {
+            @Override
+            public Double calc(Double old, Double target, float alpha) {
+                if (alpha == 0) {
+                    return old;
+                }
+                if (alpha == 1) {
+                    return target;
+                }
+                return Mth.lerp(alpha, old, target);
+            }
+        };
+
+        static FieldLerper<Float> continousFloat(float min, float max) {
+            float range = max - min;
+            return new FieldLerper<Float>() {
+                @Override
+                public Float calc(Float old, Float target, float alpha) {
+                    if (alpha == 0) {
+                        return old;
+                    }
+                    if (alpha == 1) {
+                        return target;
+                    }
+                    return old + alpha * (((target - old - min) % range + range) % range + min);
+                }
+            };
+        }
+
+        static FieldLerper<Double> continousDouble(double min, double max) {
+            double range = max - min;
+            return new FieldLerper<Double>() {
+                @Override
+                public Double calc(Double old, Double target, float alpha) {
+                    if (alpha == 0) {
+                        return old;
+                    }
+                    if (alpha == 1) {
+                        return target;
+                    }
+                    return old + alpha * (((target - old - min) % range + range) % range + min);
+                }
+            };
         }
     }
 

@@ -14,10 +14,10 @@ import java.util.UUID;
  * Just a rectangle
  */
 public class RectangleObject extends RenderableObject {
-    @FloatingNumberProperty(min = 0)
+    @FloatingNumberProperty(min = 0, lerp = true)
     public float sizeX = 0;
 
-    @FloatingNumberProperty(min = 0)
+    @FloatingNumberProperty(min = 0, lerp = true)
     public float sizeY = 0;
 
     public RectangleObject(OverlayModule module) {

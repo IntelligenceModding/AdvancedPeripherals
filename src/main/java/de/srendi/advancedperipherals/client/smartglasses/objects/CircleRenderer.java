@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.client.smartglasses.objects;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import de.srendi.advancedperipherals.client.APRenderTypes;
 import de.srendi.advancedperipherals.client.RenderUtil;
@@ -14,26 +13,17 @@ public class CircleRenderer extends Simple2DObjectRenderer<CircleObject> {
     @Override
     protected void render(CircleObject circle, GuiGraphics gui, DeltaTracker partialTick, boolean is3D) {
         float r = RenderUtil.getRed(circle.color), g = RenderUtil.getGreen(circle.color), b = RenderUtil.getBlue(circle.color), a = circle.opacity;
-        drawCircle(gui.bufferSource(), gui.pose(), circle, r, g, b, a);
+
+        drawCircle(gui.bufferSource(), gui.pose().last().pose(), circle, r, g, b, a);
     }
 
-    private void drawCircle(MultiBufferSource.BufferSource bufferSource, PoseStack poseStack, CircleObject circle, float red, float green, float blue, float alpha) {
+    private void drawCircle(MultiBufferSource.BufferSource bufferSource, Matrix4f matrix, CircleObject circle, float red, float green, float blue, float alpha) {
         float r = circle.radius;
-        float cx = circle.x;
-        float cy = circle.y;
-        float cz = circle.z;
         float borderWidth = circle.borderWidth;
         int segments = circle.segments;
 
         boolean isFilled = circle.filled;
         boolean isPixelated = circle.pixelated;
-
-        poseStack.pushPose();
-
-        poseStack.translate(cx, cy, cz);
-        poseStack.mulPose(circle.getRotation());
-
-        Matrix4f matrix = poseStack.last().pose();
 
         // Normal, smooth lines
         if (!isPixelated) {
@@ -135,7 +125,6 @@ public class CircleRenderer extends Simple2DObjectRenderer<CircleObject> {
                 }
             }
         }
-        poseStack.popPose();
     }
 }
 

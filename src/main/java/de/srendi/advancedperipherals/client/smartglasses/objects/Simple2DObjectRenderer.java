@@ -16,15 +16,16 @@ public abstract class Simple2DObjectRenderer<O extends RenderableObject> impleme
     protected abstract void render(O object, GuiGraphics gui, DeltaTracker partialTick, boolean is3D);
 
     @Override
-    public void render2D(List<O> batch, GuiGraphics gui, DeltaTracker partialTick) {
+    public void render2D(List<O> batch, GuiGraphics gui, DeltaTracker partialTickTracker) {
+        float partialTick = partialTickTracker.getGameTimeDeltaPartialTick(true);
         PoseStack.Pose last = gui.pose().last();
         gui.pose().pushPose();
         for (O obj : batch) {
             gui.pose().last().pose().set(last.pose());
             gui.pose().last().normal().set(last.normal());
-            gui.pose().translate(obj.x, obj.y, obj.z);
-            gui.pose().mulPose(obj.getRotation());
-            this.render(obj, gui, partialTick, false);
+            gui.pose().translate(obj.getX(partialTick), obj.getY(partialTick), obj.getZ(partialTick));
+            gui.pose().mulPose(obj.getRotation(partialTick));
+            this.render(obj, gui, partialTickTracker, false);
         }
         gui.pose().popPose();
     }
@@ -38,7 +39,7 @@ public abstract class Simple2DObjectRenderer<O extends RenderableObject> impleme
 
         for (O obj : batch) {
             gui.pose().last().pose().set(poseStack.last().pose());
-            IObjectRenderer.apply3DTransforms(gui.pose(), obj, eyePos, eyeRotation);
+            IObjectRenderer.apply3DTransforms(gui.pose(), obj, partialTick, eyePos, eyeRotation);
             this.render(obj, gui, partialTick, true);
         }
     }

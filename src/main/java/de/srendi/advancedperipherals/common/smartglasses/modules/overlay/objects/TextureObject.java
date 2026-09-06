@@ -42,10 +42,10 @@ public class TextureObject extends ThreeDimensionalObject implements AutoCloseab
     private static final int MAX_DIM = 0xfff;
     private static final int[] ZERO_DATA = new int[0];
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float sizeX = 1;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float sizeY = 1;
 
     public int width = 0;
