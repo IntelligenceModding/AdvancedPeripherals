@@ -25,10 +25,7 @@ public class LineRenderer implements IObjectRenderer<LineObject> {
                 continue;
             }
 
-            float alpha = line.opacity;
-            float red = RenderUtil.getRed(line.color);
-            float green = RenderUtil.getGreen(line.color);
-            float blue = RenderUtil.getBlue(line.color);
+            float r = RenderUtil.getRed(line.color), g = RenderUtil.getGreen(line.color), b = RenderUtil.getBlue(line.color), a = line.opacity;
 
             // Start and end points of the line
             float x1 = line.x;
@@ -49,25 +46,25 @@ public class LineRenderer implements IObjectRenderer<LineObject> {
             // Normal, smooth lines
             if (!line.pixelated) {
                 if (y1 == y2) {
-                    bufferBuilder.addVertex(matrix, x1, y1 - halfWidth, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1, y1 + halfWidth, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x2, y1 + halfWidth, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x2, y1 - halfWidth, z).setColor(red, green, blue, alpha);
+                    bufferBuilder.addVertex(matrix, x1, y1 - halfWidth, z).setColor(r, g, b, a);
+                    bufferBuilder.addVertex(matrix, x1, y1 + halfWidth, z).setColor(r, g, b, a);
+                    bufferBuilder.addVertex(matrix, x2, y1 + halfWidth, z).setColor(r, g, b, a);
+                    bufferBuilder.addVertex(matrix, x2, y1 - halfWidth, z).setColor(r, g, b, a);
                     continue;
                 }
                 if (x1 == x2) {
-                    bufferBuilder.addVertex(matrix, x1 - halfWidth, y1, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1 + halfWidth, y1, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1 + halfWidth, y2, z).setColor(red, green, blue, alpha);
-                    bufferBuilder.addVertex(matrix, x1 - halfWidth, y2, z).setColor(red, green, blue, alpha);
+                    bufferBuilder.addVertex(matrix, x1 - halfWidth, y1, z).setColor(r, g, b, a);
+                    bufferBuilder.addVertex(matrix, x1 + halfWidth, y1, z).setColor(r, g, b, a);
+                    bufferBuilder.addVertex(matrix, x1 + halfWidth, y2, z).setColor(r, g, b, a);
+                    bufferBuilder.addVertex(matrix, x1 - halfWidth, y2, z).setColor(r, g, b, a);
                     continue;
                 }
                 float l = (float) Math.sqrt(dx * dx + dy * dy);
                 float rx = -dy / l * halfWidth, ry = dx / l * halfWidth;
-                bufferBuilder.addVertex(matrix, x1 - rx, y1 - ry, z).setColor(red, green, blue, alpha);
-                bufferBuilder.addVertex(matrix, x1 + rx, y1 + ry, z).setColor(red, green, blue, alpha);
-                bufferBuilder.addVertex(matrix, x2 + rx, y2 + ry, z).setColor(red, green, blue, alpha);
-                bufferBuilder.addVertex(matrix, x2 - rx, y2 - ry, z).setColor(red, green, blue, alpha);
+                bufferBuilder.addVertex(matrix, x1 - rx, y1 - ry, z).setColor(r, g, b, a);
+                bufferBuilder.addVertex(matrix, x1 + rx, y1 + ry, z).setColor(r, g, b, a);
+                bufferBuilder.addVertex(matrix, x2 + rx, y2 + ry, z).setColor(r, g, b, a);
+                bufferBuilder.addVertex(matrix, x2 - rx, y2 - ry, z).setColor(r, g, b, a);
                 continue;
             }
 
@@ -99,10 +96,10 @@ public class LineRenderer implements IObjectRenderer<LineObject> {
                 float pX2 = currentX + width;
                 float pY2 = currentY + width;
 
-                bufferBuilder.addVertex(matrix, pX1, pY2, z).setColor(red, green, blue, alpha); // Bottom-left
-                bufferBuilder.addVertex(matrix, pX2, pY2, z).setColor(red, green, blue, alpha); // Bottom-right
-                bufferBuilder.addVertex(matrix, pX2, pY1, z).setColor(red, green, blue, alpha); // Top-right
-                bufferBuilder.addVertex(matrix, pX1, pY1, z).setColor(red, green, blue, alpha); // Top-left
+                bufferBuilder.addVertex(matrix, pX1, pY2, z).setColor(r, g, b, a); // Bottom-left
+                bufferBuilder.addVertex(matrix, pX2, pY2, z).setColor(r, g, b, a); // Bottom-right
+                bufferBuilder.addVertex(matrix, pX2, pY1, z).setColor(r, g, b, a); // Top-right
+                bufferBuilder.addVertex(matrix, pX1, pY1, z).setColor(r, g, b, a); // Top-left
             }
         }
     }

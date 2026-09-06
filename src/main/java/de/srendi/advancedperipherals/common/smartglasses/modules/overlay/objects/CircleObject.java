@@ -5,13 +5,14 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.Overlay
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FixedPointNumberProperty;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class CircleObject extends RenderableObject {
-    @FixedPointNumberProperty(min = 0)
-    public int radius = 0;
+    @FloatingNumberProperty(min = 0, lerp = true)
+    public float radius = 0;
 
     @BooleanProperty
     public boolean filled = true;
@@ -19,8 +20,8 @@ public class CircleObject extends RenderableObject {
     @BooleanProperty
     public boolean pixelated = false;
 
-    @FixedPointNumberProperty(min = 0, max = 32767)
-    public int borderWidth = 4;
+    @FloatingNumberProperty(min = 0, max = 32767, lerp = true)
+    public float borderWidth = 4;
 
     @FixedPointNumberProperty(min = 0, max = 256)
     public int segments = 25;

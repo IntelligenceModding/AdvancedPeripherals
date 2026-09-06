@@ -6,7 +6,6 @@ import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propert
 import java.util.UUID;
 
 public abstract class ThreeDimensionalObject extends RenderableObject {
-
     @BooleanProperty
     public boolean culling = true;
 

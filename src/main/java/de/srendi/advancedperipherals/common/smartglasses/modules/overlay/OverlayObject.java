@@ -39,9 +39,10 @@ import java.util.function.Supplier;
 public abstract class OverlayObject implements IDynamicLuaObject {
 
     private final FieldWithPropertyType[] fields;
-    private final String[] getterSetterNames;
+    private final String[] methodNames;
     private final Map<String, FieldWithPropertyType> propertiesMap;
     private final FieldEncoder<?>[] fieldEncoders;
+    private final LerpController<?>[] fieldLerpers;
     private final Object2IntMap<String> fieldNameToIndex;
 
     @BooleanProperty
@@ -68,7 +69,8 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             if (objectProperty == null) {
                 continue;
             }
-            @SuppressWarnings("rawtypes") PropertyType propertyType = PropertyType.of(objectProperty);
+            @SuppressWarnings("rawtypes")
+            PropertyType propertyType = PropertyType.of(objectProperty);
             if (propertyType == null) {
                 throw new IllegalStateException("Invalid property type for field " + fieldName);
             }
@@ -83,24 +85,25 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
         this.propertiesMap = properties.build();
         this.fields = this.propertiesMap.values().toArray(FieldWithPropertyType[]::new);
-        List<String> getterSetterNames = new ArrayList<>();
+        List<String> methodNames = new ArrayList<>();
         for (FieldWithPropertyType propField : this.fields) {
             String name = propField.field().getName();
             String nameCap = name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
-            getterSetterNames.add(
+            methodNames.add(
                 propField.type() instanceof BooleanType bType
                     ? bType.getGetterPrefix() == null
                         ? name
                         : bType.getGetterPrefix() + nameCap
                     : "get" + nameCap
             );
-            getterSetterNames.add("set" + nameCap);
+            methodNames.add("set" + nameCap);
         }
-        this.getterSetterNames = getterSetterNames.toArray(String[]::new);
 
         List<FieldEncoder<?>> fieldEncoders = new ArrayList<>();
+        List<LerpController<?>> fieldLerpers = new ArrayList<>();
         this.fieldNameToIndex = new Object2IntOpenHashMap<>();
         this.fieldNameToIndex.defaultReturnValue(-1);
+
         BiConsumer<String, FieldEncoder<?>> registrar = (name, encoder) -> {
             if (this.fieldNameToIndex.containsKey(name)) {
                 throw new IllegalArgumentException("Field name " + name + " duplicated!");
@@ -108,33 +111,52 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             this.fieldNameToIndex.put(name, fieldEncoders.size());
             fieldEncoders.add(encoder);
         };
+
         for (FieldWithPropertyType field : this.fields) {
+            String name = field.field().getName();
+            @SuppressWarnings("rawtypes")
+            Supplier getter = () -> {
+                try {
+                    return field.field().get(this);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            };
+            @SuppressWarnings("rawtypes")
+            Consumer setter = (v) -> {
+                try {
+                    field.field().set(this, v);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            };
+
             @SuppressWarnings("rawtypes")
             FieldLerper lerper = field.type().getLerper((Class) field.field().getType());
+            if (lerper != null) {
+                @SuppressWarnings("rawtypes")
+                LerpController controller = new LerpController(getter, setter, lerper);
+                setter = controller::setTarget;
+                String nameCap = name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
+                methodNames.add("get" + nameCap + "LerpSteps");
+                methodNames.add("set" + nameCap + "LerpSteps");
+                fieldLerpers.add(controller);
+            }
+
             registrar.accept(
-                field.field().getName(),
+                name,
                 new FieldEncoder<>(
                     (StreamCodec<? super RegistryFriendlyByteBuf, Object>) field.type().codec((Class) field.field().getType()),
-                    () -> {
-                        try {
-                            return field.field().get(this);
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
-                        }
-                    },
-                    (v) -> {
-                        try {
-                            field.field().set(this, v);
-                        } catch (IllegalAccessException e) {
-                            throw new RuntimeException(e);
-                        }
-                    },
-                    lerper
+                    getter,
+                    setter
                 )
             );
         }
         this.registerFieldEncoders(registrar);
+
+        this.methodNames = methodNames.toArray(String[]::new);
         this.fieldEncoders = fieldEncoders.toArray(FieldEncoder[]::new);
+        this.fieldLerpers = fieldLerpers.toArray(LerpController[]::new);
         this.updated = new BitSet(this.fieldEncoders.length);
     }
 
@@ -218,23 +240,32 @@ public abstract class OverlayObject implements IDynamicLuaObject {
 
     @Override
     public String[] getMethodNames() {
-        return this.getterSetterNames;
+        return this.methodNames;
     }
 
     @Override
     public MethodResult callMethod(ILuaContext context, int methodIndex, IArguments args) throws LuaException {
         boolean isGetter = methodIndex % 2 == 0;
         int fieldIndex = methodIndex / 2;
-        FieldWithPropertyType propField = this.fields[fieldIndex];
-        if (isGetter) {
-            try {
-                return MethodResult.of(propField.field().get(this));
-            } catch (IllegalAccessException e) {
-                throw new LuaException("Cannot read field " + propField.field().getName());
+        if (fieldIndex < this.fields.length) {
+            FieldWithPropertyType propField = this.fields[fieldIndex];
+            if (isGetter) {
+                try {
+                    return MethodResult.of(propField.field().get(this));
+                } catch (IllegalAccessException e) {
+                    throw new LuaException("Cannot read field " + propField.field().getName());
+                }
             }
+            Object value = args.get(0);
+            propField.setFor(this, value);
+            this.markAndTryUpdate(fieldIndex);
+            return MethodResult.of();
         }
-        Object value = args.get(0);
-        propField.setFor(this, value);
+        LerpController<?> controller = this.fieldLerpers[fieldIndex - this.fields.length];
+        if (isGetter) {
+            return MethodResult.of(controller.getSteps());
+        }
+        controller.setSteps(args.getInt(0));
         this.markAndTryUpdate(fieldIndex);
         return MethodResult.of();
     }
@@ -275,6 +306,9 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     @MustBeInvokedByOverriders
     public void encode(RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(this.id);
+        for (LerpController<?> controller : this.fieldLerpers) {
+            buffer.writeVarInt(controller.getSteps());
+        }
         for (FieldEncoder<?> field : this.fieldEncoders) {
             field.encode(buffer);
         }
@@ -284,6 +318,9 @@ public abstract class OverlayObject implements IDynamicLuaObject {
     @MustBeInvokedByOverriders
     public void decode(RegistryFriendlyByteBuf buffer) {
         this.id = buffer.readInt();
+        for (LerpController<?> controller : this.fieldLerpers) {
+            controller.setSteps(buffer.readVarInt());
+        }
         for (FieldEncoder<?> field : this.fieldEncoders) {
             field.decode(buffer);
         }
@@ -291,6 +328,13 @@ public abstract class OverlayObject implements IDynamicLuaObject {
 
     public void encodeUpdated(RegistryFriendlyByteBuf buffer) {
         buffer.writeBitSet(this.updated);
+        for (int i = 0; i < this.fieldLerpers.length; i++) {
+            if (!this.updated.get(i + this.fieldEncoders.length)) {
+                continue;
+            }
+            LerpController<?> controller = this.fieldLerpers[i];
+            buffer.writeVarInt(controller.getSteps());
+        }
         for (int i = 0; i < this.fieldEncoders.length; i++) {
             if (!this.updated.get(i)) {
                 continue;
@@ -303,6 +347,13 @@ public abstract class OverlayObject implements IDynamicLuaObject {
 
     public void decodeUpdated(RegistryFriendlyByteBuf buffer) {
         BitSet updated = buffer.readBitSet();
+        for (int i = 0; i < this.fieldLerpers.length; i++) {
+            if (!updated.get(i + this.fieldEncoders.length)) {
+                continue;
+            }
+            LerpController<?> controller = this.fieldLerpers[i];
+            controller.setSteps(buffer.readVarInt());
+        }
         for (int i = 0; i < this.fieldEncoders.length; i++) {
             if (!updated.get(i)) {
                 continue;
@@ -312,9 +363,10 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
     }
 
+    @MustBeInvokedByOverriders
     public void stepFields() {
-        for (FieldEncoder<?> encoder : this.fieldEncoders) {
-            encoder.step();
+        for (LerpController<?> controller : this.fieldLerpers) {
+            controller.step();
         }
     }
 
@@ -374,34 +426,36 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         return value;
     }
 
+    private record FieldWithPropertyType(Field field, PropertyType<?, ?> type) {
+        @SuppressWarnings("rawtypes")
+        public void setFor(OverlayObject obj, Object value) throws LuaException {
+            value = castValueToFieldType(this.field, value);
+            if (!this.type.checkIsValid(value)) {
+                throw new LuaException("The value " + value + " is not valid for " + this.field.getName());
+            }
+            value = ((PropertyType) this.type).fixValue(value);
+
+            try {
+                this.field.set(obj, value);
+            } catch (IllegalAccessException exception) {
+                throw new IllegalStateException("Cannot set value for " + this.field.getName(), exception);
+            }
+        }
+    }
+
     public static final class FieldEncoder<T> {
         private final StreamCodec<? super RegistryFriendlyByteBuf, T> codec;
         private final Supplier<T> getter;
         private final Consumer<T> setter;
-
-        private final FieldLerper<T> lerper;
-        private T lerpTarget = null;
-        private int lerpStep = 0;
-        private int lerpTargetSteps = 2; // TODO: maybe allow script to get/set lerp steps?
-
-        public FieldEncoder(
-            StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
-            Supplier<T> getter,
-            Consumer<T> setter,
-            FieldLerper<T> lerper
-        ) {
-            this.codec = codec;
-            this.getter = getter;
-            this.setter = setter;
-            this.lerper = lerper;
-        }
 
         public FieldEncoder(
             StreamCodec<? super RegistryFriendlyByteBuf, T> codec,
             Supplier<T> getter,
             Consumer<T> setter
         ) {
-            this(codec, getter, setter, null);
+            this.codec = codec;
+            this.getter = getter;
+            this.setter = setter;
         }
 
         public void encode(RegistryFriendlyByteBuf buffer) {
@@ -409,24 +463,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
 
         public void decode(RegistryFriendlyByteBuf buffer) {
-            T v = this.codec.decode(buffer);
-            if (this.lerper != null && this.lerpTargetSteps > 0) {
-                this.lerpStep = this.lerpTargetSteps;
-                this.lerpTarget = v;
-            } else {
-                this.setter.accept(v);
-            }
-        }
-
-        public void step() {
-            if (this.lerper == null) {
-                return;
-            }
-            if (this.lerpStep <= 0) {
-                return;
-            }
-            this.setter.accept(this.lerper.calc(this.getter.get(), this.lerpTarget, 1f / this.lerpStep));
-            this.lerpStep--;
+            this.setter.accept(this.codec.decode(buffer));
         }
     }
 
@@ -493,20 +530,47 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
     }
 
-    private record FieldWithPropertyType(Field field, PropertyType<?, ?> type) {
-        @SuppressWarnings("rawtypes")
-        public void setFor(OverlayObject obj, Object value) throws LuaException {
-            value = castValueToFieldType(this.field, value);
-            if (!this.type.checkIsValid(value)) {
-                throw new LuaException("The value " + value + " is not valid for " + this.field.getName());
-            }
-            value = ((PropertyType) this.type).fixValue(value);
+    private static final class LerpController<T> {
+        private final Supplier<T> getter;
+        private final Consumer<T> setter;
+        private final FieldLerper<T> lerper;
 
-            try {
-                this.field.set(obj, value);
-            } catch (IllegalAccessException exception) {
-                throw new IllegalStateException("Cannot set value for " + this.field.getName(), exception);
+        private T target = null;
+        private int step = 0;
+        private int targetSteps = 2;
+
+        public LerpController(
+            Supplier<T> getter,
+            Consumer<T> setter,
+            FieldLerper<T> lerper
+        ) {
+            this.getter = getter;
+            this.setter = setter;
+            this.lerper = lerper;
+        }
+
+        public int getSteps() {
+            return this.targetSteps;
+        }
+
+        public void setSteps(int steps) {
+            this.targetSteps = Math.max(0, steps);
+        }
+
+        public void setTarget(T v) {
+            this.target = v;
+            this.step = this.targetSteps;
+            if (this.step <= 0) {
+                this.setter.accept(v);
             }
+        }
+
+        public void step() {
+            if (this.step <= 0) {
+                return;
+            }
+            this.setter.accept(this.lerper.calc(this.getter.get(), this.target, 1f / this.step));
+            this.step--;
         }
     }
 }
