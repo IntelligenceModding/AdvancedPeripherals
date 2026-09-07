@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -92,7 +92,7 @@ public class SmartGlassesComputer extends ServerComputer {
     }
 
     public static SmartGlassesComputer create(ServerLevel level, BlockPos pos, ServerComputer.Properties properties, ItemStack stack) {
-        IsEquippedWrapper wrapper = new IsEquippedWrapper();
+        EquippedEntityWrapper wrapper = new EquippedEntityWrapper();
         SmartGlassesComputer computer = new SmartGlassesComputer(
             level,
             pos,
@@ -359,12 +359,18 @@ public class SmartGlassesComputer extends ServerComputer {
         }
     }
 
-    private static final class IsEquippedWrapper implements BooleanSupplier {
+    private static final class EquippedEntityWrapper implements Supplier<Entity> {
         private SmartGlassesComputer computer = null;
 
         @Override
-        public boolean getAsBoolean() {
-            return this.computer != null && this.computer.isEquipped();
+        public Entity get() {
+            if (this.computer == null) {
+                return null;
+            }
+            if (!this.computer.isEquipped()) {
+                return null;
+            }
+            return this.computer.getEntity();
         }
     }
 }

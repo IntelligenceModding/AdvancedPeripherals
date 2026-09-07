@@ -230,12 +230,6 @@ public class PlayerDetectorPeripheral extends BasePeripheral<IPeripheralOwner> {
         }
         CoordUtil.putFRUCoords(info, x - selfPos.x, y - selfPos.y, z - selfPos.z, owner.getOrientation());
 
-        if (APConfig.PERIPHERALS_CONFIG.morePlayerInformation.get()) {
-            // TODO: should we put those into lua converter as well?
-            info.put("respawnPosition", LuaConverter.posToLua(player.getRespawnPosition()));
-            info.put("respawnDimension", player.getRespawnDimension().location().toString());
-            info.put("respawnAngle", player.getRespawnAngle());
-        }
         return info;
     }
 
