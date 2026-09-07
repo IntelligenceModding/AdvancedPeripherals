@@ -13,7 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add `smartglasses.getOwner()` to directly get wearer's information without player detector.
 - Close #834 add `dimension` field to entity info
 
-## [extension 'changelog' property 'version'] - 2026-09-04
+## [1.21.1-0.8.1a] - 2026-09-06
 - `scanEntities` on envrionment detector now can detect specific type of entities by passing the entity type or tag ID as an arugment.
 - `player_interaction` event will return block position along with block states.
 - Fix chatbox crash when using `/say` command in server interface.
