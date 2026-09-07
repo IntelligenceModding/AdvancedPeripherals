@@ -10,6 +10,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fix some BlockEntity may crash client due to FakeLevel.
 - Make overlay objects fields update smoother by adding lerp ability.
 - All overlay objects can draw on both in world or on GUI now. Use `gui` field to differ the render space.
+- Add `smartglasses.getOwner()` to directly get wearer's information without player detector.
+- Close #834 add `dimension` field to entity info
 
 ## [extension 'changelog' property 'version'] - 2026-09-04
 - `scanEntities` on envrionment detector now can detect specific type of entities by passing the entity type or tag ID as an arugment.
