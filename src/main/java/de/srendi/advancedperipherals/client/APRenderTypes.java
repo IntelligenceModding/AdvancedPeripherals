@@ -2,7 +2,7 @@ package de.srendi.advancedperipherals.client;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim.ThreeDimensionalObject;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.ThreeDimensionalObject;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
@@ -16,6 +16,7 @@ public final class APRenderTypes
         super(null, null, null);
     }
 
+    public static final RenderStateShard.CullStateShard NO_CULL = RenderStateShard.NO_CULL;
     public static final RenderStateShard.ShaderStateShard POSITION_TEX_COLOR_SHADER = new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader);
 
     public static final RenderType TRIANGLE_FAN_2D = RenderType.create(

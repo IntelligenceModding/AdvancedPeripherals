@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -20,7 +21,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -169,6 +169,7 @@ public class LuaConverter {
                 data.put("dy", delta.y);
                 data.put("dz", delta.z);
                 // TODO: df, du, dr?
+                data.put("dimension", entity.level().dimension().location().toString());
                 data.put("tags", entity.getTags());
                 data.put("category", type.getCategory().getName());
                 data.put("canBurn", entity.fireImmune());
@@ -206,7 +207,7 @@ public class LuaConverter {
                 data.put("shareable", shareable.isShearable(ctx.itemInHand(), entity.level(), entity.blockPosition()));
             }
         });
-        registerEntityConverter(Player.class, (entity, data, ctx) -> {
+        registerEntityConverter(ServerPlayer.class, (entity, data, ctx) -> {
             data.put("score", entity.getScore());
             data.put("luck", entity.getLuck());
             Inventory inv = entity.getInventory();
@@ -220,6 +221,10 @@ public class LuaConverter {
                     }
                 }
                 data.put("inventory", invMap);
+
+                data.put("respawnPosition", LuaConverter.posToLua(entity.getRespawnPosition()));
+                data.put("respawnDimension", entity.getRespawnDimension().location().toString());
+                data.put("respawnAngle", entity.getRespawnAngle());
             }
         });
     }

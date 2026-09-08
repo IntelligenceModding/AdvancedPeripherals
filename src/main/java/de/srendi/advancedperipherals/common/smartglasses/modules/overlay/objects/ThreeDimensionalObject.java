@@ -1,19 +1,11 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 
 import java.util.UUID;
 
 public abstract class ThreeDimensionalObject extends RenderableObject {
-
-    @BooleanProperty
-    public boolean relativePosition = false;
-
-    @BooleanProperty
-    public boolean relativeRotation = false;
-
     @BooleanProperty
     public boolean culling = true;
 

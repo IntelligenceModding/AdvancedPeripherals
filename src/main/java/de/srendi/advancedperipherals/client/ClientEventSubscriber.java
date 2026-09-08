@@ -11,6 +11,7 @@ import de.srendi.advancedperipherals.common.network.toserver.PlayerInteractionPa
 import de.srendi.advancedperipherals.common.network.toserver.SaddleTurtleControlPacket;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.modules.keyboard.KeyboardModule;
+import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObject;
 import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
@@ -79,6 +80,10 @@ public class ClientEventSubscriber {
             lastScale = guiScale;
             lastGlassesId = glassesId;
             OverlayModuleClientInfoPacket.sendCurrentInformation();
+        }
+
+        for (OverlayObject object : OverlayObjectHolder.getObjects()) {
+            object.stepFields();
         }
     }
 

@@ -21,7 +21,7 @@ public class BooleanType implements PropertyType<Boolean, BooleanProperty> {
     }
 
     @Override
-    public StreamCodec<ByteBuf, Boolean> codec(Class<?> type) {
+    public StreamCodec<ByteBuf, Boolean> codec(Class<? extends Boolean> type) {
         return StreamCodec.BOOL;
     }
 

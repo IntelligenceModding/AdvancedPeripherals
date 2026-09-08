@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
 import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
@@ -16,10 +16,10 @@ public class TorusObject extends ThreeDimensionalObject {
     @FixedPointNumberProperty(min = 1, max = 1024)
     public int rings = 16;
 
-    @FloatingNumberProperty(min = 0.001f, max = 128)
+    @FloatingNumberProperty(min = 0.001f, max = 128, lerp = true)
     public float minorRadius = 0.1f;
 
-    @FloatingNumberProperty(min = 0.001f, max = 128)
+    @FloatingNumberProperty(min = 0.001f, max = 128, lerp = true)
     public float majorRadius = 0.5f;
 
     public TorusObject(OverlayModule module) {

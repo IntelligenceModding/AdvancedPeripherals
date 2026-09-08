@@ -18,7 +18,7 @@ public class StringType implements PropertyType<String, StringProperty> {
     }
 
     @Override
-    public StreamCodec<ByteBuf, String> codec(Class<?> type) {
+    public StreamCodec<ByteBuf, String> codec(Class<? extends String> type) {
         // TODO: is non-utf8 string safe to use utf8 codec?
         // we don't have non-utf8 string right now anyways.
         return StreamCodec.STRING_UTF8;

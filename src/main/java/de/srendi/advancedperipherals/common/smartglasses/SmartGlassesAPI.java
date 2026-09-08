@@ -4,18 +4,22 @@ import dan200.computercraft.api.lua.IComputerSystem;
 import dan200.computercraft.api.lua.ILuaAPI;
 import dan200.computercraft.api.lua.LuaFunction;
 import de.srendi.advancedperipherals.common.setup.APComputerComponents;
+import de.srendi.advancedperipherals.common.util.CoordUtil;
+import de.srendi.advancedperipherals.common.util.LuaConverter;
+import net.minecraft.world.entity.Entity;
 
-import java.util.function.BooleanSupplier;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public final class SmartGlassesAPI implements ILuaAPI {
-    private final BooleanSupplier equipped;
+    private final Supplier<Entity> equipped;
 
-    private SmartGlassesAPI(BooleanSupplier equipped) {
+    private SmartGlassesAPI(Supplier<Entity> equipped) {
         this.equipped = equipped;
     }
 
     public static ILuaAPI create(IComputerSystem system) {
-        final BooleanSupplier smartGlassesEquipped = system.getComponent(APComputerComponents.SMARTGLASSES_EQUIPPED);
+        final Supplier<Entity> smartGlassesEquipped = system.getComponent(APComputerComponents.SMARTGLASSES_EQUIPPED);
         if (smartGlassesEquipped == null) {
             return null;
         }
@@ -35,6 +39,18 @@ public final class SmartGlassesAPI implements ILuaAPI {
      */
     @LuaFunction(mainThread = true)
     public boolean isEquipped() {
-        return this.equipped.getAsBoolean();
+        return this.equipped.get() != null;
+    }
+
+    @LuaFunction(mainThread = true)
+    public Map<String, Object> getOwner() {
+        Entity entity = this.equipped.get();
+        if (entity == null) {
+            return null;
+        }
+
+        Map<String, Object> data = LuaConverter.entityToLua(entity, LuaConverter.entityContextBuilder().detailed().build());
+        CoordUtil.putXYZCoords(data, entity.getX(), entity.getY(), entity.getZ());
+        return data;
     }
 }

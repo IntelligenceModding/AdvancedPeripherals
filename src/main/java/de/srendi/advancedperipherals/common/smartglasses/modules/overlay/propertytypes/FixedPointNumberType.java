@@ -19,7 +19,7 @@ public class FixedPointNumberType implements PropertyType<Number, FixedPointNumb
     }
 
     @Override
-    public StreamCodec<ByteBuf, ? extends Number> codec(Class<?> type) {
+    public StreamCodec<ByteBuf, ? extends Number> codec(Class<? extends Number> type) {
         if (type == Long.TYPE || type == Long.class) {
             return StreamCodec.VAR_LONG;
         }

@@ -406,7 +406,7 @@ dependencies {
 changelog {
     version = "${mod_version}"
     path = "${project.projectDir}/CHANGELOG.md"
-    header = "[${version}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
+    header = "[${project.version}] - ${new SimpleDateFormat("yyyy-MM-dd").format(new Date())}"
     // Valid patterns would be:
     //   1.16.5-1.1.1.1b
     //   1.18-1.0r

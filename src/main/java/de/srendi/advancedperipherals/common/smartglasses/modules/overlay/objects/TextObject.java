@@ -1,9 +1,8 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.two_dim;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
 import de.srendi.advancedperipherals.common.setup.APOverlayObjects;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayModule;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
-import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.RenderableObject;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.BooleanProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.FloatingNumberProperty;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.propertytypes.StringProperty;
@@ -11,11 +10,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class TextObject extends RenderableObject {
+public class TextObject extends ThreeDimensionalObject {
     @StringProperty(utf8 = true)
     public String content = "";
 
-    @FloatingNumberProperty(min = 0, max = 128)
+    @FloatingNumberProperty(min = 0, max = 128, lerp = true)
     public float fontSize = 1;
 
     @BooleanProperty(getterPrefix = "has")

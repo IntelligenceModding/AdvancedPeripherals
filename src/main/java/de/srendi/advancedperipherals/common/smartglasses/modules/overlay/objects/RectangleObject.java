@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -10,40 +10,44 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class BoxObject extends ThreeDimensionalObject {
-    @FloatingNumberProperty
-    public float sizeX = 1;
+/**
+ * Just a rectangle
+ */
+public class RectangleObject extends RenderableObject {
+    @FloatingNumberProperty(min = 0, lerp = true)
+    public float sizeX = 0;
 
-    @FloatingNumberProperty
-    public float sizeY = 1;
+    @FloatingNumberProperty(min = 0, lerp = true)
+    public float sizeY = 0;
 
-    @FloatingNumberProperty
-    public float sizeZ = 1;
-
-    public BoxObject(OverlayModule module) {
+    public RectangleObject(OverlayModule module) {
         super(module);
     }
 
-    public BoxObject(UUID player) {
+    /**
+     * constructor for the client side initialization
+     *
+     * @param player the target player
+     */
+    public RectangleObject(UUID player) {
         super(player);
     }
 
     @Override
     @NotNull
-    public OverlayObjectType<?> getType() {
-        return APOverlayObjects.BOX.get();
+    public OverlayObjectType<RectangleObject> getType() {
+        return APOverlayObjects.RECTANGLE.get();
     }
 
     @LuaFunction
     public final MethodResult getSizes() {
-        return MethodResult.of(this.sizeX, this.sizeY, this.sizeZ);
+        return MethodResult.of(this.sizeX, this.sizeY);
     }
 
     @LuaFunction
-    public final void setSizes(double x, double y, double z) {
+    public final void setSizes(double x, double y) {
         this.sizeX = (float) Math.max(x, 0);
         this.sizeY = (float) Math.max(y, 0);
-        this.sizeZ = (float) Math.max(z, 0);
-        this.markAndTryUpdate("sizeX", "sizeY", "sizeZ");
+        this.markAndTryUpdate("sizeX", "sizeY");
     }
 }

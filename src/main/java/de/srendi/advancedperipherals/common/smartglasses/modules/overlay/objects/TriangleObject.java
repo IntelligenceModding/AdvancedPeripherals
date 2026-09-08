@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects.three_dim;
+package de.srendi.advancedperipherals.common.smartglasses.modules.overlay.objects;
 
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.MethodResult;
@@ -11,31 +11,31 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class TriangleObject extends ThreeDimensionalObject {
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float x1 = 0;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float y1 = 0;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float z1 = 0;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float x2 = 0;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float y2 = 0;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float z2 = 0;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float x3 = 0;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float y3 = 0;
 
-    @FloatingNumberProperty
+    @FloatingNumberProperty(lerp = true)
     public float z3 = 0;
 
     public TriangleObject(OverlayModule module) {
