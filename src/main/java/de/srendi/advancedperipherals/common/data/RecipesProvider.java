@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -416,9 +417,7 @@ public class RecipesProvider extends RecipeProvider implements IConditionBuilder
             .save(recipeOutput);
     }
 
-    private static Item makePotion(Holder<Potion> potionType) {
-        ItemStack potion = Items.POTION.getDefaultInstance();
-        potion.set(DataComponents.POTION_CONTENTS, new PotionContents(potionType));
-        return potion.getItem();
+    private static Ingredient makePotion(Holder<Potion> potionType) {
+        return DataComponentIngredient.of(false, DataComponents.POTION_CONTENTS, new PotionContents(potionType), Items.POTION);
     }
 }

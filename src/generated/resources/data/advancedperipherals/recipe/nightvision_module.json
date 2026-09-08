@@ -6,7 +6,13 @@
       "item": "advancedperipherals:peripheral_casing"
     },
     "N": {
-      "item": "minecraft:potion"
+      "type": "neoforge:components",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:night_vision"
+        }
+      },
+      "items": "minecraft:potion"
     }
   },
   "pattern": [

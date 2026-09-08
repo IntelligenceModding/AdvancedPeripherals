@@ -9,7 +9,13 @@
       "tag": "c:gems/diamond"
     },
     "L": {
-      "item": "minecraft:potion"
+      "type": "neoforge:components",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:long_regeneration"
+        }
+      },
+      "items": "minecraft:potion"
     },
     "R": {
       "tag": "c:storage_blocks/redstone"
