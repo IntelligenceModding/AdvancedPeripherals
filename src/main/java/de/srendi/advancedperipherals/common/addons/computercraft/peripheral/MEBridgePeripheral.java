@@ -167,7 +167,8 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
         if (!needRefresh) {
             this.diskRescanCD--;
             if (this.diskRescanCD <= 0) {
-                for (Object2LongMap.Entry<AEKey> entry : this.node.getGrid().getService(IStorageService.class).getCachedInventory()) {
+                this.diskRescanCD = 20;
+                for (Object2LongMap.Entry<AEKey> entry : inventory) {
                     if (entry.getKey() instanceof AEDiskKey diskKey && !this.lastDisks.contains(diskKey)) {
                         needRefresh = true;
                         break;

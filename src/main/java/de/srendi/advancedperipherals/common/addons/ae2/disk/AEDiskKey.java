@@ -114,4 +114,9 @@ public final class AEDiskKey extends AEKey {
     public boolean hasComponents() {
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "AEDiskKey(" + this.id.id() + ")";
+    }
 }
