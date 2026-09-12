@@ -13,6 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add `smartglasses.getOwner()` to directly get wearer's information without player detector.
 - Close #834 add `dimension` field to entity info
 - Fix potion related item recipes are impossible to craft
+- Fix ME Bridge constantly refreshing disks when an empty AEDiskCell is inserted.
+- Fix ME Bridge may not detect AEDiskCell insertion.
 
 ## [1.21.1-0.8.1a] - 2026-09-06
 - `scanEntities` on envrionment detector now can detect specific type of entities by passing the entity type or tag ID as an arugment.
