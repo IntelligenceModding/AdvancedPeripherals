@@ -66,7 +66,8 @@ public class AEDiskCellStorage implements StorageCell {
         if (!(mount instanceof WritableMount writableMount)) {
             return 0;
         }
-        return writableMount.getCapacity() - this.getFreeBytes();
+        long usedBytes = writableMount.getCapacity() - this.getFreeBytes();
+        return usedBytes <= 0 ? 1 : usedBytes;
     }
 
     @Override

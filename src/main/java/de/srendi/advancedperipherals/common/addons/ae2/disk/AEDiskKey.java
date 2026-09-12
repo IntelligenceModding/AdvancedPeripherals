@@ -99,4 +99,9 @@ public final class AEDiskKey extends AEKey {
 
     @Override
     public void addDrops(long amount, List<ItemStack> drops, Level level, BlockPos pos) {}
+
+    @Override
+    public String toString() {
+        return "AEDiskKey(" + this.id + ")";
+    }
 }
