@@ -26,9 +26,11 @@ public class FilteringBehaviourIntegration implements APGenericPeripheral {
 
     @LuaFunction(mainThread = true)
     public final Map<String, ?> getFilter(Wrapper wrapper) {
-        Map<String, Object> data = new HashMap<>(
-            CreateFilter.filterToLua(FilterItemStack.of(wrapper.behaviour().getFilter()), wrapper.blockEntity().getLevel().registryAccess())
-        );
+        Map<String, Object> data = CreateFilter.filterToLua(FilterItemStack.of(wrapper.behaviour().getFilter()), wrapper.blockEntity().getLevel().registryAccess());
+        if (data == null) {
+            return null;
+        }
+        data = new HashMap<>(data);
         data.put("count", wrapper.behaviour().count);
         data.put("upTo", wrapper.behaviour().upTo);
         return data;
@@ -47,8 +49,10 @@ public class FilteringBehaviourIntegration implements APGenericPeripheral {
         if (!behaviour.setFilter(result.left())) {
             return MethodResult.of(false, "invalid filter");
         }
-        behaviour.count = Math.min(Math.max(filterTable.optInt("count").orElse(behaviour.getMaxStackSize()), 1), behaviour.getMaxStackSize());
-        behaviour.upTo = filterTable.optBoolean("upTo").orElse(true);
+        if (filterTable != null) {
+            behaviour.count = Math.min(Math.max(filterTable.optInt("count").orElse(behaviour.getMaxStackSize()), 1), behaviour.getMaxStackSize());
+            behaviour.upTo = filterTable.optBoolean("upTo").orElse(true);
+        }
         return MethodResult.of(true);
     }
 

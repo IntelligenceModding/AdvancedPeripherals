@@ -37,7 +37,7 @@ import java.util.Map;
 public final class CreateFilter {
     private CreateFilter() {}
 
-    public static Map<String, ?> filterToLua(FilterItemStack stack, RegistryAccess registryAccess) {
+    public static Map<String, Object> filterToLua(FilterItemStack stack, RegistryAccess registryAccess) {
         if (stack.isEmpty()) {
             return null;
         }
