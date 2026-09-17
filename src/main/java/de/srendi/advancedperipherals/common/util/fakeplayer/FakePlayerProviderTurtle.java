@@ -40,26 +40,26 @@ public final class FakePlayerProviderTurtle {
         // Player inventory
         Inventory playerInventory = player.getInventory();
         playerInventory.selected = 0;
+        playerInventory.clearContent();
 
         // Copy primary items into player inventory and empty the rest
         Container turtleInventory = turtle.getInventory();
         int size = turtleInventory.getContainerSize();
-        int largerSize = playerInventory.getContainerSize();
-        playerInventory.selected = turtle.getSelectedSlot();
-        for (int i = 0; i < size; i++) {
-            playerInventory.setItem(i, turtleInventory.getItem(i));
-        }
-        for (int i = size; i < largerSize; i++) {
-            playerInventory.setItem(i, ItemStack.EMPTY);
+        int selectedSlot = turtle.getSelectedSlot();
+
+        playerInventory.setItem(0, turtleInventory.getItem(selectedSlot));
+        int i = 0;
+        for (; i < size; i++) {
+            playerInventory.setItem(i + 1, i == selectedSlot ? ItemStack.EMPTY : turtleInventory.getItem(i));
         }
 
         // Add properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (!activeStack.isEmpty()) {
-            activeStack.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (attr, modif) -> {
-                AttributeInstance inst = player.getAttribute(attr);
-                if (inst != null) {
-                    inst.addOrUpdateTransientModifier(modif);
+            activeStack.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (holder, mod) -> {
+                AttributeInstance attr = player.getAttribute(holder);
+                if (attr != null) {
+                    attr.addOrUpdateTransientModifier(mod);
                 }
             });
         }
@@ -67,15 +67,14 @@ public final class FakePlayerProviderTurtle {
 
     public static void unload(APFakePlayer player, ITurtleAccess turtle) {
         Inventory playerInventory = player.getInventory();
-        playerInventory.selected = 0;
 
         // Remove properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (!activeStack.isEmpty()) {
-            activeStack.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (attr, modif) -> {
-                AttributeInstance inst = player.getAttribute(attr);
-                if (inst != null) {
-                    inst.addOrUpdateTransientModifier(modif);
+            activeStack.getAttributeModifiers().forEach(EquipmentSlot.MAINHAND, (holder, mod) -> {
+                AttributeInstance attr = player.getAttribute(holder);
+                if (attr != null) {
+                    attr.removeModifier(mod);
                 }
             });
         }
@@ -84,14 +83,20 @@ public final class FakePlayerProviderTurtle {
         Container turtleInventory = turtle.getInventory();
         int size = turtleInventory.getContainerSize();
         int largerSize = playerInventory.getContainerSize();
-        playerInventory.selected = turtle.getSelectedSlot();
-        for (int i = 0; i < size; i++) {
-            turtleInventory.setItem(i, playerInventory.getItem(i));
-            playerInventory.setItem(i, ItemStack.EMPTY);
+        int selectedSlot = turtle.getSelectedSlot();
+
+        turtleInventory.setItem(selectedSlot, playerInventory.getItem(0));
+        playerInventory.setItem(0, ItemStack.EMPTY);
+        int i = 0;
+        for (; i < size; i++) {
+            if (i != selectedSlot) {
+                turtleInventory.setItem(i, playerInventory.getItem(i + 1));
+            }
+            playerInventory.setItem(i + 1, ItemStack.EMPTY);
         }
 
-        for (int i = size; i < largerSize; i++) {
-            ItemStack remaining = playerInventory.getItem(i);
+        for (; i < largerSize; i++) {
+            ItemStack remaining = playerInventory.getItem(i + 1);
             if (!remaining.isEmpty()) {
                 remaining = InventoryUtil.storeItemsFromOffset(turtleInventory, remaining, 0);
                 if (!remaining.isEmpty()) {
@@ -99,16 +104,17 @@ public final class FakePlayerProviderTurtle {
                     WorldUtil.dropItemStack(turtle.getLevel(), position, turtle.getDirection().getOpposite(), remaining);
                 }
             }
-
-            playerInventory.setItem(i, ItemStack.EMPTY);
+            playerInventory.setItem(i + 1, ItemStack.EMPTY);
         }
     }
 
     public static <T> T withPlayer(ITurtleAccess turtle, APFakePlayer.Action<T> action) throws LuaException {
         APFakePlayer player = getPlayer(turtle, turtle.getOwningPlayer());
         load(player, turtle);
-        T result = action.apply(player);
-        unload(player, turtle);
-        return result;
+        try {
+            return action.apply(player);
+        } finally {
+            unload(player, turtle);
+        }
     }
 }

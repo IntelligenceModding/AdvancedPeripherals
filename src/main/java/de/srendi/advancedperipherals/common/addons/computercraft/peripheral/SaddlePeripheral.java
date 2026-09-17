@@ -154,7 +154,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
         return withOperation(SADDLE_CAPTURE, null, null, context -> {
             Predicate<Entity> suitableEntity = EntitySelector.NO_SPECTATORS
                 .and((entity) -> entity instanceof LivingEntity || entity instanceof AbstractMinecart || entity instanceof Boat)
-                .and((entity) -> !entity.isPassenger());
+                .and((entity) -> entity.isPickable() && !entity.isPassenger());
             if (!APConfig.PERIPHERALS_CONFIG.allowSaddleTurtleCapturePlayer.get()) {
                 suitableEntity = suitableEntity.and((entity) -> !(entity instanceof Player));
             }

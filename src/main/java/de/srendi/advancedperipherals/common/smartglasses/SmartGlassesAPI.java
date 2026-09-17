@@ -5,6 +5,7 @@ import dan200.computercraft.api.lua.IComputerSystem;
 import dan200.computercraft.api.lua.ILuaAPI;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
+import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.entity.SmartChestHand;
 import de.srendi.advancedperipherals.common.items.SmartChestMountItem;
@@ -15,6 +16,8 @@ import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaArgsHelper;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
+import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.common.util.fakeplayer.SmartHandFakePlayerProvider;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,6 +32,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -115,8 +120,6 @@ public final class SmartGlassesAPI implements ILuaAPI {
         if (stack.isEmpty()) {
             return MethodResult.of(false, "SMART_CHEST_NOT_EQUIPPED");
         }
-
-        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
         return MethodResult.of(true, SmartChestMountItemHandler.SLOTS);
     }
 
@@ -155,11 +158,31 @@ public final class SmartGlassesAPI implements ILuaAPI {
     }
 
     @LuaFunction(mainThread = true)
+    public MethodResult smartHandPos(int index) {
+        index--;
+
+        if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
+            return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
+        }
+        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        if (stack.isEmpty()) {
+            return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
+        }
+        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+            return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
+        }
+
+        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
+        Vector3f pos = hand.getRelativePos();
+        return MethodResult.of(pos.x, pos.y, pos.z);
+    }
+
+    @LuaFunction(mainThread = true)
     public MethodResult smartHandMove(int index, double x, double y, double z) {
         index--;
 
-        Entity entity = this.getComputer().getEntity();
-        if (!(entity instanceof LivingEntity livingEntity)) {
+        if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
             return MethodResult.of(false, "SMART_CHEST_NOT_EQUIPPED");
         }
         ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
@@ -171,7 +194,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
         }
 
         SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
-        chestData.getOrCreateHand(index, livingEntity, stack).setRelativePos(new Vector3f((float) x, (float) y, (float) z));
+        chestData.getOrCreateHand(index, livingEntity, stack).setRelativePos((float) x, (float) y, (float) z);
         return MethodResult.of(true);
     }
 
@@ -179,8 +202,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
     public MethodResult smartHandDropItem(int index, Optional<Integer> optCount) {
         index--;
 
-        Entity entity = this.getComputer().getEntity();
-        if (!(entity instanceof LivingEntity livingEntity)) {
+        if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
         ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
@@ -243,8 +265,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
             }
         }
 
-        Entity entity = this.getComputer().getEntity();
-        if (!(entity instanceof LivingEntity livingEntity)) {
+        if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
         ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
@@ -253,6 +274,10 @@ public final class SmartGlassesAPI implements ILuaAPI {
         }
         if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
             return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
+        }
+
+        if (tester == null) {
+            return MethodResult.of(0);
         }
 
         IItemHandlerModifiable chestItemHandler = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
@@ -323,5 +348,62 @@ public final class SmartGlassesAPI implements ILuaAPI {
         chestItemHandler.setStackInSlot(index, collecting);
 
         return MethodResult.of(collecting.getCount() - initCount);
+    }
+
+    @LuaFunction(mainThread = true)
+    public MethodResult smartHandAttack(int index, Optional<LuaTable<?, ?>> optionsMap) throws LuaException {
+        index--;
+
+        if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
+            return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
+        }
+        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        if (stack.isEmpty()) {
+            return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
+        }
+        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+            return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
+        }
+
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(optionsMap);
+
+        boolean sneak = options.optBoolean("sneak").orElse(false);
+        float yaw = options.optDouble("yaw").orElse(0d).floatValue();
+        float pitch = options.optDouble("pitch").orElse(0d).floatValue();
+        boolean ground = options.optBoolean("ground").orElse(false);
+
+        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
+
+        return SmartHandFakePlayerProvider.doAction(
+            livingEntity, index, hand.position(), stack,
+            APFakePlayer.wrapActionWithShiftKey(
+                sneak,
+                APFakePlayer.wrapActionWithRot(
+                    yaw, pitch,
+                    APFakePlayer.wrapActionWithReachRange(
+                        1,
+                        (player) -> {
+                            HitResult hitResult = player.findHit(false, true, (e) -> e.isAlive() && e.isPickable() && e != livingEntity);
+                            if (hitResult.getType() != HitResult.Type.ENTITY) {
+                                return MethodResult.of(false);
+                            }
+                            Entity target = ((EntityHitResult) hitResult).getEntity();
+                            player.setAttackStrengthTicker(hand.getAttackStrengthTicker());
+                            if (ground) {
+                                player.setOnGround(true);
+                                player.fallDistance = 0;
+                            } else {
+                                player.setOnGround(false);
+                                player.fallDistance = 1;
+                            }
+                            player.attack(target);
+                            hand.resetAttackStrengthTicker();
+                            return MethodResult.of(true);
+                        }
+                    )
+                )
+            )
+        );
     }
 }

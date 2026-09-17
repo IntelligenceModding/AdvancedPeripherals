@@ -6,6 +6,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
+import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.misc.DataPublisher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.MessageArgument;
@@ -23,6 +24,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.CommandEvent;
 import net.neoforged.neoforge.event.ServerChatEvent;
+import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.jetbrains.annotations.Nullable;
@@ -133,6 +135,13 @@ public class Events {
         putChatMessage(
             new ChatMessageRecord(player.getUUID(), event.getUsername(), message, isHidden, player.serverLevel().dimension(), player.position())
         );
+    }
+
+    @SubscribeEvent
+    public static void onTargeting(LivingChangeTargetEvent event) {
+        if (event.getNewAboutToBeSetTarget() instanceof APFakePlayer) {
+            event.setCanceled(true);
+        }
     }
 
     public static void putChatMessage(ChatMessageRecord message) {

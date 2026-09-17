@@ -24,11 +24,13 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 public class SmartChestHand extends Entity {
+    private static final float MAX_RANGE = 10;
     public static final EntityDataAccessor<ItemStack> DATA_HOLDING_STACK = SynchedEntityData.defineId(SmartChestHand.class, EntityDataSerializers.ITEM_STACK);
     public static final EntityDataAccessor<Boolean> DATA_LEFT_HAND = SynchedEntityData.defineId(SmartChestHand.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Vector3f> DATA_REL_POS = SynchedEntityData.defineId(SmartChestHand.class, EntityDataSerializers.VECTOR3);
 
     private final ItemStack chestStack;
+    private int attackStrengthTicker = 0;
 
     public SmartChestHand(EntityType<?> type, Level level) {
         super(type, level);
@@ -59,7 +61,11 @@ public class SmartChestHand extends Entity {
     }
 
     public void setHoldingStack(ItemStack stack) {
+        if (ItemStack.matches(this.getHoldingStack(), stack)) {
+            return;
+        }
         this.entityData.set(DATA_HOLDING_STACK, stack);
+        this.resetAttackStrengthTicker();
     }
 
     public ItemDisplayContext getDisplayContext() {
@@ -95,7 +101,14 @@ public class SmartChestHand extends Entity {
     }
 
     public void setRelativePos(Vector3f pos) {
+        if (pos.lengthSquared() > MAX_RANGE * MAX_RANGE) {
+            pos.normalize(MAX_RANGE);
+        }
         this.entityData.set(DATA_REL_POS, pos);
+    }
+
+    public void setRelativePos(float x, float y, float z) {
+        this.setRelativePos(new Vector3f(x, y, z));
     }
 
     public void addRelativePos(float x, float y, float z) {
@@ -105,6 +118,14 @@ public class SmartChestHand extends Entity {
     @Override
     protected boolean canRide(Entity vehicle) {
         return true;
+    }
+
+    public int getAttackStrengthTicker() {
+        return this.attackStrengthTicker;
+    }
+
+    public void resetAttackStrengthTicker() {
+        this.attackStrengthTicker = 0;
     }
 
     @Override
@@ -120,6 +141,7 @@ public class SmartChestHand extends Entity {
                 return;
             }
         }
+        this.attackStrengthTicker++;
     }
 
     public static class Renderer extends EntityRenderer<SmartChestHand> {

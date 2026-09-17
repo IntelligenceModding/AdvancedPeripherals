@@ -7,7 +7,9 @@ import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.sounds.SoundEvent;
@@ -15,12 +17,15 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -36,6 +41,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.TriState;
@@ -54,7 +60,7 @@ public class APFakePlayer extends FakePlayer {
     Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/gameplay/PlethoraFakePlayer.java
     */
     public static final GameProfile PROFILE = new GameProfile(UUID.fromString("6e483f02-30db-4454-b612-3a167614b276"), "[" + AdvancedPeripherals.MOD_ID + "]");
-    private static final Predicate<Entity> DEFAULT_ENTITY_FILTER = EntitySelector.NO_SPECTATORS.and(LivingEntity.class::isInstance).and((entity) -> !entity.isPassenger());
+    private static final Predicate<Entity> DEFAULT_ENTITY_FILTER = (e) -> !e.isSpectator() && e.isPickable() && !e.isPassenger();
 
     private final WeakReference<Entity> owner;
 
@@ -64,10 +70,13 @@ public class APFakePlayer extends FakePlayer {
     private float currentDamage = 0;
     private double reachRange = -1;
 
-    public APFakePlayer(ServerLevel world, Entity owner, GameProfile profile) {
-        super(world, profile != null ? profile : PROFILE);
+    private boolean hijackDamageSources = false;
+    private RedirectedDamageSources cachedDamageSources = null;
+
+    public APFakePlayer(ServerLevel level, Entity owner, GameProfile profile) {
+        super(level, profile != null ? profile : PROFILE);
         if (owner != null) {
-            setCustomName(owner.getName());
+            this.setCustomName(owner.getName());
             this.owner = new WeakReference<>(owner);
         } else {
             this.owner = null;
@@ -80,14 +89,12 @@ public class APFakePlayer extends FakePlayer {
 
     @Override
     public void awardStat(@NotNull Stat<?> stat) {
-        // TODO: anypoint to award stat for fake player? should we award stat on the owner instead?
-        // MinecraftServer server = level().getServer();
-        // if (server != null && getGameProfile() != PROFILE) {
-        //     Player player = server.getPlayerList().getPlayer(getUUID());
-        //     if (player != null) {
-        //         player.awardStat(stat);
-        //     }
-        // }
+        MinecraftServer server = level().getServer();
+        if (server != null && getGameProfile() != PROFILE) {
+            if (this.owner.get() instanceof Player player) {
+                player.awardStat(stat);
+            }
+        }
     }
 
     @Override
@@ -118,6 +125,37 @@ public class APFakePlayer extends FakePlayer {
     @Override
     public float getEyeHeight(@NotNull Pose pose) {
         return 0;
+    }
+
+    @Override
+    public boolean isAttackable() {
+        return false;
+    }
+
+    @Override
+    public boolean attackable() {
+        return false;
+    }
+
+    @Override
+    public boolean isPickable() {
+        return false;
+    }
+
+    @Override
+    public PlayerTeam getTeam() {
+        Entity entity = this.owner.get();
+        return entity != null ? entity.getTeam() : null;
+    }
+
+    @Override
+    public boolean canHarmPlayer(Player other) {
+        if (!this.getServer().isPvpAllowed()) {
+            return false;
+        }
+        PlayerTeam team = this.getTeam();
+        PlayerTeam otherTeam = other.getTeam();
+        return team == null || team.isAllowFriendlyFire() || !team.isAlliedTo(otherTeam);
     }
 
     public static <T> Action<T> wrapActionWithRot(float yaw, float pitch, Action<T> action) {
@@ -171,6 +209,34 @@ public class APFakePlayer extends FakePlayer {
             range = this.reachRange;
         }
         return range;
+    }
+
+    @Override
+    public DamageSources damageSources() {
+        DamageSources sources = super.damageSources();
+        if (this.hijackDamageSources) {
+            if (this.owner.get() instanceof Player player) {
+                if (this.cachedDamageSources == null) {
+                    this.cachedDamageSources = new RedirectedDamageSources(this.level().registryAccess(), sources, player);
+                }
+                return this.cachedDamageSources;
+            }
+        }
+        return sources;
+    }
+
+    public void setAttackStrengthTicker(int attackStrengthTicker) {
+        this.attackStrengthTicker = attackStrengthTicker;
+    }
+
+    @Override
+    public void attack(Entity targetEntity) {
+        this.hijackDamageSources = true;
+        try {
+            super.attack(targetEntity);
+        } finally {
+            this.hijackDamageSources = false;
+        }
     }
 
     public Pair<Boolean, String> digBlock() {
@@ -389,5 +455,22 @@ public class APFakePlayer extends FakePlayer {
     @FunctionalInterface
     public interface Action<T> {
         T apply(APFakePlayer player) throws LuaException;
+    }
+
+    private static class RedirectedDamageSources extends DamageSources {
+        private final DamageSources sources;
+        private final WeakReference<Player> originPlayer;
+
+        public RedirectedDamageSources(RegistryAccess registry, DamageSources sources, Player originPlayer) {
+            super(registry);
+            this.sources = sources;
+            this.originPlayer = new WeakReference<>(originPlayer);
+        }
+
+        @Override
+        public DamageSource playerAttack(Player player) {
+            Player p = this.originPlayer.get();
+            return this.sources.playerAttack(p != null ? p : player);
+        }
     }
 }

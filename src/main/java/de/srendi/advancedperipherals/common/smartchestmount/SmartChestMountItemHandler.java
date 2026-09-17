@@ -60,7 +60,10 @@ public class SmartChestMountItemHandler implements IItemHandlerModifiable {
             return stack;
         }
         ItemStack existing = this.getStackInSlot(slot);
-        int limit = this.getSlotLimit(slot) - existing.getCount();
+        if (!existing.isEmpty() && ItemStack.isSameItemSameComponents(existing, stack)) {
+            return stack;
+        }
+        int limit = Math.min(this.getSlotLimit(slot), existing.getMaxStackSize()) - existing.getCount();
         if (limit <= 0) {
             return stack;
         }

@@ -346,6 +346,8 @@ dependencies {
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
     // Spark
     runtimeOnly "maven.modrinth:spark:1.10.124-neoforge-1.21.1"
+    // Jade
+    runtimeOnly "maven.modrinth:jade:15.10.6+neoforge"
 
     if (!minimumRuntime) {
         // Extended AE
