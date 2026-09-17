@@ -11,6 +11,7 @@ import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.storage.IStorageService;
+import appeng.api.parts.RegisterPartCapabilitiesEvent;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
@@ -34,6 +35,7 @@ import appeng.me.cells.BasicCellHandler;
 import appeng.me.cells.BasicCellInventory;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
+import dan200.computercraft.api.network.wired.WiredElementCapability;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellItem;
@@ -84,9 +86,12 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class AEApi {
-
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, APBlockEntityTypes.ME_BRIDGE.get(), (blockEntity, side) -> blockEntity);
+    }
+
+    public static void registerPartCapabilities(RegisterPartCapabilitiesEvent event) {
+        event.register(WiredElementCapability.get(), (part, context) -> part.getExposedApi(), WiredCableP2PTunnelPart.class);
     }
 
     @NotNull

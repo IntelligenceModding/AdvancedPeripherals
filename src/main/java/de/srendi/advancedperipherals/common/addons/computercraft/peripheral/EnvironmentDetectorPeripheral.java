@@ -34,6 +34,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -54,6 +55,17 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     public static final String PERIPHERAL_TYPE = "environment_detector";
     private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PERIPHERAL_PLUGINS = new ArrayList<>();
+    private static final EntityTypeTest<Entity, Entity> ALL_ENTITY_TYPES = new EntityTypeTest<>() {
+        @Override
+        public Entity tryCast(Entity entity) {
+            return entity;
+        }
+
+        @Override
+        public Class<? extends Entity> getBaseClass() {
+            return Entity.class;
+        }
+    };
 
     protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
         super(PERIPHERAL_TYPE, owner);
@@ -212,12 +224,13 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
                 .position(pos)
                 .orientation(owner.getOrientation())
                 .build();
-            List<Map<String, Object>> entities = getLevel()
-                .getEntities((Entity) null, box, finalEntityTester)
+            List<Entity> entities = new ArrayList<>(16);
+            this.getLevel().getEntities(ALL_ENTITY_TYPES, box, finalEntityTester, entities, 4096);
+            List<Map<String, Object>> result = entities
                 .stream()
                 .map(entity -> LuaConverter.entityToLua(entity, convContext))
                 .toList();
-            return MethodResult.of(entities);
+            return MethodResult.of(result);
         }, null);
     }
 

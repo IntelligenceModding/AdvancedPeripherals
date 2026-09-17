@@ -18,7 +18,6 @@ import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -43,14 +42,10 @@ public class AdvancedPeripherals {
         APConfig.register(ModLoadingContext.get());
 
         modBus.addListener(this::onLoadComplete);
-        modBus.addListener(this::registerCapabilities);
         modBus.addListener(ChunkManager::registerTicketController);
+        this.registerCapabilities(modBus);
 
         APRegistration.register(modBus);
-
-        if (APAddon.AE2.isLoaded()) {
-            modBus.addListener(AE2Registries::onRegister);
-        }
     }
 
     public static void debug(String message, Object... params) {
@@ -85,15 +80,17 @@ public class AdvancedPeripherals {
         }
     }
 
-    public void registerCapabilities(RegisterCapabilitiesEvent event) {
+    public void registerCapabilities(IEventBus modBus) {
         if (APAddon.AE2.isLoaded()) {
-            AEApi.registerCapabilities(event);
+            modBus.addListener(AEApi::registerCapabilities);
+            modBus.addListener(AEApi::registerPartCapabilities);
+            modBus.addListener(AE2Registries::onRegister);
         }
         if (APAddon.REFINEDSTORAGE.isLoaded()) {
-            RSApi.registerCapabilities(event);
+            modBus.addListener(RSApi::registerCapabilities);
         }
 
-        IntegrationPeripheralProvider.registerBlockIntegrations(event);
+        modBus.addListener(IntegrationPeripheralProvider::registerBlockIntegrations);
     }
 
     @SubscribeEvent

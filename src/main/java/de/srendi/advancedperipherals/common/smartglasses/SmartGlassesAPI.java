@@ -358,7 +358,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
                 }
                 pickingStack.shrink(transferring);
                 if (livingEntity instanceof Player player) {
-                   net.neoforged.neoforge.event.EventHooks.fireItemPickupPost(ie, player, pickingStackCopy);
+                    net.neoforged.neoforge.event.EventHooks.fireItemPickupPost(ie, player, pickingStackCopy);
                 }
                 if (pickingStack.isEmpty()) {
                     ie.discard();

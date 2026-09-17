@@ -460,7 +460,7 @@ public class APFakePlayer extends FakePlayer {
         private final DamageSources sources;
         private final WeakReference<Player> originPlayer;
 
-        public RedirectedDamageSources(RegistryAccess registry, DamageSources sources, Player originPlayer) {
+        private RedirectedDamageSources(RegistryAccess registry, DamageSources sources, Player originPlayer) {
             super(registry);
             this.sources = sources;
             this.originPlayer = new WeakReference<>(originPlayer);
