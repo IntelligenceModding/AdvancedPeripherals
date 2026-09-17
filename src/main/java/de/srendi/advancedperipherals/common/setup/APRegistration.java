@@ -9,6 +9,7 @@ import dan200.computercraft.shared.media.MountMedia;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProviders;
+import de.srendi.advancedperipherals.common.items.SmartChestMountItem;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
 import mekanism.api.chemical.IChemicalHandler;
@@ -142,6 +143,11 @@ public class APRegistration {
             Capabilities.ItemHandler.ITEM,
             (stack, ignored) -> ((SmartGlassesItem) stack.getItem()).createItemHandlerCap(stack),
             smartGlasses
+        );
+        event.registerItem(
+            Capabilities.ItemHandler.ITEM,
+            (stack, ignored) -> ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack),
+            APItems.SMART_CHESTMOUNT.get()
         );
         if (APAddon.CURIOS.isLoaded()) {
             event.registerItem(

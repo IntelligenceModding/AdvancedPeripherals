@@ -2,9 +2,9 @@ package de.srendi.advancedperipherals.common.smartglasses;
 
 import dan200.computercraft.core.computer.ComputerSide;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerCopySlot;
 
-public class SmartGlassesSlot extends SlotItemHandler {
+public class SmartGlassesSlot extends ItemHandlerCopySlot {
     public static final int PERIPHERAL_SLOTS = 5;
     public static final int MODULE_SLOT_OFFSET = PERIPHERAL_SLOTS;
     public static final int MODULE_SLOTS = 6;
