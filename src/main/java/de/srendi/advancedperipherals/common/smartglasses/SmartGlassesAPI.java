@@ -190,7 +190,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
         SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
         SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
         Vector3f pos = hand.getRelativePos();
-        return MethodResult.of(pos.x, pos.y, pos.z);
+        return MethodResult.of(pos.x, pos.y, pos.z, hand.getXRot(), hand.getYRot());
     }
 
     @LuaFunction(mainThread = true)
@@ -275,7 +275,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
     }
 
     @LuaFunction(mainThread = true)
-    public MethodResult smartHandCollectItem(IArguments arguments) throws LuaException {
+    public MethodResult smartHandSuckItem(IArguments arguments) throws LuaException {
         int index = arguments.getInt(0) - 1;
 
         LuaArgsHelper.Args uargs = LuaArgsHelper.getUnorderedArgs(arguments, 1, Number.class, String.class);

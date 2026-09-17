@@ -18,6 +18,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +26,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class SmartChestHand extends Entity {
@@ -55,7 +56,7 @@ public class SmartChestHand extends Entity {
         super(type, level);
         this.chestStack = chestStack;
         this.index = index;
-        this.entityData.set(DATA_LEFT_HAND, this.index % 2 != 0);
+        this.entityData.set(DATA_LEFT_HAND, false/*this.index % 2 != 0*/);
     }
 
     @Override
@@ -224,6 +225,8 @@ public class SmartChestHand extends Entity {
             if (stack.isEmpty()) {
                 return;
             }
+            poseStack.pushPose();
+            poseStack.mulPose(new Quaternionf().rotationYXZ(Mth.DEG_TO_RAD * -entity.getYRot(), Mth.DEG_TO_RAD * entity.getXRot(), 0));
             this.itemRenderer.renderStatic(
                 null,
                 stack,
@@ -236,6 +239,7 @@ public class SmartChestHand extends Entity {
                 OverlayTexture.NO_OVERLAY,
                 entity.getId() + entity.getDisplayContext().ordinal()
             );
+            poseStack.popPose();
         }
     }
 }
