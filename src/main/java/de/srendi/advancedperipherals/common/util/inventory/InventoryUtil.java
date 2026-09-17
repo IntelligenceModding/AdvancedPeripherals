@@ -1,6 +1,5 @@
 package de.srendi.advancedperipherals.common.util.inventory;
 
-import dan200.computercraft.api.lua.LuaException;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -12,7 +11,7 @@ public class InventoryUtil {
     private InventoryUtil() {
     }
 
-    public static Map<Integer, Map<String, Object>> list(IItemHandler handler) throws LuaException {
+    public static Map<Integer, Map<String, Object>> list(IItemHandler handler) {
         int size = handler.getSlots();
         Map<Integer, Map<String, Object>> items = new HashMap<>();
         for (int slot = 0; slot < size; slot++) {

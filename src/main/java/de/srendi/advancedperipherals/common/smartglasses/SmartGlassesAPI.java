@@ -17,21 +17,27 @@ import de.srendi.advancedperipherals.common.util.LuaArgsHelper;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import de.srendi.advancedperipherals.common.util.fakeplayer.SmartHandFakePlayerProvider;
+import de.srendi.advancedperipherals.common.util.inventory.InventoryUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.common.NeoForge;
@@ -124,6 +130,15 @@ public final class SmartGlassesAPI implements ILuaAPI {
     }
 
     @LuaFunction(mainThread = true)
+    public MethodResult smartChestList() {
+        ItemStack stack = this.getSmartChest();
+        if (stack.isEmpty()) {
+            return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
+        }
+        return MethodResult.of(InventoryUtil.list(this.getOwnerInventory()));
+    }
+
+    @LuaFunction(mainThread = true)
     public MethodResult smartChestImportItem(Optional<Map<?, ?>> filterTable) throws LuaException {
         ItemStack stack = this.getSmartChest();
         if (stack.isEmpty()) {
@@ -179,7 +194,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
     }
 
     @LuaFunction(mainThread = true)
-    public MethodResult smartHandMove(int index, double x, double y, double z) {
+    public MethodResult smartHandMove(int index, Map<?, ?> options) throws LuaException {
         index--;
 
         if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
@@ -193,8 +208,24 @@ public final class SmartGlassesAPI implements ILuaAPI {
             return MethodResult.of(false, "HAND_DOES_NOT_EXISTS");
         }
 
+        LuaTable<?, ?> optionsMap = EmptyLuaTable.orEmpty(options);
+
         SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
-        chestData.getOrCreateHand(index, livingEntity, stack).setRelativePos((float) x, (float) y, (float) z);
+        SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
+        if (optionsMap.containsKey("x") || optionsMap.containsKey("y") || optionsMap.containsKey("z")) {
+            float x = (float) optionsMap.getFiniteDouble("x");
+            float y = (float) optionsMap.getFiniteDouble("y");
+            float z = (float) optionsMap.getFiniteDouble("z");
+            hand.setRelativePos(x, y, z);
+        }
+        if (optionsMap.containsKey("pitch")) {
+            float pitch = (float) optionsMap.getFiniteDouble("pitch");
+            hand.setXRot(pitch);
+        }
+        if (optionsMap.containsKey("yaw")) {
+            float yaw = (float) optionsMap.getFiniteDouble("yaw");
+            hand.setYRot(yaw);
+        }
         return MethodResult.of(true);
     }
 
@@ -214,15 +245,20 @@ public final class SmartGlassesAPI implements ILuaAPI {
             return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
         }
 
+        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
+        Level level = hand.level();
+
+        if (!hand.allocAction()) {
+            return MethodResult.of(null, "ACTION_CONFLICT");
+        }
+
         IItemHandlerModifiable chestItemHandler = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
         ItemStack extracted = chestItemHandler.extractItem(index, optCount.orElse(Integer.MAX_VALUE), false);
         if (extracted.isEmpty()) {
             return MethodResult.of(0);
         }
 
-        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
-        SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
-        Level level = hand.level();
         ItemEntity itemEntity = new ItemEntity(level, hand.getX(), hand.getY(), hand.getZ(), extracted);
         itemEntity.setThrower(livingEntity);
         if (livingEntity instanceof Player player) {
@@ -276,14 +312,18 @@ public final class SmartGlassesAPI implements ILuaAPI {
             return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
         }
 
-        if (tester == null) {
-            return MethodResult.of(0);
-        }
-
         IItemHandlerModifiable chestItemHandler = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
         SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
         SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
         Level level = hand.level();
+
+        if (!hand.allocAction()) {
+            return MethodResult.of(null, "ACTION_CONFLICT");
+        }
+
+        if (tester == null) {
+            return MethodResult.of(0);
+        }
 
         ItemStack collecting = chestItemHandler.getStackInSlot(index);
         int initCount = collecting.getCount();
@@ -366,43 +406,132 @@ public final class SmartGlassesAPI implements ILuaAPI {
         }
 
         LuaTable<?, ?> options = EmptyLuaTable.orEmpty(optionsMap);
-
         boolean sneak = options.optBoolean("sneak").orElse(false);
-        float yaw = options.optDouble("yaw").orElse(0d).floatValue();
-        float pitch = options.optDouble("pitch").orElse(0d).floatValue();
         boolean ground = options.optBoolean("ground").orElse(false);
 
         SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
         SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
 
-        return SmartHandFakePlayerProvider.doAction(
-            livingEntity, index, hand.position(), stack,
+        return hand.doAction(
             APFakePlayer.wrapActionWithShiftKey(
                 sneak,
-                APFakePlayer.wrapActionWithRot(
-                    yaw, pitch,
-                    APFakePlayer.wrapActionWithReachRange(
-                        1,
-                        (player) -> {
-                            HitResult hitResult = player.findHit(false, true, (e) -> e.isAlive() && e.isPickable() && e != livingEntity);
-                            if (hitResult.getType() != HitResult.Type.ENTITY) {
-                                return MethodResult.of(false);
-                            }
-                            Entity target = ((EntityHitResult) hitResult).getEntity();
-                            player.setAttackStrengthTicker(hand.getAttackStrengthTicker());
-                            if (ground) {
-                                player.setOnGround(true);
-                                player.fallDistance = 0;
-                            } else {
-                                player.setOnGround(false);
-                                player.fallDistance = 1;
-                            }
-                            player.attack(target);
-                            hand.resetAttackStrengthTicker();
-                            return MethodResult.of(true);
-                        }
-                    )
-                )
+                (player) -> {
+                    ItemStack tool = player.getItemBySlot(EquipmentSlot.MAINHAND);
+                    if (tool.isEmpty()) {
+                        return MethodResult.of(null, "TOOL_REQUIRED");
+                    }
+
+                    HitResult hitResult = player.findHit(false, true, (e) -> e.isAlive() && e.isPickable() && e != livingEntity);
+                    if (hitResult.getType() != HitResult.Type.ENTITY) {
+                        return MethodResult.of(null, "NO_ENTITY_FOUND");
+                    }
+                    Entity target = ((EntityHitResult) hitResult).getEntity();
+                    player.setAttackStrengthTicker(hand.getAttackStrengthTicker());
+                    hand.resetAttackStrengthTicker();
+                    if (ground) {
+                        player.setOnGround(true);
+                        player.fallDistance = 0;
+                    } else {
+                        player.setOnGround(false);
+                        player.fallDistance = 1;
+                    }
+
+                    player.attack(target);
+
+                    return MethodResult.of(true);
+                }
+            )
+        );
+    }
+
+    @LuaFunction(mainThread = true)
+    public MethodResult smartHandDig(int index, Optional<LuaTable<?, ?>> optionsMap) throws LuaException {
+        index--;
+
+        if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
+            return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
+        }
+        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        if (stack.isEmpty()) {
+            return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
+        }
+        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+            return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
+        }
+
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(optionsMap);
+        boolean sneak = options.optBoolean("sneak").orElse(false);
+
+        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
+
+        return hand.doAction(
+            APFakePlayer.wrapActionWithShiftKey(
+                sneak,
+                (player) -> {
+                    ServerLevel level = player.serverLevel();
+                    ItemStack tool = player.getItemBySlot(EquipmentSlot.MAINHAND);
+                    if (tool.isEmpty()) {
+                        return MethodResult.of(null, "TOOL_REQUIRED");
+                    }
+
+                    HitResult hitResult = player.findHit(true, false);
+                    if (hitResult.getType() != HitResult.Type.BLOCK) {
+                        return MethodResult.of(null, "NO_BLOCK_FOUND");
+                    }
+                    BlockPos target = ((BlockHitResult) hitResult).getBlockPos();
+                    BlockState state = level.getBlockState(target);
+
+                    float destroySpeed = state.getDestroySpeed(level, target);
+                    if (destroySpeed < 0) {
+                        return MethodResult.of(null, "UNBREAKABLE_BLOCK");
+                    }
+                    if (state.requiresCorrectToolForDrops() && !tool.isCorrectToolForDrops(state)) {
+                        return MethodResult.of(null, "INCORRECT_TOOL");
+                    }
+
+                    player.resetAttackStrengthTicker();
+                    hand.resetAttackStrengthTicker();
+
+                    float prog = destroySpeed == 0 ? 1 : hand.breaking(target, state.getDestroyProgress(player, level, target));
+                    if (prog >= 1) {
+                        level.destroyBlock(target, true, livingEntity);
+                        return MethodResult.of(true);
+                    }
+                    return MethodResult.of(prog);
+                }
+            )
+        );
+    }
+
+    @LuaFunction(mainThread = true)
+    public MethodResult smartHandUse(int index, Optional<LuaTable<?, ?>> optionsMap) throws LuaException {
+        index--;
+
+        if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
+            return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
+        }
+        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        if (stack.isEmpty()) {
+            return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
+        }
+        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+            return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
+        }
+
+        LuaTable<?, ?> options = EmptyLuaTable.orEmpty(optionsMap);
+        boolean sneak = options.optBoolean("sneak").orElse(false);
+
+        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
+
+        return hand.doAction(
+            APFakePlayer.wrapActionWithShiftKey(
+                sneak,
+                (player) -> {
+                    InteractionResult result = player.use(false, false);
+                    return MethodResult.of(result.consumesAction(), result.name());
+                }
             )
         );
     }

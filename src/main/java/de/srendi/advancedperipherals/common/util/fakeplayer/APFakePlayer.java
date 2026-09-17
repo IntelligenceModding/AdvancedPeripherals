@@ -20,7 +20,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -318,7 +317,7 @@ public class APFakePlayer extends FakePlayer {
     }
 
     public InteractionResult use(boolean skipEntity, boolean skipBlock) {
-        return use(skipEntity, skipBlock, null);
+        return use(skipEntity, skipBlock, (e) -> !e.isSpectator() && e.isPickable());
     }
 
     public InteractionResult use(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {

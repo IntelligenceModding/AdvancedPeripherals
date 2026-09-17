@@ -69,7 +69,7 @@ public class SmartChestMountItem extends ArmorItem {
         public SmartChestHand getOrCreateHand(int index, LivingEntity owner, ItemStack chestStack) {
             SmartChestHand hand = this.hands[index];
             if (hand == null || hand.isRemoved()) {
-                hand = new SmartChestHand(APEntities.SMART_CHEST_HAND.get(), (ServerLevel) owner.level(), chestStack, index % 2 != 0);
+                hand = new SmartChestHand(APEntities.SMART_CHEST_HAND.get(), (ServerLevel) owner.level(), chestStack, index);
                 hand.startRiding(owner, true);
                 this.hands[index] = hand;
                 owner.level().addFreshEntity(hand);

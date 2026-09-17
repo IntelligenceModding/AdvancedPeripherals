@@ -1,12 +1,17 @@
 package de.srendi.advancedperipherals.common.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.items.SmartChestMountItem;
+import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
+import de.srendi.advancedperipherals.common.util.fakeplayer.SmartHandFakePlayerProvider;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -30,17 +35,27 @@ public class SmartChestHand extends Entity {
     public static final EntityDataAccessor<Vector3f> DATA_REL_POS = SynchedEntityData.defineId(SmartChestHand.class, EntityDataSerializers.VECTOR3);
 
     private final ItemStack chestStack;
+    private final int index;
+
+    private double interactRange = 0.8;
+
+    private boolean didAction = false;
     private int attackStrengthTicker = 0;
+
+    private BlockPos breakingPos = null;
+    private float breakingProg = 0;
 
     public SmartChestHand(EntityType<?> type, Level level) {
         super(type, level);
         this.chestStack = ItemStack.EMPTY;
+        this.index = -1;
     }
 
-    public SmartChestHand(EntityType<?> type, ServerLevel level, ItemStack chestStack, boolean isLeft) {
+    public SmartChestHand(EntityType<?> type, ServerLevel level, ItemStack chestStack, int index) {
         super(type, level);
         this.chestStack = chestStack;
-        this.entityData.set(DATA_LEFT_HAND, isLeft);
+        this.index = index;
+        this.entityData.set(DATA_LEFT_HAND, this.index % 2 != 0);
     }
 
     @Override
@@ -78,15 +93,12 @@ public class SmartChestHand extends Entity {
         return this.getVehicle() instanceof LivingEntity owner ? owner : null;
     }
 
-    public boolean stillValid() {
-        LivingEntity owner = this.getOwner();
-        if (owner == null) {
+    public boolean allocAction() {
+        if (this.didAction) {
             return false;
         }
-        if (owner.isRemoved()) {
-            return false;
-        }
-        return SmartChestMountItem.getEquipped(owner) == this.chestStack;
+        this.didAction = true;
+        return true;
     }
 
     @Override
@@ -128,6 +140,33 @@ public class SmartChestHand extends Entity {
         this.attackStrengthTicker = 0;
     }
 
+    public float breaking(BlockPos pos, float speed) {
+        if (!pos.equals(this.breakingPos)) {
+            this.breakingPos = pos;
+            this.breakingProg = 0;
+        }
+        this.breakingProg += speed;
+        if (this.breakingProg < 1) {
+            this.level().destroyBlockProgress(this.getId(), pos, (int) (this.breakingProg * 10));
+            return this.breakingProg;
+        }
+        this.breakingPos = null;
+        this.breakingProg = 0;
+        this.level().destroyBlockProgress(this.getId(), pos, -1);
+        return 1;
+    }
+
+    public boolean stillValid() {
+        LivingEntity owner = this.getOwner();
+        if (owner == null) {
+            return false;
+        }
+        if (owner.isRemoved()) {
+            return false;
+        }
+        return SmartChestMountItem.getEquipped(owner) == this.chestStack;
+    }
+
     @Override
     public void tick() {
         if (this.getOwner() == null) {
@@ -141,7 +180,23 @@ public class SmartChestHand extends Entity {
                 return;
             }
         }
+        this.didAction = false;
         this.attackStrengthTicker++;
+    }
+
+    public MethodResult doAction(APFakePlayer.Action<MethodResult> action) throws LuaException {
+        if (this.didAction) {
+            return MethodResult.of(null, "ACTION_CONFLICT");
+        }
+        this.didAction = true;
+        LivingEntity owner = this.getOwner();
+        return SmartHandFakePlayerProvider.doAction(
+            owner, index, this.position(), this.chestStack,
+            APFakePlayer.wrapActionWithRot(
+                this.getYRot(), this.getXRot(),
+                APFakePlayer.wrapActionWithReachRange(this.interactRange, action)
+            )
+        );
     }
 
     public static class Renderer extends EntityRenderer<SmartChestHand> {
