@@ -3,7 +3,7 @@ package de.srendi.advancedperipherals.common.entity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.MethodResult;
-import de.srendi.advancedperipherals.common.items.SmartChestMountItem;
+import de.srendi.advancedperipherals.common.items.SmartChestplateItem;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.common.util.fakeplayer.SmartHandFakePlayerProvider;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -165,7 +165,7 @@ public class SmartChestHand extends Entity {
         if (owner.isRemoved()) {
             return false;
         }
-        return SmartChestMountItem.getEquipped(owner) == this.chestStack;
+        return SmartChestplateItem.getEquipped(owner) == this.chestStack;
     }
 
     @Override
@@ -226,7 +226,7 @@ public class SmartChestHand extends Entity {
                 return;
             }
             poseStack.pushPose();
-            poseStack.mulPose(new Quaternionf().rotationYXZ(Mth.DEG_TO_RAD * -entity.getYRot(), Mth.DEG_TO_RAD * entity.getXRot(), 0));
+            poseStack.mulPose(new Quaternionf().rotationYXZ(Mth.DEG_TO_RAD * (180 - entity.getYRot()), Mth.DEG_TO_RAD * entity.getXRot(), 0));
             this.itemRenderer.renderStatic(
                 null,
                 stack,

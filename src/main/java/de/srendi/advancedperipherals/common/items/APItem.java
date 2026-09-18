@@ -21,5 +21,4 @@ public class APItem extends BaseItem {
     public boolean isEnabled() {
         return enabledSup.get();
     }
-
 }

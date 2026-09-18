@@ -2,23 +2,21 @@ package de.srendi.advancedperipherals.common.items.base;
 
 import de.srendi.advancedperipherals.common.util.EnumColor;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.block.Block;
 
 import java.util.List;
 
-public abstract class BaseBlockItem extends BlockItem implements IAPTooltipItem {
+public abstract class BaseArmorItem extends ArmorItem implements IAPTooltipItem {
     private Component tooltipComponent;
 
-    public BaseBlockItem(Block block, Properties properties) {
-        super(block, properties);
-    }
-
-    public BaseBlockItem(Block block) {
-        super(block, new Properties());
+    public BaseArmorItem(Holder<ArmorMaterial> material, ArmorItem.Type type, Item.Properties properties) {
+        super(material, type, properties);
     }
 
     @Override

@@ -22,6 +22,7 @@ import dan200.computercraft.shared.util.StorageCapacity;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.curios.SmartGlassesCurio;
 import de.srendi.advancedperipherals.common.component.ItemStackStorage;
+import de.srendi.advancedperipherals.common.items.base.BaseArmorItem;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
@@ -57,7 +58,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
-public class SmartGlassesItem extends ArmorItem {
+public class SmartGlassesItem extends BaseArmorItem {
 
     public SmartGlassesItem(Holder<ArmorMaterial> material) {
         super(material, ArmorItem.Type.HELMET, new Properties().stacksTo(1));
@@ -77,6 +78,11 @@ public class SmartGlassesItem extends ArmorItem {
 
     public Object createCurioCap(ItemStack stack) {
         return new SmartGlassesCurio(this, stack);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     @Override

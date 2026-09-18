@@ -8,9 +8,9 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.LuaTable;
 import dan200.computercraft.api.lua.MethodResult;
 import de.srendi.advancedperipherals.common.entity.SmartChestHand;
-import de.srendi.advancedperipherals.common.items.SmartChestMountItem;
+import de.srendi.advancedperipherals.common.items.SmartChestplateItem;
 import de.srendi.advancedperipherals.common.setup.APComputerComponents;
-import de.srendi.advancedperipherals.common.smartchestmount.SmartChestMountItemHandler;
+import de.srendi.advancedperipherals.common.smartchestplate.SmartChestplateItemHandler;
 import de.srendi.advancedperipherals.common.util.CoordUtil;
 import de.srendi.advancedperipherals.common.util.EmptyLuaTable;
 import de.srendi.advancedperipherals.common.util.LuaArgsHelper;
@@ -115,7 +115,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
     private ItemStack getSmartChest() {
         Entity entity = this.getComputer().getEntity();
         if (entity instanceof LivingEntity livingEntity) {
-            return SmartChestMountItem.getEquipped(livingEntity);
+            return SmartChestplateItem.getEquipped(livingEntity);
         }
         return ItemStack.EMPTY;
     }
@@ -126,7 +126,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
         if (stack.isEmpty()) {
             return MethodResult.of(false, "SMART_CHEST_NOT_EQUIPPED");
         }
-        return MethodResult.of(true, SmartChestMountItemHandler.SLOTS);
+        return MethodResult.of(true, SmartChestplateItemHandler.SLOTS);
     }
 
     @LuaFunction(mainThread = true)
@@ -151,7 +151,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
         }
 
         IItemHandler inventoryFrom = this.getOwnerInventory();
-        IItemHandler inventoryTo = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
+        IItemHandler inventoryTo = ((SmartChestplateItem) stack.getItem()).createItemHandlerCap(stack);
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 
@@ -168,7 +168,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
         }
 
         IItemHandler inventoryTo = this.getOwnerInventory();
-        IItemHandler inventoryFrom = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
+        IItemHandler inventoryFrom = ((SmartChestplateItem) stack.getItem()).createItemHandlerCap(stack);
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 
@@ -179,15 +179,15 @@ public final class SmartGlassesAPI implements ILuaAPI {
         if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        ItemStack stack = SmartChestplateItem.getEquipped(livingEntity);
         if (stack.isEmpty()) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+        if (index < 0 || index >= SmartChestplateItemHandler.SLOTS) {
             return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
         }
 
-        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestplateItem.DataStorage chestData = this.getComputer().chestDataStorage;
         SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
         Vector3f pos = hand.getRelativePos();
         return MethodResult.of(pos.x, pos.y, pos.z, hand.getXRot(), hand.getYRot());
@@ -200,17 +200,17 @@ public final class SmartGlassesAPI implements ILuaAPI {
         if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
             return MethodResult.of(false, "SMART_CHEST_NOT_EQUIPPED");
         }
-        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        ItemStack stack = SmartChestplateItem.getEquipped(livingEntity);
         if (stack.isEmpty()) {
             return MethodResult.of(false, "SMART_CHEST_NOT_EQUIPPED");
         }
-        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+        if (index < 0 || index >= SmartChestplateItemHandler.SLOTS) {
             return MethodResult.of(false, "HAND_DOES_NOT_EXISTS");
         }
 
         LuaTable<?, ?> optionsMap = EmptyLuaTable.orEmpty(options);
 
-        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestplateItem.DataStorage chestData = this.getComputer().chestDataStorage;
         SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
         if (optionsMap.containsKey("x") || optionsMap.containsKey("y") || optionsMap.containsKey("z")) {
             float x = (float) optionsMap.getFiniteDouble("x");
@@ -236,16 +236,16 @@ public final class SmartGlassesAPI implements ILuaAPI {
         if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        ItemStack stack = SmartChestplateItem.getEquipped(livingEntity);
         if (stack.isEmpty()) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
 
-        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+        if (index < 0 || index >= SmartChestplateItemHandler.SLOTS) {
             return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
         }
 
-        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestplateItem.DataStorage chestData = this.getComputer().chestDataStorage;
         SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
         Level level = hand.level();
 
@@ -253,7 +253,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
             return MethodResult.of(null, "ACTION_CONFLICT");
         }
 
-        IItemHandlerModifiable chestItemHandler = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
+        IItemHandlerModifiable chestItemHandler = ((SmartChestplateItem) stack.getItem()).createItemHandlerCap(stack);
         ItemStack extracted = chestItemHandler.extractItem(index, optCount.orElse(Integer.MAX_VALUE), false);
         if (extracted.isEmpty()) {
             return MethodResult.of(0);
@@ -304,16 +304,16 @@ public final class SmartGlassesAPI implements ILuaAPI {
         if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        ItemStack stack = SmartChestplateItem.getEquipped(livingEntity);
         if (stack.isEmpty()) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+        if (index < 0 || index >= SmartChestplateItemHandler.SLOTS) {
             return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
         }
 
-        IItemHandlerModifiable chestItemHandler = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
-        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        IItemHandlerModifiable chestItemHandler = ((SmartChestplateItem) stack.getItem()).createItemHandlerCap(stack);
+        SmartChestplateItem.DataStorage chestData = this.getComputer().chestDataStorage;
         SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
         Level level = hand.level();
 
@@ -397,11 +397,11 @@ public final class SmartGlassesAPI implements ILuaAPI {
         if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        ItemStack stack = SmartChestplateItem.getEquipped(livingEntity);
         if (stack.isEmpty()) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+        if (index < 0 || index >= SmartChestplateItemHandler.SLOTS) {
             return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
         }
 
@@ -409,7 +409,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
         boolean sneak = options.optBoolean("sneak").orElse(false);
         boolean ground = options.optBoolean("ground").orElse(false);
 
-        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestplateItem.DataStorage chestData = this.getComputer().chestDataStorage;
         SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
 
         return hand.doAction(
@@ -451,18 +451,18 @@ public final class SmartGlassesAPI implements ILuaAPI {
         if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        ItemStack stack = SmartChestplateItem.getEquipped(livingEntity);
         if (stack.isEmpty()) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+        if (index < 0 || index >= SmartChestplateItemHandler.SLOTS) {
             return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
         }
 
         LuaTable<?, ?> options = EmptyLuaTable.orEmpty(optionsMap);
         boolean sneak = options.optBoolean("sneak").orElse(false);
 
-        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestplateItem.DataStorage chestData = this.getComputer().chestDataStorage;
         SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
 
         return hand.doAction(
@@ -511,18 +511,18 @@ public final class SmartGlassesAPI implements ILuaAPI {
         if (!(this.getComputer().getEntity() instanceof LivingEntity livingEntity)) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        ItemStack stack = SmartChestMountItem.getEquipped(livingEntity);
+        ItemStack stack = SmartChestplateItem.getEquipped(livingEntity);
         if (stack.isEmpty()) {
             return MethodResult.of(null, "SMART_CHEST_NOT_EQUIPPED");
         }
-        if (index < 0 || index >= SmartChestMountItemHandler.SLOTS) {
+        if (index < 0 || index >= SmartChestplateItemHandler.SLOTS) {
             return MethodResult.of(null, "HAND_DOES_NOT_EXISTS");
         }
 
         LuaTable<?, ?> options = EmptyLuaTable.orEmpty(optionsMap);
         boolean sneak = options.optBoolean("sneak").orElse(false);
 
-        SmartChestMountItem.DataStorage chestData = this.getComputer().chestDataStorage;
+        SmartChestplateItem.DataStorage chestData = this.getComputer().chestDataStorage;
         SmartChestHand hand = chestData.getOrCreateHand(index, livingEntity, stack);
 
         return hand.doAction(

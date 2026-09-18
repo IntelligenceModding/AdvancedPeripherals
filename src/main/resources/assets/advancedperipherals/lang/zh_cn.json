@@ -88,6 +88,8 @@
   "item.advancedperipherals.overpowered_husbandry_automata_core.tooltip": "&7改进的畜牧业自动核心版本，提供了一些强大的用途！小心，升级非常脆弱。",
   "item.advancedperipherals.overpowered_weak_automata_core": "过载的弱自动化核心",
   "item.advancedperipherals.overpowered_weak_automata_core.tooltip": "&7改进的弱自动核心版本，提供了一些强大的用途！小心，升级非常脆弱。",
+  "item.advancedperipherals.smart_chestplate": "智能胸甲",
+  "item.advancedperipherals.smart_chestplate.tooltip": "&7一个先进的胸甲, 具备可使用智能眼镜控制的伸缩机械手.",
   "item.advancedperipherals.smart_glasses": "智能眼镜",
   "item.advancedperipherals.smart_glasses.tooltip": "&7一个可用多种外设和模块扩展的移动电脑",
   "item.advancedperipherals.smart_glasses_interface": "智能眼镜接口",

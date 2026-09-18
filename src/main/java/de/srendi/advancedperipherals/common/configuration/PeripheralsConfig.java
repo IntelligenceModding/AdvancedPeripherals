@@ -115,6 +115,9 @@ public class PeripheralsConfig implements IAPConfig {
     // Pocket Peripherals
     public final ModConfigSpec.BooleanValue disablePocketFuelConsumption;
 
+    // Smart Chestplate
+    public final ModConfigSpec.BooleanValue disableSmartChestplate;
+
     //// CONFIGS END ////
 
     private final ModConfigSpec configSpec;
@@ -365,6 +368,12 @@ public class PeripheralsConfig implements IAPConfig {
         disablePocketFuelConsumption = builder
             .comment("If true, pockets will have infinite fuel")
             .define("disablePocketFuelConsumption", true);
+
+        pop("Smart_Chest", builder);
+
+        disableSmartChestplate = builder
+            .comment("If true, smart chestplate and its abilities will be disabled")
+            .define("disableSmartChestplate", false);
 
         pop("Operations", builder);
 

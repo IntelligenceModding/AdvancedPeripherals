@@ -11,7 +11,6 @@ import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import org.apache.logging.log4j.Level;
@@ -21,7 +20,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.Random;
 
 @Mod(AdvancedPeripherals.MOD_ID)
-@EventBusSubscriber
 public class AdvancedPeripherals {
 
     public static final String MOD_ID = "advancedperipherals";

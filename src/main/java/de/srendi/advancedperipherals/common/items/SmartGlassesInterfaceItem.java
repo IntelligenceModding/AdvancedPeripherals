@@ -16,7 +16,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 public class SmartGlassesInterfaceItem extends BaseItem {
-
     public SmartGlassesInterfaceItem() {
         super(new Properties().stacksTo(1));
     }

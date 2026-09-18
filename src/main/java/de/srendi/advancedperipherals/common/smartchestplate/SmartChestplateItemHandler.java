@@ -1,4 +1,4 @@
-package de.srendi.advancedperipherals.common.smartchestmount;
+package de.srendi.advancedperipherals.common.smartchestplate;
 
 import de.srendi.advancedperipherals.common.component.ItemStackStorage;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
@@ -6,13 +6,13 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
-public class SmartChestMountItemHandler implements IItemHandlerModifiable {
+public class SmartChestplateItemHandler implements IItemHandlerModifiable {
     public static final int SLOTS = 5;
     private static final ItemStackStorage EMPTY_ITEMS = ItemStackStorage.ofSize(SLOTS);
 
     private final ItemStack stack;
 
-    public SmartChestMountItemHandler(ItemStack stack) {
+    public SmartChestplateItemHandler(ItemStack stack) {
         this.stack = stack;
     }
 

@@ -1,7 +1,7 @@
 package de.srendi.advancedperipherals.common.util.fakeplayer;
 
 import dan200.computercraft.api.lua.LuaException;
-import de.srendi.advancedperipherals.common.items.SmartChestMountItem;
+import de.srendi.advancedperipherals.common.items.SmartChestplateItem;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -31,7 +31,7 @@ public class SmartHandFakePlayerProvider {
     }
 
     public static <T> T doAction(LivingEntity entity, int index, Vec3 position, ItemStack chestStack, APFakePlayer.Action<T> action) throws LuaException {
-        IItemHandlerModifiable chestItemHandler = ((SmartChestMountItem) chestStack.getItem()).createItemHandlerCap(chestStack);
+        IItemHandlerModifiable chestItemHandler = ((SmartChestplateItem) chestStack.getItem()).createItemHandlerCap(chestStack);
         APFakePlayer player = getOrCreateFakePlayer(entity);
         player.moveTo(position);
         Inventory inventory = player.getInventory();

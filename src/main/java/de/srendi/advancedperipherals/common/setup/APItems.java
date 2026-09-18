@@ -7,7 +7,7 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.APItem;
 import de.srendi.advancedperipherals.common.items.KeyboardItem;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;
-import de.srendi.advancedperipherals.common.items.SmartChestMountItem;
+import de.srendi.advancedperipherals.common.items.SmartChestplateItem;
 import de.srendi.advancedperipherals.common.items.SmartGlassesInterfaceItem;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.items.WeakAutomataCore;
@@ -62,9 +62,9 @@ public class APItems {
     @DefaultTranslation("Smart Glasses Interface")
     @DefaultTooltip("&7Can access equipped smart glasses without taking it off!")
     public static final DeferredHolder<Item, SmartGlassesInterfaceItem> SMART_GLASSES_INTERFACE = APRegistration.ITEMS.register("smart_glasses_interface", SmartGlassesInterfaceItem::new);
-    @DefaultTranslation("Smart Chest Mount")
-    @DefaultTooltip("&7An advanced chestplate that can be controlled by Smart Glasses.")
-    public static final DeferredHolder<Item, SmartChestMountItem> SMART_CHESTMOUNT = APRegistration.ITEMS.register("smart_chestmount", () -> new SmartChestMountItem(ArmorMaterials.NETHERITE));
+    @DefaultTranslation("Smart Chestplate")
+    @DefaultTooltip("&7An advanced chestplate that provides extendable hands can be controlled by Smart Glasses.")
+    public static final DeferredHolder<Item, SmartChestplateItem> SMART_CHESTPLATE = APRegistration.ITEMS.register("smart_chestplate", () -> new SmartChestplateItem(ArmorMaterials.NETHERITE));
 
     @DefaultTranslation("Hotkey Module")
     @DefaultTooltip("&7Capture a predefined key and forward it as an event.")

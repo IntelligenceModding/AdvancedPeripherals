@@ -8,7 +8,7 @@ import dan200.computercraft.impl.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import dan200.computercraft.shared.computer.core.TerminalSize;
 import de.srendi.advancedperipherals.common.component.ItemStackStorage;
-import de.srendi.advancedperipherals.common.items.SmartChestMountItem;
+import de.srendi.advancedperipherals.common.items.SmartChestplateItem;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APComputerComponents;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
@@ -54,7 +54,7 @@ public class SmartGlassesComputer extends ServerComputer {
     private volatile boolean modulesUpdated = false;
     private volatile boolean moduleDatasUpdated = false;
 
-    public SmartChestMountItem.DataStorage chestDataStorage = new SmartChestMountItem.DataStorage();
+    public SmartChestplateItem.DataStorage chestDataStorage = new SmartChestplateItem.DataStorage();
 
     protected SmartGlassesComputer(ServerLevel level, BlockPos pos, ServerComputer.Properties properties, ItemStack stack) {
         super(level, pos, properties);
@@ -308,9 +308,9 @@ public class SmartGlassesComputer extends ServerComputer {
             }
         }
         if (entity instanceof LivingEntity livingEntity) {
-            ItemStack chestStack = SmartChestMountItem.getEquipped(livingEntity);
+            ItemStack chestStack = SmartChestplateItem.getEquipped(livingEntity);
             if (!chestStack.isEmpty()) {
-                ((SmartChestMountItem) chestStack.getItem()).onActiveTick(
+                ((SmartChestplateItem) chestStack.getItem()).onActiveTick(
                     chestStack, (ServerLevel) livingEntity.level(), livingEntity, this.chestDataStorage
                 );
             }
