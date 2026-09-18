@@ -6,19 +6,14 @@ import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
 import de.srendi.advancedperipherals.common.addons.computercraft.integrations.IntegrationPeripheralProvider;
 import de.srendi.advancedperipherals.common.addons.refinedstorage.RSApi;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import de.srendi.advancedperipherals.common.util.ChunkManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,17 +86,5 @@ public class AdvancedPeripherals {
         }
 
         modBus.addListener(IntegrationPeripheralProvider::registerBlockIntegrations);
-    }
-
-    @SubscribeEvent
-    public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
-        ItemStack stack = event.getFrom();
-        ItemStack newStack = event.getTo();
-        if (stack.getItem() instanceof SmartGlassesItem glassesItem) {
-            if (newStack.getItem() == glassesItem && SmartGlassesItem.getComputerID(stack) == SmartGlassesItem.getComputerID(newStack)) {
-                return;
-            }
-            glassesItem.onUnequip(stack, (ServerLevel) event.getEntity().level(), event.getEntity());
-        }
     }
 }

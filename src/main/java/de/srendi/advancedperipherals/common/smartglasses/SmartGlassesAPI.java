@@ -150,8 +150,8 @@ public final class SmartGlassesAPI implements ILuaAPI {
             return MethodResult.of(null, filter.right());
         }
 
-        IItemHandler inventoryTo = this.getOwnerInventory();
-        IItemHandler inventoryFrom = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
+        IItemHandler inventoryFrom = this.getOwnerInventory();
+        IItemHandler inventoryTo = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 
@@ -167,8 +167,8 @@ public final class SmartGlassesAPI implements ILuaAPI {
             return MethodResult.of(null, filter.right());
         }
 
-        IItemHandler inventoryFrom = this.getOwnerInventory();
-        IItemHandler inventoryTo = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
+        IItemHandler inventoryTo = this.getOwnerInventory();
+        IItemHandler inventoryFrom = ((SmartChestMountItem) stack.getItem()).createItemHandlerCap(stack);
         return MethodResult.of(ItemUtil.moveItem(inventoryFrom, inventoryTo, filter.left()));
     }
 
