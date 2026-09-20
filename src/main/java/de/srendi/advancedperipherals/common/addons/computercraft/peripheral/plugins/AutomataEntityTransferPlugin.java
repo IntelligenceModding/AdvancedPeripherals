@@ -95,7 +95,7 @@ public class AutomataEntityTransferPlugin extends AutomataCorePlugin {
         float yaw = options.optDouble("yaw").orElse(0d).floatValue();
         float pitch = options.optDouble("pitch").orElse(0d).floatValue();
 
-        HitResult entityHit = automataCore.getPeripheralOwner().withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
+        HitResult entityHit = automataCore.getPeripheralOwner().withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(APFakePlayer.RayCastContext.ENTITY, suitableEntity)));
         if (entityHit.getType() == HitResult.Type.MISS)
             return MethodResult.of(null, "Nothing found");
         return automataCore.withOperation(CAPTURE_ANIMAL, context -> {

@@ -82,7 +82,8 @@ public class APFakePlayer extends FakePlayer {
         }
     }
 
-    public void setSourceBlock(BlockPos pos) {
+    public void setSourceBlock(ServerLevel level, BlockPos pos) {
+        this.setServerLevel(level);
         this.source = pos;
     }
 
@@ -240,7 +241,7 @@ public class APFakePlayer extends FakePlayer {
 
     public Pair<Boolean, String> digBlock() {
         Level world = level();
-        HitResult hit = findHit(true, false);
+        HitResult hit = findHit(RayCastContext.BLOCK);
         if (!(hit instanceof BlockHitResult blockHit) || hit.getType() == HitResult.Type.MISS) {
             return Pair.of(false, "Nothing to break");
         }
@@ -293,15 +294,15 @@ public class APFakePlayer extends FakePlayer {
     }
 
     public InteractionResult useOnBlock() {
-        return use(true, false);
+        return use(RayCastContext.BLOCK);
     }
 
     public InteractionResult useOnEntity() {
-        return use(false, true);
+        return use(RayCastContext.ENTITY);
     }
 
     public InteractionResult useOnFilteredEntity(Predicate<Entity> filter) {
-        return use(false, true, filter);
+        return use(RayCastContext.ENTITY, filter);
     }
 
     public InteractionResult useOnSpecificEntity(@NotNull Entity entity, HitResult result) {
@@ -316,12 +317,12 @@ public class APFakePlayer extends FakePlayer {
         return entity.interactAt(this, result.getLocation(), InteractionHand.MAIN_HAND);
     }
 
-    public InteractionResult use(boolean skipEntity, boolean skipBlock) {
-        return use(skipEntity, skipBlock, (e) -> !e.isSpectator() && e.isPickable());
+    public InteractionResult use(RayCastContext context) {
+        return use(context, (e) -> !e.isSpectator() && e.isPickable());
     }
 
-    public InteractionResult use(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
-        HitResult hit = findHit(skipEntity, skipBlock, entityFilter);
+    public InteractionResult use(RayCastContext context, @Nullable Predicate<Entity> entityFilter) {
+        HitResult hit = findHit(context, entityFilter);
 
         if (hit instanceof BlockHitResult blockHit) {
             ItemStack stack = getMainHandItem();
@@ -374,45 +375,37 @@ public class APFakePlayer extends FakePlayer {
         return InteractionResult.FAIL;
     }
 
-    public HitResult findHit(boolean skipEntity, boolean skipBlock) {
-        return findHit(skipEntity, skipBlock, DEFAULT_ENTITY_FILTER);
+    public HitResult findHit(RayCastContext context) {
+        return findHit(context, DEFAULT_ENTITY_FILTER);
     }
 
     @NotNull
-    public HitResult findHit(boolean skipEntity, boolean skipBlock, @NotNull Predicate<Entity> entityFilter) {
+    public HitResult findHit(RayCastContext context, @Nullable Predicate<Entity> entityFilter) {
         double range = this.getReachRange();
         Vec3 origin = new Vec3(this.getX(), this.getY(), this.getZ());
         Vec3 look = this.getLookAngle();
         Vec3 target = new Vec3(origin.x + look.x * range, origin.y + look.y * range, origin.z + look.z * range);
 
         BlockHitResult blockHit;
-        if (skipBlock) {
+        if (context.checkBlock()) {
+            blockHit = HitResultUtil.getBlockHitResult(origin, target, level(), ClipContext.Block.OUTLINE, this.source);
+        } else {
             Direction traceDirection = Direction.getNearest(look);
             blockHit = BlockHitResult.miss(target, traceDirection, BlockPos.containing(target));
-        } else {
-            blockHit = HitResultUtil.getBlockHitResult(origin, target, level(), ClipContext.Block.OUTLINE, this.source);
         }
 
-        if (skipEntity) {
+        if (!context.checkEntity()) {
             return blockHit;
         }
 
         List<Entity> entities = level().getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1), DEFAULT_ENTITY_FILTER);
 
-        LivingEntity closestEntity = null;
+        Entity closestEntity = null;
         Vec3 closestVec = null;
         double closestDistance = blockHit.getType() == HitResult.Type.MISS ? range * range : distanceToSqr(blockHit.getLocation());
-        for (Entity entityHit : entities) {
-            if (!(entityHit instanceof LivingEntity entity)) {
-                continue;
-            }
+        for (Entity entity : entities) {
             // TODO: maybe let entityFilter returns the priority of the entity, instead of only returns the closest one.
             if (entityFilter != null && !entityFilter.test(entity)) {
-                continue;
-            }
-
-            // Hit vehicle before passenger
-            if (entity.isPassenger()) {
                 continue;
             }
 
@@ -454,6 +447,28 @@ public class APFakePlayer extends FakePlayer {
     @FunctionalInterface
     public interface Action<T> {
         T apply(APFakePlayer player) throws LuaException;
+    }
+
+    public enum RayCastContext {
+        BLOCK(true, false),
+        ENTITY(false, true),
+        BOTH(true, true);
+
+        private final boolean block;
+        private final boolean entity;
+
+        RayCastContext(boolean block, boolean entity) {
+            this.block = block;
+            this.entity = entity;
+        }
+
+        public boolean checkBlock() {
+            return this.block;
+        }
+
+        public boolean checkEntity() {
+            return this.entity;
+        }
     }
 
     private static class RedirectedDamageSources extends DamageSources {

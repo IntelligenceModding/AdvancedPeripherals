@@ -17,18 +17,23 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.WeakHashMap;
 
-public final class FakePlayerProviderTurtle {
+public final class TurtleFakePlayerProvider {
 
     /*
     Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/integration/computercraft/FakePlayerProviderTurtle.java
     */
-    private static final WeakHashMap<ITurtleAccess, APFakePlayer> registeredPlayers = new WeakHashMap<>();
+    private static final WeakHashMap<ITurtleAccess, APFakePlayer> PLAYERS = new WeakHashMap<>();
 
-    private FakePlayerProviderTurtle() {
+    private TurtleFakePlayerProvider() {
     }
 
     public static APFakePlayer getPlayer(ITurtleAccess turtle, GameProfile profile) {
-        return registeredPlayers.computeIfAbsent(turtle, iTurtleAccess -> new APFakePlayer((ServerLevel) turtle.getLevel(), null, profile));
+        APFakePlayer player = PLAYERS.computeIfAbsent(
+            turtle,
+            access -> new APFakePlayer((ServerLevel) access.getLevel(), null, profile)
+        );
+        player.setSourceBlock((ServerLevel) turtle.getLevel(), turtle.getPosition());
+        return player;
     }
 
     public static void load(APFakePlayer player, ITurtleAccess turtle) {

@@ -20,14 +20,16 @@ public class SmartHandFakePlayerProvider {
     private SmartHandFakePlayerProvider() {}
 
     public static APFakePlayer getOrCreateFakePlayer(LivingEntity entity) {
-        return PLAYERS.computeIfAbsent(
+        APFakePlayer player = PLAYERS.computeIfAbsent(
             entity,
             (e) -> new APFakePlayer(
                 (ServerLevel) e.level(),
                 e,
-                e instanceof ServerPlayer player ? player.getGameProfile() : APFakePlayer.PROFILE
+                e instanceof ServerPlayer p ? p.getGameProfile() : APFakePlayer.PROFILE
             )
         );
+        player.setServerLevel((ServerLevel) entity.level());
+        return player;
     }
 
     public static <T> T doAction(LivingEntity entity, int index, Vec3 position, ItemStack chestStack, APFakePlayer.Action<T> action) throws LuaException {

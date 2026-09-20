@@ -45,6 +45,7 @@ public class SmartChestHand extends Entity {
 
     private BlockPos breakingPos = null;
     private float breakingProg = 0;
+    private int breakingTicks = 0;
 
     public SmartChestHand(EntityType<?> type, Level level) {
         super(type, level);
@@ -142,6 +143,7 @@ public class SmartChestHand extends Entity {
     }
 
     public float breaking(BlockPos pos, float speed) {
+        this.breakingTicks = 0;
         if (!pos.equals(this.breakingPos)) {
             this.breakingPos = pos;
             this.breakingProg = 0;
@@ -183,6 +185,14 @@ public class SmartChestHand extends Entity {
         }
         this.didAction = false;
         this.attackStrengthTicker++;
+        if (this.breakingProg > 0) {
+            this.breakingTicks++;
+            if (this.breakingTicks > 20) {
+                this.breakingPos = null;
+                this.breakingProg = 0;
+                this.breakingTicks = 0;
+            }
+        }
     }
 
     public MethodResult doAction(APFakePlayer.Action<MethodResult> action) throws LuaException {
@@ -226,7 +236,14 @@ public class SmartChestHand extends Entity {
                 return;
             }
             poseStack.pushPose();
-            poseStack.mulPose(new Quaternionf().rotationYXZ(Mth.DEG_TO_RAD * (180 - entity.getYRot()), Mth.DEG_TO_RAD * entity.getXRot(), 0));
+            poseStack.mulPose(
+                new Quaternionf()
+                    .rotationYXZ(
+                        Mth.DEG_TO_RAD * (180 - entity.getViewYRot(partialTick)),
+                        Mth.DEG_TO_RAD * entity.getViewXRot(partialTick),
+                        0
+                    )
+            );
             this.itemRenderer.renderStatic(
                 null,
                 stack,

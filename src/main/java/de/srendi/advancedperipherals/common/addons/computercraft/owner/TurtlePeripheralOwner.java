@@ -8,7 +8,7 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.shared.util.InventoryUtil;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
-import de.srendi.advancedperipherals.common.util.fakeplayer.FakePlayerProviderTurtle;
+import de.srendi.advancedperipherals.common.util.fakeplayer.TurtleFakePlayerProvider;
 import de.srendi.advancedperipherals.lib.peripherals.AbstractDataStorage;
 import de.srendi.advancedperipherals.lib.peripherals.IBasePeripheral;
 import net.minecraft.core.BlockPos;
@@ -117,7 +117,7 @@ public class TurtlePeripheralOwner extends BasePeripheralOwner {
 
     @Override
     public <T> T withPlayer(APFakePlayer.Action<T> function) throws LuaException {
-        return FakePlayerProviderTurtle.withPlayer(turtle, function);
+        return TurtleFakePlayerProvider.withPlayer(turtle, function);
     }
 
     @Override

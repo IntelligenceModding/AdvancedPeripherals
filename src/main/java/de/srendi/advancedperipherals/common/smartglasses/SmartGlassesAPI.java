@@ -421,7 +421,10 @@ public final class SmartGlassesAPI implements ILuaAPI {
                         return MethodResult.of(null, "TOOL_REQUIRED");
                     }
 
-                    HitResult hitResult = player.findHit(false, true, (e) -> e.isAlive() && e.isPickable() && e != livingEntity);
+                    HitResult hitResult = player.findHit(
+                        APFakePlayer.RayCastContext.ENTITY,
+                        (e) -> e.isAlive() && e.isPickable() && e != livingEntity
+                    );
                     if (hitResult.getType() != HitResult.Type.ENTITY) {
                         return MethodResult.of(null, "NO_ENTITY_FOUND");
                     }
@@ -475,7 +478,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
                         return MethodResult.of(null, "TOOL_REQUIRED");
                     }
 
-                    HitResult hitResult = player.findHit(true, false);
+                    HitResult hitResult = player.findHit(APFakePlayer.RayCastContext.BLOCK);
                     if (hitResult.getType() != HitResult.Type.BLOCK) {
                         return MethodResult.of(null, "NO_BLOCK_FOUND");
                     }
@@ -492,6 +495,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
 
                     player.resetAttackStrengthTicker();
                     hand.resetAttackStrengthTicker();
+                    player.setOnGround(true);
 
                     float prog = destroySpeed == 0 ? 1 : hand.breaking(target, state.getDestroyProgress(player, level, target));
                     if (prog >= 1) {
@@ -529,7 +533,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
             APFakePlayer.wrapActionWithShiftKey(
                 sneak,
                 (player) -> {
-                    InteractionResult result = player.use(false, false);
+                    InteractionResult result = player.use(APFakePlayer.RayCastContext.BOTH);
                     return MethodResult.of(result.consumesAction(), result.name());
                 }
             )

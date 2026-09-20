@@ -17,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
@@ -177,6 +178,7 @@ public class ClientEventSubscriber {
         event.setCanceled(true);
 
         BlockPos hitBlock = null;
+        Direction hitBlockFace = null;
         UUID hitEntity = null;
 
         float partialTicks = minecraft.getTimer().getGameTimeDeltaTicks();
@@ -186,12 +188,13 @@ public class ClientEventSubscriber {
         HitResult hitResultBlock = player.pick(reachRange, partialTicks, false);
         if (hitResultBlock instanceof BlockHitResult result && result.getType() == HitResult.Type.BLOCK) {
             hitBlock = result.getBlockPos();
+            hitBlockFace = result.getDirection();
         }
         EntityHitResult hitResultEntity = HitResultUtil.getEntityHitResult(playerEyes, playerEyes.add(player.getViewVector(partialTicks).scale(reachRange)), player.level(), player);
         if (hitResultEntity.getType() == HitResult.Type.ENTITY) {
             hitEntity = hitResultEntity.getEntity().getUUID();
         }
 
-        PacketDistributor.sendToServer(new PlayerInteractionPacket(button + 1, hitBlock, hitEntity));
+        PacketDistributor.sendToServer(new PlayerInteractionPacket(button + 1, hitBlock, hitBlockFace, hitEntity));
     }
 }

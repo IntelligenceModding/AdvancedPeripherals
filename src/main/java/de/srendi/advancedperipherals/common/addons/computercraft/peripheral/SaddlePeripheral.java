@@ -159,7 +159,7 @@ public class SaddlePeripheral extends BasePeripheral<TurtlePeripheralOwner> {
                 suitableEntity = suitableEntity.and((entity) -> !(entity instanceof Player));
             }
             final Predicate<Entity> finalSuitableEntity = suitableEntity;
-            final APFakePlayer.Action<HitResult> action = (player) -> player.findHit(false, true, finalSuitableEntity);
+            final APFakePlayer.Action<HitResult> action = (player) -> player.findHit(APFakePlayer.RayCastContext.ENTITY, finalSuitableEntity);
             HitResult entityHit = owner.withPlayer(action);
             if (entityHit.getType() == HitResult.Type.MISS) {
                 entityHit = owner.withPlayer(APFakePlayer.wrapActionWithReachRange(1, APFakePlayer.wrapActionWithRot(0, -90, action)));

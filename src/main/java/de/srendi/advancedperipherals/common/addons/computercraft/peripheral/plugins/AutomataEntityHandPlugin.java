@@ -71,7 +71,7 @@ public class AutomataEntityHandPlugin extends AutomataCorePlugin {
 
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        HitResult entityHit = owner.withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true, suitableEntity)));
+        HitResult entityHit = owner.withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(APFakePlayer.RayCastContext.ENTITY, suitableEntity)));
         if (entityHit.getType() == HitResult.Type.MISS) {
             return MethodResult.of(null, "Nothing found");
         }
