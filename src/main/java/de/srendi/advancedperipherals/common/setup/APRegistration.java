@@ -1,18 +1,16 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import dan200.computercraft.api.media.MediaCapability;
-import dan200.computercraft.api.peripheral.PeripheralCapability;
 import dan200.computercraft.api.pocket.IPocketUpgrade;
 import dan200.computercraft.api.turtle.ITurtleUpgrade;
 import dan200.computercraft.api.upgrades.UpgradeType;
 import dan200.computercraft.shared.media.MountMedia;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
-import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProviders;
+import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProvider;
 import de.srendi.advancedperipherals.common.items.SmartChestplateItem;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.smartglasses.modules.overlay.OverlayObjectType;
-import mekanism.api.chemical.IChemicalHandler;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -92,45 +90,8 @@ public class APRegistration {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         BLOCK_ENTITIES.getEntries().forEach((entry) -> {
-            @SuppressWarnings("rawtypes")
-            BlockEntityType beType = entry.get();
-
-            event.registerBlockEntity(
-                PeripheralCapability.get(),
-                beType,
-                (blockEntity, side) -> blockEntity instanceof BlockCapabilityProviders.Peripheral provider
-                    ? provider.createPeripheralCap(side)
-                    : null
-            );
-            event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                beType,
-                (blockEntity, side) -> blockEntity instanceof BlockCapabilityProviders.ItemHandler provider
-                    ? provider.createItemHandlerCap(side)
-                    : null
-            );
-            event.registerBlockEntity(
-                Capabilities.FluidHandler.BLOCK,
-                beType,
-                (blockEntity, side) -> blockEntity instanceof BlockCapabilityProviders.FluidHandler provider
-                    ? provider.createFluidHandlerCap(side)
-                    : null
-            );
-            event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
-                beType,
-                (blockEntity, side) -> blockEntity instanceof BlockCapabilityProviders.EnergyStorage provider
-                    ? provider.createEnergyStorageCap(side)
-                    : null
-            );
-            if (APAddon.MEKANISM.isLoaded()) {
-                event.registerBlockEntity(
-                    mekanism.common.capabilities.Capabilities.CHEMICAL.block(),
-                    beType,
-                    (blockEntity, side) -> blockEntity instanceof BlockCapabilityProviders.ChemicalHandler provider
-                        ? (IChemicalHandler) provider.createChemicalHandlerCap(side)
-                        : null
-                );
+            if (entry.get() instanceof BlockCapabilityProvider provider) {
+                provider.registerCapabilities(event);
             }
         });
 

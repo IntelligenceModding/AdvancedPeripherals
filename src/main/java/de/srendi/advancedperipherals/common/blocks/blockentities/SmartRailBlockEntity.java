@@ -1,9 +1,10 @@
 package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.api.peripheral.PeripheralCapability;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.SmartRailPeripheral;
 import de.srendi.advancedperipherals.common.blocks.SmartRailBlock;
-import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProviders;
+import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProvider;
 import de.srendi.advancedperipherals.common.blocks.base.VarNameable;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
@@ -26,12 +27,14 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
-public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBlockEntity, BlockCapabilityProviders.Peripheral, VarNameable {
+public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBlockEntity, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     private static final String ACTIVATING_KEY = "activating";
     private static final String STATE_KEY = "state";
@@ -99,7 +102,6 @@ public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBloc
         );
     }
 
-    @Override
     @Nullable
     public IPeripheral createPeripheralCap(@Nullable Direction side) {
         if (this.peripheral == null) {
@@ -224,5 +226,20 @@ public class SmartRailBlockEntity extends BlockEntity implements IPeripheralBloc
             pos.getY() + 1 - shrinkRange,
             pos.getZ() + 1 - shrinkRange
         );
+    }
+
+    public static class Type<T extends SmartRailBlockEntity> extends BlockEntityType<T> implements BlockCapabilityProvider {
+        public Type(BlockEntitySupplier<? extends T> factory, Set<Block> validBlocks, com.mojang.datafixers.types.Type<?> dataType) {
+            super(factory, validBlocks, dataType);
+        }
+
+        @Override
+        public void registerCapabilities(RegisterCapabilitiesEvent event) {
+            event.registerBlockEntity(
+                PeripheralCapability.get(),
+                this,
+                (be, side) -> be.createPeripheralCap(side)
+            );
+        }
     }
 }

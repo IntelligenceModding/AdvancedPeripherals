@@ -7,12 +7,16 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 /**
  * @param <T> The storage handle type
@@ -142,5 +146,24 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
     public T getOutputStorage() {
         Direction outputDirection = this.getOutputDirection();
         return level.getCapability(this.capability, worldPosition.relative(outputDirection), outputDirection.getOpposite());
+    }
+
+    public static class Type<T extends BaseDetectorEntity<C, ?, ?>, C> extends PeripheralBlockEntity.Type<T> {
+        private final BlockCapability<C, Direction> capability;
+
+        protected Type(BlockEntitySupplier<? extends T> factory, Set<Block> validBlocks, com.mojang.datafixers.types.Type<?> dataType, BlockCapability<C, Direction> capability) {
+            super(factory, validBlocks, dataType);
+            this.capability = capability;
+        }
+
+        @Override
+        public void registerCapabilities(RegisterCapabilitiesEvent event) {
+            super.registerCapabilities(event);
+            event.registerBlockEntity(
+                this.capability,
+                this,
+                (be, side) -> be.getCapability(side)
+            );
+        }
     }
 }

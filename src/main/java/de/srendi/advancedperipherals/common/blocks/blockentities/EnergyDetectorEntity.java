@@ -2,20 +2,20 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.EnergyDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.BaseDetectorEntity;
-import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProviders;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.proxy.EnergyStorageProxy;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class EnergyDetectorEntity extends BaseDetectorEntity<IEnergyStorage, EnergyStorageProxy, EnergyDetectorPeripheral> implements BlockCapabilityProviders.EnergyStorage {
+import java.util.Set;
+
+public class EnergyDetectorEntity extends BaseDetectorEntity<IEnergyStorage, EnergyStorageProxy, EnergyDetectorPeripheral> {
 
     private static final EnergyStorage ZERO_STORAGE = new EnergyStorage(0, 0, 0);
 
@@ -41,9 +41,9 @@ public class EnergyDetectorEntity extends BaseDetectorEntity<IEnergyStorage, Ene
         return ZERO_STORAGE;
     }
 
-    @Override
-    @Nullable
-    public IEnergyStorage createEnergyStorageCap(@Nullable Direction side) {
-        return this.getCapability(side);
+    public static class Type<T extends EnergyDetectorEntity> extends BaseDetectorEntity.Type<T, IEnergyStorage> {
+        public Type(BlockEntitySupplier<? extends T> factory, Set<Block> validBlocks, com.mojang.datafixers.types.Type<?> dataType) {
+            super(factory, validBlocks, dataType, Capabilities.EnergyStorage.BLOCK);
+        }
     }
 }

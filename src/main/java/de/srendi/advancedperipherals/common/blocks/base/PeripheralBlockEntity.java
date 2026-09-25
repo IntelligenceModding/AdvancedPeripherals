@@ -1,6 +1,7 @@
 package de.srendi.advancedperipherals.common.blocks.base;
 
 import dan200.computercraft.api.peripheral.IPeripheral;
+import dan200.computercraft.api.peripheral.PeripheralCapability;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.DisabledPeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralBlockEntity;
@@ -17,24 +18,29 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, IPeripheralBlockEntity, BlockCapabilityProviders.ItemHandler, BlockCapabilityProviders.Peripheral, VarNameable {
+import java.util.Set;
+
+public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends BaseContainerBlockEntity implements WorldlyContainer, IPeripheralBlockEntity, VarNameable {
     private static final String PERIPHERAL_SETTINGS_KEY = "peripheralSettings";
     protected CompoundTag peripheralSettings = new CompoundTag();
     protected NonNullList<ItemStack> items;
     private IItemHandler itemHandler = null;
     private IPeripheral peripheral = null;
 
-    protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
-        super(tileEntityTypeIn, pos, state);
+    protected PeripheralBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
+        super(blockEntityType, pos, state);
         if (this instanceof IInventoryBlock inventoryBlock) {
             items = NonNullList.withSize(inventoryBlock.getInvSize(), ItemStack.EMPTY);
         } else {
@@ -48,7 +54,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         this.setChanged();
     }
 
-    @Override
     @NotNull
     public IItemHandler createItemHandlerCap(@Nullable Direction side) {
         if (this.itemHandler == null) {
@@ -57,7 +62,6 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         return this.itemHandler;
     }
 
-    @Override
     @NotNull
     public IPeripheral createPeripheralCap(@Nullable Direction side) {
         // Perform later peripheral creation, because creating peripheral
@@ -249,5 +253,25 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
         }
         this.setChanged();
         this.getLevel().sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 0 /* no use on server-side */);
+    }
+
+    public static class Type<T extends PeripheralBlockEntity<?>> extends BlockEntityType<T> implements BlockCapabilityProvider {
+        public Type(BlockEntitySupplier<? extends T> factory, Set<Block> validBlocks, com.mojang.datafixers.types.Type<?> dataType) {
+            super(factory, validBlocks, dataType);
+        }
+
+        @Override
+        public void registerCapabilities(RegisterCapabilitiesEvent event) {
+            event.registerBlockEntity(
+                PeripheralCapability.get(),
+                this,
+                (be, side) -> be.createPeripheralCap(side)
+            );
+            event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                this,
+                (be, side) -> be.createItemHandlerCap(side)
+            );
+        }
     }
 }

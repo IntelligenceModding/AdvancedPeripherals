@@ -12,7 +12,6 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class APContainerTypes {
-
     public static final DeferredHolder<MenuType<?>, MenuType<InventoryManagerContainer>> INVENTORY_MANAGER_CONTAINER = APRegistration.CONTAINER_TYPES.register(
         "memory_card_container",
         () -> IMenuTypeExtension.create((windowId, inv, buf) -> {
@@ -38,7 +37,6 @@ public class APContainerTypes {
         )
     );
 
-    protected static void register() {
+    public static void register() {
     }
-
 }

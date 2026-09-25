@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public abstract class FuelAbility<T extends IPeripheralOwner> implements IOwnerAbility, IPeripheralPlugin {
-    protected static final int MIN_FUEL_CONSUMING_RATE = 1;
+    public static final int MIN_FUEL_CONSUMING_RATE = 1;
 
     protected @NotNull T owner;
 

@@ -95,7 +95,6 @@ public class APItems {
     @DefaultTooltip("&7Provides a lot external file storage via ME Bridge.")
     public static final DeferredHolder<Item, AEDiskCellItem> AE_DISK_CELL_256M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_256m", () -> new AEDiskCellItem(new Item.Properties(), AEDiskCellItem.Tier.DISK_256M)) : null;
 
-    protected static void register() {
+    public static void register() {
     }
-
 }

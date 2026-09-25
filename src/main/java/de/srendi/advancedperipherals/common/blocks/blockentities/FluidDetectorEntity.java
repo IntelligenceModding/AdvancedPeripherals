@@ -2,20 +2,19 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.FluidDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.BaseDetectorEntity;
-import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProviders;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.proxy.FluidStorageProxy;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.Set;
 
-public class FluidDetectorEntity extends BaseDetectorEntity<IFluidHandler, FluidStorageProxy, FluidDetectorPeripheral> implements BlockCapabilityProviders.FluidHandler {
+public class FluidDetectorEntity extends BaseDetectorEntity<IFluidHandler, FluidStorageProxy, FluidDetectorPeripheral> {
 
     private static final FluidTank ZERO_STORAGE = new FluidTank(0);
 
@@ -41,9 +40,9 @@ public class FluidDetectorEntity extends BaseDetectorEntity<IFluidHandler, Fluid
         return ZERO_STORAGE;
     }
 
-    @Override
-    @Nullable
-    public IFluidHandler createFluidHandlerCap(@Nullable Direction side) {
-        return this.getCapability(side);
+    public static class Type<T extends FluidDetectorEntity> extends BaseDetectorEntity.Type<T, IFluidHandler> {
+        public Type(BlockEntitySupplier<? extends T> factory, Set<Block> validBlocks, com.mojang.datafixers.types.Type<?> dataType) {
+            super(factory, validBlocks, dataType, Capabilities.FluidHandler.BLOCK);
+        }
     }
 }

@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.blocks.blockentities;
 
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.GasDetectorPeripheral;
 import de.srendi.advancedperipherals.common.blocks.base.BaseDetectorEntity;
-import de.srendi.advancedperipherals.common.blocks.base.BlockCapabilityProviders;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.util.proxy.GasStorageProxy;
@@ -10,12 +9,12 @@ import de.srendi.advancedperipherals.common.util.proxy.ZeroGasTank;
 import mekanism.api.chemical.IChemicalHandler;
 import mekanism.common.capabilities.Capabilities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.Set;
 
-public class GasDetectorEntity extends BaseDetectorEntity<IChemicalHandler, GasStorageProxy, GasDetectorPeripheral> implements BlockCapabilityProviders.ChemicalHandler {
+public class GasDetectorEntity extends BaseDetectorEntity<IChemicalHandler, GasStorageProxy, GasDetectorPeripheral> {
 
     private static final IChemicalHandler ZERO_STORAGE = new ZeroGasTank();
 
@@ -41,9 +40,9 @@ public class GasDetectorEntity extends BaseDetectorEntity<IChemicalHandler, GasS
         return ZERO_STORAGE;
     }
 
-    @Override
-    @Nullable
-    public Object createChemicalHandlerCap(@Nullable Direction side) {
-        return this.getCapability(side);
+    public static class Type<T extends GasDetectorEntity> extends BaseDetectorEntity.Type<T, IChemicalHandler> {
+        public Type(BlockEntitySupplier<? extends T> factory, Set<Block> validBlocks, com.mojang.datafixers.types.Type<?> dataType) {
+            super(factory, validBlocks, dataType, Capabilities.CHEMICAL.block());
+        }
     }
 }
