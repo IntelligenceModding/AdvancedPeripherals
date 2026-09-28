@@ -69,24 +69,15 @@ public class SmartGlassesCurio implements ICurio {
         return true;
     }
 
-    private static boolean isSmartGlasses(SlotContext context) {
-        final LivingEntity owner = context.entity();
-        if (owner.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof SmartGlassesItem) {
-            return false;
-        }
-        final ICuriosItemHandler curiosInv = CuriosApi.getCuriosInventory(owner).orElse(null);
-        if (curiosInv == null) {
-            return false;
-        }
-        final SlotResult slot = curiosInv.findCurio(context.identifier(), context.index()).orElse(null);
-        if (slot == null) {
-            return false;
-        }
-        return slot.stack().getItem() instanceof SmartGlassesItem;
-    }
-
     @Override
     public void onUnequip(SlotContext context, ItemStack newStack) {
+        // For some reason this.stack != context.stack
+        // Seems Curios API will always create a copy of ItemStack for capability,
+        // but it still detect and persist this.stack's component change so it is safe to use in other part of code.
+        ItemStack stack = getSmartGlasses(context);
+        if (stack == newStack) {
+            return;
+        }
         final LivingEntity owner = context.entity();
         if (owner.level() instanceof ServerLevel serverLevel) {
             this.item.onUnequip(this.stack, serverLevel, owner);
@@ -100,5 +91,26 @@ public class SmartGlassesCurio implements ICurio {
             return;
         }
         this.item.onEquippedTick(this.stack, owner.level(), owner);
+    }
+
+    private static ItemStack getSmartGlasses(SlotContext context) {
+        final LivingEntity owner = context.entity();
+        if (owner.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof SmartGlassesItem) {
+            return ItemStack.EMPTY;
+        }
+        final ICuriosItemHandler curiosInv = CuriosApi.getCuriosInventory(owner).orElse(null);
+        if (curiosInv == null) {
+            return ItemStack.EMPTY;
+        }
+        final SlotResult slot = curiosInv.findCurio(context.identifier(), context.index()).orElse(null);
+        if (slot == null) {
+            return ItemStack.EMPTY;
+        }
+        final ItemStack stack = slot.stack();
+        return stack.getItem() instanceof SmartGlassesItem ? stack : ItemStack.EMPTY;
+    }
+
+    private static boolean isSmartGlasses(SlotContext context) {
+        return !getSmartGlasses(context).isEmpty();
     }
 }

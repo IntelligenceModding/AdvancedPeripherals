@@ -23,9 +23,18 @@ public class TextureRenderer extends Simple2DObjectRenderer<TextureObject> {
         float r = RenderUtil.getRed(obj.color), g = RenderUtil.getGreen(obj.color), b = RenderUtil.getBlue(obj.color), a = obj.opacity;
 
         Matrix4f mat = gui.pose().last().pose();
-        buffer.addVertex(mat, 0, 0, 0).setColor(r, g, b, a).setUv(0, 1);
-        buffer.addVertex(mat, obj.sizeX, 0, 0).setColor(r, g, b, a).setUv(1, 1);
-        buffer.addVertex(mat, obj.sizeX, obj.sizeY, 0).setColor(r, g, b, a).setUv(1, 0);
-        buffer.addVertex(mat, 0, obj.sizeY, 0).setColor(r, g, b, a).setUv(0, 0);
+        if (is3D) {
+            // in 3D Y+ is up
+            buffer.addVertex(mat, 0, 0, 0).setColor(r, g, b, a).setUv(0, 1);
+            buffer.addVertex(mat, obj.sizeX, 0, 0).setColor(r, g, b, a).setUv(1, 1);
+            buffer.addVertex(mat, obj.sizeX, obj.sizeY, 0).setColor(r, g, b, a).setUv(1, 0);
+            buffer.addVertex(mat, 0, obj.sizeY, 0).setColor(r, g, b, a).setUv(0, 0);
+        } else {
+            // in 2D Y- is up
+            buffer.addVertex(mat, 0, 0, 0).setColor(r, g, b, a).setUv(0, 0);
+            buffer.addVertex(mat, 0, obj.sizeY, 0).setColor(r, g, b, a).setUv(0, 1);
+            buffer.addVertex(mat, obj.sizeX, obj.sizeY, 0).setColor(r, g, b, a).setUv(1, 1);
+            buffer.addVertex(mat, obj.sizeX, 0, 0).setColor(r, g, b, a).setUv(1, 0);
+        }
     }
 }
