@@ -5,14 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- \[Breaking Change\] All overlay objects can draw on both in world or on GUI now. Use `gui` field to differ the render space.
 - We investigated a more efficient way to build Distance Detector, now it will use amethyst instead of diamond!
-- Fix #833 some AE2 addons may return `null` FuzzyMode and crash the game.
-- Fix some BlockEntity may crash client due to FakeLevel.
 - Make overlay objects fields update smoother by adding lerp ability.
-- All overlay objects can draw on both in world or on GUI now. Use `gui` field to differ the render space.
 - Add `smartglasses.getOwner()` to directly get wearer's information without player detector.
-- Close #834 add `dimension` field to entity info
-- Fix potion related item recipes are impossible to craft
+- Add `dimension` field to entity info. #834
+- Fix some AE2 addons may return `null` FuzzyMode and crash the game. #833
+- Fix some BlockEntity may crash client due to FakeLevel.
+- Fix potion related item recipes are impossible to craft.
 - Fix ME Bridge constantly refreshing disks when an empty AEDiskCell is inserted.
 - Fix ME Bridge may not detect AEDiskCell insertion.
 - Fix Smart Glasses may eat peripherals, and reset unexpectedly inside curios slots.
