@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "advancedperipherals:item/ae_disk_cell_16m",
+    "layer1": "advancedperipherals:item/storage_cell_led"
+  }
+}
