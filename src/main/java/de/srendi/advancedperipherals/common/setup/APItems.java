@@ -18,6 +18,7 @@ import de.srendi.advancedperipherals.lib.annotation.DefaultTooltip;
 import de.srendi.advancedperipherals.lib.annotation.DefaultTranslation;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class APItems {
@@ -55,16 +56,16 @@ public class APItems {
 
     @DefaultTranslation("Smart Glasses")
     @DefaultTooltip("&7A portable computer that supports multiple peripherals and modules.")
-    public static final DeferredHolder<Item, SmartGlassesItem> SMART_GLASSES = APRegistration.ITEMS.register("smart_glasses", () -> new SmartGlassesItem(ArmorMaterials.CHAIN));
+    public static final DeferredHolder<Item, SmartGlassesItem> SMART_GLASSES = APRegistration.ITEMS.register("smart_glasses", () -> new SmartGlassesItem(ArmorMaterials.CHAIN, new Item.Properties()));
     @DefaultTranslation("Netherite reinforced Smart Glasses")
     @DefaultTooltip("&7An upgraded version of smart glasses that provides a bit more armor.")
-    public static final DeferredHolder<Item, SmartGlassesItem> SMART_GLASSES_NETHERITE = APRegistration.ITEMS.register("smart_glasses_netherite", () -> new SmartGlassesItem(ArmorMaterials.NETHERITE));
+    public static final DeferredHolder<Item, SmartGlassesItem> SMART_GLASSES_NETHERITE = APRegistration.ITEMS.register("smart_glasses_netherite", () -> new SmartGlassesItem(ArmorMaterials.NETHERITE, new Item.Properties().fireResistant()));
     @DefaultTranslation("Smart Glasses Interface")
     @DefaultTooltip("&7Can access equipped smart glasses without taking it off!")
     public static final DeferredHolder<Item, SmartGlassesInterfaceItem> SMART_GLASSES_INTERFACE = APRegistration.ITEMS.register("smart_glasses_interface", SmartGlassesInterfaceItem::new);
     @DefaultTranslation("Smart Chestplate")
     @DefaultTooltip("&7An advanced chestplate that provides extendable hands can be controlled by Smart Glasses.")
-    public static final DeferredHolder<Item, SmartChestplateItem> SMART_CHESTPLATE = APRegistration.ITEMS.register("smart_chestplate", () -> new SmartChestplateItem(ArmorMaterials.NETHERITE));
+    public static final DeferredHolder<Item, SmartChestplateItem> SMART_CHESTPLATE = APRegistration.ITEMS.register("smart_chestplate", () -> new SmartChestplateItem(ArmorMaterials.NETHERITE, new Item.Properties().fireResistant().durability(SmartChestplateItem.Type.CHESTPLATE.getDurability(37))));
 
     @DefaultTranslation("Hotkey Module")
     @DefaultTooltip("&7Capture a predefined key and forward it as an event.")

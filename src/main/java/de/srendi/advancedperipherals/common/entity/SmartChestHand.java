@@ -107,7 +107,8 @@ public class SmartChestHand extends Entity {
     public Vec3 getVehicleAttachmentPoint(Entity owner) {
         Vec3 pos = owner.getPassengerRidingPosition(this);
         Vec3 basePos = owner.getEyePosition();
-        return pos.subtract(basePos.add(new Vec3(this.getRelativePos())));
+        Vector3f relPos = this.getRelativePos();
+        return pos.subtract(basePos.add(relPos.x, relPos.y, relPos.z));
     }
 
     public Vector3f getRelativePos() {
@@ -115,10 +116,16 @@ public class SmartChestHand extends Entity {
     }
 
     public void setRelativePos(Vector3f pos) {
+        Vector3f oldPos = this.entityData.get(DATA_REL_POS);
+        if (oldPos.equals(pos)) {
+            return;
+        }
+
         if (pos.lengthSquared() > MAX_RANGE * MAX_RANGE) {
             pos.normalize(MAX_RANGE);
         }
         this.entityData.set(DATA_REL_POS, pos);
+        ((SmartChestplateItem) this.chestStack.getItem()).setHandPosition(this.chestStack, this.index, new Vec3(pos));
     }
 
     public void setRelativePos(float x, float y, float z) {
@@ -167,6 +174,9 @@ public class SmartChestHand extends Entity {
         if (owner.isRemoved()) {
             return false;
         }
+        if (owner.level() != this.level()) {
+            return false;
+        }
         return SmartChestplateItem.getEquipped(owner) == this.chestStack;
     }
 
@@ -202,7 +212,7 @@ public class SmartChestHand extends Entity {
         this.didAction = true;
         LivingEntity owner = this.getOwner();
         return SmartHandFakePlayerProvider.doAction(
-            owner, index, this.position(), this.chestStack,
+            owner, this.index, this.position(), this.chestStack,
             APFakePlayer.wrapActionWithRot(
                 this.getYRot(), this.getXRot(),
                 APFakePlayer.wrapActionWithReachRange(this.interactRange, action)

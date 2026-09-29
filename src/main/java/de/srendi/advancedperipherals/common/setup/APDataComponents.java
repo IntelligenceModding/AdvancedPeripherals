@@ -17,11 +17,14 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -30,6 +33,15 @@ import java.util.function.UnaryOperator;
 
 @SuppressWarnings("UnusedMethod")
 public class APDataComponents {
+
+    private static final StreamCodec<ByteBuf, Vec3> VEC3_STREAMCODEC = StreamCodec.of(
+        (b, v) -> {
+            b.writeFloat((float) v.x);
+            b.writeFloat((float) v.y);
+            b.writeFloat((float) v.z);
+        },
+        (b) -> new Vec3(b.readFloat(), b.readFloat(), b.readFloat())
+    );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Map<String, Long>>> ABILITY_COOLDOWNS = registerStringKeyMap("cooldowns", Codec.LONG, ByteBufCodecs.VAR_LONG);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> BINDING_COMPUTER = registerInt("binding_computer");
@@ -44,6 +56,7 @@ public class APDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> MODULE_DATAS = registerDataComponent("module_datas");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> OWNER = registerUUID("owner_id");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Map<String, GlobalPos>>> POINT_DATA_MARK = registerStringKeyMap("point_data_mark", GlobalPos.CODEC, GlobalPos.STREAM_CODEC);
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<Vec3>>> POSITIONS = registerList("positions", Vec3.CODEC, VEC3_STREAMCODEC);
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ROTATION_CHARGE_SETTING = registerInt("rotation_charge_setting");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DataComponentPatch>> STORED_DATA = registerDataComponent("stored_data");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WORLD_DATA_MARK = registerString("world_data_mark");
@@ -132,6 +145,19 @@ public class APDataComponents {
     private static DeferredHolder<DataComponentType<?>, DataComponentType<ItemStackStorage>> registerItemStackStorage(String name) {
         return simple(name, builder -> builder.persistent(ItemStackStorage.CODEC)
                 .networkSynchronized(ItemStackStorage.STREAM_CODEC));
+    }
+
+    private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<List<T>>> registerList(
+        String name,
+        Codec<T> codec,
+        StreamCodec<? super ByteBuf, T> streamCodec
+    ) {
+        return simple(
+            name,
+            builder -> builder
+                .persistent(Codec.list(codec))
+                .networkSynchronized(ByteBufCodecs.collection(ArrayList::new, streamCodec))
+        );
     }
 
     private static <K, V> DeferredHolder<DataComponentType<?>, DataComponentType<Map<K, V>>> registerMap(

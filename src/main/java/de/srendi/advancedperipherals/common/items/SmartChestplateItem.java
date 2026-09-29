@@ -5,6 +5,7 @@ import de.srendi.advancedperipherals.common.component.ItemStackStorage;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.entity.SmartChestHand;
 import de.srendi.advancedperipherals.common.items.base.BaseArmorItem;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.setup.APEntities;
 import de.srendi.advancedperipherals.common.smartchestplate.SmartChestplateItemHandler;
 import net.minecraft.core.Holder;
@@ -14,15 +15,23 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 // Inspired by F-Tech: Equipment (https://www.curseforge.com/minecraft/mc-mods/f-tech-equipment)
 public class SmartChestplateItem extends BaseArmorItem {
-    public SmartChestplateItem(Holder<ArmorMaterial> material) {
-        super(material, ArmorItem.Type.CHESTPLATE, new Properties().stacksTo(1));
+    private final int slots = SmartChestplateItemHandler.SLOTS;
+    private final List<Vec3> zeroPositions = Collections.nCopies(this.slots, Vec3.ZERO);
+
+    public SmartChestplateItem(Holder<ArmorMaterial> material, Properties properties) {
+        super(material, ArmorItem.Type.CHESTPLATE, properties);
     }
 
     public IItemHandlerModifiable createItemHandlerCap(ItemStack stack) {
@@ -40,9 +49,19 @@ public class SmartChestplateItem extends BaseArmorItem {
 
     public void onActiveTick(ItemStack chestStack, ServerLevel level, LivingEntity entity, DataStorage data) {
         ItemStackStorage items = SmartChestplateItemHandler.loadItems(chestStack);
-        for (int i = 0; i < SmartChestplateItemHandler.SLOTS; i++) {
+        for (int i = 0; i < this.slots; i++) {
             data.getOrCreateHand(i, entity, chestStack).setHoldingStack(items.get(i));
         }
+    }
+
+    public Vec3 getHandPosition(ItemStack chestStack, int index) {
+        return chestStack.getOrDefault(APDataComponents.POSITIONS, this.zeroPositions).get(index);
+    }
+
+    public void setHandPosition(ItemStack chestStack, int index, Vec3 pos) {
+        List<Vec3> positions = new ArrayList<>(chestStack.getOrDefault(APDataComponents.POSITIONS, this.zeroPositions));
+        positions.set(index, pos);
+        chestStack.set(APDataComponents.POSITIONS, positions);
     }
 
     public static ItemStack getEquipped(final LivingEntity entity) {
@@ -81,12 +100,23 @@ public class SmartChestplateItem extends BaseArmorItem {
         private final SmartChestHand[] hands = new SmartChestHand[SmartChestplateItemHandler.SLOTS];
 
         public SmartChestHand getOrCreateHand(int index, LivingEntity owner, ItemStack chestStack) {
+            ServerLevel level = (ServerLevel) owner.level();
+            SmartChestplateItem item = (SmartChestplateItem) chestStack.getItem();
             SmartChestHand hand = this.hands[index];
-            if (hand == null || hand.isRemoved()) {
-                hand = new SmartChestHand(APEntities.SMART_CHEST_HAND.get(), (ServerLevel) owner.level(), chestStack, index);
+            boolean handInvalid = hand == null || hand.isRemoved();
+            if (!handInvalid) {
+                if (hand.level() != level) {
+                    handInvalid = true;
+                    hand.discard();
+                }
+            }
+            if (handInvalid) {
+                hand = new SmartChestHand(APEntities.SMART_CHEST_HAND.get(), level, chestStack, index);
+                hand.setRelativePos(item.getHandPosition(chestStack, index).toVector3f());
+                hand.setPos(owner.position());
                 hand.startRiding(owner, true);
                 this.hands[index] = hand;
-                owner.level().addFreshEntity(hand);
+                level.addFreshEntity(hand);
             }
             return hand;
         }

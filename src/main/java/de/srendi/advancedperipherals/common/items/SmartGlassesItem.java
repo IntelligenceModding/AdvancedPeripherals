@@ -59,9 +59,8 @@ import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
 public class SmartGlassesItem extends BaseArmorItem {
-
-    public SmartGlassesItem(Holder<ArmorMaterial> material) {
-        super(material, ArmorItem.Type.HELMET, new Properties().stacksTo(1));
+    public SmartGlassesItem(Holder<ArmorMaterial> material, Properties properties) {
+        super(material, ArmorItem.Type.HELMET, properties);
     }
 
     public IItemHandler createItemHandlerCap(ItemStack stack) {

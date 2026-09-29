@@ -6,6 +6,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 - \[Breaking Change\] All overlay objects can draw on both in world or on GUI now. Use `gui` field to differ the render space.
+- Add Smart Chestplate that may perform various operations via smartglasses (in-dev, feedback welcome!)
 - We investigated a more efficient way to build Distance Detector, now it will use amethyst instead of diamond!
 - Make overlay objects fields update smoother by adding lerp ability.
 - Add `smartglasses.getOwner()` to directly get wearer's information without player detector.
