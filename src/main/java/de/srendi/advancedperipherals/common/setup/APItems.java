@@ -18,7 +18,6 @@ import de.srendi.advancedperipherals.lib.annotation.DefaultTooltip;
 import de.srendi.advancedperipherals.lib.annotation.DefaultTranslation;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class APItems {
