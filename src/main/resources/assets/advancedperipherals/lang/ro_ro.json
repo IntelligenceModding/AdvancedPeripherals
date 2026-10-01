@@ -37,7 +37,7 @@
   "block.advancedperipherals.inventory_manager": "Manager de inventar",
   "block.advancedperipherals.inventory_manager.tooltip": "§7Acest bloc este capabil de a trimite sau de a primi obiecte specifice de la un inventar al unui jucător.",
   "block.advancedperipherals.me_bridge": "ME Bridge",
-  "block.advancedperipherals.me_bridge.tooltip": "§ 7Poate fi utilizat pentru a interacționa cu Applied Energistics 2.",
+  "block.advancedperipherals.me_bridge.tooltip": "§7Poate fi utilizat pentru a interacționa cu Applied Energistics 2.",
   "block.advancedperipherals.nbt_storage": "Stocare NBT",
   "block.advancedperipherals.nbt_storage.tooltip": "§7Acest bloc este capabil de a stoca unele date nbt",
   "block.advancedperipherals.peripheral_casing": "Carcasa periferică",
