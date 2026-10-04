@@ -35,7 +35,10 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -473,7 +476,7 @@ public final class SmartGlassesAPI implements ILuaAPI {
                 sneak,
                 (player) -> {
                     ServerLevel level = player.serverLevel();
-                    ItemStack tool = player.getItemBySlot(EquipmentSlot.MAINHAND);
+                    ItemStack tool = player.getMainHandItem();
                     if (tool.isEmpty()) {
                         return MethodResult.of(null, "TOOL_REQUIRED");
                     }
@@ -484,12 +487,19 @@ public final class SmartGlassesAPI implements ILuaAPI {
                     }
                     BlockPos target = ((BlockHitResult) hitResult).getBlockPos();
                     BlockState state = level.getBlockState(target);
+                    Block block = state.getBlock();
+                    BlockEntity blockEntity = level.getBlockEntity(target);
+
+                    Player targetPlayer = livingEntity instanceof Player p ? p : player;
+                    if (targetPlayer.blockActionRestricted(level, target, GameType.SURVIVAL)) {
+                        return MethodResult.of(null, "ACTION_RESTRICTED");
+                    }
 
                     float destroySpeed = state.getDestroySpeed(level, target);
                     if (destroySpeed < 0) {
                         return MethodResult.of(null, "UNBREAKABLE_BLOCK");
                     }
-                    if (state.requiresCorrectToolForDrops() && !tool.isCorrectToolForDrops(state)) {
+                    if (state.requiresCorrectToolForDrops() && !tool.isCorrectToolForDrops(state) || tool.getItem().canAttackBlock(state, level, target, targetPlayer)) {
                         return MethodResult.of(null, "INCORRECT_TOOL");
                     }
 
@@ -498,11 +508,19 @@ public final class SmartGlassesAPI implements ILuaAPI {
                     player.setOnGround(true);
 
                     float prog = destroySpeed == 0 ? 1 : hand.breaking(target, state.getDestroyProgress(player, level, target));
-                    if (prog >= 1) {
-                        level.destroyBlock(target, true, livingEntity);
-                        return MethodResult.of(true);
+                    if (prog < 1) {
+                        return MethodResult.of(prog);
                     }
-                    return MethodResult.of(prog);
+                    BlockState oldState = block.playerWillDestroy(level, target, state, targetPlayer);
+                    boolean canRemove = level.removeBlock(target, false);
+                    if (canRemove) {
+                        block.destroy(level, target, oldState);
+                    }
+                    tool.mineBlock(level, oldState, target, targetPlayer);
+                    if (canRemove) {
+                        block.playerDestroy(level, targetPlayer, target, oldState, blockEntity, tool);
+                    }
+                    return MethodResult.of(true);
                 }
             )
         );
