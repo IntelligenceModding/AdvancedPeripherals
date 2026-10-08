@@ -12,7 +12,6 @@ import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.registries.RegistryObject;
 
 public class APContainerTypes {
-
     public static final RegistryObject<MenuType<InventoryManagerContainer>> INVENTORY_MANAGER_CONTAINER = APRegistration.CONTAINER_TYPES.register(
         "memory_card_container",
         () -> IForgeMenuType.create((windowId, inv, buf) -> {
@@ -38,7 +37,6 @@ public class APContainerTypes {
         )
     );
 
-    protected static void register() {
+    public static void register() {
     }
-
 }

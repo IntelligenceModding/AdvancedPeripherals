@@ -7,7 +7,9 @@ import de.srendi.advancedperipherals.common.util.HitResultUtil;
 import de.srendi.advancedperipherals.common.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.sounds.SoundEvent;
@@ -15,10 +17,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -34,6 +37,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -51,7 +55,7 @@ public class APFakePlayer extends FakePlayer {
     Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/gameplay/PlethoraFakePlayer.java
     */
     public static final GameProfile PROFILE = new GameProfile(UUID.fromString("6e483f02-30db-4454-b612-3a167614b276"), "[" + AdvancedPeripherals.MOD_ID + "]");
-    private static final Predicate<Entity> DEFAULT_ENTITY_FILTER = EntitySelector.NO_SPECTATORS.and(LivingEntity.class::isInstance).and((entity) -> !entity.isPassenger());
+    private static final Predicate<Entity> DEFAULT_ENTITY_FILTER = (e) -> !e.isSpectator() && e.isPickable() && !e.isPassenger();
 
     private final WeakReference<Entity> owner;
 
@@ -61,30 +65,32 @@ public class APFakePlayer extends FakePlayer {
     private float currentDamage = 0;
     private double reachRange = -1;
 
-    public APFakePlayer(ServerLevel world, Entity owner, GameProfile profile) {
-        super(world, profile != null ? profile : PROFILE);
+    private boolean hijackDamageSources = false;
+    private RedirectedDamageSources cachedDamageSources = null;
+
+    public APFakePlayer(ServerLevel level, Entity owner, GameProfile profile) {
+        super(level, profile != null ? profile : PROFILE);
         if (owner != null) {
-            setCustomName(owner.getName());
+            this.setCustomName(owner.getName());
             this.owner = new WeakReference<>(owner);
         } else {
             this.owner = null;
         }
     }
 
-    public void setSourceBlock(BlockPos pos) {
+    public void setSourceBlock(ServerLevel level, BlockPos pos) {
+        this.setServerLevel(level);
         this.source = pos;
     }
 
     @Override
     public void awardStat(@NotNull Stat<?> stat) {
-        // TODO: anypoint to award stat for fake player? should we award stat on the owner instead?
-        // MinecraftServer server = level().getServer();
-        // if (server != null && getGameProfile() != PROFILE) {
-        //     Player player = server.getPlayerList().getPlayer(getUUID());
-        //     if (player != null) {
-        //         player.awardStat(stat);
-        //     }
-        // }
+        MinecraftServer server = level().getServer();
+        if (server != null && getGameProfile() != PROFILE) {
+            if (this.owner.get() instanceof Player player) {
+                player.awardStat(stat);
+            }
+        }
     }
 
     @Override
@@ -115,6 +121,37 @@ public class APFakePlayer extends FakePlayer {
     @Override
     public float getEyeHeight(@NotNull Pose pose) {
         return 0;
+    }
+
+    @Override
+    public boolean isAttackable() {
+        return false;
+    }
+
+    @Override
+    public boolean attackable() {
+        return false;
+    }
+
+    @Override
+    public boolean isPickable() {
+        return false;
+    }
+
+    @Override
+    public Team getTeam() {
+        Entity entity = this.owner.get();
+        return entity != null ? entity.getTeam() : null;
+    }
+
+    @Override
+    public boolean canHarmPlayer(Player other) {
+        if (!this.getServer().isPvpAllowed()) {
+            return false;
+        }
+        Team team = this.getTeam();
+        Team otherTeam = other.getTeam();
+        return team == null || team.isAllowFriendlyFire() || !team.isAlliedTo(otherTeam);
     }
 
     public static <T> Action<T> wrapActionWithRot(float yaw, float pitch, Action<T> action) {
@@ -162,9 +199,37 @@ public class APFakePlayer extends FakePlayer {
         return this.getBlockReach();
     }
 
+    @Override
+    public DamageSources damageSources() {
+        DamageSources sources = super.damageSources();
+        if (this.hijackDamageSources) {
+            if (this.owner.get() instanceof Player player) {
+                if (this.cachedDamageSources == null) {
+                    this.cachedDamageSources = new RedirectedDamageSources(this.level().registryAccess(), sources, player);
+                }
+                return this.cachedDamageSources;
+            }
+        }
+        return sources;
+    }
+
+    public void setAttackStrengthTicker(int attackStrengthTicker) {
+        this.attackStrengthTicker = attackStrengthTicker;
+    }
+
+    @Override
+    public void attack(Entity targetEntity) {
+        this.hijackDamageSources = true;
+        try {
+            super.attack(targetEntity);
+        } finally {
+            this.hijackDamageSources = false;
+        }
+    }
+
     public Pair<Boolean, String> digBlock() {
         Level world = level();
-        HitResult hit = findHit(true, false);
+        HitResult hit = findHit(RayCastContext.BLOCK);
         if (!(hit instanceof BlockHitResult blockHit) || hit.getType() == HitResult.Type.MISS) {
             return Pair.of(false, "Nothing to break");
         }
@@ -218,15 +283,15 @@ public class APFakePlayer extends FakePlayer {
     }
 
     public InteractionResult useOnBlock() {
-        return use(true, false);
+        return use(RayCastContext.BLOCK);
     }
 
     public InteractionResult useOnEntity() {
-        return use(false, true);
+        return use(RayCastContext.ENTITY);
     }
 
     public InteractionResult useOnFilteredEntity(Predicate<Entity> filter) {
-        return use(false, true, filter);
+        return use(RayCastContext.ENTITY, filter);
     }
 
     public InteractionResult useOnSpecificEntity(@NotNull Entity entity, HitResult result) {
@@ -241,12 +306,12 @@ public class APFakePlayer extends FakePlayer {
         return entity.interactAt(this, result.getLocation(), InteractionHand.MAIN_HAND);
     }
 
-    public InteractionResult use(boolean skipEntity, boolean skipBlock) {
-        return use(skipEntity, skipBlock, null);
+    public InteractionResult use(RayCastContext context) {
+        return use(context, (e) -> !e.isSpectator() && e.isPickable());
     }
 
-    public InteractionResult use(boolean skipEntity, boolean skipBlock, @Nullable Predicate<Entity> entityFilter) {
-        HitResult hit = findHit(skipEntity, skipBlock, entityFilter);
+    public InteractionResult use(RayCastContext context, @Nullable Predicate<Entity> entityFilter) {
+        HitResult hit = findHit(context, entityFilter);
 
         if (hit instanceof BlockHitResult blockHit) {
             ItemStack stack = getMainHandItem();
@@ -299,45 +364,37 @@ public class APFakePlayer extends FakePlayer {
         return InteractionResult.FAIL;
     }
 
-    public HitResult findHit(boolean skipEntity, boolean skipBlock) {
-        return findHit(skipEntity, skipBlock, DEFAULT_ENTITY_FILTER);
+    public HitResult findHit(RayCastContext context) {
+        return findHit(context, DEFAULT_ENTITY_FILTER);
     }
 
     @NotNull
-    public HitResult findHit(boolean skipEntity, boolean skipBlock, @NotNull Predicate<Entity> entityFilter) {
+    public HitResult findHit(RayCastContext context, @Nullable Predicate<Entity> entityFilter) {
         double range = this.getReachRange();
         Vec3 origin = new Vec3(this.getX(), this.getY(), this.getZ());
         Vec3 look = this.getLookAngle();
         Vec3 target = new Vec3(origin.x + look.x * range, origin.y + look.y * range, origin.z + look.z * range);
 
         BlockHitResult blockHit;
-        if (skipBlock) {
+        if (context.checkBlock()) {
+            blockHit = HitResultUtil.getBlockHitResult(origin, target, level(), ClipContext.Block.OUTLINE, this.source);
+        } else {
             Direction traceDirection = Direction.getNearest(look.x, look.y, look.z);
             blockHit = BlockHitResult.miss(target, traceDirection, BlockPos.containing(target));
-        } else {
-            blockHit = HitResultUtil.getBlockHitResult(origin, target, level(), ClipContext.Block.OUTLINE, this.source);
         }
 
-        if (skipEntity) {
+        if (!context.checkEntity()) {
             return blockHit;
         }
 
         List<Entity> entities = level().getEntities(this, getBoundingBox().expandTowards(look.x * range, look.y * range, look.z * range).inflate(1), DEFAULT_ENTITY_FILTER);
 
-        LivingEntity closestEntity = null;
+        Entity closestEntity = null;
         Vec3 closestVec = null;
         double closestDistance = blockHit.getType() == HitResult.Type.MISS ? range * range : distanceToSqr(blockHit.getLocation());
-        for (Entity entityHit : entities) {
-            if (!(entityHit instanceof LivingEntity entity)) {
-                continue;
-            }
+        for (Entity entity : entities) {
             // TODO: maybe let entityFilter returns the priority of the entity, instead of only returns the closest one.
             if (entityFilter != null && !entityFilter.test(entity)) {
-                continue;
-            }
-
-            // Hit vehicle before passenger
-            if (entity.isPassenger()) {
                 continue;
             }
 
@@ -379,5 +436,44 @@ public class APFakePlayer extends FakePlayer {
     @FunctionalInterface
     public interface Action<T> {
         T apply(APFakePlayer player) throws LuaException;
+    }
+
+    public enum RayCastContext {
+        BLOCK(true, false),
+        ENTITY(false, true),
+        BOTH(true, true);
+
+        private final boolean block;
+        private final boolean entity;
+
+        RayCastContext(boolean block, boolean entity) {
+            this.block = block;
+            this.entity = entity;
+        }
+
+        public boolean checkBlock() {
+            return this.block;
+        }
+
+        public boolean checkEntity() {
+            return this.entity;
+        }
+    }
+
+    private static class RedirectedDamageSources extends DamageSources {
+        private final DamageSources sources;
+        private final WeakReference<Player> originPlayer;
+
+        private RedirectedDamageSources(RegistryAccess registry, DamageSources sources, Player originPlayer) {
+            super(registry);
+            this.sources = sources;
+            this.originPlayer = new WeakReference<>(originPlayer);
+        }
+
+        @Override
+        public DamageSource playerAttack(Player player) {
+            Player p = this.originPlayer.get();
+            return this.sources.playerAttack(p != null ? p : player);
+        }
     }
 }

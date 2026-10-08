@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "minecraft:item/netherite_chestplate",
+    "layer1": "advancedperipherals:item/smart_chestplate"
+  }
+}

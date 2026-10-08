@@ -63,7 +63,7 @@ public class EmptyLuaTable implements LuaTable<Object, Object> {
         return table == null ? INSTANCE : new ObjectLuaTable(table);
     }
 
-    public static LuaTable<Object, Object> orEmpty(Optional<Map<?, ?>> optTable) {
+    public static LuaTable<Object, Object> orEmpty(Optional<? extends Map<?, ?>> optTable) {
         return orEmpty(optTable.orElse(null));
     }
 }

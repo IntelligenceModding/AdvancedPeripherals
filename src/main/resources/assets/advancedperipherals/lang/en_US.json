@@ -88,6 +88,8 @@
   "item.advancedperipherals.overpowered_husbandry_automata_core.tooltip": "&7Improved version of the husbandry automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.",
   "item.advancedperipherals.overpowered_weak_automata_core": "Overpowered Weak Automata Core",
   "item.advancedperipherals.overpowered_weak_automata_core.tooltip": "&7Improved version of the weak automata core, that provides some overpowered uses! Be careful, the upgrade is very fragile.",
+  "item.advancedperipherals.smart_chestplate": "Smart Chestplate",
+  "item.advancedperipherals.smart_chestplate.tooltip": "&7An advanced chestplate that provides extendable hands can be controlled by Smart Glasses.",
   "item.advancedperipherals.smart_glasses": "Smart Glasses",
   "item.advancedperipherals.smart_glasses.tooltip": "&7A portable computer that supports multiple peripherals and modules.",
   "item.advancedperipherals.smart_glasses_interface": "Smart Glasses Interface",

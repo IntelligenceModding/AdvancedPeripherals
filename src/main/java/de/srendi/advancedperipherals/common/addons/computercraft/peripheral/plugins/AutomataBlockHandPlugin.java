@@ -129,8 +129,8 @@ public class AutomataBlockHandPlugin extends AutomataCorePlugin {
 
     private InteractionResult updateBlock(APFakePlayer player, LuaTable<?, ?> options) throws LuaException {
         Level world = player.level();
-        HitResult hit = player.findHit(true, false);
-        if (!(hit instanceof BlockHitResult blockHit)) {
+        HitResult hit = player.findHit(APFakePlayer.RayCastContext.BLOCK);
+        if (hit.getType() != HitResult.Type.BLOCK || !(hit instanceof BlockHitResult blockHit)) {
             return InteractionResult.PASS;
         }
         BlockPos pos = blockHit.getBlockPos();

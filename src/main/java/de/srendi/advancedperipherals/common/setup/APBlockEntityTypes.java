@@ -22,10 +22,6 @@ import net.minecraftforge.registries.RegistryObject;
 import java.util.Set;
 
 public class APBlockEntityTypes {
-
-    protected static void register() {
-    }
-
     public static final RegistryObject<BlockEntityType<BlockReaderEntity>> BLOCK_READER = APRegistration.BLOCK_ENTITIES.register("block_reader", () -> new BlockEntityType<>(BlockReaderEntity::new, Set.of(APBlocks.BLOCK_READER.get()), null));
     public static final RegistryObject<BlockEntityType<ChatBoxEntity>> CHAT_BOX = APRegistration.BLOCK_ENTITIES.register("chat_box", () -> new BlockEntityType<>(ChatBoxEntity::new, Set.of(APBlocks.CHAT_BOX.get()), null));
     public static final RegistryObject<BlockEntityType<ColonyIntegratorEntity>> COLONY_INTEGRATOR = APAddon.MINECOLONIES.isLoaded() ? APRegistration.BLOCK_ENTITIES.register("colony_integrator", () -> new BlockEntityType<>(ColonyIntegratorEntity::new, Set.of(APBlocks.COLONY_INTEGRATOR.get()), null)) : null;
@@ -42,4 +38,6 @@ public class APBlockEntityTypes {
     // public static final RegistryObject<BlockEntityType<RSBridgeEntity>> RS_BRIDGE = APAddon.REFINEDSTORAGE.isLoaded() ? APRegistration.BLOCK_ENTITIES.register("rs_bridge", () -> new BlockEntityType<>(RSBridgeEntity::new, Set.of(APBlocks.RS_BRIDGE.get()), null)) : null;
     public static final RegistryObject<BlockEntityType<SmartRailBlockEntity>> SMART_RAIL = APRegistration.BLOCK_ENTITIES.register("smart_rail", () -> new BlockEntityType<>(SmartRailBlockEntity::new, Set.of(APBlocks.SMART_RAIL.get()), null));
 
+    public static void register() {
+    }
 }

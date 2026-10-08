@@ -14,14 +14,19 @@ import de.srendi.advancedperipherals.common.addons.computercraft.owner.PocketPer
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.TurtlePeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.base.PeripheralBlockEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.util.LuaArgsHelper;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.lib.peripherals.BasePeripheral;
 import de.srendi.advancedperipherals.lib.peripherals.IPeripheralPlugin;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
@@ -29,6 +34,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -40,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static de.srendi.advancedperipherals.common.addons.computercraft.operations.SphereOperation.SCAN_ENTITIES;
 
@@ -47,6 +54,17 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
 
     public static final String PERIPHERAL_TYPE = "environment_detector";
     private static final List<Function<IPeripheralOwner, IPeripheralPlugin>> PERIPHERAL_PLUGINS = new ArrayList<>();
+    private static final EntityTypeTest<Entity, Entity> ALL_ENTITY_TYPES = new EntityTypeTest<>() {
+        @Override
+        public Entity tryCast(Entity entity) {
+            return entity;
+        }
+
+        @Override
+        public Class<? extends Entity> getBaseClass() {
+            return Entity.class;
+        }
+    };
 
     protected EnvironmentDetectorPeripheral(IPeripheralOwner owner) {
         super(PERIPHERAL_TYPE, owner);
@@ -170,7 +188,30 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
     @LuaFunction(mainThread = true)
     public final MethodResult scanEntities(@NotNull IArguments arguments) throws LuaException {
         int radius = arguments.getInt(0);
-        boolean detailed = arguments.count() > 1 ? arguments.getBoolean(1) : false;
+        LuaArgsHelper.Args uargs = LuaArgsHelper.getUnorderedArgs(arguments, 1, Boolean.class, String.class);
+        boolean detailed = uargs.get(Boolean.class, false);
+        String filter = uargs.get(String.class);
+
+        Predicate<Entity> entityTester = (entity) -> entity.isAlive() && entity instanceof LivingEntity;
+        if (filter != null) {
+            if (filter.length() > 0 && filter.charAt(0) == '#') {
+                ResourceLocation id = ResourceLocation.tryParse(filter.substring(1));
+                if (id == null) {
+                    throw new LuaException("argument #1 is an invalid tag ID");
+                }
+                TagKey<EntityType<?>> tag = TagKey.create(Registries.ENTITY_TYPE, id);
+                entityTester = (entity) -> entity.isAlive() && entity.getType().is(tag);
+            } else {
+                ResourceLocation id = ResourceLocation.tryParse(filter);
+                if (id == null) {
+                    throw new LuaException("argument #1 is an invalid block ID");
+                }
+                EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(id);
+                entityTester = entityType == null ? null : (entity) -> entity.isAlive() && entity.getType() == entityType;
+            }
+        }
+        final Predicate<Entity> finalEntityTester = entityTester;
+
         return withOperation(SCAN_ENTITIES, new SphereOperationContext(radius), context -> {
             return context.getRadius() > SCAN_ENTITIES.getMaxCostRadius() ? MethodResult.of(null, "Radius exceeds max value") : null;
         }, context -> {
@@ -182,12 +223,13 @@ public class EnvironmentDetectorPeripheral extends BasePeripheral<IPeripheralOwn
                 .position(pos)
                 .orientation(owner.getOrientation())
                 .build();
-            List<Map<String, Object>> entities = getLevel()
-                .getEntities((Entity) null, box, entity -> entity instanceof LivingEntity && entity.isAlive())
+            List<Entity> entities = new ArrayList<>(16);
+            this.getLevel().getEntities(ALL_ENTITY_TYPES, box, finalEntityTester, entities, 4096);
+            List<Map<String, Object>> result = entities
                 .stream()
                 .map(entity -> LuaConverter.entityToLua(entity, convContext))
                 .toList();
-            return MethodResult.of(entities);
+            return MethodResult.of(result);
         }, null);
     }
 

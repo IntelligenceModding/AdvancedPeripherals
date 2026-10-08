@@ -1,9 +1,6 @@
 package de.srendi.advancedperipherals.common.items.base;
 
-import de.srendi.advancedperipherals.client.KeyBindings;
-import de.srendi.advancedperipherals.common.setup.APTranslations;
 import de.srendi.advancedperipherals.common.util.EnumColor;
-import de.srendi.advancedperipherals.common.util.KeybindUtil;
 import de.srendi.advancedperipherals.common.util.TranslationUtil;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -14,7 +11,7 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.List;
 
-public abstract class BaseBlockItem extends BlockItem {
+public abstract class BaseBlockItem extends BlockItem implements IAPTooltipItem {
     private Component tooltipComponent;
 
     public BaseBlockItem(Block block, Properties properties) {
@@ -26,20 +23,16 @@ public abstract class BaseBlockItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, level, tooltip, flagIn);
-        if (!KeybindUtil.isKeyPressed(KeyBindings.DESCRIPTION_KEYBINDING)) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable(APTranslations.TOOLTIP_SHOW_DESC, KeyBindings.DESCRIPTION_KEYBINDING.getTranslatedKeyMessage())));
-        } else {
-            if (this.tooltipComponent == null) {
-                this.tooltipComponent = Component.translatable(TranslationUtil.tooltip(getDescriptionId()));
-            }
-            tooltip.add(EnumColor.buildTextComponent(this.tooltipComponent));
+    public Component getTooltipComponent() {
+        if (this.tooltipComponent == null) {
+            this.tooltipComponent = EnumColor.buildTextComponent(Component.translatable(TranslationUtil.tooltip(getDescriptionId())));
         }
-        if (!isEnabled()) {
-            tooltip.add(EnumColor.buildTextComponent(Component.translatable(APTranslations.TOOLTIP_DISABLED)));
-        }
+        return this.tooltipComponent;
     }
 
-    public abstract boolean isEnabled();
+    @Override
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
+        IAPTooltipItem.appendTooltip(stack, level, tooltip, flag);
+    }
 }

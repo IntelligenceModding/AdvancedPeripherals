@@ -36,8 +36,8 @@ public abstract class PeripheralBlockEntity<T extends BasePeripheral<?>> extends
     private LazyOptional<? extends IItemHandler> itemHandler = LazyOptional.empty();
     private LazyOptional<IPeripheral> peripheralCap = LazyOptional.empty();
 
-    protected PeripheralBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
-        super(tileEntityTypeIn, pos, state);
+    protected PeripheralBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
+        super(blockEntityType, pos, state);
         if (this instanceof IInventoryBlock inventoryBlock) {
             items = NonNullList.withSize(inventoryBlock.getInvSize(), ItemStack.EMPTY);
         } else {

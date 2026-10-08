@@ -17,18 +17,23 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.WeakHashMap;
 
-public final class FakePlayerProviderTurtle {
+public final class TurtleFakePlayerProvider {
 
     /*
     Highly inspired by https://github.com/SquidDev-CC/plethora/blob/minecraft-1.12/src/main/java/org/squiddev/plethora/integration/computercraft/FakePlayerProviderTurtle.java
     */
-    private static final WeakHashMap<ITurtleAccess, APFakePlayer> registeredPlayers = new WeakHashMap<>();
+    private static final WeakHashMap<ITurtleAccess, APFakePlayer> PLAYERS = new WeakHashMap<>();
 
-    private FakePlayerProviderTurtle() {
+    private TurtleFakePlayerProvider() {
     }
 
     public static APFakePlayer getPlayer(ITurtleAccess turtle, GameProfile profile) {
-        return registeredPlayers.computeIfAbsent(turtle, iTurtleAccess -> new APFakePlayer((ServerLevel) turtle.getLevel(), null, profile));
+        APFakePlayer player = PLAYERS.computeIfAbsent(
+            turtle,
+            access -> new APFakePlayer((ServerLevel) access.getLevel(), null, profile)
+        );
+        player.setSourceBlock((ServerLevel) turtle.getLevel(), turtle.getPosition());
+        return player;
     }
 
     public static void load(APFakePlayer player, ITurtleAccess turtle) {
@@ -40,17 +45,17 @@ public final class FakePlayerProviderTurtle {
         // Player inventory
         Inventory playerInventory = player.getInventory();
         playerInventory.selected = 0;
+        playerInventory.clearContent();
 
         // Copy primary items into player inventory and empty the rest
         Container turtleInventory = turtle.getInventory();
         int size = turtleInventory.getContainerSize();
-        int largerSize = playerInventory.getContainerSize();
-        playerInventory.selected = turtle.getSelectedSlot();
-        for (int i = 0; i < size; i++) {
-            playerInventory.setItem(i, turtleInventory.getItem(i));
-        }
-        for (int i = size; i < largerSize; i++) {
-            playerInventory.setItem(i, ItemStack.EMPTY);
+        int selectedSlot = turtle.getSelectedSlot();
+
+        playerInventory.setItem(0, turtleInventory.getItem(selectedSlot));
+        int i = 0;
+        for (; i < size; i++) {
+            playerInventory.setItem(i + 1, i == selectedSlot ? ItemStack.EMPTY : turtleInventory.getItem(i));
         }
 
         // Add properties
@@ -67,7 +72,6 @@ public final class FakePlayerProviderTurtle {
 
     public static void unload(APFakePlayer player, ITurtleAccess turtle) {
         Inventory playerInventory = player.getInventory();
-        playerInventory.selected = 0;
 
         // Remove properties
         ItemStack activeStack = player.getItemInHand(InteractionHand.MAIN_HAND);
@@ -84,14 +88,20 @@ public final class FakePlayerProviderTurtle {
         Container turtleInventory = turtle.getInventory();
         int size = turtleInventory.getContainerSize();
         int largerSize = playerInventory.getContainerSize();
-        playerInventory.selected = turtle.getSelectedSlot();
-        for (int i = 0; i < size; i++) {
-            turtleInventory.setItem(i, playerInventory.getItem(i));
-            playerInventory.setItem(i, ItemStack.EMPTY);
+        int selectedSlot = turtle.getSelectedSlot();
+
+        turtleInventory.setItem(selectedSlot, playerInventory.getItem(0));
+        playerInventory.setItem(0, ItemStack.EMPTY);
+        int i = 0;
+        for (; i < size; i++) {
+            if (i != selectedSlot) {
+                turtleInventory.setItem(i, playerInventory.getItem(i + 1));
+            }
+            playerInventory.setItem(i + 1, ItemStack.EMPTY);
         }
 
-        for (int i = size; i < largerSize; i++) {
-            ItemStack remaining = playerInventory.getItem(i);
+        for (; i < largerSize; i++) {
+            ItemStack remaining = playerInventory.getItem(i + 1);
             if (!remaining.isEmpty()) {
                 remaining = InventoryUtil.storeItemsFromOffset(turtleInventory, remaining, 0);
                 if (!remaining.isEmpty()) {
@@ -99,16 +109,17 @@ public final class FakePlayerProviderTurtle {
                     WorldUtil.dropItemStack(turtle.getLevel(), position, turtle.getDirection().getOpposite(), remaining);
                 }
             }
-
-            playerInventory.setItem(i, ItemStack.EMPTY);
+            playerInventory.setItem(i + 1, ItemStack.EMPTY);
         }
     }
 
     public static <T> T withPlayer(ITurtleAccess turtle, APFakePlayer.Action<T> action) throws LuaException {
         APFakePlayer player = getPlayer(turtle, turtle.getOwningPlayer());
         load(player, turtle);
-        T result = action.apply(player);
-        unload(player, turtle);
-        return result;
+        try {
+            return action.apply(player);
+        } finally {
+            unload(player, turtle);
+        }
     }
 }

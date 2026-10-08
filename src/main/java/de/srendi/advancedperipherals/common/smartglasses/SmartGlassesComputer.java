@@ -7,6 +7,7 @@ import dan200.computercraft.core.computer.ComputerSide;
 import dan200.computercraft.impl.PocketUpgrades;
 import dan200.computercraft.shared.computer.core.ServerComputer;
 import de.srendi.advancedperipherals.common.component.ItemStackStorage;
+import de.srendi.advancedperipherals.common.items.SmartChestplateItem;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APComputerComponents;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
@@ -47,6 +48,8 @@ public class SmartGlassesComputer extends ServerComputer {
     private volatile boolean modulesUpdated = false;
     private volatile boolean moduleDatasUpdated = false;
 
+    public SmartChestplateItem.DataStorage chestDataStorage = new SmartChestplateItem.DataStorage();
+
     protected SmartGlassesComputer(ServerLevel level, BlockPos pos, ServerComputer.Properties properties, ItemStack stack) {
         super(level, pos, properties);
         this.stack = stack;
@@ -85,16 +88,16 @@ public class SmartGlassesComputer extends ServerComputer {
     }
 
     public static SmartGlassesComputer create(ServerLevel level, BlockPos pos, ServerComputer.Properties properties, ItemStack stack) {
-        EquippedEntityWrapper wrapper = new EquippedEntityWrapper();
+        ComputerRef ref = new ComputerRef();
         SmartGlassesComputer computer = new SmartGlassesComputer(
             level,
             pos,
             properties
                 .terminalSize(39, 13)
-                .addComponent(APComputerComponents.SMARTGLASSES_EQUIPPED, wrapper),
+                .addComponent(APComputerComponents.SMARTGLASSES_EQUIPPED, ref),
             stack
         );
-        wrapper.computer = computer;
+        ref.computer = computer;
         return computer;
     }
 
@@ -268,6 +271,14 @@ public class SmartGlassesComputer extends ServerComputer {
                 module.serverTick(smartGlassesModuleAccess);
             }
         }
+        if (entity instanceof LivingEntity livingEntity) {
+            ItemStack chestStack = SmartChestplateItem.getEquipped(livingEntity);
+            if (!chestStack.isEmpty()) {
+                ((SmartChestplateItem) chestStack.getItem()).onActiveTick(
+                    chestStack, (ServerLevel) livingEntity.level(), livingEntity, this.chestDataStorage
+                );
+            }
+        }
     }
 
     public void setEntity(@Nullable Entity entity) {
@@ -323,18 +334,13 @@ public class SmartGlassesComputer extends ServerComputer {
         }
     }
 
-    private static final class EquippedEntityWrapper implements Supplier<Entity> {
+    private static final class ComputerRef implements Supplier<SmartGlassesComputer> {
         private SmartGlassesComputer computer = null;
 
         @Override
-        public Entity get() {
-            if (this.computer == null) {
-                return null;
-            }
-            if (!this.computer.isEquipped()) {
-                return null;
-            }
-            return this.computer.getEntity();
+        @NotNull
+        public SmartGlassesComputer get() {
+            return Objects.requireNonNull(this.computer);
         }
     }
 }

@@ -3,14 +3,9 @@ package de.srendi.advancedperipherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.AE2Registries;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
-import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.APRegistration;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -22,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.Random;
 
 @Mod(AdvancedPeripherals.MOD_ID)
-@Mod.EventBusSubscriber
 public class AdvancedPeripherals {
 
     public static final String MOD_ID = "advancedperipherals";
@@ -39,12 +33,9 @@ public class AdvancedPeripherals {
         APConfig.register(ModLoadingContext.get());
 
         modBus.addListener(this::onLoadComplete);
+        this.registerCapabilities(modBus);
 
         APRegistration.register(modBus);
-
-        if (APAddon.AE2.isLoaded()) {
-            modBus.addListener(AE2Registries::onRegister);
-        }
     }
 
     public static void debug(String message, Object... params) {
@@ -79,15 +70,12 @@ public class AdvancedPeripherals {
         }
     }
 
-    @SubscribeEvent
-    public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
-        ItemStack stack = event.getFrom();
-        ItemStack newStack = event.getTo();
-        if (stack.getItem() instanceof SmartGlassesItem glassesItem) {
-            if (newStack.getItem() == glassesItem && glassesItem.getComputerID(stack) == glassesItem.getComputerID(newStack)) {
-                return;
-            }
-            glassesItem.onUnequip(stack, (ServerLevel) event.getEntity().level(), event.getEntity());
+    public void registerCapabilities(IEventBus modBus) {
+        if (APAddon.AE2.isLoaded()) {
+            modBus.addListener(AE2Registries::onRegister);
         }
+        // if (APAddon.REFINEDSTORAGE.isLoaded()) {
+        //     modBus.addListener(RSApi::registerCapabilities);
+        // }
     }
 }

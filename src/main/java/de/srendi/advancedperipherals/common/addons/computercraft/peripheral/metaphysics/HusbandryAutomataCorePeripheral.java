@@ -16,10 +16,11 @@ import java.util.function.Predicate;
 public class HusbandryAutomataCorePeripheral extends WeakAutomataCorePeripheral {
     public static final String TYPE = "husbandry_automata";
 
-    private static final Predicate<Entity> isAnimal = entity1 -> entity1.getType().getCategory().isFriendly();
-    private static final Predicate<Entity> isLivingEntity = LivingEntity.class::isInstance;
-    private static final Predicate<Entity> isNotPlayer = entity1 -> !(entity1 instanceof Player);
-    private static final Predicate<Entity> suitableEntity = isAnimal.and(isLivingEntity).and(isNotPlayer);
+    private static final Predicate<Entity> suitableEntity = (e) ->
+        e instanceof LivingEntity &&
+        !(e instanceof Player) &&
+        e.getType().getCategory().isFriendly() &&
+        e.isPickable();
 
     public HusbandryAutomataCorePeripheral(ITurtleAccess turtle, TurtleSide side) {
         this(TYPE, turtle, side, AutomataCoreTier.TIER2);

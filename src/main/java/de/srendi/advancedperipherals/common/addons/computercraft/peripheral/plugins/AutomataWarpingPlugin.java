@@ -214,13 +214,13 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
      *   facing = "north", -- where will the turtle face after teleport
      *   costs = 10000, -- the costs to cross the portal
      *   canSpawn = true, -- if the target position is not blocked and turtle are able to spawn there
-     *   shipId = "xxx", -- the random id used for ship the portal. You have to call portalShipActive(shipId) if needed.
+     *   warpId = "xxx", -- the random id used for ship the portal. You have to call activePortalWarp(warpId) if needed.
      * }
      * </code>
      * </pre>
      */
     @LuaFunction
-    public final MethodResult portalShipPrepare(IArguments arguments) throws LuaException {
+    public final MethodResult preparePortalWarp(IArguments arguments) throws LuaException {
         Direction direction;
         switch (arguments.optString(0).orElse("").toLowerCase(Locale.ROOT)) {
             case "up", "top" -> direction = Direction.UP;
@@ -234,20 +234,20 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         ITurtleAccess turtle = owner.getTurtle();
         TurtleEnderPearl shipPearl = new TurtleEnderPearl(turtle, direction);
-        String shipId = shipPearl.getStringUUID();
+        String warpId = shipPearl.getStringUUID();
         ServerWorker.add(() -> {
             MethodResult res;
             try {
                 res = automataCore.withOperation(PREPARE_PORTAL, new SingleOperationContext(1, 1), context -> {
-                    shipPearl.setCallback(pearl -> {
+                    shipPearl.setCallbacks(pearl -> {
                         if (pearl == null || pearl.isRemoved()) {
-                            automataCore.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, "PEARL_GONE");
-                            shipPearls.remove(shipId);
+                            automataCore.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, warpId, "PEARL_GONE");
+                            shipPearls.remove(warpId);
                             return;
                         }
                         Level level = pearl.level();
                         if (level == turtle.getLevel()) {
-                            automataCore.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, "NO_PORTAL_FOUND");
+                            automataCore.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, warpId, "NO_PORTAL_FOUND");
                             pearl.discard();
                             return;
                         }
@@ -258,11 +258,12 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
                             "facing", pearl.getDirection().getName(),
                             "costs", getCostsToLevel(level.dimension()),
                             "canSpawn", owner.isMovementPossible(level, pos),
-                            "shipId", shipId
+                            "warpId", warpId
                         );
-                        shipPearls.put(shipId, pearl);
+                        shipPearls.values().removeIf(TurtleEnderPearl::isRemoved);
+                        shipPearls.put(warpId, pearl);
                         automataCore.queueEvent(PortalPrepareCallback.EVENT_ID, data);
-                    });
+                    }, shipPearls::remove);
                     turtle.getLevel().addFreshEntity(shipPearl);
                     return null;
                 }, null);
@@ -271,18 +272,18 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             }
             if (res != null) {
                 Object err = res.getResult()[1];
-                automataCore.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, shipId, err);
+                automataCore.queueEvent(PortalPrepareCallback.FAILED_EVENT_ID, warpId, err);
             }
         });
-        return new PortalPrepareCallback(shipId).pull;
+        return new PortalPrepareCallback(warpId).pull;
     }
 
     /**
-     * @param id the random shipId, one of the result from portalShipPrepare()
+     * @param id the random warpId from the result of preparePortalWarp()
      * @return true | nil, string
      */
     @LuaFunction(mainThread = true)
-    public final MethodResult portalShipActive(String id) throws LuaException {
+    public final MethodResult activePortalWarp(String id) throws LuaException {
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
         TurtleEnderPearl shipPearl = shipPearls.get(id);
         if (shipPearl == null) {
@@ -295,12 +296,12 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
         Level level = shipPearl.level();
         BlockPos newPosition = shipPearl.blockPosition();
         return automataCore.withOperation(ACTIVE_PORTAL, new SingleOperationContext(getCostsToLevel(level.dimension()), 1), context -> {
+            shipPearls.remove(id);
             shipPearl.discard();
             boolean result = owner.move(level, newPosition);
             if (!result) {
                 return MethodResult.of(null, "Cannot teleport to location");
             }
-            shipPearls.remove(id);
             return MethodResult.of(true);
         }, context -> {
             if (!owner.isMovementPossible(level, newPosition)) {
@@ -346,7 +347,7 @@ public class AutomataWarpingPlugin extends AutomataCorePlugin {
             if (!EVENT_ID.equals(datas[0]) || datas.length != 2) {
                 return pull;
             }
-            if (!(datas[1] instanceof Map<?, ?> data) || !id.equals(data.get("shipId"))) {
+            if (!(datas[1] instanceof Map<?, ?> data) || !id.equals(data.get("warpId"))) {
                 return pull;
             }
             return MethodResult.of(data);

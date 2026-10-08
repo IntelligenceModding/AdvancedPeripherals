@@ -17,16 +17,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     private static final ItemStackStorage EMPTY_ITEMS = ItemStackStorage.ofSize(SmartGlassesSlot.SLOTS);
-    private final ItemStack glasses;
+    private final ItemStack stack;
     private final SmartGlassesComputer computer;
 
-    public SmartGlassesItemHandler(@NotNull ItemStack glasses, @NotNull SmartGlassesComputer computer) {
-        this.glasses = glasses;
+    public SmartGlassesItemHandler(@NotNull ItemStack stack, @NotNull SmartGlassesComputer computer) {
+        this.stack = stack;
         this.computer = computer;
     }
 
     public ItemStack getGlasses() {
-        return glasses;
+        return stack;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
         if (stack.getItem() instanceof SmartGlassesItem) {
             return false;
         }
-        ItemStackStorage items = loadItems(this.glasses);
+        ItemStackStorage items = loadItems(this.stack);
         if (slot < SmartGlassesSlot.PERIPHERAL_SLOTS) {
             UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(stack);
             if (upgradeData == null) {
@@ -75,29 +75,47 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
     }
 
     @Override
+    public ItemStack getStackInSlot(int slot) {
+        return loadItems(this.stack).getAllUnsafe()[slot];
+    }
+
+    @Override
+    public void setStackInSlot(int slot, ItemStack stack) {
+        ItemStackStorage items = loadItems(this.stack);
+        if (slot < SmartGlassesSlot.PERIPHERAL_SLOTS) {
+            if (items.isSameItemSameTags(slot, stack)) {
+                return;
+            }
+            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(stack);
+            this.computer.setUpgrade(SmartGlassesSlot.indexToSide(slot), upgradeData);
+        } else {
+            this.computer.setModuleStack(slot - SmartGlassesSlot.MODULE_SLOT_OFFSET, stack);
+        }
+        this.computer.updateStack(this.stack, true);
+    }
+
+    @Override
     @NotNull
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        if (!isItemValid(slot, stack)) {
+        if (!this.isItemValid(slot, stack)) {
             return stack;
         }
-        ItemStack existing = getStackInSlot(slot);
-        int limit = getSlotLimit(slot) - existing.getCount();
+        ItemStack existing = this.getStackInSlot(slot);
+        if (!existing.isEmpty() && ItemStack.isSameItemSameTags(existing, stack)) {
+            return stack;
+        }
+        int limit = Math.min(this.getSlotLimit(slot), existing.getMaxStackSize()) - existing.getCount();
         if (limit <= 0) {
             return stack;
         }
 
-        boolean reachedLimit = stack.getCount() > limit;
+        boolean reachedLimit = stack.getCount() >= limit;
 
         if (!simulate) {
-            if (existing.isEmpty()) {
-                setStackInSlot(slot, reachedLimit ? stack.copyWithCount(limit) : stack);
-            } else {
-                existing.grow(reachedLimit ? limit : stack.getCount());
-                setStackInSlot(slot, existing);
-            }
+            this.setStackInSlot(slot, stack.copyWithCount(existing.getCount() + (reachedLimit ? limit : stack.getCount())));
         }
 
         return reachedLimit ? stack.copyWithCount(stack.getCount() - limit) : ItemStack.EMPTY;
@@ -110,45 +128,22 @@ public class SmartGlassesItemHandler implements IItemHandlerModifiable {
             return ItemStack.EMPTY;
         }
 
-        ItemStack existing = getStackInSlot(slot);
+        ItemStack existing = this.getStackInSlot(slot);
         if (existing.isEmpty()) {
             return ItemStack.EMPTY;
         }
 
-        int toExtract = Math.min(amount, existing.getMaxStackSize());
-
-        if (existing.getCount() <= toExtract) {
-            if (simulate) {
-                return existing.copy();
+        if (existing.getCount() <= amount) {
+            if (!simulate) {
+                this.setStackInSlot(slot, ItemStack.EMPTY);
             }
-            setStackInSlot(slot, ItemStack.EMPTY);
-            return existing;
+            return existing.copy();
         }
 
         if (!simulate) {
-            setStackInSlot(slot, existing.copyWithCount(existing.getCount() - toExtract));
+            this.setStackInSlot(slot, existing.copyWithCount(existing.getCount() - amount));
         }
-        return existing.copyWithCount(toExtract);
-    }
-
-    @Override
-    public ItemStack getStackInSlot(int slot) {
-        return loadItems(this.glasses).getAllUnsafe()[slot];
-    }
-
-    @Override
-    public void setStackInSlot(int slot, ItemStack stack) {
-        ItemStackStorage items = loadItems(this.glasses);
-        if (slot < SmartGlassesSlot.PERIPHERAL_SLOTS) {
-            if (items.isSameItemSameTags(slot, stack)) {
-                return;
-            }
-            UpgradeData<IPocketUpgrade> upgradeData = PocketUpgrades.instance().get(stack);
-            this.computer.setUpgrade(SmartGlassesSlot.indexToSide(slot), upgradeData);
-        } else {
-            this.computer.setModuleStack(slot - SmartGlassesSlot.MODULE_SLOT_OFFSET, stack);
-        }
-        this.computer.updateStack(this.glasses, true);
+        return existing.copyWithCount(amount);
     }
 
     public static final void saveItems(ItemStack glasses, ItemStackStorage items) {

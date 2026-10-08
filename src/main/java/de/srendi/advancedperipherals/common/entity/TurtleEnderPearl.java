@@ -31,6 +31,7 @@ public class TurtleEnderPearl extends ThrowableProjectile {
     private ITurtleAccess turtle = null;
     private BlockPos spawnPos = null;
     private Consumer<TurtleEnderPearl> callback = null;
+    private Consumer<String> onExpire = null;
     private int life = 20;
     private boolean changedDim = false;
 
@@ -56,8 +57,9 @@ public class TurtleEnderPearl extends ThrowableProjectile {
         return turtle;
     }
 
-    public void setCallback(Consumer<TurtleEnderPearl> callback) {
+    public void setCallbacks(Consumer<TurtleEnderPearl> callback, Consumer<String> onExpire) {
         this.callback = callback;
+        this.onExpire = onExpire;
     }
 
     @Override
@@ -85,6 +87,9 @@ public class TurtleEnderPearl extends ThrowableProjectile {
             // clean after 5s
             if (this.life < -100) {
                 this.discard();
+                if (this.onExpire != null) {
+                    this.onExpire.accept(this.getStringUUID());
+                }
                 return;
             }
             return;

@@ -124,6 +124,13 @@ public abstract class BaseDetectorEntity<T, S extends IStorageProxy, P extends B
     }
 
     @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        this.inputStorageCap.invalidate();
+        this.zeroStorageCap.invalidate();
+    }
+
+    @Override
     public void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putLong(RATE_LIMIT_TAG, this.getTransferRateLimit());

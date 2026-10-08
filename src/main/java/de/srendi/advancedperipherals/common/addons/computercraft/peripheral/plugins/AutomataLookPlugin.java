@@ -41,7 +41,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
 
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        HitResult result = owner.withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(true, false)));
+        HitResult result = owner.withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(APFakePlayer.RayCastContext.BLOCK)));
         if (result.getType() == HitResult.Type.MISS) {
             return MethodResult.of(null, "No block find");
         }
@@ -74,7 +74,7 @@ public class AutomataLookPlugin extends AutomataCorePlugin {
 
         automataCore.addRotationCycle();
         TurtlePeripheralOwner owner = automataCore.getPeripheralOwner();
-        HitResult result = owner.withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(false, true)));
+        HitResult result = owner.withPlayer(APFakePlayer.wrapActionWithRot(yaw, pitch, p -> p.findHit(APFakePlayer.RayCastContext.ENTITY)));
         if (result.getType() == HitResult.Type.MISS) {
             return MethodResult.of(null, "No entity find");
         }

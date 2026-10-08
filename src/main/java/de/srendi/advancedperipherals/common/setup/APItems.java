@@ -7,6 +7,7 @@ import de.srendi.advancedperipherals.common.configuration.APConfig;
 import de.srendi.advancedperipherals.common.items.APItem;
 import de.srendi.advancedperipherals.common.items.KeyboardItem;
 import de.srendi.advancedperipherals.common.items.MemoryCardItem;
+import de.srendi.advancedperipherals.common.items.SmartChestplateItem;
 import de.srendi.advancedperipherals.common.items.SmartGlassesInterfaceItem;
 import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.items.WeakAutomataCore;
@@ -54,13 +55,16 @@ public class APItems {
 
     @DefaultTranslation("Smart Glasses")
     @DefaultTooltip("&7A portable computer that supports multiple peripherals and modules.")
-    public static final RegistryObject<SmartGlassesItem> SMART_GLASSES = APRegistration.ITEMS.register("smart_glasses", () -> new SmartGlassesItem(ArmorMaterials.CHAIN));
+    public static final RegistryObject<SmartGlassesItem> SMART_GLASSES = APRegistration.ITEMS.register("smart_glasses", () -> new SmartGlassesItem(ArmorMaterials.CHAIN, new Item.Properties()));
     @DefaultTranslation("Netherite reinforced Smart Glasses")
     @DefaultTooltip("&7An upgraded version of smart glasses that provides a bit more armor.")
-    public static final RegistryObject<SmartGlassesItem> SMART_GLASSES_NETHERITE = APRegistration.ITEMS.register("smart_glasses_netherite", () -> new SmartGlassesItem(ArmorMaterials.NETHERITE));
+    public static final RegistryObject<SmartGlassesItem> SMART_GLASSES_NETHERITE = APRegistration.ITEMS.register("smart_glasses_netherite", () -> new SmartGlassesItem(ArmorMaterials.NETHERITE, new Item.Properties().fireResistant()));
     @DefaultTranslation("Smart Glasses Interface")
     @DefaultTooltip("&7Can access equipped smart glasses without taking it off!")
     public static final RegistryObject<SmartGlassesInterfaceItem> SMART_GLASSES_INTERFACE = APRegistration.ITEMS.register("smart_glasses_interface", SmartGlassesInterfaceItem::new);
+    @DefaultTranslation("Smart Chestplate")
+    @DefaultTooltip("&7An advanced chestplate that provides extendable hands can be controlled by Smart Glasses.")
+    public static final RegistryObject<SmartChestplateItem> SMART_CHESTPLATE = APRegistration.ITEMS.register("smart_chestplate", () -> new SmartChestplateItem(ArmorMaterials.NETHERITE, new Item.Properties().fireResistant()));
 
     @DefaultTranslation("Hotkey Module")
     @DefaultTooltip("&7Capture a predefined key and forward it as an event.")
@@ -91,7 +95,6 @@ public class APItems {
     @DefaultTooltip("&7Provides a lot external file storage via ME Bridge.")
     public static final RegistryObject<AEDiskCellItem> AE_DISK_CELL_256M = APAddon.AE2.isLoaded() ? APRegistration.ITEMS.register("ae_disk_cell_256m", () -> new AEDiskCellItem(new Item.Properties(), AEDiskCellItem.Tier.DISK_256M)) : null;
 
-    protected static void register() {
+    public static void register() {
     }
-
 }

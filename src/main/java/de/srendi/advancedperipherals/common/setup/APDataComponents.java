@@ -15,6 +15,7 @@ public class APDataComponents {
     public static final String MODULE_DATAS = "module_datas";
     public static final String OWNER = "owner_id";
     public static final String POINT_DATA_MARK = "point_data_mark";
+    public static final String POSITIONS = "positions";
     public static final String ROTATION_CHARGE_SETTING = "rotation_charge_setting";
     public static final String STORED_DATA = "stored_data";
     public static final String WORLD_DATA_MARK = "world_data_mark";

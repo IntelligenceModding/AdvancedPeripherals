@@ -23,6 +23,7 @@ import dan200.computercraft.shared.util.IDAssigner;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.curios.SmartGlassesCurio;
 import de.srendi.advancedperipherals.common.component.ItemStackStorage;
+import de.srendi.advancedperipherals.common.items.base.BaseArmorItem;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesComputer;
 import de.srendi.advancedperipherals.common.smartglasses.SmartGlassesItemHandler;
@@ -63,7 +64,7 @@ import top.theillusivec4.curios.api.CuriosCapability;
 import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
-public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia {
+public class SmartGlassesItem extends BaseArmorItem implements IComputerItem, IMedia {
 
     public static final String NBT_LIGHT = "Light";
     public static final String NBT_ON = "On";
@@ -71,8 +72,8 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
     private static final String NBT_INSTANCE = "InstanceId";
     private static final String NBT_SESSION = "SessionId";
 
-    public SmartGlassesItem(ArmorMaterial material) {
-        super(material, ArmorItem.Type.HELMET, new Properties().stacksTo(1));
+    public SmartGlassesItem(ArmorMaterial material, Properties properties) {
+        super(material, ArmorItem.Type.HELMET, properties);
     }
 
     public IItemHandler createItemHandlerCap(ItemStack stack) {
@@ -107,6 +108,10 @@ public class SmartGlassesItem extends ArmorItem implements IComputerItem, IMedia
                 return LazyOptional.empty();
             }
         };
+    }
+
+    public boolean isEnabled() {
+        return true;
     }
 
     // @Override // TODO: what's the replacement in 1.20.1?

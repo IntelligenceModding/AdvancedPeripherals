@@ -5,12 +5,15 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
+import de.srendi.advancedperipherals.common.items.SmartGlassesItem;
 import de.srendi.advancedperipherals.common.setup.CCEvents;
+import de.srendi.advancedperipherals.common.util.fakeplayer.APFakePlayer;
 import de.srendi.advancedperipherals.lib.misc.DataPublisher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -20,7 +23,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -133,6 +138,25 @@ public class Events {
         putChatMessage(
             new ChatMessageRecord(player.getUUID(), event.getUsername(), message, isHidden, player.serverLevel().dimension(), player.position())
         );
+    }
+
+    @SubscribeEvent
+    public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+        ItemStack stack = event.getFrom();
+        ItemStack newStack = event.getTo();
+        if (stack.getItem() instanceof SmartGlassesItem glassesItem) {
+            if (newStack.getItem() == glassesItem && glassesItem.getComputerID(stack) == glassesItem.getComputerID(newStack)) {
+                return;
+            }
+            glassesItem.onUnequip(stack, (ServerLevel) event.getEntity().level(), event.getEntity());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onTargeting(LivingChangeTargetEvent event) {
+        if (event.getNewTarget() instanceof APFakePlayer) {
+            event.setCanceled(true);
+        }
     }
 
     public static void putChatMessage(ChatMessageRecord message) {

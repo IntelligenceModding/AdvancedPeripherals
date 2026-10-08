@@ -14,6 +14,8 @@
 
 local native = smartglasses
 
+---- BEGIN MODULES ----
+
 local MODULES_SIDE = 'back'
 
 local function iterModules()
@@ -110,6 +112,71 @@ _ENV.modules = setmetatable({
 		return str
 	end,
 })
+
+---- END MODULES ----
+
+---- BEGIN SMARTCHEST ----
+
+local function createHand(index)
+	local hand = {}
+
+	function hand.getIndex()
+		return index
+	end
+
+	function hand.getItem()
+		return smartglasses.smartChestList()[index]
+	end
+
+	function hand.importItem(option)
+		option = option or {}
+		option.toSlot = index
+		return smartglasses.smartChestImportItem(option)
+	end
+
+	function hand.exportItem(option)
+		option = option or {}
+		option.fromSlot = index
+		return smartglasses.smartChestExportItem(option)
+	end
+
+	function hand.getPos()
+		return smartglasses.smartHandPos(index)
+	end
+
+	function hand.setPos(x, y, z)
+		local arg = type(x) == 'table' and x or { x = x, y = y, z = z }
+		return smartglasses.smartHandMove(index, x)
+	end
+
+	function hand.suck(...)
+		return smartglasses.smartHandSuckItem(index, ...)
+	end
+
+	function hand.drop(...)
+		return smartglasses.smartHandDropItem(index, ...)
+	end
+
+	function hand.attack(...)
+		return smartglasses.smartHandAttack(index, ...)
+	end
+
+	function hand.dig(...)
+		return smartglasses.smartHandDig(index, ...)
+	end
+
+	function hand.use(...)
+		return smartglasses.smartHandUse(index, ...)
+	end
+
+	return hand
+end
+
+function _ENV.wrapSmartHand(index)
+	return createHand(index)
+end
+
+---- END SMARTCHEST ----
 
 for k, v in pairs(native) do
 	_ENV[k] = v
