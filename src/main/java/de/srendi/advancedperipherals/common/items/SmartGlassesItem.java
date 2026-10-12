@@ -110,6 +110,7 @@ public class SmartGlassesItem extends BaseArmorItem implements IComputerItem, IM
         };
     }
 
+    @Override
     public boolean isEnabled() {
         return true;
     }

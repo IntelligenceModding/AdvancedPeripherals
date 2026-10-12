@@ -103,13 +103,16 @@ public class SmartChestHand extends Entity {
         return true;
     }
 
-    @Override
-    public Vec3 getVehicleAttachmentPoint(Entity owner) {
-        Vec3 pos = owner.getPassengerRidingPosition(this);
-        Vec3 basePos = owner.getEyePosition();
-        Vector3f relPos = this.getRelativePos();
-        return pos.subtract(basePos.add(relPos.x, relPos.y, relPos.z));
-    }
+    // TODO: find a way work in 1.20.1
+    // I probably will not spend time on it, so PR is welcome.
+    //
+    // @Override
+    // public Vec3 getVehicleAttachmentPoint(Entity owner) {
+    //     Vec3 pos = owner.getPassengerRidingPosition(this);
+    //     Vec3 basePos = owner.getEyePosition();
+    //     Vector3f relPos = this.getRelativePos();
+    //     return pos.subtract(basePos.add(relPos.x, relPos.y, relPos.z));
+    // }
 
     public Vector3f getRelativePos() {
         return this.entityData.get(DATA_REL_POS);
