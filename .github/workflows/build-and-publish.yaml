@@ -98,4 +98,6 @@ jobs:
 
   update-issue-template:
     if: ${{ github.event_name == 'push' && contains(github.ref, 'release/') }}
+    needs:
+      - publish
     uses: ./.github/workflows/update-issue-template.yaml
