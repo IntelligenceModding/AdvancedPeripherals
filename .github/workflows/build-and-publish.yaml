@@ -98,4 +98,4 @@ jobs:
 
   update-issue-template:
     if: ${{ github.event_name == 'push' && contains(github.ref, 'release/') }}
-    uses: ./.github/workflows/update-issue-template.yml
+    uses: ./.github/workflows/update-issue-template.yaml
