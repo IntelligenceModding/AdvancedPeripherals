@@ -3,14 +3,18 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
+import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
+import appeng.api.stacks.GenericStack;
 import appeng.api.stacks.KeyCounter;
 import appeng.crafting.pattern.EncodedPatternItem;
+import appeng.me.cluster.implementations.CraftingCPUCluster;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -50,6 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageSystemBlockEntityPeripheralOwner<MEBridgeEntity>> {
@@ -408,9 +413,9 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
             return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
         }
 
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.right(), filter.getCount(), bridge, target);
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, new GenericStack(stack.right(), filter.getCount()), node, bridge, target);
         bridge.addJob(job);
-        return MethodResult.of(job.withCPU(target));
+        return MethodResult.of(job);
     }
 
     @Override
@@ -428,9 +433,9 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
         }
 
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.right(), filter.getAmount(), bridge, target);
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, new GenericStack(stack.right(), filter.getAmount()), node, bridge, target);
         bridge.addJob(job);
-        return MethodResult.of(job.withCPU(target));
+        return MethodResult.of(job);
     }
 
     @Override
@@ -449,9 +454,9 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
         }
 
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.right(), filter.getAmount(), bridge, target);
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, new GenericStack(stack.right(), filter.getAmount()), node, bridge, target);
         bridge.addJob(job);
-        return MethodResult.of(job.withCPU(target));
+        return MethodResult.of(job);
     }
 
     @Override
@@ -460,32 +465,55 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
 
         List<Object> jobs = new ArrayList<>();
 
-        for (AECraftJob job : bridge.getJobs()) {
-            for (ICraftingCPU cpu : craftingGrid.getCpus()) {
-                if (cpu.isBusy() && job.getToCraft().matches(cpu.getJobStatus().crafting()))
-                    jobs.add(AEApi.parseCraftingJob(cpu.getJobStatus(), job, cpu));
+        for (ICraftingCPU cpu : craftingGrid.getCpus()) {
+            if (!cpu.isBusy()) {
+                continue;
             }
+            AECraftJob job = null;
+            if (cpu instanceof CraftingCPUCluster cluster) {
+                ICraftingLink lastLink = cluster.craftingLogic.getLastLink();
+                if (lastLink != null) {
+                    job = bridge.getJob(lastLink.getCraftingID());
+                }
+            }
+            jobs.add(AEApi.parseCraftingJob(cpu.getJobStatus(), job, cpu));
         }
+
         return jobs;
     }
 
     @Override
-    public Object getCraftingTaskImpl(int id) {
-        for (AECraftJob job : bridge.getJobs()) {
-            if (job.getId() == id) {
-                return MethodResult.of(job);
-            }
+    public MethodResult getCraftingTaskImpl(int id) {
+        AECraftJob job = bridge.getJob(id);
+        if (job != null) {
+            return MethodResult.of(job);
+        }
+        return MethodResult.of(null, StatusConstants.NOT_FOUND.toString());
+    }
+
+    @Override
+    public MethodResult getCraftingTaskImpl(UUID uuid) {
+        AECraftJob job = bridge.getJob(uuid);
+        if (job != null) {
+            return MethodResult.of(job);
+        }
+        ICraftingCPU cpu = AECraftJob.searchJobCPU(uuid, bridge.getGridNode().getGrid().getCraftingService());
+        if (cpu instanceof CraftingCPUCluster cluster) {
+            job = new AECraftJob(cluster.craftingLogic.getFinalJobOutput(), cluster.craftingLogic.getLastLink(), cpu);
+            bridge.watchJob(job);
+            return MethodResult.of(job);
         }
         return MethodResult.of(null, StatusConstants.NOT_FOUND.toString());
     }
 
     @Override
     public int cancelCraftingTasksImpl(GenericFilter<?> filter) throws LuaException {
-        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+        ICraftingService craftingService = node.getGrid().getService(ICraftingService.class);
 
         int canceled = 0;
-        for (ICraftingCPU cpu : craftingGrid.getCpus()) {
-            if (cpu.getJobStatus() != null && filter.testAE(cpu.getJobStatus().crafting())) {
+        for (ICraftingCPU cpu : craftingService.getCpus()) {
+            CraftingJobStatus status = cpu.getJobStatus();
+            if (status != null && filter.testAE(status.crafting())) {
                 cpu.cancelJob();
                 canceled++;
             }

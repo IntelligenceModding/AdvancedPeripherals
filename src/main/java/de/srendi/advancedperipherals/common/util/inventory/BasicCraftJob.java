@@ -3,25 +3,26 @@ package de.srendi.advancedperipherals.common.util.inventory;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
-import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class BasicCraftJob {
 
     private static final String EVENT_SUFFIX = "_crafting";
     private static final int JOB_DONE_PURGE_TIME = 5 * 60 * 1000;
 
-    public static final AtomicLong ID_SEQ = new AtomicLong();
+    public static final AtomicInteger ID_SEQ = new AtomicInteger();
 
-    protected final long id = ID_SEQ.incrementAndGet();
+    protected final int id;
+    protected volatile UUID uuid;
+    @Nullable
     protected final IComputerAccess computer;
     protected final String eventPrefix;
-    protected final long amount;
-    protected final Level world;
 
-    protected boolean startedCrafting = false;
     protected boolean startedCalculation = false;
+    protected boolean startedCrafting = false;
     protected boolean calculationNotSuccessful = false;
     protected boolean errorOccurred = false;
     protected boolean isJobDone = false;
@@ -29,16 +30,30 @@ public abstract class BasicCraftJob {
     protected boolean isJobCanceled = false;
     protected String debugMessage = null;
 
-    public BasicCraftJob(IComputerAccess computer, String eventPrefix, Level world, long amount) {
+    public BasicCraftJob(int id, UUID uuid, IComputerAccess computer, String eventPrefix) {
+        this.id = id;
+        this.uuid = uuid;
         this.computer = computer;
         this.eventPrefix = eventPrefix;
-        this.world = world;
-        this.amount = amount;
+    }
+
+    public BasicCraftJob(IComputerAccess computer, String eventPrefix) {
+        this(ID_SEQ.incrementAndGet(), null, computer, eventPrefix);
     }
 
     @LuaFunction
-    public final long getId() {
+    public final int getId() {
         return id;
+    }
+
+    @Nullable
+    public final UUID getUUID() {
+        return this.uuid;
+    }
+
+    @LuaFunction("getUUID")
+    public final String getUUIDLua() {
+        return uuid == null ? null : uuid.toString();
     }
 
     protected abstract boolean isJobDone();
@@ -80,86 +95,71 @@ public abstract class BasicCraftJob {
         return debugMessage;
     }
 
+    protected abstract Object getParsedRequestedItemImpl();
+
     @LuaFunction
     public final Object getRequestedItem() {
         return getParsedRequestedItemImpl();
     }
 
+    protected abstract long getElapsedTimeImpl();
+
     @LuaFunction
-    public final long getElapsedTime() {
+    public final double getElapsedTime() {
         return getElapsedTimeImpl();
     }
 
-    @LuaFunction
-    public final long getTotalItems() {
-        return getTotalItemsImpl();
-    }
+    protected abstract double getItemProgressImpl();
 
     @LuaFunction
-    public final long getItemProgress() {
+    public final double getItemProgress() {
         return getItemProgressImpl();
     }
+
+    protected abstract Object getEmittedItemsImpl();
 
     @LuaFunction
     public final Object getEmittedItems() {
         return getEmittedItemsImpl();
     }
 
+    protected abstract Object getUsedItemsImpl();
+
     @LuaFunction
     public final Object getUsedItems() {
         return getUsedItemsImpl();
     }
+
+    protected abstract Object getMissingItemsImpl();
 
     @LuaFunction
     public final Object getMissingItems() {
         return getMissingItemsImpl();
     }
 
+    protected abstract boolean hasMultiplePathsImpl();
+
     @LuaFunction
     public final boolean hasMultiplePaths() {
         return hasMultiplePathsImpl();
     }
+
+    protected abstract Object getFinalOutputImpl();
 
     @LuaFunction
     public final Object getFinalOutput() {
         return getFinalOutputImpl();
     }
 
+    protected abstract boolean cancelImpl();
+
     @LuaFunction
     public final boolean cancel() {
         return cancelImpl();
     }
 
-    protected abstract Object getParsedRequestedItemImpl();
-
-    protected abstract long getElapsedTimeImpl();
-
-    protected abstract long getTotalItemsImpl();
-
-    protected abstract long getItemProgressImpl();
-
-    protected abstract Object getEmittedItemsImpl();
-
-    protected abstract Object getUsedItemsImpl();
-
-    protected abstract Object getMissingItemsImpl();
-
-    protected abstract boolean hasMultiplePathsImpl();
-
-    protected abstract Object getFinalOutputImpl();
-
-    protected abstract boolean cancelImpl();
-
-    protected Level getWorld() {
-        return world;
-    }
-
-    protected long getAmount() {
-        return amount;
-    }
-
     public boolean canBePurged() {
-        return calculationNotSuccessful || ((isJobDone || isJobCanceled) && jobDoneTime + JOB_DONE_PURGE_TIME < System.currentTimeMillis());
+        return calculationNotSuccessful || isJobDone || isJobCanceled;
     }
 
     protected void fireNotConnected() {
@@ -182,25 +182,35 @@ public abstract class BasicCraftJob {
     }
 
     protected void fireEvent(boolean error, StatusConstants message) {
+        if (this.computer == null) {
+            return;
+        }
         this.computer.queueEvent(eventPrefix + EVENT_SUFFIX, error, this.id, message.toString());
         this.debugMessage = message.toString();
         this.errorOccurred = error;
     }
 
     protected void fireEvent(boolean error, String message) {
+        if (this.computer == null) {
+            return;
+        }
         this.computer.queueEvent(eventPrefix + EVENT_SUFFIX, error, this.id, message);
         this.debugMessage = message;
         this.errorOccurred = error;
     }
 
     public void tick() {
-        startCalculation();
-        maybeCraft();
+        if (!startedCrafting) {
+            if (!startedCalculation) {
+                startCalculation();
+            }
+            maybeCraft();
+        }
     }
 
-    protected abstract void maybeCraft();
-
     protected abstract void startCalculation();
+
+    protected abstract void maybeCraft();
 
     public abstract void jobStateChanged();
 }

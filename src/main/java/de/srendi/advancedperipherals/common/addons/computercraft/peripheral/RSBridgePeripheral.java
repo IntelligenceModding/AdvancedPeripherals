@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<StorageSystemBlockEntityPeripheralOwner<RSBridgeEntity>> {
     public static final String PERIPHERAL_TYPE = "rs_bridge";
@@ -265,14 +266,14 @@ public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
 
     @Override
     public MethodResult craftItemImpl(IComputerAccess computer, IArguments arguments, ItemFilter filter) throws LuaException {
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getCount(), ItemResource.ofItemStack(filter.toItemStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        RSCraftJob job = new RSCraftJob(getLevel(), computer, ItemResource.ofItemStack(filter.toItemStack()), filter.getCount(), getNetwork().getComponent(AutocraftingNetworkComponent.class));
         bridge.addJob(job);
         return MethodResult.of(job);
     }
 
     @Override
     public MethodResult craftFluidImpl(IComputerAccess computer, IArguments arguments, FluidFilter filter) throws LuaException {
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getAmount(), VariantUtil.ofFluidStack(filter.toFluidStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        RSCraftJob job = new RSCraftJob(getLevel(), computer, VariantUtil.ofFluidStack(filter.toFluidStack()), filter.getAmount(), getNetwork().getComponent(AutocraftingNetworkComponent.class));
         bridge.addJob(job);
         return MethodResult.of(job);
     }
@@ -281,7 +282,7 @@ public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     public MethodResult craftChemicalImpl(IComputerAccess computer, IArguments arguments, Object /*ChemicalFilter*/ filter0) throws LuaException {
         ChemicalFilter filter = (ChemicalFilter) filter0;
 
-        RSCraftJob job = new RSCraftJob(computer, getLevel(), filter.getAmount(), ChemicalResource.ofChemicalStack(filter.toChemicalStack()), getNetwork().getComponent(AutocraftingNetworkComponent.class));
+        RSCraftJob job = new RSCraftJob(getLevel(), computer, ChemicalResource.ofChemicalStack(filter.toChemicalStack()), filter.getAmount(), getNetwork().getComponent(AutocraftingNetworkComponent.class));
         bridge.addJob(job);
         return MethodResult.of(job);
     }
@@ -293,9 +294,23 @@ public class RSBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
 
     @Override
     public MethodResult getCraftingTaskImpl(int id) {
-        for (RSCraftJob job : bridge.getJobs()) {
-            if (job.getId() == id) {
-                return MethodResult.of(job);
+        RSCraftJob job = bridge.getJob(id);
+        if (job != null) {
+            return MethodResult.of(job);
+        }
+        return MethodResult.of(null, StatusConstants.NOT_FOUND.toString());
+    }
+
+    @Override
+    public MethodResult getCraftingTaskImpl(UUID uuid) {
+        RSCraftJob job = bridge.getJobs().stream().filter(j -> uuid.equals(j.getUUID())).findFirst().orElse(null);
+        if (job != null) {
+            return MethodResult.of(job);
+        }
+        AutocraftingNetworkComponent craftingNetwork = getNetwork().getComponent(AutocraftingNetworkComponent.class);
+        for (TaskStatus status : craftingNetwork.getStatuses()) {
+            if (status.info().id().id().equals(uuid)) {
+                return MethodResult.of(new RSCraftJob(status, craftingNetwork));
             }
         }
         return MethodResult.of(null, StatusConstants.NOT_FOUND.toString());

@@ -626,8 +626,8 @@ public class RSApi {
     public static Object parseCraftingTask(@Nullable RSCraftJob task, TaskStatus status, @Nullable AutocraftingNetworkComponent autocraftingComponent) {
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put("bridgeId", task == null ? -1 : task.getId());
-        properties.put("id", status.info().id().toString());
+        properties.put("id", task == null ? -1 : task.getId());
+        properties.put("uuid", status.info().id().id().toString());
         properties.put("quantity", status.info().amount());
         // The "stored" attribute of the Item does not always work. I guess this is a bug, I at least reported it.
         // So currently we just calculate it by subtracting the currently crafting from the requested amount

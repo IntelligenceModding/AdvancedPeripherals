@@ -534,7 +534,7 @@ public class AEApi {
     public static Object parseCraftingJob(CraftingJobStatus status, @Nullable AECraftJob craftJob, @Nullable ICraftingCPU cpu) {
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put("bridgeId", craftJob == null ? -1 : craftJob.getId());
+        properties.put("id", craftJob == null ? -1 : craftJob.getId());
         properties.put("quantity", status.crafting().amount());
         properties.put("resource", parseGenericStack(status.crafting()));
 
@@ -545,9 +545,7 @@ public class AEApi {
             long crafted = status.crafting().amount() - (pending + active);
             properties.put("completion", crafted / (double) status.crafting().amount());
             properties.put("crafted", crafted);
-
-            properties.put("id", craftingCpuLogic.getLastLink().getCraftingID().toString());
-
+            properties.put("uuid", craftingCpuLogic.getLastLink().getCraftingID().toString());
             properties.put("cpu", parseCraftingCPU(cpu, true));
         }
 

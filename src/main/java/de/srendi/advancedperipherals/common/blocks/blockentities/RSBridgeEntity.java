@@ -25,15 +25,17 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> implements NetworkNodeContainerProvider, TaskStatusListener {
 
     private final NetworkNode node;
     private final InWorldNetworkNodeContainer networkNodeContainer;
-    private final List<RSCraftJob> jobs = new CopyOnWriteArrayList<>();
+    private final Map<Integer, RSCraftJob> jobs = new ConcurrentHashMap<>();
     private boolean addedListener = false;
 
     public RSBridgeEntity(BlockPos pos, BlockState state) {
@@ -63,19 +65,24 @@ public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
             }
         }
 
-        // Try to start the job if the job calculation finished
-        jobs.forEach(BasicCraftJob::tick);
-
-        // Remove the job if the crafting calculation failed, we can't do anything with it anymore
-        jobs.removeIf(BasicCraftJob::canBePurged);
+        for (RSCraftJob job : jobs.values()) {
+            job.tick();
+            if (job.canBePurged()) {
+                jobs.remove(job.getId());
+            }
+        }
     }
 
     public void addJob(RSCraftJob job) {
-        jobs.add(job);
+        jobs.put(job.getId(), job);
     }
 
-    public List<RSCraftJob> getJobs() {
-        return jobs;
+    public RSCraftJob getJob(int id) {
+        return jobs.get(id);
+    }
+
+    public Collection<RSCraftJob> getJobs() {
+        return jobs.values();
     }
 
     public NetworkNode getNode() {
@@ -105,16 +112,26 @@ public class RSBridgeEntity extends PeripheralBlockEntity<RSBridgePeripheral> im
 
     @Override
     public void taskStatusChanged(@NotNull TaskStatus taskStatus) {
-        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter(job -> job.getCraftingTask().info().id().equals(taskStatus.info().id())).forEach(BasicCraftJob::jobStateChanged);
+        UUID id = taskStatus.info().id().id();
+        notifyJobStateChanged(id);
     }
 
     @Override
     public void taskRemoved(@NotNull TaskId taskId) {
-        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter(job -> job.getCraftingTask().info().id().equals(taskId)).forEach(BasicCraftJob::jobStateChanged);
+        UUID id = taskId.id();
+        notifyJobStateChanged(id);
     }
 
     @Override
     public void taskAdded(@NotNull TaskStatus taskStatus) {
-        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter(job -> job.getCraftingTask().info().id().equals(taskStatus.info().id())).forEach(BasicCraftJob::jobStateChanged);
+        UUID id = taskStatus.info().id().id();
+        notifyJobStateChanged(id);
+    }
+
+    private void notifyJobStateChanged(UUID id) {
+        jobs.values().stream()
+            .filter(BasicCraftJob::isCraftingStarted)
+            .filter(job -> id.equals(job.getUUID()))
+            .forEach(BasicCraftJob::jobStateChanged);
     }
 }

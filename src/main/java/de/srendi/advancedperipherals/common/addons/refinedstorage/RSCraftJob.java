@@ -13,6 +13,7 @@ import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
 import de.srendi.advancedperipherals.common.util.inventory.BasicCraftJob;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -21,28 +22,41 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 public class RSCraftJob extends BasicCraftJob {
-
+    private final Level world;
     private final AutocraftingNetworkComponent autocraftingComponent;
     private final ResourceKey toCraft;
+    private final long amount;
 
-    private TaskStatus craftingTask;
+    private TaskStatus lastCraftingTask = null;
     private Preview preview;
     private Future<Optional<Preview>> futureCalculationResult;
     private Optional<TaskId> futureTask = Optional.empty();
 
-    public RSCraftJob(IComputerAccess computer, Level world, long amount, ResourceKey toCraft, AutocraftingNetworkComponent calculationResult) {
-        super(computer, "rs", world, amount);
-        this.autocraftingComponent = calculationResult;
+    public RSCraftJob(TaskStatus task, AutocraftingNetworkComponent component) {
+        super(-1, task.info().id().id(), null, "rs");
+        this.world = null;
+        this.autocraftingComponent = component;
+        this.toCraft = task.info().resource();
+        this.amount = task.info().amount();
+    }
+
+    public RSCraftJob(Level world, IComputerAccess computer, ResourceKey toCraft, long amount, AutocraftingNetworkComponent component) {
+        super(computer, "rs");
+        this.world = world;
+        this.autocraftingComponent = component;
         this.toCraft = toCraft;
+        this.amount = amount;
     }
 
     @Override
     protected boolean isJobDone() {
+        TaskStatus craftingTask = this.getCraftingTask();
         return craftingTask != null && craftingTask.percentageCompleted() >= 100;
     }
 
     @Override
     protected boolean isJobCanceled() {
+        TaskStatus craftingTask = this.getCraftingTask();
         return craftingTask != null && craftingTask.percentageCompleted() < 100 && autocraftingComponent.getStatuses().stream().noneMatch(task -> task.info().id() == craftingTask.info().id());
     }
 
@@ -53,6 +67,7 @@ public class RSCraftJob extends BasicCraftJob {
 
     @Override
     public long getElapsedTimeImpl() {
+        TaskStatus craftingTask = this.getCraftingTask();
         if (craftingTask == null) {
             return -1;
         }
@@ -60,16 +75,11 @@ public class RSCraftJob extends BasicCraftJob {
     }
 
     @Override
-    public long getTotalItemsImpl() {
-        if (craftingTask == null) {
-            return -1;
-        }
-        return craftingTask.items().size();
-    }
-
-    @Override
-    public long getItemProgressImpl() {
-        return craftingTask == null ? 0 : craftingTask.items().stream().mapToLong(TaskStatus.Item::stored).sum();
+    public double getItemProgressImpl() {
+        TaskStatus craftingTask = this.getCraftingTask();
+        return craftingTask == null
+            ? -1
+            : craftingTask.percentageCompleted() / 100;
     }
 
     @Override
@@ -108,16 +118,30 @@ public class RSCraftJob extends BasicCraftJob {
         return preview.outputsOfPatternWithCycle().stream().map((resource) -> RSApi.getObjectFromResourceAmount(resource, autocraftingComponent)).collect(Collectors.toList());
     }
 
+    @Nullable
     public TaskStatus getCraftingTask() {
-        return craftingTask;
+        if (this.lastCraftingTask != null) {
+            return this.lastCraftingTask;
+        }
+        if (this.uuid != null) {
+            for (TaskStatus status : autocraftingComponent.getStatuses()) {
+                if (status.info().id().id().equals(this.uuid)) {
+                    if (this.lastCraftingTask != null) {
+                        this.lastCraftingTask = status;
+                    }
+                    return status;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public boolean cancelImpl() {
-        if (isJobDone() || isJobCanceled()) {
+        if (this.uuid == null || isJobDone() || isJobCanceled()) {
             return false;
         }
-        autocraftingComponent.cancel(craftingTask.info().id());
+        autocraftingComponent.cancel(new TaskId(this.uuid));
         return true;
     }
 
@@ -126,23 +150,24 @@ public class RSCraftJob extends BasicCraftJob {
         super.tick();
         // RS2 does re-create a new instance of the TaskStatus when something changes - so we actually need to re fetch that from the system
         // It's cursed, but the only way currently
-        if (craftingTask != null) {
+        if (this.lastCraftingTask != null) {
             for (TaskStatus status : autocraftingComponent.getStatuses()) {
-                if (status.info().id().equals(craftingTask.info().id())) {
-                    this.craftingTask = status;
+                if (status.info().id().id().equals(this.uuid)) {
+                    this.lastCraftingTask = status;
                     break;
                 }
             }
         }
+
         // The following is to get the TaskStatus from the issued task
-        if (futureTask.isEmpty() || craftingTask != null) {
+        if (futureTask.isEmpty() || this.uuid != null) {
             return;
         }
-
         TaskId id = futureTask.get();
+        this.uuid = id.id();
         for (TaskStatus status : autocraftingComponent.getStatuses()) {
             if (status.info().id().equals(id)) {
-                this.craftingTask = status;
+                this.lastCraftingTask = status;
                 // And only now we set that the crafting is started.
                 setStartedCrafting();
                 break;
@@ -213,7 +238,7 @@ public class RSCraftJob extends BasicCraftJob {
 
     @Override
     public void jobStateChanged() {
-        if (this.craftingTask == null) {
+        if (this.uuid == null) {
             fireEvent(true, StatusConstants.UNKNOWN_ERROR);
             return;
         }
