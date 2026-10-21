@@ -101,8 +101,8 @@ public class AECraftJob extends BasicCraftJob {
             return false;
         }
         return targetCpu.isBusy() && (
-            targetCpu instanceof CraftingCPUCluster cluster && cluster.craftingLogic.getLastLink().getCraftingID().equals(this.uuid)
-        );
+                targetCpu instanceof CraftingCPUCluster cluster && cluster.craftingLogic.getLastLink().getCraftingID().equals(this.uuid)
+            );
     }
 
     @Override
