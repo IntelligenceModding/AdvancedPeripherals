@@ -488,15 +488,17 @@ public class LuaConverter {
         );
     }
 
-    @Unmodifiable
     public static Map<String, Object> teamToLua(Team team) {
         if (team == null) {
             return null;
         }
-        return Map.of(
-            "name", team.getName(),
-            "color", team.getColor().getColor()
-        );
+        Map<String, Object> data = new HashMap<>(4);
+        data.put("name", team.getName());
+        Integer color = team.getColor().getColor();
+        if (color != null) {
+            data.put("color", color);
+        }
+        return data;
     }
 
     // public static Map<String, Object> shipToObject(ServerShip ship) {
