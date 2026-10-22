@@ -21,7 +21,9 @@ public class AEDiskCellStorage implements StorageCell {
     protected final AEDiskCellItem cell;
     @Nullable
     protected final ISaveProvider host;
+    @Nullable
     protected final NonNegativeId diskId;
+    @Nullable
     protected final AEDiskKey aeKey;
     protected final Mount mount;
     private int refreshCD = 0;
@@ -31,11 +33,22 @@ public class AEDiskCellStorage implements StorageCell {
         this.cell = cell;
         this.host = host;
         boolean needInit = !stack.has(APDataComponents.DISK_ID);
-        this.mount = cell.getMedia().createDataMount(stack, ServerLifecycleHooks.getCurrentServer().overworld());
-        this.diskId = Objects.requireNonNull(stack.get(APDataComponents.DISK_ID), "AEDiskCell media must assign a diskId");
-        this.aeKey = AEDiskKey.of(this.diskId, this.mount);
-        if (needInit && host != null) {
-            host.saveChanges();
+        if (host != null) {
+            this.mount = cell.getMedia().createDataMount(stack, ServerLifecycleHooks.getCurrentServer().overworld());
+            this.diskId = Objects.requireNonNull(stack.get(APDataComponents.DISK_ID), "AEDiskCell media must assign a diskId");
+            this.aeKey = AEDiskKey.of(this.diskId, this.mount);
+            if (needInit) {
+                host.saveChanges();
+            }
+        } else {
+            this.diskId = stack.getOrDefault(APDataComponents.DISK_ID, null);
+            if (this.diskId == null) {
+                this.mount = null;
+                this.aeKey = null;
+            } else {
+                this.mount = cell.getMedia().createDataMount(stack, ServerLifecycleHooks.getCurrentServer().overworld());
+                this.aeKey = AEDiskKey.of(this.diskId, this.mount);
+            }
         }
     }
 
@@ -74,6 +87,10 @@ public class AEDiskCellStorage implements StorageCell {
 
     @Override
     public void getAvailableStacks(KeyCounter out) {
+        if (this.aeKey == null) {
+            return;
+        }
+
         long usedBytes = this.getUsedBytes();
         out.add(this.aeKey, usedBytes);
 
