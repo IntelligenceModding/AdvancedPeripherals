@@ -159,13 +159,15 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
         if (this.node == null) {
             return;
         }
-        KeyCounter inventory = this.node.getGrid().getService(IStorageService.class).getCachedInventory();
-
         boolean needRefresh = false;
-        for (AEDiskKey diskKey : this.lastDisks) {
-            if (inventory.get(diskKey) == 0) {
-                needRefresh = true;
-                break;
+
+        if (!this.lastDisks.isEmpty()) {
+            KeyCounter inventory = this.node.getGrid().getService(IStorageService.class).getCachedInventory();
+            for (AEDiskKey diskKey : this.lastDisks) {
+                if (inventory.get(diskKey) == 0) {
+                    needRefresh = true;
+                    break;
+                }
             }
         }
 
@@ -173,6 +175,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
             this.diskRescanCD--;
             if (this.diskRescanCD <= 0) {
                 this.diskRescanCD = 20;
+                KeyCounter inventory = this.node.getGrid().getService(IStorageService.class).getCachedInventory();
                 for (Object2LongMap.Entry<AEKey> entry : inventory) {
                     if (entry.getKey() instanceof AEDiskKey diskKey && !this.lastDisks.contains(diskKey)) {
                         needRefresh = true;
