@@ -35,7 +35,9 @@ import appeng.me.cells.BasicCellHandler;
 import appeng.me.cells.BasicCellInventory;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
+import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.network.wired.WiredElementCapability;
+import dan200.computercraft.shared.util.NonNegativeId;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellItem;
@@ -43,6 +45,7 @@ import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellStorage;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKeys;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
@@ -306,7 +309,7 @@ public class AEApi {
             .flatMap((clazz) -> StreamSupport.stream(grid.getMachineNodes(clazz).spliterator(), false));
     }
 
-    private static Stream<@NotNull Pair<Item, ItemStack>> streamCell(IGrid grid) {
+    public static Stream<@NotNull Pair<Item, ItemStack>> streamCell(IGrid grid) {
         return streamCellDrive(grid)
             .map((node) -> node.getService(IStorageProvider.class) instanceof IChestOrDrive drive ? drive : null)
             .filter(Objects::nonNull)
@@ -348,6 +351,17 @@ public class AEApi {
         return streamExternalStorage(grid)
             .map((bus) -> ChemicalUtil.extractHandler(null, bus.getLevel(), bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide()), bus.getSide().getOpposite()))
             .filter(Objects::nonNull);
+    }
+
+    public static Map<NonNegativeId, Mount> getDiskMounts(IGrid grid) {
+        return streamCell(grid)
+            .filter(pair -> pair.left() instanceof AEDiskCellItem)
+            .map(pair -> {
+                Mount mount = ((AEDiskCellItem) pair.left()).getOrCreateMount(pair.right());
+                NonNegativeId id = Objects.requireNonNull(pair.right().get(APDataComponents.DISK_ID), "AEDiskCell media must assign a diskId");
+                return Map.entry(id, mount);
+            })
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private static Class<? extends PatternContainer> tryCastMachineToContainer(Class<?> machineClass) {

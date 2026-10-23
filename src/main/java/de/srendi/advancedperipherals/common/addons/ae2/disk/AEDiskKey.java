@@ -4,7 +4,6 @@ import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.shared.util.NonNegativeId;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.core.BlockPos;
@@ -15,8 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 
 public final class AEDiskKey extends AEKey {
@@ -28,21 +25,14 @@ public final class AEDiskKey extends AEKey {
 
     private final NonNegativeId id;
     private final ResourceLocation rlId;
-    @Nullable
-    private final Mount mount;
 
-    private AEDiskKey(NonNegativeId id, @Nullable Mount mount) {
+    private AEDiskKey(NonNegativeId id) {
         this.id = id;
         this.rlId = AdvancedPeripherals.getRL("_disk_" + this.id.id());
-        this.mount = mount;
     }
 
     public static AEDiskKey of(NonNegativeId id) {
-        return new AEDiskKey(id, null);
-    }
-
-    public static AEDiskKey of(NonNegativeId id, Mount mount) {
-        return new AEDiskKey(id, mount);
+        return new AEDiskKey(id);
     }
 
     @Override
@@ -52,11 +42,6 @@ public final class AEDiskKey extends AEKey {
 
     public NonNegativeId getDiskId() {
         return this.id;
-    }
-
-    @Nullable
-    public Mount getMount() {
-        return this.mount;
     }
 
     @Override

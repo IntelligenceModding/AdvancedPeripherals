@@ -1,9 +1,11 @@
 package de.srendi.advancedperipherals.common.setup;
 
 import com.mojang.serialization.Codec;
+import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.shared.util.NonNegativeId;
 import de.srendi.advancedperipherals.common.addons.computercraft.peripheral.DistanceDetectorPeripheral.DetectionType;
 import de.srendi.advancedperipherals.common.component.ItemStackStorage;
+import de.srendi.advancedperipherals.common.util.TransientValueHolder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Registry;
@@ -69,11 +71,17 @@ public class APDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> MAX_RANGE = registerFloat("max_range");
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> SHOW_LASER = registerBoolean("show_laser");
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<TransientValueHolder<Mount>>> _MOUNT_HOLDER = registerTransient("_mount_holder");
+
     public static void register() {
     }
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> simple(String name, UnaryOperator<DataComponentType.Builder<T>> operator) {
         return APRegistration.DATA_COMPONENT_TYPES.register(name, () -> operator.apply(DataComponentType.builder()).build());
+    }
+
+    private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<TransientValueHolder<T>>> registerTransient(String name) {
+        return simple(name, builder -> builder.networkSynchronized(StreamCodec.of((b, v) -> {}, (b) -> TransientValueHolder.nil())));
     }
 
     private static DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> registerBoolean(String name) {

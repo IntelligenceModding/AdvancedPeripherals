@@ -7,14 +7,12 @@ import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
 import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingService;
-import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
-import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
-import appeng.api.stacks.KeyCounter;
 import appeng.crafting.pattern.EncodedPatternItem;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
+import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -28,7 +26,6 @@ import de.srendi.advancedperipherals.common.addons.ae2.AEMekanismApi;
 import de.srendi.advancedperipherals.common.addons.ae2.MEChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MEFluidHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MEItemHandler;
-import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKey;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.StorageSystemBlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -41,7 +38,6 @@ import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHandler;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemItemHandler;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +60,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     private IGridNode node;
 
     private int diskRescanCD = 1;
-    private Set<AEDiskKey> lastDisks = Set.of();
+    private Map<NonNegativeId, Mount> lastDisks = Map.of();
     private final Map<IComputerAccess, Map<NonNegativeId, String>> computers = new HashMap<>();
 
     public MEBridgePeripheral(MEBridgeEntity be) {
@@ -106,52 +102,47 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
         computers.keySet().forEach(consumer);
     }
 
+    private void mountDisks(IComputerAccess computer, Map<NonNegativeId, Mount> disks, Map<NonNegativeId, String> mounts) {
+        for (Map.Entry<NonNegativeId, Mount> entry : disks.entrySet()) {
+            String path = CCMountUtil.mountDisk(computer, Objects.requireNonNull(entry.getValue()));
+            mounts.put(entry.getKey(), path);
+        }
+        computer.queueEvent("disk", computer.getAttachmentName());
+    }
+
+    private void unmountDisks(IComputerAccess computer, Map<NonNegativeId, String> mounts) {
+        mounts.values().forEach(computer::unmount);
+        mounts.clear();
+        computer.queueEvent("disk_eject", computer.getAttachmentName());
+    }
+
     @Override
     public synchronized void attach(@NotNull IComputerAccess computer) {
         Map<NonNegativeId, String> mounts = new HashMap<>();
         computers.put(computer, mounts);
-
-        for (AEDiskKey diskKey : this.lastDisks) {
-            String path = CCMountUtil.mountDisk(computer, Objects.requireNonNull(diskKey.getMount()));
-            mounts.put(diskKey.getDiskId(), path);
-        }
-
-        computer.queueEvent("disk", computer.getAttachmentName());
+        this.mountDisks(computer, this.lastDisks, mounts);
     }
 
     @Override
     public synchronized void detach(@NotNull IComputerAccess computer) {
         Map<NonNegativeId, String> mounts = computers.remove(computer);
-        mounts.values().forEach(computer::unmount);
-        computer.queueEvent("disk_eject", computer.getAttachmentName());
+        this.unmountDisks(computer, mounts);
     }
 
-    protected synchronized void refreshDisks() {
+    protected synchronized void refreshDisks(@Nullable Map<NonNegativeId, Mount> disks) {
         this.diskRescanCD = 20;
 
-        computers.forEach((computer, mounts) -> {
-            mounts.values().forEach(computer::unmount);
-            mounts.clear();
-            computer.queueEvent("disk_eject", computer.getAttachmentName());
-        });
+        computers.forEach((computer, mounts) -> this.unmountDisks(computer, mounts));
 
-        Set<AEDiskKey> disks = new HashSet<>();
-        if (this.node != null) {
-            for (Object2LongMap.Entry<AEKey> entry : this.node.getGrid().getService(IStorageService.class).getCachedInventory()) {
-                if (entry.getKey() instanceof AEDiskKey diskKey) {
-                    disks.add(diskKey);
-                }
-            }
+        if (disks == null) {
+            disks = this.node != null ? AEApi.getDiskMounts(this.node.getGrid()) : Map.of();
         }
+        final Map<NonNegativeId, Mount> finalDisks = disks;
         this.lastDisks = disks;
 
-        computers.forEach((computer, mounts) -> {
-            for (AEDiskKey diskKey : disks) {
-                String path = CCMountUtil.mountDisk(computer, Objects.requireNonNull(diskKey.getMount()));
-                mounts.put(diskKey.getDiskId(), path);
-            }
-            computer.queueEvent("disk", computer.getAttachmentName());
-        });
+        if (!finalDisks.isEmpty()) {
+            computers.forEach((computer, mounts) -> this.mountDisks(computer, finalDisks, mounts));
+        }
     }
 
     @Override
@@ -159,12 +150,14 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
         if (this.node == null) {
             return;
         }
+
         boolean needRefresh = false;
 
+        Map<NonNegativeId, Mount> disks = null;
         if (!this.lastDisks.isEmpty()) {
-            KeyCounter inventory = this.node.getGrid().getService(IStorageService.class).getCachedInventory();
-            for (AEDiskKey diskKey : this.lastDisks) {
-                if (inventory.get(diskKey) == 0) {
+            disks = AEApi.getDiskMounts(this.node.getGrid());
+            for (NonNegativeId id : this.lastDisks.keySet()) {
+                if (!disks.containsKey(id)) {
                     needRefresh = true;
                     break;
                 }
@@ -175,9 +168,9 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
             this.diskRescanCD--;
             if (this.diskRescanCD <= 0) {
                 this.diskRescanCD = 20;
-                KeyCounter inventory = this.node.getGrid().getService(IStorageService.class).getCachedInventory();
-                for (Object2LongMap.Entry<AEKey> entry : inventory) {
-                    if (entry.getKey() instanceof AEDiskKey diskKey && !this.lastDisks.contains(diskKey)) {
+                disks = AEApi.getDiskMounts(this.node.getGrid());
+                for (NonNegativeId id : disks.keySet()) {
+                    if (!this.lastDisks.containsKey(id)) {
                         needRefresh = true;
                         break;
                     }
@@ -186,7 +179,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
         }
 
         if (needRefresh) {
-            this.refreshDisks();
+            this.refreshDisks(disks);
         }
     }
 

@@ -6,11 +6,9 @@ import appeng.api.storage.cells.ISaveProvider;
 import appeng.api.storage.cells.StorageCell;
 import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.filesystem.WritableMount;
-import dan200.computercraft.shared.util.NonNegativeId;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -21,44 +19,17 @@ public class AEDiskCellStorage implements StorageCell {
     protected final AEDiskCellItem cell;
     @Nullable
     protected final ISaveProvider host;
-    @Nullable
-    protected final NonNegativeId diskId;
-    @Nullable
-    protected final AEDiskKey aeKey;
-    protected final Mount mount;
     private int refreshCD = 0;
 
     public AEDiskCellStorage(ItemStack stack, AEDiskCellItem cell, @Nullable ISaveProvider host) {
         this.stack = stack;
         this.cell = cell;
         this.host = host;
-        boolean needInit = !stack.has(APDataComponents.DISK_ID);
-        if (host != null) {
-            this.mount = cell.getMedia().createDataMount(stack, ServerLifecycleHooks.getCurrentServer().overworld());
-            this.diskId = Objects.requireNonNull(stack.get(APDataComponents.DISK_ID), "AEDiskCell media must assign a diskId");
-            this.aeKey = AEDiskKey.of(this.diskId, this.mount);
-            if (needInit) {
-                host.saveChanges();
-            }
-        } else {
-            this.diskId = stack.getOrDefault(APDataComponents.DISK_ID, null);
-            if (this.diskId == null) {
-                this.mount = null;
-                this.aeKey = null;
-            } else {
-                this.mount = cell.getMedia().createDataMount(stack, ServerLifecycleHooks.getCurrentServer().overworld());
-                this.aeKey = AEDiskKey.of(this.diskId, this.mount);
-            }
-        }
     }
 
     @Nullable
-    public NonNegativeId getDiskId() {
-        return this.diskId;
-    }
-
     public Mount getMount() {
-        return this.mount;
+        return this.cell.getMount(this.stack);
     }
 
     @Override
@@ -67,7 +38,7 @@ public class AEDiskCellStorage implements StorageCell {
     }
 
     public long getFreeBytes() {
-        if (mount instanceof WritableMount writableMount) {
+        if (this.getMount() instanceof WritableMount writableMount) {
             try {
                 return writableMount.getRemainingSpace();
             } catch (IOException e) {
@@ -78,7 +49,7 @@ public class AEDiskCellStorage implements StorageCell {
     }
 
     public long getUsedBytes() {
-        if (!(mount instanceof WritableMount writableMount)) {
+        if (!(this.getMount() instanceof WritableMount writableMount)) {
             return 0;
         }
         long usedBytes = writableMount.getCapacity() - this.getFreeBytes();
@@ -87,12 +58,12 @@ public class AEDiskCellStorage implements StorageCell {
 
     @Override
     public void getAvailableStacks(KeyCounter out) {
-        if (this.aeKey == null) {
+        long usedBytes = this.getUsedBytes();
+        if (usedBytes <= 0) {
             return;
         }
 
-        long usedBytes = this.getUsedBytes();
-        out.add(this.aeKey, usedBytes);
+        out.add(AEDiskKey.of(Objects.requireNonNull(this.stack.get(APDataComponents.DISK_ID))), usedBytes);
 
         this.refreshCD--;
         if (this.refreshCD <= 0) {
@@ -107,7 +78,7 @@ public class AEDiskCellStorage implements StorageCell {
 
     @Override
     public CellState getStatus() {
-        if (this.getDiskId() == null) {
+        if (this.getMount() == null) {
             return CellState.EMPTY;
         }
         long remaining = this.getFreeBytes();
@@ -124,6 +95,5 @@ public class AEDiskCellStorage implements StorageCell {
 
     @Override
     public void persist() {
-        this.stack.set(APDataComponents.DISK_ID, this.diskId);
     }
 }
