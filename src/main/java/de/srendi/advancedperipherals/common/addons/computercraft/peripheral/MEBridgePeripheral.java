@@ -3,14 +3,16 @@ package de.srendi.advancedperipherals.common.addons.computercraft.peripheral;
 import appeng.api.crafting.IPatternDetails;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
+import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
+import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingService;
-import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.KeyCounter;
+import appeng.api.stacks.GenericStack;
 import appeng.crafting.pattern.EncodedPatternItem;
+import appeng.me.cluster.implementations.CraftingCPUCluster;
+import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
@@ -20,7 +22,6 @@ import de.srendi.advancedperipherals.common.addons.ae2.AEApi;
 import de.srendi.advancedperipherals.common.addons.ae2.AECraftJob;
 import de.srendi.advancedperipherals.common.addons.ae2.MEFluidHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MEItemHandler;
-import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKey;
 import de.srendi.advancedperipherals.common.addons.computercraft.owner.StorageSystemBlockEntityPeripheralOwner;
 import de.srendi.advancedperipherals.common.blocks.blockentities.MEBridgeEntity;
 import de.srendi.advancedperipherals.common.configuration.APConfig;
@@ -32,7 +33,6 @@ import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemFluidHandler;
 import de.srendi.advancedperipherals.common.util.inventory.IStorageSystemItemHandler;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
-import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageSystemBlockEntityPeripheralOwner<MEBridgeEntity>> {
@@ -53,7 +54,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
     private IGridNode node;
 
     private int diskRescanCD = 1;
-    private Set<AEDiskKey> lastDisks = Set.of();
+    private Map<Integer, Mount> lastDisks = Map.of();
     private final Map<IComputerAccess, Map<Integer, String>> computers = new HashMap<>();
 
     public MEBridgePeripheral(MEBridgeEntity be) {
@@ -95,52 +96,47 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
         computers.keySet().forEach(consumer);
     }
 
+    private void mountDisks(IComputerAccess computer, Map<Integer, Mount> disks, Map<Integer, String> mounts) {
+        for (Map.Entry<Integer, Mount> entry : disks.entrySet()) {
+            String path = CCMountUtil.mountDisk(computer, Objects.requireNonNull(entry.getValue()));
+            mounts.put(entry.getKey(), path);
+        }
+        computer.queueEvent("disk", computer.getAttachmentName());
+    }
+
+    private void unmountDisks(IComputerAccess computer, Map<Integer, String> mounts) {
+        mounts.values().forEach(computer::unmount);
+        mounts.clear();
+        computer.queueEvent("disk_eject", computer.getAttachmentName());
+    }
+
     @Override
     public synchronized void attach(@NotNull IComputerAccess computer) {
         Map<Integer, String> mounts = new HashMap<>();
         computers.put(computer, mounts);
-
-        for (AEDiskKey diskKey : this.lastDisks) {
-            String path = CCMountUtil.mountDisk(computer, Objects.requireNonNull(diskKey.getMount()));
-            mounts.put(diskKey.getDiskId(), path);
-        }
-
-        computer.queueEvent("disk", computer.getAttachmentName());
+        this.mountDisks(computer, this.lastDisks, mounts);
     }
 
     @Override
     public synchronized void detach(@NotNull IComputerAccess computer) {
         Map<Integer, String> mounts = computers.remove(computer);
-        mounts.values().forEach(computer::unmount);
-        computer.queueEvent("disk_eject", computer.getAttachmentName());
+        this.unmountDisks(computer, mounts);
     }
 
-    protected synchronized void refreshDisks() {
+    protected synchronized void refreshDisks(@Nullable Map<Integer, Mount> disks) {
         this.diskRescanCD = 20;
 
-        computers.forEach((computer, mounts) -> {
-            mounts.values().forEach(computer::unmount);
-            mounts.clear();
-            computer.queueEvent("disk_eject", computer.getAttachmentName());
-        });
+        computers.forEach((computer, mounts) -> this.unmountDisks(computer, mounts));
 
-        Set<AEDiskKey> disks = new HashSet<>();
-        if (this.node != null) {
-            for (Object2LongMap.Entry<AEKey> entry : this.node.getGrid().getService(IStorageService.class).getCachedInventory()) {
-                if (entry.getKey() instanceof AEDiskKey diskKey) {
-                    disks.add(diskKey);
-                }
-            }
+        if (disks == null) {
+            disks = this.node != null ? AEApi.getDiskMounts(this.node.getGrid()) : Map.of();
         }
+        final Map<Integer, Mount> finalDisks = disks;
         this.lastDisks = disks;
 
-        computers.forEach((computer, mounts) -> {
-            for (AEDiskKey diskKey : disks) {
-                String path = CCMountUtil.mountDisk(computer, Objects.requireNonNull(diskKey.getMount()));
-                mounts.put(diskKey.getDiskId(), path);
-            }
-            computer.queueEvent("disk", computer.getAttachmentName());
-        });
+        if (!finalDisks.isEmpty()) {
+            computers.forEach((computer, mounts) -> this.mountDisks(computer, finalDisks, mounts));
+        }
     }
 
     @Override
@@ -148,13 +144,17 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
         if (this.node == null) {
             return;
         }
-        KeyCounter inventory = this.node.getGrid().getService(IStorageService.class).getCachedInventory();
 
         boolean needRefresh = false;
-        for (AEDiskKey diskKey : this.lastDisks) {
-            if (inventory.get(diskKey) == 0) {
-                needRefresh = true;
-                break;
+
+        Map<Integer, Mount> disks = null;
+        if (!this.lastDisks.isEmpty()) {
+            disks = AEApi.getDiskMounts(this.node.getGrid());
+            for (Integer id : this.lastDisks.keySet()) {
+                if (!disks.containsKey(id)) {
+                    needRefresh = true;
+                    break;
+                }
             }
         }
 
@@ -162,8 +162,9 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
             this.diskRescanCD--;
             if (this.diskRescanCD <= 0) {
                 this.diskRescanCD = 20;
-                for (Object2LongMap.Entry<AEKey> entry : inventory) {
-                    if (entry.getKey() instanceof AEDiskKey diskKey && !this.lastDisks.contains(diskKey)) {
+                disks = AEApi.getDiskMounts(this.node.getGrid());
+                for (Integer id : disks.keySet()) {
+                    if (!this.lastDisks.containsKey(id)) {
                         needRefresh = true;
                         break;
                     }
@@ -172,7 +173,7 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
         }
 
         if (needRefresh) {
-            this.refreshDisks();
+            this.refreshDisks(disks);
         }
     }
 
@@ -345,9 +346,9 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
             return MethodResult.of(null, StatusConstants.NOT_CRAFTABLE.toString());
         }
 
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.right(), filter.getCount(), bridge, target);
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, new GenericStack(stack.right(), filter.getCount()), node, bridge, target);
         bridge.addJob(job);
-        return MethodResult.of(job.withCPU(target));
+        return MethodResult.of(job);
     }
 
     @Override
@@ -365,9 +366,9 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
             return MethodResult.of(false, StatusConstants.NOT_CRAFTABLE.toString());
         }
 
-        AECraftJob job = new AECraftJob(owner.getLevel(), computer, node, stack.right(), filter.getAmount(), bridge, target);
+        AECraftJob job = new AECraftJob(owner.getLevel(), computer, new GenericStack(stack.right(), filter.getAmount()), node, bridge, target);
         bridge.addJob(job);
-        return MethodResult.of(job.withCPU(target));
+        return MethodResult.of(job);
     }
 
     @Override
@@ -376,32 +377,55 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
 
         List<Object> jobs = new ArrayList<>();
 
-        for (AECraftJob job : bridge.getJobs()) {
-            for (ICraftingCPU cpu : craftingGrid.getCpus()) {
-                if (cpu.isBusy() && job.getToCraft().matches(cpu.getJobStatus().crafting()))
-                    jobs.add(AEApi.parseCraftingJob(cpu.getJobStatus(), job, cpu));
+        for (ICraftingCPU cpu : craftingGrid.getCpus()) {
+            if (!cpu.isBusy()) {
+                continue;
             }
+            AECraftJob job = null;
+            if (cpu instanceof CraftingCPUCluster cluster) {
+                ICraftingLink lastLink = cluster.craftingLogic.getLastLink();
+                if (lastLink != null) {
+                    job = bridge.getJob(lastLink.getCraftingID());
+                }
+            }
+            jobs.add(AEApi.parseCraftingJob(cpu.getJobStatus(), job, cpu));
         }
+
         return jobs;
     }
 
     @Override
-    public Object getCraftingTaskImpl(int id) {
-        for (AECraftJob job : bridge.getJobs()) {
-            if (job.getId() == id) {
-                return MethodResult.of(job);
-            }
+    public MethodResult getCraftingTaskImpl(int id) {
+        AECraftJob job = bridge.getJob(id);
+        if (job != null) {
+            return MethodResult.of(job);
+        }
+        return MethodResult.of(null, StatusConstants.NOT_FOUND.toString());
+    }
+
+    @Override
+    public MethodResult getCraftingTaskImpl(UUID uuid) {
+        AECraftJob job = bridge.getJob(uuid);
+        if (job != null) {
+            return MethodResult.of(job);
+        }
+        ICraftingCPU cpu = AECraftJob.searchJobCPU(uuid, bridge.getGridNode().getGrid().getCraftingService());
+        if (cpu instanceof CraftingCPUCluster cluster) {
+            job = new AECraftJob(cluster.craftingLogic.getFinalJobOutput(), cluster.craftingLogic.getLastLink(), cpu);
+            bridge.watchJob(job);
+            return MethodResult.of(job);
         }
         return MethodResult.of(null, StatusConstants.NOT_FOUND.toString());
     }
 
     @Override
     public int cancelCraftingTasksImpl(GenericFilter<?> filter) throws LuaException {
-        ICraftingService craftingGrid = node.getGrid().getService(ICraftingService.class);
+        ICraftingService craftingService = node.getGrid().getService(ICraftingService.class);
 
         int canceled = 0;
-        for (ICraftingCPU cpu : craftingGrid.getCpus()) {
-            if (cpu.getJobStatus() != null && filter.testAE(cpu.getJobStatus().crafting())) {
+        for (ICraftingCPU cpu : craftingService.getCpus()) {
+            CraftingJobStatus status = cpu.getJobStatus();
+            if (status != null && filter.testAE(status.crafting())) {
                 cpu.cancelJob();
                 canceled++;
             }

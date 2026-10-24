@@ -2,7 +2,6 @@ package de.srendi.advancedperipherals.common.addons.ae2.disk;
 
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
-import dan200.computercraft.api.filesystem.Mount;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -11,28 +10,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
 
 public final class AEDiskKey extends AEKey {
     private final int id;
     private final ResourceLocation rlId;
-    @Nullable
-    private final Mount mount;
 
-    private AEDiskKey(int id, @Nullable Mount mount) {
+    private AEDiskKey(int id) {
         this.id = id;
         this.rlId = AdvancedPeripherals.getRL("_disk_" + this.id);
-        this.mount = mount;
     }
 
     public static AEDiskKey of(int id) {
-        return new AEDiskKey(id, null);
-    }
-
-    public static AEDiskKey of(int id, Mount mount) {
-        return new AEDiskKey(id, mount);
+        return new AEDiskKey(id);
     }
 
     @Override
@@ -42,11 +32,6 @@ public final class AEDiskKey extends AEKey {
 
     public int getDiskId() {
         return this.id;
-    }
-
-    @Nullable
-    public Mount getMount() {
-        return this.mount;
     }
 
     @Override

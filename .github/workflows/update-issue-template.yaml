@@ -1,6 +1,7 @@
 name: Update Issue Template
 
 on:
+  workflow_call:
   workflow_dispatch:
   push:
     tags:

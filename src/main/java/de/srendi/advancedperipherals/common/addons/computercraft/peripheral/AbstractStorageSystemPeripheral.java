@@ -4,6 +4,7 @@ import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.LuaTable;
+import dan200.computercraft.api.lua.LuaValues;
 import dan200.computercraft.api.lua.MethodResult;
 import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * <p>
@@ -506,15 +508,31 @@ public abstract class AbstractStorageSystemPeripheral<O extends IStorageSystemPe
         return MethodResult.of(this.getCraftingTasksImpl());
     }
 
-    public abstract Object getCraftingTaskImpl(int id);
+    public abstract MethodResult getCraftingTaskImpl(int id);
+    public abstract MethodResult getCraftingTaskImpl(UUID uuid);
 
     @LuaFunction(mainThread = true)
-    public final MethodResult getCraftingTask(int id) {
+    public final MethodResult getCraftingTask(IArguments args) throws LuaException {
         if (!this.isAvailable()) {
             return NOT_CONNECTED_RESULT;
         }
 
-        return MethodResult.of(this.getCraftingTaskImpl(id));
+        Object id = args.get(0);
+        if (id instanceof Number number) {
+            return this.getCraftingTaskImpl(number.intValue());
+        }
+        if (id instanceof String str) {
+            UUID uuid;
+            try {
+                uuid = UUID.fromString(str);
+            } catch (IllegalArgumentException e) {
+                uuid = null;
+            }
+            if (uuid != null) {
+                return this.getCraftingTaskImpl(uuid);
+            }
+        }
+        throw LuaValues.badArgumentOf(args, 0, "number or uuid string");
     }
 
     public abstract int cancelCraftingTasksImpl(GenericFilter<?> filter) throws LuaException;

@@ -95,3 +95,9 @@ jobs:
           PUBLIC_REP_NAME: ${{ secrets.PUBLIC_REP_NAME }}
           PUBLIC_REP_KEY: ${{ secrets.PUBLIC_REP_KEY }}
         run: ./gradlew publishAllPublicationsToPublicRepository
+
+  update-issue-template:
+    if: ${{ github.event_name == 'push' && contains(github.ref, 'release/') }}
+    needs:
+      - publish
+    uses: ./.github/workflows/update-issue-template.yaml

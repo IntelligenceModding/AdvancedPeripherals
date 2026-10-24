@@ -33,12 +33,14 @@ import appeng.me.cells.BasicCellHandler;
 import appeng.me.cells.BasicCellInventory;
 import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
+import dan200.computercraft.api.filesystem.Mount;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellItem;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellStorage;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKeys;
+import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
 import de.srendi.advancedperipherals.common.util.Pair;
 import de.srendi.advancedperipherals.common.util.StatusConstants;
@@ -290,7 +292,7 @@ public class AEApi {
             .flatMap((clazz) -> StreamSupport.stream(grid.getMachineNodes(clazz).spliterator(), false));
     }
 
-    private static Stream<@NotNull Pair<Item, ItemStack>> streamCell(IGrid grid) {
+    public static Stream<@NotNull Pair<Item, ItemStack>> streamCell(IGrid grid) {
         return streamCellDrive(grid)
             .map((node) -> node.getService(IStorageProvider.class) instanceof IChestOrDrive drive ? drive : null)
             .filter(Objects::nonNull)
@@ -326,6 +328,17 @@ public class AEApi {
         return streamExternalStorage(grid)
             .map((bus) -> FluidUtil.extractHandler(null, bus.getLevel(), bus.getHost().getBlockEntity().getBlockPos().relative(bus.getSide()), bus.getSide().getOpposite()))
             .filter(Objects::nonNull);
+    }
+
+    public static Map<Integer, Mount> getDiskMounts(IGrid grid) {
+        return streamCell(grid)
+            .filter(pair -> pair.left() instanceof AEDiskCellItem)
+            .map(pair -> {
+                Mount mount = ((AEDiskCellItem) pair.left()).getOrCreateMount(pair.right());
+                int id = Objects.requireNonNull(pair.right().getTag()).getInt(APDataComponents.DISK_ID);
+                return Map.entry(id, mount);
+            })
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private static Class<? extends PatternContainer> tryCastMachineToContainer(Class<?> machineClass) {
@@ -510,7 +523,7 @@ public class AEApi {
     public static Object parseCraftingJob(CraftingJobStatus status, @Nullable AECraftJob craftJob, @Nullable ICraftingCPU cpu) {
         Map<String, Object> properties = new HashMap<>();
 
-        properties.put("bridgeId", craftJob == null ? -1 : craftJob.getId());
+        properties.put("id", craftJob == null ? -1 : craftJob.getId());
         properties.put("quantity", status.crafting().amount());
         properties.put("resource", parseGenericStack(status.crafting()));
 
@@ -521,9 +534,7 @@ public class AEApi {
             long crafted = status.crafting().amount() - (pending + active);
             properties.put("completion", crafted / (double) status.crafting().amount());
             properties.put("crafted", crafted);
-
-            properties.put("id", craftingCpuLogic.getLastLink().getCraftingID().toString());
-
+            properties.put("uuid", craftingCpuLogic.getLastLink().getCraftingID().toString());
             properties.put("cpu", parseCraftingCPU(cpu, true));
         }
 

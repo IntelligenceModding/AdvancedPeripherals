@@ -1,0 +1,20 @@
+name: Mark Trespassing Issue
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  label_issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - if: github.event.issue.labels[0] == null
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          LABELS: trespassing
+        run: gh issue edit "$NUMBER" --add-label "$LABELS"

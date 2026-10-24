@@ -10,7 +10,6 @@ import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
-import appeng.api.orientation.BlockOrientation;
 import appeng.api.stacks.AEKey;
 import appeng.api.util.AECableType;
 import appeng.me.helpers.IGridConnectedBlockEntity;
@@ -34,15 +33,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.lang.ref.WeakReference;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> implements IActionSource, IGridConnectedBlockEntity, ICraftingSimulationRequester, ICraftingRequester {
 
-    private final List<AECraftJob> jobs = new CopyOnWriteArrayList<>();
+    private final Map<Integer, AECraftJob> jobs = new ConcurrentHashMap<>();
+    private final Map<UUID, WeakReference<AECraftJob>> watchingJob = new ConcurrentHashMap<>();
     private boolean initialized = false;
     private final IManagedGridNode mainNode = GridHelper.createManagedNode(this, MEBridgeEntityListener.INSTANCE);
 
@@ -77,11 +79,23 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
             }
         }
 
-        // Try to start the job if the job calculation finished
-        jobs.forEach(AECraftJob::tick);
-
-        // Remove the job if the crafting started, we can't do anything with it anymore
-        jobs.removeIf(AECraftJob::canBePurged);
+        for (AECraftJob job : jobs.values()) {
+            job.tick();
+            if (job.canBePurged()) {
+                jobs.remove(job.getId());
+            }
+        }
+        for (Map.Entry<UUID, WeakReference<AECraftJob>> entry : watchingJob.entrySet()) {
+            AECraftJob job = entry.getValue().get();
+            if (job == null) {
+                watchingJob.remove(entry.getKey());
+                continue;
+            }
+            job.tick();
+            if (job.canBePurged()) {
+                watchingJob.remove(entry.getKey());
+            }
+        }
     }
 
     @Override
@@ -105,7 +119,7 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
     @Override
     @Nullable
     public IGridNode getActionableNode() {
-        return mainNode.getNode();
+        return getGridNode();
     }
 
     @Override
@@ -126,25 +140,19 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
     }
 
     @Override
-    public Set<Direction> getGridConnectableSides(BlockOrientation orientation) {
-        return IGridConnectedBlockEntity.super.getGridConnectableSides(orientation);
-    }
-
-    @Override
     @Nullable
     public IGridNode getGridNode() {
-        return IGridConnectedBlockEntity.super.getGridNode();
+        return mainNode.getNode();
     }
 
     @Override
     @Nullable
     public IGridNode getGridNode(Direction dir) {
-        return getActionableNode();
+        return getGridNode();
     }
 
     @Override
     public void saveChanges() {
-
     }
 
     @Override
@@ -163,16 +171,41 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
     }
 
     public void addJob(AECraftJob job) {
-        jobs.add(job);
+        jobs.put(job.getId(), job);
     }
 
-    public List<AECraftJob> getJobs() {
-        return jobs;
+    public void watchJob(AECraftJob job) {
+        if (job.getId() != -1) {
+            throw new IllegalArgumentException("Should not watch already watching job.");
+        }
+        watchingJob.put(job.getUUID(), new WeakReference<>(job));
+    }
+
+    public AECraftJob getJob(int id) {
+        return jobs.get(id);
+    }
+
+    public AECraftJob getJob(UUID id) {
+        WeakReference<AECraftJob> ref = watchingJob.get(id);
+        if (ref != null) {
+            AECraftJob job = ref.get();
+            if (job != null) {
+                return job;
+            }
+        }
+        return jobs.values().stream().filter(j -> id.equals(j.getUUID())).findFirst().orElse(null);
+    }
+
+    public Collection<AECraftJob> getRunningJobs() {
+        return jobs.values();
     }
 
     @Override
     public ImmutableSet<ICraftingLink> getRequestedJobs() {
-        return jobs.stream().filter(BasicCraftJob::isCraftingStarted).map(AECraftJob::getJobLink).collect(Collectors.toCollection(ImmutableSet::of));
+        return jobs.values().stream()
+            .filter(BasicCraftJob::isCraftingStarted)
+            .map(AECraftJob::getJobLink)
+            .collect(Collectors.toCollection(ImmutableSet::of));
     }
 
     @Override
@@ -182,6 +215,10 @@ public class MEBridgeEntity extends PeripheralBlockEntity<MEBridgePeripheral> im
 
     @Override
     public void jobStateChange(ICraftingLink link) {
-        jobs.stream().filter(BasicCraftJob::isCraftingStarted).filter((job) -> job.getJobLink().getCraftingID().equals(link.getCraftingID())).forEach(AECraftJob::jobStateChanged);
+        AECraftJob job = this.getJob(link.getCraftingID());
+        if (job != null) {
+            job.jobStateChanged();
+            jobs.remove(job.getId());
+        }
     }
 }
