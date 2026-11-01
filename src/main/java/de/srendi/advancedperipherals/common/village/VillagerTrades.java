@@ -21,27 +21,31 @@ import static de.srendi.advancedperipherals.common.village.VillagerTrade.TradeBu
 public class VillagerTrades {
     @SubscribeEvent
     public static void registerWanderingTrade(WandererTradesEvent event) {
-        if (APConfig.WORLD_CONFIG.enableWanderingTraderTrades.get()) {
-            new TradeBuilder(event, VillagerTrade.Type.ITEM_FOR_EMERALD)
-                .withItem(APBlocks.PERIPHERAL_CASING.get())
-                .withMaxUses(8)
-                .build();
-            new TradeBuilder(event, VillagerTrade.Type.ITEM_FOR_EMERALD)
-                .withItem(ModRegistry.Blocks.TURTLE_ADVANCED.get())
-                .withEmeralds(2)
-                .withMaxUses(8)
-                .build();
-            new TradeBuilder(event, VillagerTrade.Type.ITEM_FOR_EMERALD)
-                .withItem(APItems.SMART_GLASSES.get())
-                .withEmeralds(32)
-                .withMaxUses(1)
-                .build();
+        if (!APConfig.WORLD_CONFIG.enableWanderingTraderTrades.get()) {
+            return;
         }
+        new TradeBuilder(event, VillagerTrade.Type.ITEM_FOR_EMERALD)
+            .withItem(APBlocks.PERIPHERAL_CASING.get())
+            .withMaxUses(8)
+            .build();
+        new TradeBuilder(event, VillagerTrade.Type.ITEM_FOR_EMERALD)
+            .withItem(ModRegistry.Blocks.TURTLE_ADVANCED.get())
+            .withEmeralds(2)
+            .withMaxUses(8)
+            .build();
+        new TradeBuilder(event, VillagerTrade.Type.ITEM_FOR_EMERALD)
+            .withItem(APItems.SMART_GLASSES.get())
+            .withEmeralds(32)
+            .withMaxUses(1)
+            .build();
     }
 
     @SubscribeEvent
     public static void registerVillagerTrades(VillagerTradesEvent event) {
         if (event.getType() == APVillagers.COMPUTER_SCIENTIST.get()) {
+            if (!APConfig.WORLD_CONFIG.enableComputerScientistTrades.get()) {
+                return;
+            }
             new TradeBuilder(event, VillagerTrade.Type.ITEM_FOR_EMERALD)
                 .withItem(APBlocks.PERIPHERAL_CASING.get())
                 .withXp(1)
