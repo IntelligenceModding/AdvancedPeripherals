@@ -136,7 +136,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             if (lerper != null) {
                 @SuppressWarnings("rawtypes")
                 LerpController controller = new LerpController(getter, setter, lerper);
-                setter = controller::setTarget;
+                setter = controller;
                 String nameCap = name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
                 methodNames.add("get" + nameCap + "LerpSteps");
                 methodNames.add("set" + nameCap + "LerpSteps");
@@ -303,6 +303,13 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
     }
 
+    /**
+     * invoked on server-side when an object is newly created.
+     *
+     * @param buffer The byte buffer write into
+     * @see decode
+     * @see encodeUpdated
+     */
     @MustBeInvokedByOverriders
     public void encode(RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(this.id);
@@ -315,6 +322,13 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         this.updated.clear();
     }
 
+    /**
+     * invoked on client-side when an object is newly created.
+     *
+     * @param buffer The byte buffer read from
+     * @see encode
+     * @see decodeUpdated
+     */
     @MustBeInvokedByOverriders
     public void decode(RegistryFriendlyByteBuf buffer) {
         this.id = buffer.readInt();
@@ -322,10 +336,18 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             controller.setSteps(buffer.readVarInt());
         }
         for (FieldEncoder<?> field : this.fieldEncoders) {
-            field.decode(buffer);
+            field.decodeNow(buffer);
         }
     }
 
+    /**
+     * invoked on server-side when an object is already created and is willing to send updated fields.
+     *
+     * @param buffer The byte buffer write into
+     * @see decodeUpdated
+     * @see encode
+     */
+    @MustBeInvokedByOverriders
     public void encodeUpdated(RegistryFriendlyByteBuf buffer) {
         buffer.writeBitSet(this.updated);
         for (int i = 0; i < this.fieldLerpers.length; i++) {
@@ -345,6 +367,14 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         this.updated.clear();
     }
 
+    /**
+     * invoked on client-side when an object is already created and is receiving updated fields.
+     *
+     * @param buffer The byte buffer read from
+     * @see encodeUpdated
+     * @see decode
+     */
+    @MustBeInvokedByOverriders
     public void decodeUpdated(RegistryFriendlyByteBuf buffer) {
         BitSet updated = buffer.readBitSet();
         for (int i = 0; i < this.fieldLerpers.length; i++) {
@@ -465,6 +495,14 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         public void decode(RegistryFriendlyByteBuf buffer) {
             this.setter.accept(this.codec.decode(buffer));
         }
+
+        public void decodeNow(RegistryFriendlyByteBuf buffer) {
+            Consumer<T> setter = this.setter;
+            if (setter instanceof LerpController<T> lerper) {
+                setter = lerper.setter;
+            }
+            setter.accept(this.codec.decode(buffer));
+        }
     }
 
     @FunctionalInterface
@@ -530,7 +568,7 @@ public abstract class OverlayObject implements IDynamicLuaObject {
         }
     }
 
-    public static final class LerpController<T> {
+    public static final class LerpController<T> implements Consumer<T> {
         private final Supplier<T> getter;
         private final Consumer<T> setter;
         private final FieldLerper<T> lerper;
@@ -563,6 +601,11 @@ public abstract class OverlayObject implements IDynamicLuaObject {
             if (this.step <= 0) {
                 this.setter.accept(v);
             }
+        }
+
+        @Override
+        public void accept(T v) {
+            this.setTarget(v);
         }
 
         public void step() {

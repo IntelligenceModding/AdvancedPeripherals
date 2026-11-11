@@ -37,6 +37,7 @@ public class RenderableObjectBulkAddPacket implements IAPPacket {
             int typeId = buffer.readVarInt();
             OverlayObject object = registry.byIdOrThrow(typeId).createClient(this.player);
             object.decode(buffer);
+            object.stepFields();
             objects.add(object);
         }
         this.objects = objects;

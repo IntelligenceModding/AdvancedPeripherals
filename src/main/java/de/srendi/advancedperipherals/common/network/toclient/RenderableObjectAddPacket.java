@@ -31,6 +31,7 @@ public class RenderableObjectAddPacket implements IAPPacket {
         int typeId = buffer.readVarInt();
         this.object = registry.byIdOrThrow(typeId).createClient(this.player);
         this.object.decode(buffer);
+        this.object.stepFields();
     }
 
     @Override
