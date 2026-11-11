@@ -6,7 +6,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 - Allow ME/RS bridges check progress and cancel all crafting jobs.
-- Fix `getPlayer` may crash when player is in a team without a color.
+- Add Advanced AE quantum CPU compact. #858
+- Fix various critical issues about AEDiskCell.
+- Fix `getPlayer` may crash when player is in a team without a color. #853
 
 ## [1.21.1-0.8.2a] - 2026-10-04
 - \[Breaking Change\] All overlay objects can draw on both in world or on GUI now. Use `gui` field to differ the render space.
