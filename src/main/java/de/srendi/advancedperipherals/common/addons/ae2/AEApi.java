@@ -22,18 +22,13 @@ import appeng.api.storage.AEKeyFilter;
 import appeng.api.storage.IStorageProvider;
 import appeng.api.storage.ISubMenuHost;
 import appeng.api.storage.MEStorage;
-import appeng.api.storage.cells.IBasicCellItem;
 import appeng.api.storage.cells.ICellWorkbenchItem;
 import appeng.blockentity.storage.DriveBlockEntity;
 import appeng.blockentity.storage.MEChestBlockEntity;
 import appeng.core.definitions.AEItems;
-import appeng.crafting.execution.CraftingCpuLogic;
 import appeng.crafting.pattern.EncodedPatternItem;
 import appeng.helpers.IPriorityHost;
 import appeng.helpers.patternprovider.PatternContainer;
-import appeng.me.cells.BasicCellHandler;
-import appeng.me.cells.BasicCellInventory;
-import appeng.me.cluster.implementations.CraftingCPUCluster;
 import appeng.parts.storagebus.StorageBusPart;
 import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.network.wired.WiredElementCapability;
@@ -41,9 +36,6 @@ import dan200.computercraft.shared.util.NonNegativeId;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
 import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellItem;
-import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskCellStorage;
-import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskHandler;
-import de.srendi.advancedperipherals.common.addons.ae2.disk.AEDiskKeys;
 import de.srendi.advancedperipherals.common.setup.APBlockEntityTypes;
 import de.srendi.advancedperipherals.common.setup.APDataComponents;
 import de.srendi.advancedperipherals.common.util.LuaConverter;
@@ -55,9 +47,6 @@ import de.srendi.advancedperipherals.common.util.inventory.FluidUtil;
 import de.srendi.advancedperipherals.common.util.inventory.GenericFilter;
 import de.srendi.advancedperipherals.common.util.inventory.ItemUtil;
 import de.srendi.advancedperipherals.common.util.inventory.ItemFilter;
-import io.github.projectet.ae2things.storage.DISKCellHandler;
-import io.github.projectet.ae2things.storage.DISKCellInventory;
-import io.github.projectet.ae2things.storage.IDISKCellItem;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import me.ramidzkh.mekae2.ae2.MekanismKey;
 import me.ramidzkh.mekae2.ae2.MekanismKeyType;
@@ -77,7 +66,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -537,8 +525,9 @@ public class AEApi {
         properties.put("storage", storage);
         properties.put("coProcessors", coProcessors);
         properties.put("isBusy", isBusy);
-        if (!recursive)
+        if (!recursive) {
             properties.put("craftingJob", cpu.getJobStatus() != null ? parseCraftingJob(cpu.getJobStatus(), null, null) : null);
+        }
         properties.put("name", cpu.getName() != null ? cpu.getName().getString() : "Unnamed");
         properties.put("selectionMode", cpu.getSelectionMode().toString());
 
@@ -549,18 +538,19 @@ public class AEApi {
         Map<String, Object> properties = new HashMap<>();
 
         properties.put("id", craftJob == null ? -1 : craftJob.getId());
-        properties.put("quantity", status.crafting().amount());
+        long craftingAmount = status.crafting().amount();
+        properties.put("quantity", craftingAmount);
         properties.put("resource", parseGenericStack(status.crafting()));
 
         if (cpu != null) {
-            CraftingCpuLogic craftingCpuLogic = ((CraftingCPUCluster) cpu).craftingLogic;
-            long pending = craftingCpuLogic.getPendingOutputs(status.crafting().what());
-            long active = craftingCpuLogic.getWaitingFor(status.crafting().what());
-            long crafted = status.crafting().amount() - (pending + active);
-            properties.put("completion", crafted / (double) status.crafting().amount());
-            properties.put("crafted", crafted);
-            properties.put("uuid", craftingCpuLogic.getLastLink().getCraftingID().toString());
             properties.put("cpu", parseCraftingCPU(cpu, true));
+            ICpuWrapper wrapped = ICpuWrapper.of(cpu);
+            if (wrapped != null) {
+                long crafted = craftingAmount - wrapped.getToCraft(status.crafting().what());
+                properties.put("completion", ((double) crafted) / craftingAmount);
+                properties.put("crafted", crafted);
+                properties.put("uuid", wrapped.getCraftingID().toString());
+            }
         }
 
         return properties;
@@ -835,19 +825,15 @@ public class AEApi {
     }
 
     public static ICraftingCPU getCraftingCPU(IGridNode node, String cpuName) {
-        if (cpuName.isEmpty())
+        if (cpuName.isEmpty()) {
             return null;
+        }
         ICraftingService grid = node.getGrid().getService(ICraftingService.class);
-        if (grid == null)
+        if (grid == null) {
             return null;
+        }
 
-        Iterator<ICraftingCPU> iterator = grid.getCpus().iterator();
-        if (!iterator.hasNext())
-            return null;
-
-        while (iterator.hasNext()) {
-            ICraftingCPU cpu = iterator.next();
-
+        for (ICraftingCPU cpu : grid.getCpus()) {
             if (cpu.getName() != null && cpu.getName().getString().equals(cpuName)) {
                 return cpu;
             }
@@ -858,157 +844,5 @@ public class AEApi {
 
     public static List<Map<String, Object>> listCells(IGrid grid) {
         return streamCell(grid).map((pair) -> cellToLua(pair.left(), pair.right())).toList();
-    }
-
-    private interface ICellWrapper {
-        Item item();
-        AEKeyType keyType();
-        long maxBytes();
-        long usedBytes();
-        long bytesPerType();
-        long maxTypes();
-
-        default long freeBytes() {
-            return this.maxBytes() - this.usedBytes();
-        }
-
-        static ICellWrapper of(Item item, ItemStack stack) {
-            if (item instanceof IBasicCellItem cell) {
-                return new BasicCellWrapper(cell, stack);
-            }
-            if (APAddon.AE2THINGS.isLoaded() && item instanceof IDISKCellItem cell) {
-                return new AE2ThingsDiskCellWrapper(cell, stack);
-            }
-            if (item instanceof AEDiskCellItem cell) {
-                return new APDiskCellWrapper(cell, stack);
-            }
-            return null;
-        }
-    }
-
-    private static final class BasicCellWrapper implements ICellWrapper {
-        final IBasicCellItem cell;
-        final ItemStack stack;
-        final BasicCellInventory inv;
-
-        BasicCellWrapper(IBasicCellItem cell, ItemStack stack) {
-            this.cell = cell;
-            this.stack = stack;
-            this.inv = BasicCellHandler.INSTANCE.getCellInventory(stack, null);
-        }
-
-        @Override
-        public Item item() {
-            return (Item) this.cell;
-        }
-
-        @Override
-        public AEKeyType keyType() {
-            return this.cell.getKeyType();
-        }
-
-        @Override
-        public long maxBytes() {
-            return this.cell.getBytes(this.stack);
-        }
-
-        @Override
-        public long usedBytes() {
-            return this.inv == null ? 0 : this.inv.getUsedBytes();
-        }
-
-        @Override
-        public long bytesPerType() {
-            return this.cell.getBytesPerType(this.stack);
-        }
-
-        @Override
-        public long maxTypes() {
-            return this.cell.getTotalTypes(this.stack);
-        }
-    }
-
-    private static final class AE2ThingsDiskCellWrapper implements ICellWrapper {
-        final IDISKCellItem cell;
-        final ItemStack stack;
-        final DISKCellInventory inv;
-
-        AE2ThingsDiskCellWrapper(IDISKCellItem cell, ItemStack stack) {
-            this.cell = cell;
-            this.stack = stack;
-            this.inv = DISKCellHandler.INSTANCE.getCellInventory(stack, null);
-        }
-
-        @Override
-        public Item item() {
-            return (Item) this.cell;
-        }
-
-        @Override
-        public AEKeyType keyType() {
-            return this.cell.getKeyType();
-        }
-
-        @Override
-        public long maxBytes() {
-            return this.cell.getBytes(this.stack);
-        }
-
-        @Override
-        public long usedBytes() {
-            return this.inv == null ? 0 : this.inv.getStoredItemCount();
-        }
-
-        @Override
-        public long bytesPerType() {
-            return 0;
-        }
-
-        @Override
-        public long maxTypes() {
-            return Long.MAX_VALUE;
-        }
-    }
-
-    private static final class APDiskCellWrapper implements ICellWrapper {
-        final AEDiskCellItem cell;
-        final ItemStack stack;
-        final AEDiskCellStorage inv;
-
-        APDiskCellWrapper(AEDiskCellItem cell, ItemStack stack) {
-            this.cell = cell;
-            this.stack = stack;
-            this.inv = AEDiskHandler.INSTANCE.getCellInventory(stack, null);
-        }
-
-        @Override
-        public Item item() {
-            return this.cell;
-        }
-
-        @Override
-        public AEKeyType keyType() {
-            return AEDiskKeys.INSTANCE;
-        }
-
-        @Override
-        public long maxBytes() {
-            return this.cell.getMaxBytes();
-        }
-
-        @Override
-        public long usedBytes() {
-            return this.inv == null ? 0 : this.inv.getUsedBytes();
-        }
-
-        @Override
-        public long bytesPerType() {
-            return 0;
-        }
-
-        @Override
-        public long maxTypes() {
-            return 1;
-        }
     }
 }

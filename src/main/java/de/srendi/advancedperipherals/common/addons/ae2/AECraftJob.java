@@ -15,7 +15,6 @@ import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
 import appeng.api.stacks.KeyCounter;
-import appeng.me.cluster.implementations.CraftingCPUCluster;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import de.srendi.advancedperipherals.AdvancedPeripherals;
@@ -97,12 +96,15 @@ public class AECraftJob extends BasicCraftJob {
     }
 
     protected boolean isCrafting() {
-        if (jobLink == null || targetCpu == null) {
+        UUID uuid = this.uuid;
+        if (uuid == null || jobLink == null || targetCpu == null) {
             return false;
         }
-        return targetCpu.isBusy() && (
-                targetCpu instanceof CraftingCPUCluster cluster && cluster.craftingLogic.getLastLink().getCraftingID().equals(this.uuid)
-            );
+        if (!targetCpu.isBusy()) {
+            return false;
+        }
+        ICpuWrapper wrapped = ICpuWrapper.of(targetCpu);
+        return wrapped != null && uuid.equals(wrapped.getCraftingID());
     }
 
     @Override
@@ -294,45 +296,50 @@ public class AECraftJob extends BasicCraftJob {
         if (!startedCrafting) {
             return;
         }
-        if (this.targetCpu instanceof CraftingCPUCluster cluster) {
-            cluster.craftingLogic.addListener(new Consumer<>() {
+        ICraftingCPU cpu = this.targetCpu;
+        ICpuWrapper wrapped = ICpuWrapper.of(cpu);
+        if (wrapped != null) {
+            wrapped.addListener(new Consumer<>() {
                 private boolean canceled = false;
 
                 @Override
                 public void accept(AEKey key) {
                     // The last time the listeners are called from the cpu logic is when the job is finished
                     // These listeners are not intended by ae2 to be used like this, but it works, and we don't modify the key
-                    CraftingJobStatus newStatus = cluster.getJobStatus();
-                    if (newStatus != null) {
-                        cachedStatus = newStatus;
-                        if (cachedStatus.progress() >= cachedStatus.totalItems() && !canceled) {
-                            canceled = true;
-                            ServerWorker.add(() -> cluster.craftingLogic.removeListener(this));
-                        }
+                    if (canceled) {
+                        return;
                     }
+                    CraftingJobStatus newStatus = cpu.getJobStatus();
+                    if (newStatus == null) {
+                        return;
+                    }
+                    cachedStatus = newStatus;
+                    if (newStatus.progress() < newStatus.totalItems()) {
+                        return;
+                    }
+                    canceled = true;
+                    ServerWorker.add(() -> wrapped.removeListener(this));
                 }
             });
         }
     }
 
     private CraftingJobStatus getJobStatus() {
-        if (jobLink != null && this.targetCpu instanceof CraftingCPUCluster cluster) {
-            ICraftingLink lastLink = cluster.craftingLogic.getLastLink();
-            if (lastLink != null && lastLink.getCraftingID().equals(jobLink.getCraftingID())) {
-                cachedStatus = Objects.requireNonNull(cluster.getJobStatus());
+        ICpuWrapper wrapped = ICpuWrapper.of(this.targetCpu);
+        if (wrapped != null && this.jobLink != null) {
+            if (this.jobLink.getCraftingID().equals(wrapped.getCraftingID())) {
+                this.cachedStatus = Objects.requireNonNull(this.targetCpu.getJobStatus());
             }
         }
-        return cachedStatus;
+        return this.cachedStatus;
     }
 
     @Nullable
     public static ICraftingCPU searchJobCPU(UUID id, ICraftingService service) {
         for (ICraftingCPU cpu : service.getCpus()) {
-            if (cpu instanceof CraftingCPUCluster cluster) {
-                ICraftingLink lastLink = cluster.craftingLogic.getLastLink();
-                if (lastLink != null && lastLink.getCraftingID().equals(id)) {
-                    return cpu;
-                }
+            ICpuWrapper wrapped = ICpuWrapper.of(cpu);
+            if (wrapped != null && id.equals(wrapped.getCraftingID())) {
+                return cpu;
             }
         }
         return null;

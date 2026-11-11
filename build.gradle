@@ -288,6 +288,12 @@ dependencies {
         runtimeOnly "curse.maven:ae2things-609977:${ae2things_version}-sources"
     }
 
+    // Advanced AE
+    compileOnly "curse.maven:ae2things-1084104:${advanced_ae_version}"
+    if (!minimumRuntime) {
+        runtimeOnly "curse.maven:ae2things-1084104:${advanced_ae_version}"
+    }
+
     // Create
     compileOnly("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
     compileOnly "net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}"

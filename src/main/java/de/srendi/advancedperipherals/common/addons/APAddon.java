@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 public enum APAddon {
 
+    ADVANCED_AE("advanced_ae"),
     AE2("ae2"),
     AE2THINGS("ae2things"),
     APP_MEKANISTICS("appmek"),

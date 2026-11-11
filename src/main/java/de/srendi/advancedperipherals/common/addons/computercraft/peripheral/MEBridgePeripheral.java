@@ -5,13 +5,11 @@ import appeng.api.networking.IGridNode;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.networking.crafting.CraftingJobStatus;
 import appeng.api.networking.crafting.ICraftingCPU;
-import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingService;
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.GenericStack;
 import appeng.crafting.pattern.EncodedPatternItem;
-import appeng.me.cluster.implementations.CraftingCPUCluster;
 import dan200.computercraft.api.filesystem.Mount;
 import dan200.computercraft.api.lua.IArguments;
 import dan200.computercraft.api.lua.LuaException;
@@ -23,6 +21,7 @@ import de.srendi.advancedperipherals.common.addons.APAddon;
 import de.srendi.advancedperipherals.common.addons.ae2.AEApi;
 import de.srendi.advancedperipherals.common.addons.ae2.AECraftJob;
 import de.srendi.advancedperipherals.common.addons.ae2.AEMekanismApi;
+import de.srendi.advancedperipherals.common.addons.ae2.ICpuWrapper;
 import de.srendi.advancedperipherals.common.addons.ae2.MEChemicalHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MEFluidHandler;
 import de.srendi.advancedperipherals.common.addons.ae2.MEItemHandler;
@@ -466,10 +465,11 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
                 continue;
             }
             AECraftJob job = null;
-            if (cpu instanceof CraftingCPUCluster cluster) {
-                ICraftingLink lastLink = cluster.craftingLogic.getLastLink();
-                if (lastLink != null) {
-                    job = bridge.getJob(lastLink.getCraftingID());
+            ICpuWrapper wrapped = ICpuWrapper.of(cpu);
+            if (wrapped != null) {
+                UUID id = wrapped.getCraftingID();
+                if (id != null) {
+                    job = bridge.getJob(id);
                 }
             }
             jobs.add(AEApi.parseCraftingJob(cpu.getJobStatus(), job, cpu));
@@ -494,8 +494,9 @@ public class MEBridgePeripheral extends AbstractStorageSystemPeripheral<StorageS
             return MethodResult.of(job);
         }
         ICraftingCPU cpu = AECraftJob.searchJobCPU(uuid, bridge.getGridNode().getGrid().getCraftingService());
-        if (cpu instanceof CraftingCPUCluster cluster) {
-            job = new AECraftJob(cluster.craftingLogic.getFinalJobOutput(), cluster.craftingLogic.getLastLink(), cpu);
+        ICpuWrapper wrapped = ICpuWrapper.of(cpu);
+        if (wrapped != null) {
+            job = new AECraftJob(wrapped.getFinalJobOutput(), wrapped.getLastLink(), cpu);
             bridge.watchJob(job);
             return MethodResult.of(job);
         }

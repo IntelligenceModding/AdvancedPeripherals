@@ -16,6 +16,7 @@ public abstract class BasicCraftJob {
     public static final AtomicInteger ID_SEQ = new AtomicInteger();
 
     protected final int id;
+    @Nullable
     protected volatile UUID uuid;
     @Nullable
     protected final IComputerAccess computer;
